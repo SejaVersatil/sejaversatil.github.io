@@ -11,447 +11,845 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #e0e0e0;
-            background: #0a0a0a;
-            position: relative;
+        :root {
+            --primary: #1a1a1a;
+            --accent: #8b7ab8;
+            --accent-light: #b8a7d4;
+            --text: #2c2c2c;
+            --bg: #ffffff;
+            --gray: #f5f5f5;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            width: 50%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900"><defs><filter id="blur2"><feGaussianBlur stdDeviation="1.5"/></filter><radialGradient id="eye3" cx="30%25" cy="50%25"><stop offset="0%25" style="stop-color:%23FFB800"/><stop offset="50%25" style="stop-color:%23FF8C00"/><stop offset="100%25" style="stop-color:%23666"/></radialGradient></defs><g opacity="0.08" filter="url(%23blur2)" transform="rotate(-12)"><ellipse cx="220" cy="350" rx="90" ry="110" fill="%23333"/><ellipse cx="380" cy="350" rx="90" ry="110" fill="%23333"/><ellipse cx="220" cy="345" rx="20" ry="28" fill="url(%23eye3)"/><ellipse cx="380" cy="345" rx="20" ry="28" fill="url(%23eye3)"/><ellipse cx="218" cy="340" rx="10" ry="15" fill="%23000"/><ellipse cx="378" cy="340" rx="10" ry="15" fill="%23000"/><path d="M 240 400 L 300 440 L 360 400" stroke="%23222" stroke-width="8" fill="none"/><ellipse cx="300" cy="455" rx="12" ry="15" fill="%231a1a1a"/><ellipse cx="300" cy="250" rx="160" ry="90" fill="%23222" opacity="0.5"/></g></svg>') center center / contain no-repeat;
-            top: 20%;
-            right: -10%;
-            z-index: -1;
-            pointer-events: none;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .top-banner {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 0.7rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
         }
 
         header {
-            background: rgba(18, 18, 18, 0.95);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
+            background: white;
+            position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(102, 126, 234, 0.3);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            padding: 1.2rem 5%;
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 0 2rem;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
         }
 
-        .nav-links {
+        .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             list-style: none;
         }
 
-        .nav-links a {
-            color: white;
+        .nav-menu a {
             text-decoration: none;
-            transition: opacity 0.3s;
+            color: var(--text);
             font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
         }
 
-        .nav-links a:hover {
-            opacity: 0.8;
+        .nav-menu a:hover {
+            color: var(--accent);
         }
 
+        .nav-icons {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .nav-icons span {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-icons span:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter><radialGradient id="eye1" cx="30%25" cy="50%25"><stop offset="0%25" style="stop-color:%23FFB800"/><stop offset="50%25" style="stop-color:%23FF8C00"/><stop offset="100%25" style="stop-color:%23000"/></radialGradient><radialGradient id="eye2" cx="30%25" cy="50%25"><stop offset="0%25" style="stop-color:%23FFB800"/><stop offset="50%25" style="stop-color:%23FF8C00"/><stop offset="100%25" style="stop-color:%23000"/></radialGradient></defs><g opacity="0.15" filter="url(%23blur)"><ellipse cx="200" cy="400" rx="180" ry="220" fill="%23000"/><ellipse cx="600" cy="400" rx="180" ry="220" fill="%23000"/><path d="M 150 350 Q 140 370 155 385" stroke="%23333" stroke-width="8" fill="none"/><path d="M 250 350 Q 260 370 245 385" stroke="%23333" stroke-width="8" fill="none"/><path d="M 550 350 Q 540 370 555 385" stroke="%23333" stroke-width="8" fill="none"/><path d="M 650 350 Q 660 370 645 385" stroke="%23333" stroke-width="8" fill="none"/><ellipse cx="200" cy="380" rx="35" ry="45" fill="url(%23eye1)"/><ellipse cx="600" cy="380" rx="35" ry="45" fill="url(%23eye2)"/><ellipse cx="195" cy="375" rx="18" ry="25" fill="%23000"/><ellipse cx="595" cy="375" rx="18" ry="25" fill="%23000"/><ellipse cx="198" cy="370" rx="8" ry="12" fill="%23FFF" opacity="0.6"/><ellipse cx="598" cy="370" rx="8" ry="12" fill="%23FFF" opacity="0.6"/><path d="M 300 450 L 400 520 L 500 450" stroke="%23111" stroke-width="15" fill="none" stroke-linecap="round"/><ellipse cx="400" cy="540" rx="25" ry="30" fill="%230a0a0a"/><path d="M 400 540 L 400 620" stroke="%23111" stroke-width="12"/><path d="M 380 580 Q 400 600 420 580" stroke="%23111" stroke-width="10" fill="none"/><ellipse cx="330" cy="560" rx="15" ry="20" fill="%230a0a0a"/><ellipse cx="470" cy="560" rx="15" ry="20" fill="%230a0a0a"/><path d="M 100 500 Q 80 600 90 700 Q 95 750 85 800" stroke="%230a0a0a" stroke-width="3" fill="none" opacity="0.7"/><path d="M 120 520 Q 100 610 108 710 Q 112 755 105 805" stroke="%230a0a0a" stroke-width="3" fill="none" opacity="0.6"/><path d="M 700 500 Q 720 600 710 700 Q 705 750 715 800" stroke="%230a0a0a" stroke-width="3" fill="none" opacity="0.7"/><path d="M 680 520 Q 700 610 692 710 Q 688 755 695 805" stroke="%230a0a0a" stroke-width="3" fill="none" opacity="0.6"/><ellipse cx="400" cy="300" rx="320" ry="180" fill="%23000" opacity="0.3"/><path d="M 200 250 Q 180 200 190 150" stroke="%230a0a0a" stroke-width="4" fill="none" opacity="0.5"/><path d="M 250 230 Q 235 185 242 140" stroke="%230a0a0a" stroke-width="4" fill="none" opacity="0.5"/><path d="M 600 250 Q 620 200 610 150" stroke="%230a0a0a" stroke-width="4" fill="none" opacity="0.5"/><path d="M 550 230 Q 565 185 558 140" stroke="%230a0a0a" stroke-width="4" fill="none" opacity="0.5"/></g></svg>') center center / cover;
-            color: white;
-            padding: 150px 2rem 100px;
-            text-align: center;
-            margin-top: 70px;
             position: relative;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23e8e3f0" width="1200" height="800"/><path fill="%23b8a7d4" opacity="0.3" d="M0 400 Q300 300 600 400 T1200 400 V800 H0 Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
             overflow: hidden;
         }
 
-        .hero > * {
-            position: relative;
-            z-index: 1;
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+            animation: fadeIn 1.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 4rem;
+            font-weight: 700;
             margin-bottom: 1rem;
-            animation: fadeInUp 1s ease;
+            letter-spacing: -1px;
+            text-transform: uppercase;
         }
 
-        .hero p {
+        .hero-subtitle {
             font-size: 1.3rem;
-            margin-bottom: 2rem;
-            animation: fadeInUp 1s ease 0.2s;
-            opacity: 0;
-            animation-fill-mode: forwards;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        .cta-button {
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 3rem;
             background: white;
-            color: #667eea;
-            padding: 1rem 2.5rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 2px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Categories */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin: 4rem 0;
+        }
+
+        .category-item {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            animation: fadeInUp 1s ease 0.4s;
-            opacity: 0;
-            animation-fill-mode: forwards;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .category-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
         }
 
-        .features {
-            max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
+        .category-item:hover img {
+            transform: scale(1.08);
         }
 
-        .feature-card {
-            text-align: center;
+        .category-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
             padding: 2rem;
-            border-radius: 15px;
-            background: rgba(30, 30, 30, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            color: white;
         }
 
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-            border-color: rgba(102, 126, 234, 0.5);
+        .category-overlay h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .category-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #a78bfa;
-        }
-
-        .feature-card p {
-            color: #b0b0b0;
-        }
-
-        .products {
-            background: linear-gradient(to bottom, rgba(15, 15, 15, 0.8), rgba(10, 10, 10, 0.9));
-            padding: 80px 2rem;
-        }
-
-        .products h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #e0e0e0;
-        }
-
-        .product-grid {
-            max-width: 1200px;
+        /* Featured Products */
+        .featured-section {
+            padding: 5rem 5%;
+            max-width: 1600px;
             margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
         }
 
         .product-card {
-            background: rgba(25, 25, 25, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            transition: transform 0.3s, border-color 0.3s;
+            background: white;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
         .product-card:hover {
-            transform: scale(1.05);
-            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-5px);
         }
 
         .product-image {
+            position: relative;
             width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 400px;
+            background: var(--gray);
+            overflow: hidden;
+        }
+
+        .product-image::before {
+            content: '👗';
             font-size: 4rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .product-info {
-            padding: 1.5rem;
+            padding: 1.2rem 0;
         }
 
-        .product-info h3 {
-            font-size: 1.3rem;
+        .product-info h4 {
+            font-size: 1rem;
             margin-bottom: 0.5rem;
-            color: #e0e0e0;
-        }
-
-        .product-info p {
-            color: #a0a0a0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .product-price {
-            font-size: 1.5rem;
-            color: #a78bfa;
-            font-weight: bold;
-            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
-        .buy-button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .price-old {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .price-new {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* About Section */
+        .about-section {
+            background: var(--gray);
+            padding: 5rem 5%;
+        }
+
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .about-text p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .about-image {
+            height: 500px;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            border-radius: 4px;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .feature-item {
+            padding: 2.5rem 2rem;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .feature-item:last-child {
+            border-right: none;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .feature-item p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background: var(--primary);
             color: white;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.3s;
+            padding: 4rem 5%;
+            text-align: center;
         }
 
-        .buy-button:hover {
+        .newsletter h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .newsletter p {
+            margin-bottom: 2rem;
             opacity: 0.9;
         }
 
-        .about {
-            max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 2rem;
-            text-align: center;
-        }
-
-        .about h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            color: #e0e0e0;
-        }
-
-        .about p {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: #b0b0b0;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        footer {
-            background: rgba(18, 18, 18, 0.95);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        footer::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><filter id="blur3"><feGaussianBlur stdDeviation="2"/></filter><radialGradient id="eye4" cx="30%25" cy="50%25"><stop offset="0%25" style="stop-color:%23CC9900"/><stop offset="50%25" style="stop-color:%23996600"/><stop offset="100%25" style="stop-color:%23333"/></radialGradient></defs><g opacity="0.06" filter="url(%23blur3)"><ellipse cx="140" cy="180" rx="60" ry="75" fill="%23222"/><ellipse cx="260" cy="180" rx="60" ry="75" fill="%23222"/><ellipse cx="140" cy="175" rx="15" ry="20" fill="url(%23eye4)"/><ellipse cx="260" cy="175" rx="15" ry="20" fill="url(%23eye4)"/><ellipse cx="138" cy="172" rx="8" ry="12" fill="%23000"/><ellipse cx="258" cy="172" rx="8" ry="12" fill="%23000"/><path d="M 160 220 L 200 245 L 240 220" stroke="%23111" stroke-width="6" fill="none"/><ellipse cx="200" cy="255" rx="10" ry="12" fill="%230a0a0a"/><ellipse cx="200" cy="140" rx="110" ry="65" fill="%23111" opacity="0.4"/></g></svg>') center center / contain no-repeat;
-            bottom: -50px;
-            left: -50px;
-            z-index: 0;
-        }
-
-        footer > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .social-links {
+        .newsletter-form {
             display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0;
-            font-size: 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 1rem;
         }
 
-        .social-links a {
+        .newsletter-form input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .newsletter-form button {
+            padding: 1rem 2rem;
+            background: var(--accent);
             color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background: var(--accent-light);
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9rem;
             transition: color 0.3s;
         }
 
-        .social-links a:hover {
-            color: #667eea;
+        .footer-section a:hover {
+            color: var(--accent-light);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons span {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .social-icons span:hover {
+            transform: scale(1.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            
+            .categories {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
-            .hero p {
-                font-size: 1rem;
+            .nav-menu {
+                display: none;
             }
 
-            .logo {
-                font-size: 1.3rem;
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .categories {
+                grid-template-columns: 1fr;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .feature-item {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        FRETE GRÁTIS PARA TODO BRASIL ACIMA DE R$ 299 | PARCELE EM ATÉ 6X SEM JUROS
+    </div>
+
+    <!-- Header -->
     <header>
         <nav>
-            <div class="logo">Seja Versátil</div>
-            <ul class="nav-links">
-                <li><a href="#inicio">Início</a></li>
-                <li><a href="#produtos">Produtos</a></li>
-                <li><a href="#sobre">Sobre</a></li>
-                <li><a href="#contato">Contato</a></li>
+            <div class="logo">SEJA VERSÁTIL</div>
+            <ul class="nav-menu">
+                <li><a href="#novidades">NOVIDADES</a></li>
+                <li><a href="#produtos">PRODUTOS</a></li>
+                <li><a href="#colecoes">COLEÇÕES</a></li>
+                <li><a href="#sobre">SOBRE</a></li>
             </ul>
+            <div class="nav-icons">
+                <span>🔍</span>
+                <span>👤</span>
+                <span>🛍️</span>
+            </div>
         </nav>
     </header>
 
-    <section class="hero" id="inicio">
-        <h1>Seja Você, Seja Versátil</h1>
-        <p>Moda fitness feminina que acompanha seu estilo de vida ativo</p>
-        <button class="cta-button" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-            Explorar Coleção
-        </button>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Seja Versátil</h1>
+            <p class="hero-subtitle">Seja Você, Seja Versátil</p>
+            <a href="#produtos" class="btn-primary">Explore a Coleção</a>
+        </div>
     </section>
 
+    <!-- Categories -->
+    <section class="categories" id="colecoes">
+        <div class="category-item">
+            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #d4c5e8 0%, #b8a7d4 100%);"></div>
+            <div class="category-overlay">
+                <h3>Leggings</h3>
+                <p>Conforto e performance</p>
+            </div>
+        </div>
+        <div class="category-item">
+            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #b8a7d4 0%, #9b8ab8 100%);"></div>
+            <div class="category-overlay">
+                <h3>Tops & Sutiãs</h3>
+                <p>Suporte e estilo</p>
+            </div>
+        </div>
+        <div class="category-item">
+            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #9b8ab8 0%, #8b7ab8 100%);"></div>
+            <div class="category-overlay">
+                <h3>Conjuntos</h3>
+                <p>Looks completos</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-section" id="produtos">
+        <div class="section-header">
+            <h2>Novidades</h2>
+            <p>Descubra as últimas tendências em moda fitness</p>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-badge">Novo</span>
+                </div>
+                <div class="product-info">
+                    <h4>Legging High Waist Premium</h4>
+                    <div class="product-price">
+                        <span class="price-old">R$ 189,90</span>
+                        <span class="price-new">R$ 149,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-badge">Destaque</span>
+                </div>
+                <div class="product-info">
+                    <h4>Top Fitness Sem Costura</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ 89,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-badge">-30%</span>
+                </div>
+                <div class="product-info">
+                    <h4>Conjunto Ribbed Marsala</h4>
+                    <div class="product-price">
+                        <span class="price-old">R$ 299,90</span>
+                        <span class="price-new">R$ 209,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image"></div>
+                <div class="product-info">
+                    <h4>Shorts Bike Seamless</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ 79,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-badge">Novo</span>
+                </div>
+                <div class="product-info">
+                    <h4>Legging Scrunch Bum</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ 169,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image"></div>
+                <div class="product-info">
+                    <h4>Top Cropped Strappy</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ 79,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="product-badge">-25%</span>
+                </div>
+                <div class="product-info">
+                    <h4>Macaquinho Fitness Premium</h4>
+                    <div class="product-price">
+                        <span class="price-old">R$ 199,90</span>
+                        <span class="price-new">R$ 149,90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image"></div>
+                <div class="product-info">
+                    <h4>Jaqueta Oversized</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ 189,90</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
     <section class="features">
-        <div class="feature-card">
-            <div class="feature-icon">💪</div>
-            <h3>Alta Performance</h3>
-            <p>Tecidos tecnológicos que acompanham cada movimento, proporcionando conforto e liberdade total.</p>
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <h4>Frete Grátis</h4>
+            <p>Acima de R$ 299</p>
         </div>
-        <div class="feature-card">
-            <div class="feature-icon">✨</div>
-            <h3>Estilo Único</h3>
-            <p>Designs exclusivos que combinam funcionalidade e elegância para você usar dentro e fora da academia.</p>
+        <div class="feature-item">
+            <div class="feature-icon">💳</div>
+            <h4>Parcele em 6x</h4>
+            <p>Sem juros no cartão</p>
         </div>
-        <div class="feature-card">
-            <div class="feature-icon">🌟</div>
-            <h3>Qualidade Premium</h3>
-            <p>Materiais de primeira linha com durabilidade garantida para acompanhar sua rotina intensa.</p>
+        <div class="feature-item">
+            <div class="feature-icon">🔄</div>
+            <h4>Troca Grátis</h4>
+            <p>Primeira troca por nossa conta</p>
         </div>
-    </section>
-
-    <section class="products" id="produtos">
-        <h2>Nossa Coleção</h2>
-        <div class="product-grid">
-            <div class="product-card">
-                <div class="product-image">👚</div>
-                <div class="product-info">
-                    <h3>Top Fitness Essential</h3>
-                    <p>Suporte médio, tecido respirável</p>
-                    <div class="product-price">R$ 89,90</div>
-                    <button class="buy-button">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image">👖</div>
-                <div class="product-info">
-                    <h3>Legging Power</h3>
-                    <p>Alta compressão, cintura alta</p>
-                    <div class="product-price">R$ 129,90</div>
-                    <button class="buy-button">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image">👕</div>
-                <div class="product-info">
-                    <h3>Cropped Active</h3>
-                    <p>Tecido dry-fit, modelagem moderna</p>
-                    <div class="product-price">R$ 79,90</div>
-                    <button class="buy-button">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image">🩳</div>
-                <div class="product-info">
-                    <h3>Short Fitness</h3>
-                    <p>Leveza e conforto extremo</p>
-                    <div class="product-price">R$ 69,90</div>
-                    <button class="buy-button">Adicionar ao Carrinho</button>
-                </div>
-            </div>
+        <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <h4>Compra Segura</h4>
+            <p>Ambiente 100% protegido</p>
         </div>
     </section>
 
-    <section class="about" id="sobre">
-        <h2>Sobre a Seja Versátil</h2>
-        <p>
-            Nascemos da paixão por fitness e moda, acreditando que cada mulher merece roupas que a façam sentir-se 
-            poderosa e confiante. Nossa missão é criar peças versáteis que acompanhem você em todos os momentos: 
-            do treino intenso ao café com as amigas. Combinamos tecnologia têxtil de ponta com design contemporâneo, 
-            para que você possa ser autêntica em qualquer situação.
-        </p>
+    <!-- About Section -->
+    <section class="about-section" id="sobre">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>Seja Você, Seja Versátil</h2>
+                <p>
+                    Criamos roupas de treino versáteis, funcionais e confortáveis para mulheres 
+                    que querem se tornar a sua melhor versão.
+                </p>
+                <p>
+                    Com tecnologia sofisticada, contornos inteligentes e tecidos duráveis de 
+                    secagem rápida que absorvem o suor, você sempre se sentirá confortável, 
+                    apoiada e confiante em cada treino.
+                </p>
+                <p>
+                    Nossa missão é criar peças que acompanhem a mulher moderna em todos os 
+                    momentos do seu dia - do treino ao dia a dia, sempre com estilo e elegância.
+                </p>
+                <a href="#produtos" class="btn-primary">Conheça Nossa Coleção</a>
+            </div>
+            <div class="about-image"></div>
+        </div>
     </section>
 
-    <footer id="contato">
-        <h3>Seja Versátil</h3>
-        <div class="social-links">
-            <a href="#" title="Instagram">📷</a>
-            <a href="#" title="Facebook">📘</a>
-            <a href="#" title="WhatsApp">💬</a>
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <h3>Receba Novidades</h3>
+        <p>Cadastre-se e receba em primeira mão nossas promoções e lançamentos</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Seu melhor e-mail" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Seja Versátil</h4>
+                <p style="color: #ccc; font-size: 0.9rem; line-height: 1.8;">
+                    Moda fitness feminina com estilo e qualidade. Seja você, seja versátil.
+                </p>
+                <div class="social-icons">
+                    <span>📷</span>
+                    <span>📘</span>
+                    <span>💬</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="#sobre">Sobre Nós</a></li>
+                    <li><a href="#">Trabalhe Conosco</a></li>
+                    <li><a href="#">Nossas Lojas</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="#">Central de Ajuda</a></li>
+                    <li><a href="#">Trocas e Devoluções</a></li>
+                    <li><a href="#">Formas de Pagamento</a></li>
+                    <li><a href="#">Rastreamento</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <ul>
+                    <li><a href="mailto:contato@sejaversatil.com.br">contato@sejaversatil.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li>Seg - Sex: 9h às 18h</li>
+                </ul>
+            </div>
         </div>
-        <p>📧 contato@sejaversatil.com.br | 📱 (00) 0000-0000</p>
-        <p style="margin-top: 2rem; opacity: 0.7;">© 2025 Seja Versátil. Todos os direitos reservados.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Seja Versátil - Moda Fitness Feminina. Todos os direitos reservados.</p>
+        </div>
     </footer>
 
     <script>
-        document.querySelectorAll('.buy-button').forEach(button => {
-            button.addEventListener('click', function() {
-                const productName = this.parentElement.querySelector('h3').textContent;
-                alert(`${productName} adicionado ao carrinho! 🛒`);
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            observer.observe(card);
+        });
+
+        // Newsletter form
+        document.querySelector('.newsletter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Obrigada por se cadastrar! Em breve você receberá nossas novidades.');
+            e.target.reset();
         });
     </script>
 </body>
