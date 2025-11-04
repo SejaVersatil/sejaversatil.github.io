@@ -1566,11 +1566,20 @@
             aspect-ratio: 3/4;
             border: 2px solid var(--gray);
             background: white;
+            overflow: hidden;
         }
 
         .image-item-preview {
             width: 100%;
             height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .image-item-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .image-item-remove {
@@ -1588,16 +1597,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
 
         .image-item-remove:hover {
             background: #c0392b;
         }
 
+        .image-upload-options {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
         .image-add-btn {
+            flex: 1;
             padding: 0.8rem;
             background: white;
-            border: 2px dashed var(--primary);
+            border: 2px solid var(--primary);
             color: var(--primary);
             cursor: pointer;
             font-weight: 600;
@@ -1605,18 +1622,26 @@
             font-size: 0.8rem;
             letter-spacing: 0.5px;
             transition: all 0.3s;
-            width: 100%;
+            position: relative;
         }
 
         .image-add-btn:hover {
-            background: var(--gray-light);
-            border-color: var(--secondary);
-            color: var(--secondary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .image-add-btn input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
         }
 
         .image-url-input {
             display: none;
-            margin-top: 1rem;
         }
 
         .image-url-input.active {
@@ -2458,16 +2483,30 @@
                 <div class="image-manager">
                     <div class="image-manager-title">Imagens do Produto</div>
                     <div class="image-list" id="productImagesList"></div>
-                    <button type="button" class="image-add-btn" onclick="toggleImageInput()">+ Adicionar Imagem</button>
+                    
+                    <div class="image-upload-options">
+                        <button type="button" class="image-add-btn">
+                            📁 Upload de Imagem
+                            <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
+                        </button>
+                        <button type="button" class="image-add-btn" onclick="toggleImageInput()" style="border-style: dashed;">
+                            🎨 Usar Gradiente
+                        </button>
+                    </div>
+                    
                     <div class="image-url-input" id="imageUrlInput">
-                        <input type="text" id="newImageUrl" placeholder="Cole a URL da imagem ou use um gradiente CSS">
+                        <input type="text" id="newImageUrl" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
                         <div class="image-url-actions">
-                            <button type="button" onclick="addProductImage()" style="background: var(--primary); color: white;">Adicionar</button>
+                            <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
                             <button type="button" onclick="toggleImageInput()" style="background: var(--gray);">Cancelar</button>
                         </div>
                     </div>
+                    
                     <div class="image-helper">
-                        💡 <strong>Dica:</strong> Você pode usar URLs de imagens (ex: https://exemplo.com/foto.jpg) ou gradientes CSS (ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%))
+                        💡 <strong>Dicas:</strong><br>
+                        • Faça upload de fotos reais dos produtos (JPG, PNG)<br>
+                        • Ou use gradientes CSS para um visual moderno<br>
+                        • Primeira imagem será a principal do produto
                     </div>
                 </div>
                 
@@ -2789,10 +2828,13 @@
         function renderAdminProducts() {
             const grid = document.getElementById('adminProductsGrid');
             grid.innerHTML = productsData.map(product => {
-                const images = product.images || [product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+                const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+                const firstImage = images[0];
+                const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+                
                 return `
                 <div class="admin-product-card">
-                    <div class="admin-product-image" style="background: ${images[0]}"></div>
+                    <div class="admin-product-image" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                     <div class="admin-product-info">
                         <h4>${product.name}</h4>
                         <p><strong>Categoria:</strong> ${product.category}</p>
@@ -2824,7 +2866,7 @@
                 document.getElementById('productPrice').value = product.price;
                 document.getElementById('productOldPrice').value = product.oldPrice || '';
                 document.getElementById('productBadge').value = product.badge || '';
-                tempProductImages = [...(product.images || [product.image] || [])];
+                tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
             } else {
                 // Add mode
                 title.textContent = 'Adicionar Novo Produto';
@@ -2839,31 +2881,68 @@
 
         function renderProductImages() {
             const container = document.getElementById('productImagesList');
-            container.innerHTML = tempProductImages.map((img, index) => `
+            if (!container) return;
+            
+            container.innerHTML = tempProductImages.map((img, index) => {
+                const isImage = img.startsWith('data:image') || img.startsWith('http');
+                return `
                 <div class="image-item">
-                    <div class="image-item-preview" style="background: ${img}"></div>
+                    <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}">
+                        ${isImage ? `<img src="${img}" alt="Produto">` : ''}
+                    </div>
                     <button type="button" class="image-item-remove" onclick="removeProductImage(${index})">×</button>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, selecione apenas arquivos de imagem!');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempProductImages.push(e.target.result);
+                    renderProductImages();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Reset input
+            event.target.value = '';
         }
 
         function toggleImageInput() {
             const input = document.getElementById('imageUrlInput');
-            input.classList.toggle('active');
-            if (input.classList.contains('active')) {
-                document.getElementById('newImageUrl').focus();
-            } else {
-                document.getElementById('newImageUrl').value = '';
+            if (input) {
+                input.classList.toggle('active');
+                if (input.classList.contains('active')) {
+                    const urlInput = document.getElementById('newImageUrl');
+                    if (urlInput) urlInput.focus();
+                } else {
+                    const urlInput = document.getElementById('newImageUrl');
+                    if (urlInput) urlInput.value = '';
+                }
             }
         }
 
-        function addProductImage() {
-            const url = document.getElementById('newImageUrl').value.trim();
-            if (url) {
-                tempProductImages.push(url);
+        function addGradientImage() {
+            const urlInput = document.getElementById('newImageUrl');
+            if (!urlInput) return;
+            
+            const gradient = urlInput.value.trim();
+            if (gradient) {
+                tempProductImages.push(gradient);
                 renderProductImages();
-                document.getElementById('newImageUrl').value = '';
+                urlInput.value = '';
                 toggleImageInput();
+            } else {
+                alert('Digite um gradiente CSS válido!');
             }
         }
 
@@ -3155,16 +3234,19 @@
             
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = paginatedProducts.map(product => {
-                const images = product.images || [product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+                const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
                 const hasMultipleImages = images.length > 1;
                 
                 return `
                 <div class="product-card">
                     <div class="product-image">
                         <div class="product-image-carousel">
-                            ${images.map((img, index) => `
-                                <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="background: ${img}"></div>
-                            `).join('')}
+                            ${images.map((img, index) => {
+                                const isRealImage = img.startsWith('data:image') || img.startsWith('http');
+                                return `
+                                    <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="${isRealImage ? `background-image: url(${img}); background-size: cover; background-position: center;` : `background: ${img}`}"></div>
+                                `;
+                            }).join('')}
                         </div>
                         ${hasMultipleImages ? `
                             <div class="product-carousel-arrows">
