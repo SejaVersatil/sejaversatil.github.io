@@ -2930,33 +2930,100 @@
             event.target.value = '';
         }
 
-        function toggleImageInput() {
-            const input = document.getElementById('imageUrlInput');
-            if (input) {
-                input.classList.toggle('active');
-                if (input.classList.contains('active')) {
-                    const urlInput = document.getElementById('newImageUrl');
-                    if (urlInput) urlInput.focus();
+        function toggleUrlInput() {
+            const urlBox = document.getElementById('imageUrlInputBox');
+            const gradientBox = document.getElementById('imageGradientInputBox');
+            
+            if (urlBox) {
+                // Close gradient if open
+                if (gradientBox && gradientBox.classList.contains('active')) {
+                    gradientBox.classList.remove('active');
+                }
+                
+                urlBox.classList.toggle('active');
+                if (urlBox.classList.contains('active')) {
+                    const urlField = document.getElementById('imageUrlField');
+                    if (urlField) urlField.focus();
                 } else {
-                    const urlInput = document.getElementById('newImageUrl');
-                    if (urlInput) urlInput.value = '';
+                    const urlField = document.getElementById('imageUrlField');
+                    if (urlField) urlField.value = '';
                 }
             }
         }
 
-        function addGradientImage() {
-            const urlInput = document.getElementById('newImageUrl');
-            if (!urlInput) return;
+        function toggleGradientInput() {
+            const gradientBox = document.getElementById('imageGradientInputBox');
+            const urlBox = document.getElementById('imageUrlInputBox');
             
-            const gradient = urlInput.value.trim();
-            if (gradient) {
-                tempProductImages.push(gradient);
-                renderProductImages();
-                urlInput.value = '';
-                toggleImageInput();
-            } else {
-                alert('Digite um gradiente CSS válido!');
+            if (gradientBox) {
+                // Close URL if open
+                if (urlBox && urlBox.classList.contains('active')) {
+                    urlBox.classList.remove('active');
+                }
+                
+                gradientBox.classList.toggle('active');
+                if (gradientBox.classList.contains('active')) {
+                    const gradientField = document.getElementById('gradientField');
+                    if (gradientField) gradientField.focus();
+                } else {
+                    const gradientField = document.getElementById('gradientField');
+                    if (gradientField) gradientField.value = '';
+                }
             }
+        }
+
+        function addImageFromUrl() {
+            const urlField = document.getElementById('imageUrlField');
+            if (!urlField) return;
+            
+            const imageUrl = urlField.value.trim();
+            
+            if (!imageUrl) {
+                alert('Cole o link da imagem!');
+                return;
+            }
+
+            // Validate URL format
+            if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+                alert('URL inválida! Deve começar com http:// ou https://');
+                return;
+            }
+
+            // Test if image loads
+            const img = new Image();
+            img.onload = function() {
+                tempProductImages.push(imageUrl);
+                renderProductImages();
+                urlField.value = '';
+                toggleUrlInput();
+            };
+            img.onerror = function() {
+                alert('Não foi possível carregar a imagem desta URL. Verifique se o link está correto e tente novamente.');
+            };
+            img.src = imageUrl;
+        }
+
+        function addGradientImage() {
+            const gradientField = document.getElementById('gradientField');
+            if (!gradientField) return;
+            
+            const gradient = gradientField.value.trim();
+            
+            if (!gradient) {
+                alert('Digite um gradiente CSS!');
+                return;
+            }
+
+            // Basic validation for CSS gradient
+            if (!gradient.includes('gradient')) {
+                alert('Formato inválido! Exemplo: linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                return;
+            }
+
+            tempProductImages.push(gradient);
+            renderProductImages();
+            gradientField.value = '';
+            toggleGradientInput();
         }
 
         function removeProductImage(index) {
