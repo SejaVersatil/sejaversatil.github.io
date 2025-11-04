@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Seja Versátil - Moda Fitness Feminina</title>
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seja Versátil - Moda Fitness Feminina</title>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -1995,513 +1994,545 @@
     </style>
 </head>
 <body>
-<!-- Hamburger Menu Button -->
-<button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
-<span class="hamburger-line"></span>
-<span class="hamburger-line"></span>
-<span class="hamburger-line"></span>
-</button>
-<!-- Sidebar Menu -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-<div class="sidebar-menu" id="sidebarMenu">
-<div class="sidebar-section">
-<h3>Explore</h3>
-<ul>
-<li><a href="#" onclick="filterProducts('all'); toggleSidebar()">Novidades</a></li>
-<li><a href="#produtos" onclick="toggleSidebar()">Lançamentos</a></li>
-<li><a href="#produtos" onclick="toggleSidebar()">Mais Vendidos</a></li>
-</ul>
-</div>
-<div class="sidebar-section">
-<h3>Fitness</h3>
-<ul>
-<li><a href="#" onclick="filterProducts('leggings'); toggleSidebar()">Calças e Leggings</a></li>
-<li><a href="#" onclick="filterProducts('tops'); toggleSidebar()">Tops</a></li>
-<li><a href="#" onclick="filterProducts('leggings'); toggleSidebar()">Shorts e Bermudas</a></li>
-<li><a href="#" onclick="filterProducts('conjuntos'); toggleSidebar()">Macacões</a></li>
-<li><a href="#" onclick="filterProducts('conjuntos'); toggleSidebar()">Conjuntos e Jaquetas</a></li>
-</ul>
-</div>
-<div class="sidebar-section">
-<h3>Acessórios</h3>
-<ul>
-<li><a href="#">Bolsa e Calcinha</a></li>
-<li><a href="#">Bolsas e Mochilas</a></li>
-<li><a href="#">Bonés e Viseiras</a></li>
-<li><a href="#">Calçados</a></li>
-<li><a href="#">Caneleira e Coqueteiras</a></li>
-</ul>
-</div>
-<div class="sidebar-section">
-<h3>Coleções</h3>
-<ul>
-<li><a href="#">Fit Basic</a></li>
-<li><a href="#">Zenith</a></li>
-<li><a href="#">Vitality</a></li>
-<li><a href="#">Seamless</a></li>
-</ul>
-</div>
-</div>
-<!-- Top Banner -->
-<div class="top-banner">
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-section">
+            <h3>Explore</h3>
+            <ul>
+                <li><a href="#" onclick="filterProducts('all'); toggleSidebar()">Novidades</a></li>
+                <li><a href="#produtos" onclick="toggleSidebar()">Lançamentos</a></li>
+                <li><a href="#produtos" onclick="toggleSidebar()">Mais Vendidos</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3>Fitness</h3>
+            <ul>
+                <li><a href="#" onclick="filterProducts('leggings'); toggleSidebar()">Calças e Leggings</a></li>
+                <li><a href="#" onclick="filterProducts('tops'); toggleSidebar()">Tops</a></li>
+                <li><a href="#" onclick="filterProducts('leggings'); toggleSidebar()">Shorts e Bermudas</a></li>
+                <li><a href="#" onclick="filterProducts('conjuntos'); toggleSidebar()">Macacões</a></li>
+                <li><a href="#" onclick="filterProducts('conjuntos'); toggleSidebar()">Conjuntos e Jaquetas</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3>Acessórios</h3>
+            <ul>
+                <li><a href="#">Bolsa e Calcinha</a></li>
+                <li><a href="#">Bolsas e Mochilas</a></li>
+                <li><a href="#">Bonés e Viseiras</a></li>
+                <li><a href="#">Calçados</a></li>
+                <li><a href="#">Caneleira e Coqueteiras</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3>Coleções</h3>
+            <ul>
+                <li><a href="#">Fit Basic</a></li>
+                <li><a href="#">Zenith</a></li>
+                <li><a href="#">Vitality</a></li>
+                <li><a href="#">Seamless</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
         Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros
     </div>
-<!-- Header -->
-<header>
-<nav>
-<div class="logo" onclick="location.reload()">SEJA VERSÁTIL</div>
-<ul class="nav-menu">
-<li><a href="#hero">Início</a></li>
-<li><a href="#produtos">Produtos</a></li>
-<li><a href="#sobre">Sobre</a></li>
-</ul>
-<div class="nav-icons">
-<div class="nav-icon" onclick="openSearch()">
-<span class="nav-icon-symbol">🔍</span>
-<span class="nav-icon-label">Busca</span>
-</div>
-<div class="nav-icon" onclick="openUserPanel()">
-<span class="nav-icon-symbol">👤</span>
-<span class="nav-icon-label">Login</span>
-</div>
-<div class="nav-icon" onclick="toggleCart()">
-<div style="position: relative;">
-<span class="nav-icon-symbol">🛍️</span>
-<span class="cart-count" id="cartCount">0</span>
-</div>
-<span class="nav-icon-label">Carrinho</span>
-</div>
-</div>
-</nav>
-</header>
-<!-- Search Modal -->
-<div class="search-modal" id="searchModal">
-<div class="search-content">
-<input class="search-input" id="searchInput" oninput="performSearch()" placeholder="Buscar produtos..." type="text"/>
-<div class="search-results" id="searchResults"></div>
-</div>
-</div>
-<!-- Cart Sidebar -->
-<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-<div class="cart-sidebar" id="cartSidebar">
-<div class="cart-header">
-<h3>Meu Carrinho</h3>
-<span class="close-cart" onclick="toggleCart()">✕</span>
-</div>
-<div class="cart-items" id="cartItems">
-<div class="empty-cart">Seu carrinho está vazio</div>
-</div>
-<div class="cart-footer" id="cartFooter" style="display: none;">
-<div class="cart-total">
-<span>Total:</span>
-<span id="cartTotal">R$ 0,00</span>
-</div>
-<button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
-</div>
-</div>
-<!-- Hero Section -->
-<section class="hero" id="hero">
-<div class="hero-carousel">
-<div class="hero-slide active" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-<div class="hero-content">
-<h1>Seja Versátil</h1>
-<p class="hero-subtitle">Seja Você, Seja Versátil</p>
-<button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo" onclick="location.reload()">SEJA VERSÁTIL</div>
+            <ul class="nav-menu">
+                <li><a href="#hero">Início</a></li>
+                <li><a href="#produtos">Produtos</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+            </ul>
+            <div class="nav-icons">
+                <div class="nav-icon" onclick="openSearch()">
+                    <span class="nav-icon-symbol">🔍</span>
+                    <span class="nav-icon-label">Busca</span>
+                </div>
+                <div class="nav-icon" onclick="openUserPanel()">
+                    <span class="nav-icon-symbol">👤</span>
+                    <span class="nav-icon-label">Login</span>
+                </div>
+                <div class="nav-icon" onclick="toggleCart()">
+                    <div style="position: relative;">
+                        <span class="nav-icon-symbol">🛍️</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    <span class="nav-icon-label">Carrinho</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-content">
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar produtos..." oninput="performSearch()">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Meu Carrinho</h3>
+            <span class="close-cart" onclick="toggleCart()">✕</span>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">Seu carrinho está vazio</div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">R$ 0,00</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-carousel">
+            <div class="hero-slide active" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                <div class="hero-content">
+                    <h1>Seja Versátil</h1>
+                    <p class="hero-subtitle">Seja Você, Seja Versátil</p>
+                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
                         Explore a Coleção
                     </button>
-</div>
-</div>
-<div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
-<div class="hero-content">
-<h1>Nova Coleção</h1>
-<p class="hero-subtitle">Performance em Movimento</p>
-<button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+                </div>
+            </div>
+            <div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
+                <div class="hero-content">
+                    <h1>Nova Coleção</h1>
+                    <p class="hero-subtitle">Performance em Movimento</p>
+                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
                         Comprar Agora
                     </button>
-</div>
-</div>
-<div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
-<div class="hero-content">
-<h1>Fitness Premium</h1>
-<p class="hero-subtitle">Estilo e Conforto</p>
-<button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+                </div>
+            </div>
+            <div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
+                <div class="hero-content">
+                    <h1>Fitness Premium</h1>
+                    <p class="hero-subtitle">Estilo e Conforto</p>
+                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
                         Ver Produtos
                     </button>
-</div>
-</div>
-<div class="carousel-dots" id="carouselDots"></div>
-</div>
-</section>
-<!-- Categories Section -->
-<section class="categories-section">
-<div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-<div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
-<div class="category-info">
-<h3>MACAQUINHO</h3>
-<p>Conforto e performance</p>
-</div>
-</div>
-<div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-<div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
-<div class="category-info">
-<h3>MACACÃO</h3>
-<p>Suporte e estilo</p>
-</div>
-</div>
-<div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-<div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
-<div class="category-info">
-<h3>CONJUNTOS</h3>
-<p>Looks completos</p>
-</div>
-</div>
-</section>
-<!-- Products Section -->
-<section class="products-section" id="produtos">
-<h2 class="section-title">Nossos Produtos</h2>
-<div class="filters-bar">
-<div class="filter-group">
-<button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
-<button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
-<button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
-<button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
-<button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
-</div>
-<select class="sort-select" onchange="sortProducts(this.value)">
-<option value="">Ordenar por</option>
-<option value="price-asc">Menor preço</option>
-<option value="price-desc">Maior preço</option>
-<option value="name">Nome A-Z</option>
-</select>
-</div>
-<div class="products-grid" id="productsGrid"></div>
-<div class="pagination" id="pagination"></div>
-</section>
-<!-- Info Bar -->
-<section class="info-bar">
-<div class="info-grid">
-<div class="info-item">
-<div class="info-icon">🚚</div>
-<h4>Frete Grátis</h4>
-<p>Acima de R$ 299</p>
-</div>
-<div class="info-item">
-<div class="info-icon">💳</div>
-<h4>Parcele em 6x</h4>
-<p>Sem juros no cartão</p>
-</div>
-<div class="info-item">
-<div class="info-icon">🔄</div>
-<h4>Troca Grátis</h4>
-<p>Primeira troca gratuita</p>
-</div>
-<div class="info-item">
-<div class="info-icon">🔒</div>
-<h4>Compra Segura</h4>
-<p>Ambiente protegido</p>
-</div>
-</div>
-</section>
-<!-- Footer -->
-<footer id="sobre">
-<div class="footer-content">
-<div class="footer-section">
-<h4>Seja Versátil</h4>
-<p style="color: #666; font-size: 0.8rem; line-height: 1.7;">
+                </div>
+            </div>
+            <div class="carousel-dots" id="carouselDots"></div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
+            <div class="category-info">
+                <h3>MACAQUINHO</h3>
+                <p>Conforto e performance</p>
+            </div>
+        </div>
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
+            <div class="category-info">
+                <h3>MACACÃO</h3>
+                <p>Suporte e estilo</p>
+            </div>
+        </div>
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
+            <div class="category-info">
+                <h3>CONJUNTOS</h3>
+                <p>Looks completos</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="produtos">
+        <h2 class="section-title">Nossos Produtos</h2>
+        
+        <div class="filters-bar">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+                <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
+                <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
+                <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
+                <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
+            </div>
+            <select class="sort-select" onchange="sortProducts(this.value)">
+                <option value="">Ordenar por</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="name">Nome A-Z</option>
+            </select>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+
+        <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- Info Bar -->
+    <section class="info-bar">
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-icon">🚚</div>
+                <h4>Frete Grátis</h4>
+                <p>Acima de R$ 299</p>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">💳</div>
+                <h4>Parcele em 6x</h4>
+                <p>Sem juros no cartão</p>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🔄</div>
+                <h4>Troca Grátis</h4>
+                <p>Primeira troca gratuita</p>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🔒</div>
+                <h4>Compra Segura</h4>
+                <p>Ambiente protegido</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="sobre">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Seja Versátil</h4>
+                <p style="color: #666; font-size: 0.8rem; line-height: 1.7;">
                     Moda fitness feminina com estilo e qualidade. Criamos roupas versáteis, funcionais e confortáveis para mulheres que querem se tornar a sua melhor versão.
                 </p>
-<div class="social-icons">
-<a href="#">📷</a>
-<a href="#">📘</a>
-<a href="#">💬</a>
-</div>
-</div>
-<div class="footer-section">
-<h4>Institucional</h4>
-<ul>
-<li><a href="#">Sobre Nós</a></li>
-<li><a href="#">Trabalhe Conosco</a></li>
-<li><a href="#">Nossas Lojas</a></li>
-<li><a href="#">Política de Privacidade</a></li>
-</ul>
-</div>
-<div class="footer-section">
-<h4>Atendimento</h4>
-<ul>
-<li><a href="#">Central de Ajuda</a></li>
-<li><a href="#">Trocas e Devoluções</a></li>
-<li><a href="#">Formas de Pagamento</a></li>
-<li><a href="#">Rastreamento</a></li>
-</ul>
-</div>
-<div class="footer-section">
-<h4>Contato</h4>
-<ul>
-<li><a href="mailto:contato@sejaversatil.com.br">contato@sejaversatil.com.br</a></li>
-<li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
-<li style="color: #666; font-size: 0.8rem;">Seg - Sex: 9h às 18h</li>
-</ul>
-</div>
-</div>
-<div class="footer-bottom">
-<p>© 2025 Seja Versátil - Moda Fitness Feminina. Todos os direitos reservados.</p>
-</div>
-</footer>
-<!-- Chat Widget -->
-<div class="chat-widget">
-<button class="chat-button" onclick="toggleChat()">💬</button>
-<div class="chat-box" id="chatBox">
-<div class="chat-header">
-<h4>Atendimento Online</h4>
-<button class="chat-close" onclick="toggleChat()">✕</button>
-</div>
-<div class="chat-messages" id="chatMessages">
-<div class="chat-message bot">
-<div class="message-bubble">
-                        Olá! Bem-vindo(a) à Seja Versátil! 👋<br/>Como posso ajudar você hoje?
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">📘</a>
+                    <a href="#">💬</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Trabalhe Conosco</a></li>
+                    <li><a href="#">Nossas Lojas</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="#">Central de Ajuda</a></li>
+                    <li><a href="#">Trocas e Devoluções</a></li>
+                    <li><a href="#">Formas de Pagamento</a></li>
+                    <li><a href="#">Rastreamento</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <ul>
+                    <li><a href="mailto:contato@sejaversatil.com.br">contato@sejaversatil.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li style="color: #666; font-size: 0.8rem;">Seg - Sex: 9h às 18h</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Seja Versátil - Moda Fitness Feminina. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button" onclick="toggleChat()">💬</button>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-header">
+                <h4>Atendimento Online</h4>
+                <button class="chat-close" onclick="toggleChat()">✕</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot">
+                    <div class="message-bubble">
+                        Olá! Bem-vindo(a) à Seja Versátil! 👋<br>Como posso ajudar você hoje?
                     </div>
-</div>
-</div>
-<div class="chat-input-area">
-<input class="chat-input" id="chatInput" onkeypress="if(event.key==='Enter') sendMessage()" placeholder="Digite sua mensagem..." type="text"/>
-<button class="chat-send" onclick="sendMessage()">➤</button>
-</div>
-</div>
-</div>
-<!-- User Panel (Login/Cadastro) -->
-<div class="user-panel" id="userPanel">
-<div class="user-panel-content">
-<div class="user-panel-header">
-<h3>Minha Conta</h3>
-<button class="user-panel-close" onclick="closeUserPanel()">✕</button>
-</div>
-<!-- Tabs -->
-<div class="user-panel-tabs" id="userPanelTabs">
-<button class="user-panel-tab active" onclick="switchUserTab('login')">Entrar</button>
-<button class="user-panel-tab" onclick="switchUserTab('register')">Cadastrar</button>
-</div>
-<div class="user-panel-body">
-<!-- Login Tab -->
-<div class="user-tab-content active" id="loginTab">
-<form onsubmit="userLogin(event)">
-<div class="form-group">
-<label>E-mail ou Usuário</label>
-<input id="loginEmail" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>Senha</label>
-<input id="loginPassword" required="" type="password"/>
-</div>
-<button class="form-btn" type="submit">Entrar</button>
-<div class="form-error" id="loginError">E-mail ou senha incorretos</div>
-</form>
-<div class="form-link">
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="chat-send" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Panel (Login/Cadastro) -->
+    <div class="user-panel" id="userPanel">
+        <div class="user-panel-content">
+            <div class="user-panel-header">
+                <h3>Minha Conta</h3>
+                <button class="user-panel-close" onclick="closeUserPanel()">✕</button>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="user-panel-tabs" id="userPanelTabs">
+                <button class="user-panel-tab active" onclick="switchUserTab('login')">Entrar</button>
+                <button class="user-panel-tab" onclick="switchUserTab('register')">Cadastrar</button>
+            </div>
+
+            <div class="user-panel-body">
+                <!-- Login Tab -->
+                <div class="user-tab-content active" id="loginTab">
+                    <form onsubmit="userLogin(event)">
+                        <div class="form-group">
+                            <label>E-mail ou Usuário</label>
+                            <input type="text" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="form-btn">Entrar</button>
+                        <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
+                    </form>
+                    <div class="form-link">
                         Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
-</div>
-</div>
-<!-- Register Tab -->
-<div class="user-tab-content" id="registerTab">
-<form onsubmit="userRegister(event)">
-<div class="form-group">
-<label>Nome Completo</label>
-<input id="registerName" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>E-mail</label>
-<input id="registerEmail" required="" type="email"/>
-</div>
-<div class="form-group">
-<label>Senha</label>
-<input id="registerPassword" minlength="6" required="" type="password"/>
-</div>
-<div class="form-group">
-<label>Confirmar Senha</label>
-<input id="registerConfirmPassword" minlength="6" required="" type="password"/>
-</div>
-<button class="form-btn" type="submit">Criar Conta</button>
-<div class="form-error" id="registerError">Erro ao criar conta</div>
-<div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
-</form>
-<div class="form-link">
+                    </div>
+                </div>
+
+                <!-- Register Tab -->
+                <div class="user-tab-content" id="registerTab">
+                    <form onsubmit="userRegister(event)">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="registerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="registerPassword" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Senha</label>
+                            <input type="password" id="registerConfirmPassword" minlength="6" required>
+                        </div>
+                        <button type="submit" class="form-btn">Criar Conta</button>
+                        <div class="form-error" id="registerError">Erro ao criar conta</div>
+                        <div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
+                    </form>
+                    <div class="form-link">
                         Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-</div>
-</div>
-<!-- User Logged In -->
-<div class="user-tab-content" id="userLoggedTab">
-<div class="user-logged-in">
-<h4>Bem-vindo(a)! <span id="userName"></span></h4>
-<div class="user-info">
-<p><strong>E-mail:</strong> <span id="userEmail"></span></p>
-<p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
-</div>
-<div class="user-actions">
-<button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Pedidos</button>
-<button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
-<button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Endereços</button>
-<button class="user-action-btn admin" id="adminAccessBtn" onclick="openAdminPanel(); closeUserPanel()" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- User Logged In -->
+                <div class="user-tab-content" id="userLoggedTab">
+                    <div class="user-logged-in">
+                        <h4>Bem-vindo(a)! <span id="userName"></span></h4>
+                        <div class="user-info">
+                            <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
+                            <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
+                        </div>
+                        <div class="user-actions">
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Pedidos</button>
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Endereços</button>
+                            <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">
                                 🔧 Painel Administrativo
                             </button>
-<button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Login Modal (deprecated - mantido para compatibilidade) -->
-<div class="login-modal" id="loginModal">
-<div class="login-content">
-<h3>Acesso Administrativo</h3>
-<div class="login-form-group">
-<label>Usuário</label>
-<input id="adminUsername" placeholder="Digite o usuário" type="text"/>
-</div>
-<div class="login-form-group">
-<label>Senha</label>
-<input id="adminPassword" placeholder="Digite a senha" type="password"/>
-</div>
-<button class="login-btn" onclick="adminLogin()">Entrar</button>
-<div class="login-error" id="loginError">Usuário ou senha incorretos</div>
-<p style="margin-top: 1.5rem; font-size: 0.8rem; color: #999;">
+                            <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (deprecated - mantido para compatibilidade) -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <h3>Acesso Administrativo</h3>
+            <div class="login-form-group">
+                <label>Usuário</label>
+                <input type="text" id="adminUsername" placeholder="Digite o usuário">
+            </div>
+            <div class="login-form-group">
+                <label>Senha</label>
+                <input type="password" id="adminPassword" placeholder="Digite a senha">
+            </div>
+            <button class="login-btn" onclick="adminLogin()">Entrar</button>
+            <div class="login-error" id="loginError">Usuário ou senha incorretos</div>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #999;">
                 Acesso restrito a administradores
             </p>
-</div>
-</div>
-<!-- Admin Panel -->
-<div class="admin-panel" id="adminPanel">
-<div class="admin-header">
-<h2>🔧 Painel Administrativo - Seja Versátil</h2>
-<button class="admin-close" onclick="closeAdminPanel()">Sair do Painel</button>
-</div>
-<div class="admin-content">
-<!-- Statistics -->
-<div class="admin-stats">
-<div class="stat-card">
-<h4 id="totalProducts">0</h4>
-<p>Total de Produtos</p>
-</div>
-<div class="stat-card">
-<h4 id="totalRevenue">R$ 0</h4>
-<p>Valor em Estoque</p>
-</div>
-<div class="stat-card">
-<h4 id="totalOrders">0</h4>
-<p>Pedidos (simulado)</p>
-</div>
-<div class="stat-card">
-<h4 id="activeProducts">0</h4>
-<p>Produtos Ativos</p>
-</div>
-</div>
-<!-- Tabs -->
-<div class="admin-tabs">
-<button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
-<button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
-</div>
-<!-- Products Tab -->
-<div class="admin-tab-content active" id="productsTab">
-<button class="admin-btn admin-btn-add" onclick="openProductModal()">+ Adicionar Novo Produto</button>
-<div class="admin-products-grid" id="adminProductsGrid"></div>
-</div>
-<!-- Settings Tab -->
-<div class="admin-tab-content" id="settingsTab">
-<h3 style="margin-bottom: 1.5rem;">Configurações do Site</h3>
-<div class="admin-form-group">
-<label>Banner Principal - Texto 1</label>
-<input id="settingBannerTitle" type="text" value="Seja Versátil"/>
-</div>
-<div class="admin-form-group">
-<label>Banner Principal - Subtítulo</label>
-<input id="settingBannerSubtitle" type="text" value="Seja Você, Seja Versátil"/>
-</div>
-<div class="admin-form-group">
-<label>Mensagem do Banner de Promoção</label>
-<input id="settingTopBanner" type="text" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros"/>
-</div>
-<button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
-</div>
-</div>
-</div>
-<!-- Product Edit Modal -->
-<div class="admin-modal" id="productModal">
-<div class="admin-modal-content">
-<div class="admin-modal-header">
-<h3 id="modalTitle">Adicionar Produto</h3>
-<button class="admin-close" onclick="closeProductModal()">✕</button>
-</div>
-<form id="productForm" onsubmit="saveProduct(event)">
-<div class="admin-form-group">
-<label>Nome do Produto *</label>
-<input id="productName" required="" type="text"/>
-</div>
-<div class="admin-form-group">
-<label>Categoria *</label>
-<select id="productCategory" required="">
-<option value="leggings">Leggings</option>
-<option value="tops">Tops</option>
-<option value="conjuntos">Conjuntos</option>
-</select>
-</div>
-<div class="admin-form-group">
-<label>Preço Atual (R$) *</label>
-<input id="productPrice" required="" step="0.01" type="number"/>
-</div>
-<div class="admin-form-group">
-<label>Preço Antigo (R$) - Opcional</label>
-<input id="productOldPrice" step="0.01" type="number"/>
-</div>
-<div class="admin-form-group">
-<label>Badge - Opcional</label>
-<input id="productBadge" placeholder="Ex: Novo, -30%, Lançamento" type="text"/>
-</div>
-<!-- Image Manager -->
-<div class="image-manager">
-<div class="image-manager-title">Imagens do Produto</div>
-<div class="image-list" id="productImagesList"></div>
-<div class="image-upload-options">
-<button class="image-add-btn" type="button">
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2>🔧 Painel Administrativo - Seja Versátil</h2>
+            <button class="admin-close" onclick="closeAdminPanel()">Sair do Painel</button>
+        </div>
+        <div class="admin-content">
+            <!-- Statistics -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h4 id="totalProducts">0</h4>
+                    <p>Total de Produtos</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="totalRevenue">R$ 0</h4>
+                    <p>Valor em Estoque</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="totalOrders">0</h4>
+                    <p>Pedidos (simulado)</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="activeProducts">0</h4>
+                    <p>Produtos Ativos</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
+                <button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="admin-tab-content active" id="productsTab">
+                <button class="admin-btn admin-btn-add" onclick="openProductModal()">+ Adicionar Novo Produto</button>
+                <div class="admin-products-grid" id="adminProductsGrid"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="admin-tab-content" id="settingsTab">
+                <h3 style="margin-bottom: 1.5rem;">Configurações do Site</h3>
+                <div class="admin-form-group">
+                    <label>Banner Principal - Texto 1</label>
+                    <input type="text" id="settingBannerTitle" value="Seja Versátil">
+                </div>
+                <div class="admin-form-group">
+                    <label>Banner Principal - Subtítulo</label>
+                    <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
+                </div>
+                <div class="admin-form-group">
+                    <label>Mensagem do Banner de Promoção</label>
+                    <input type="text" id="settingTopBanner" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros">
+                </div>
+                <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Edit Modal -->
+    <div class="admin-modal" id="productModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 id="modalTitle">Adicionar Produto</h3>
+                <button class="admin-close" onclick="closeProductModal()">✕</button>
+            </div>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <div class="admin-form-group">
+                    <label>Nome do Produto *</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="admin-form-group">
+                    <label>Categoria *</label>
+                    <select id="productCategory" required>
+                        <option value="leggings">Leggings</option>
+                        <option value="tops">Tops</option>
+                        <option value="conjuntos">Conjuntos</option>
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label>Preço Atual (R$) *</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                </div>
+                <div class="admin-form-group">
+                    <label>Preço Antigo (R$) - Opcional</label>
+                    <input type="number" id="productOldPrice" step="0.01">
+                </div>
+                <div class="admin-form-group">
+                    <label>Badge - Opcional</label>
+                    <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
+                </div>
+                
+                <!-- Image Manager -->
+                <div class="image-manager">
+                    <div class="image-manager-title">Imagens do Produto</div>
+                    <div class="image-list" id="productImagesList"></div>
+                    
+                    <div class="image-upload-options">
+                        <button type="button" class="image-add-btn">
                             📁 Upload Local
-                            <input accept="image/*" multiple="" onchange="handleImageUpload(event)" type="file"/>
-</button>
-<button class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;" type="button">
+                            <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
+                        </button>
+                        <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">
                             🔗 URL de Imagem
                         </button>
-<button class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;" type="button">
+                        <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">
                             🎨 Gradiente CSS
                         </button>
-</div>
-<!-- URL Input -->
-<div class="image-url-input" id="imageUrlInputBox">
-<input id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)" type="text"/>
-<div class="image-url-actions">
-<button onclick="addImageFromUrl()" style="background: var(--primary); color: white;" type="button">Adicionar Imagem</button>
-<button onclick="toggleUrlInput()" style="background: var(--gray);" type="button">Cancelar</button>
-</div>
-</div>
-<!-- Gradient Input -->
-<div class="image-url-input" id="imageGradientInputBox">
-<input id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)" type="text"/>
-<div class="image-url-actions">
-<button onclick="addGradientImage()" style="background: var(--primary); color: white;" type="button">Adicionar Gradiente</button>
-<button onclick="toggleGradientInput()" style="background: var(--gray);" type="button">Cancelar</button>
-</div>
-</div>
-<div class="image-helper">
-                        💡 <strong>Como adicionar imagens:</strong><br/>
-                        • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br/>
-                        • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente) - <a href="https://imgur.com/upload" style="color: var(--secondary); text-decoration: underline;" target="_blank">Ir para Imgur</a><br/>
+                    </div>
+                    
+                    <!-- URL Input -->
+                    <div class="image-url-input" id="imageUrlInputBox">
+                        <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
+                        <div class="image-url-actions">
+                            <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
+                            <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Gradient Input -->
+                    <div class="image-url-input" id="imageGradientInputBox">
+                        <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                        <div class="image-url-actions">
+                            <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
+                            <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="image-helper">
+                        💡 <strong>Como adicionar imagens:</strong><br>
+                        • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
+                        • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente) - <a href="https://imgur.com/upload" target="_blank" style="color: var(--secondary); text-decoration: underline;">Ir para Imgur</a><br>
                         • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
                     </div>
-</div>
-<input id="productId" type="hidden"/>
-<div class="admin-form-actions">
-<button class="admin-btn-save" type="submit">Salvar Produto</button>
-<button class="admin-btn-cancel" onclick="closeProductModal()" type="button">Cancelar</button>
-</div>
-</form>
-</div>
-</div>
-<script>
+                </div>
+                
+                <input type="hidden" id="productId">
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn-save">Salvar Produto</button>
+                    <button type="button" class="admin-btn-cancel" onclick="closeProductModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
         // Products Database
         const productsData = [
             { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
@@ -2960,56 +2991,29 @@
             }
         }
 
-        
-function saveProduct(event) {
-    event.preventDefault();
+        function saveProduct(event) {
+            event.preventDefault();
 
-    const productId = document.getElementById('productId').value;
-    const name = document.getElementById('productName').value;
-    const category = document.getElementById('productCategory').value;
-    const price = parseFloat(document.getElementById('productPrice').value) || 0;
-    const oldPrice = document.getElementById('productOldPrice') && document.getElementById('productOldPrice').value
-        ? parseFloat(document.getElementById('productOldPrice').value) : null;
-    const badge = document.getElementById('productBadge') ? document.getElementById('productBadge').value || null : null;
+            const productId = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+            const badge = document.getElementById('productBadge').value || null;
+            const image = document.getElementById('productImage').value;
 
-    const images = (typeof tempProductImages !== 'undefined' && tempProductImages && tempProductImages.length)
-        ? [...tempProductImages]
-        : (document.getElementById('productImage') ? [document.getElementById('productImage').value] : []);
-
-    if (productId) {
-        const product = productsData.find(p => p.id === parseInt(productId));
-        if (product) {
-            product.name = name;
-            product.category = category;
-            product.price = price;
-            product.oldPrice = oldPrice;
-            product.badge = badge;
-            product.images = images;
-        }
-    } else {
-        const ids = productsData.length ? productsData.map(p => p.id) : [0];
-        const maxId = Math.max(...ids);
-        const newId = maxId + 1;
-
-        productsData.push({
-            id: newId,
-            name,
-            category,
-            price,
-            oldPrice,
-            badge,
-            images
-        });
-    }
-
-    saveProducts();
-    closeProductModal();
-    renderAdminProducts();
-    renderProducts();
-    updateAdminStats();
-    alert('Produto salvo com sucesso!');
-}
-} else {
+            if (productId) {
+                // Edit existing product
+                const product = productsData.find(p => p.id === parseInt(productId));
+                if (product) {
+                    product.name = name;
+                    product.category = category;
+                    product.price = price;
+                    product.oldPrice = oldPrice;
+                    product.badge = badge;
+                    product.image = image;
+                }
+            } else {
                 // Add new product
                 const newId = Math.max(...productsData.map(p => p.id)) + 1;
                 productsData.push({
@@ -3189,26 +3193,14 @@ function saveProduct(event) {
         }
 
         // Filter Products
-        
-function filterProducts(category, clickedElement = null) {
-    currentFilter = category;
-    currentPage = 1;
-
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-
-    if (clickedElement) {
-        clickedElement.classList.add('active');
-    } else {
-        const possible = Array.from(document.querySelectorAll('.filter-btn')).find(btn => {
-            const onclick = btn.getAttribute('onclick') || '';
-            return onclick.includes(`filterProducts('${category}')`) || onclick.includes(`filterProducts("${category}")`);
-        });
-        if (possible) possible.classList.add('active');
-    }
-
-    renderProducts();
-}
-);
+        function filterProducts(category) {
+            currentFilter = category;
+            currentPage = 1;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             event.target.classList.add('active');
             
             renderProducts();
@@ -3571,336 +3563,6 @@ function filterProducts(category, clickedElement = null) {
                 }
             }
         });
-    
-function toggleUrlInput() {
-    const box = document.getElementById('imageUrlInputBox');
-    if (!box) return;
-    const gradBox = document.getElementById('imageGradientInputBox');
-    if (gradBox) gradBox.style.display = 'none';
-    box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    if (box.style.display === 'block') {
-        const field = document.getElementById('imageUrlField');
-        if (field) field.focus();
-    } else {
-        const field = document.getElementById('imageUrlField');
-        if (field) field.value = '';
-    }
-}
-
-function toggleGradientInput() {
-    const box = document.getElementById('imageGradientInputBox');
-    if (!box) return;
-    const urlBox = document.getElementById('imageUrlInputBox');
-    if (urlBox) urlBox.style.display = 'none';
-    box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    if (box.style.display === 'block') {
-        const field = document.getElementById('gradientField');
-        if (field) field.focus();
-    } else {
-        const field = document.getElementById('gradientField');
-        if (field) field.value = '';
-    }
-}
-
-function addImageFromUrl() {
-    const field = document.getElementById('imageUrlField');
-    if (!field) return alert('Campo de URL não encontrado.');
-    const url = field.value.trim();
-    if (!url) return alert('Cole o link da imagem antes de adicionar.');
-    if (!/^https?:\/\//i.test(url)) return alert('Cole uma URL válida (começando com http ou https).');
-    if (typeof tempProductImages === 'undefined' || !Array.isArray(tempProductImages)) tempProductImages = [];
-    tempProductImages.push(url);
-    renderProductImages();
-    field.value = '';
-    const box = document.getElementById('imageUrlInputBox');
-    if (box) box.style.display = 'none';
-}
-
-function addGradientImage() {
-    const field = document.getElementById('gradientField') || document.getElementById('newImageUrl');
-    if (!field) return alert('Campo de gradiente não encontrado.');
-    const gradient = field.value.trim();
-    if (!gradient) return alert('Digite um gradiente CSS válido!');
-    if (typeof tempProductImages === 'undefined' || !Array.isArray(tempProductImages)) tempProductImages = [];
-    tempProductImages.push(gradient);
-    renderProductImages();
-    field.value = '';
-    const box = document.getElementById('imageGradientInputBox');
-    if (box) box.style.display = 'none';
-}
-</script>
-<script>
-/* ---------- ADMIN PRODUCT EDITING & IMAGE MANAGEMENT (OVERWRITE/ADD) ---------- */
-let tempProductImages = [];
-
-function openProductModal(productId = null) {
-    const modal = document.getElementById('productModal');
-    const title = document.getElementById('modalTitle');
-    const form = document.getElementById('productForm');
-    try { form.reset(); } catch(e){}
-    document.getElementById('productId').value = '';
-
-    tempProductImages = [];
-
-    if (productId) {
-        title.textContent = 'Editar Produto';
-        const product = productsData.find(p => p.id === productId || p.id === parseInt(productId));
-        if (product) {
-            document.getElementById('productName').value = product.name || '';
-            document.getElementById('productCategory').value = product.category || '';
-            document.getElementById('productPrice').value = (product.price !== undefined) ? product.price : '';
-            document.getElementById('productOldPrice').value = (product.oldPrice !== undefined && product.oldPrice !== null) ? product.oldPrice : '';
-            document.getElementById('productBadge').value = product.badge || '';
-            document.getElementById('productId').value = product.id;
-            tempProductImages = (Array.isArray(product.images) ? [...product.images] : (product.image ? [product.image] : []));
-        }
-    } else {
-        title.textContent = 'Adicionar Produto';
-    }
-
-    renderProductImages();
-    modal.classList.add('active');
-    setTimeout(()=> {
-        const el = document.getElementById('productName');
-        if (el) el.focus();
-    },100);
-}
-
-function closeProductModal() {
-    const modal = document.getElementById('productModal');
-    modal.classList.remove('active');
-    tempProductImages = [];
-    renderProductImages();
-}
-
-function renderProductImages() {
-    const container = document.getElementById('productImagesList');
-    if (!container) return;
-    container.innerHTML = '';
-    if (!Array.isArray(tempProductImages)) tempProductImages = [];
-
-    if (tempProductImages.length === 0) {
-        container.innerHTML = '<div style="padding:1rem;color:#666;">Nenhuma imagem adicionada. Use upload, cole um link ou adicione um gradiente.</div>';
-        return;
-    }
-
-    tempProductImages.forEach((img, idx) => {
-        const item = document.createElement('div');
-        item.className = 'image-item';
-        item.style.position = 'relative';
-
-        const preview = document.createElement('div');
-        preview.className = 'image-item-preview';
-
-        if (typeof img === 'string' && img.trim().startsWith('linear-gradient')) {
-            preview.style.background = img;
-        } else {
-            preview.style.backgroundImage = `url('${img}')`;
-            preview.style.backgroundSize = 'cover';
-            preview.style.backgroundPosition = 'center';
-        }
-        preview.style.width = '100%';
-        preview.style.height = '100%';
-        preview.style.display = 'block';
-
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'image-item-remove';
-        removeBtn.title = 'Remover imagem';
-        removeBtn.innerHTML = '×';
-        removeBtn.style.position = 'absolute';
-        removeBtn.style.top = '6px';
-        removeBtn.style.right = '6px';
-        removeBtn.onclick = (e) => {
-            e.stopPropagation();
-            deleteImageAtIndex(idx);
-        };
-
-        item.appendChild(preview);
-        item.appendChild(removeBtn);
-
-        preview.onclick = () => {
-            if (typeof tempProductImages[idx] === 'string' && /^https?:\/\//i.test(tempProductImages[idx])) {
-                window.open(tempProductImages[idx], '_blank');
-            }
-        };
-
-        container.appendChild(item);
-    });
-}
-
-function handleImageUpload(event) {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-    for (let i=0;i<files.length;i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            tempProductImages.push(e.target.result);
-            renderProductImages();
-        };
-        reader.readAsDataURL(file);
-    }
-    event.target.value = '';
-}
-
-function addImageFromUrl() {
-    const field = document.getElementById('imageUrlField');
-    if (!field) return alert('Campo de URL não encontrado.');
-    const url = field.value.trim();
-    if (!url) return alert('Cole o link da imagem antes de adicionar.');
-    if (!/^https?:\/\//i.test(url)) return alert('Cole uma URL válida (começando com http ou https).');
-    tempProductImages.push(url);
-    field.value = '';
-    renderProductImages();
-}
-
-function addGradientImage() {
-    const field = document.getElementById('gradientField');
-    if (!field) return alert('Campo de gradiente não encontrado.');
-    const gradient = field.value.trim();
-    if (!gradient) return alert('Digite um gradiente CSS válido!');
-    tempProductImages.push(gradient);
-    field.value = '';
-    renderProductImages();
-}
-
-function deleteImageAtIndex(index) {
-    if (!Array.isArray(tempProductImages)) return;
-    tempProductImages.splice(index,1);
-    renderProductImages();
-}
-
-function saveProduct(event) {
-    if (event && event.preventDefault) event.preventDefault();
-
-    const productId = document.getElementById('productId').value;
-    const name = document.getElementById('productName').value.trim();
-    const category = document.getElementById('productCategory').value;
-    const priceRaw = document.getElementById('productPrice').value;
-    const price = priceRaw !== '' ? parseFloat(priceRaw) : 0;
-    const oldPriceRaw = document.getElementById('productOldPrice').value;
-    const oldPrice = oldPriceRaw !== '' ? parseFloat(oldPriceRaw) : null;
-    const badge = document.getElementById('productBadge').value.trim() || null;
-
-    if (!name) return alert('Preencha o nome do produto.');
-
-    const images = Array.isArray(tempProductImages) ? [...tempProductImages] : [];
-
-    if (productId) {
-        const idx = productsData.findIndex(p => p.id === parseInt(productId));
-        if (idx > -1) {
-            productsData[idx].name = name;
-            productsData[idx].category = category;
-            productsData[idx].price = price;
-            productsData[idx].oldPrice = oldPrice;
-            productsData[idx].badge = badge;
-            productsData[idx].images = images;
-        } else {
-            alert('Produto não encontrado para edição.');
-            return;
-        }
-    } else {
-        const ids = productsData.length ? productsData.map(p => p.id) : [0];
-        const maxId = Math.max(...ids);
-        const newId = maxId + 1;
-        productsData.push({
-            id: newId,
-            name,
-            category,
-            price,
-            oldPrice,
-            badge,
-            images
-        });
-        document.getElementById('productId').value = newId;
-    }
-
-    try {
-        localStorage.setItem('productsData', JSON.stringify(productsData));
-    } catch (e) {
-        console.warn('Erro ao salvar no localStorage:', e);
-    }
-
-    closeProductModal();
-    if (typeof renderAdminProducts === 'function') renderAdminProducts();
-    if (typeof renderProducts === 'function') renderProducts();
-    if (typeof updateAdminStats === 'function') updateAdminStats();
-
-    alert('Produto salvo com sucesso!');
-}
-
-function renderAdminProducts() {
-    const grid = document.getElementById('adminProductsGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    productsData.forEach(prod => {
-        const card = document.createElement('div');
-        card.className = 'admin-product-card';
-
-        const img = document.createElement('div');
-        img.className = 'admin-product-image';
-        img.style.height = '180px';
-        img.style.background = prod.images && prod.images[0] ? (prod.images[0].startsWith('linear-gradient') ? prod.images[0] : `url('${prod.images[0]}') center/cover no-repeat`) : '#f0f0f0';
-        img.style.marginBottom = '1rem';
-
-        const info = document.createElement('div');
-        info.className = 'admin-product-info';
-        info.innerHTML = `<h4>${prod.name}</h4><p>Categoria: ${prod.category || ''} • Preço: R$ ${prod.price != null ? prod.price.toFixed(2) : '0.00'}</p>`;
-
-        const actions = document.createElement('div');
-        actions.className = 'admin-actions';
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'admin-btn admin-btn-edit';
-        editBtn.textContent = 'Editar';
-        editBtn.onclick = () => openProductModal(prod.id);
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'admin-btn admin-btn-delete';
-        delBtn.textContent = 'Remover';
-        delBtn.onclick = () => {
-            if (!confirm('Remover este produto?')) return;
-            const idx = productsData.findIndex(p => p.id === prod.id);
-            if (idx > -1) {
-                productsData.splice(idx,1);
-                localStorage.setItem('productsData', JSON.stringify(productsData));
-                renderAdminProducts();
-                if (typeof renderProducts === 'function') renderProducts();
-                if (typeof updateAdminStats === 'function') updateAdminStats();
-            }
-        };
-
-        actions.appendChild(editBtn);
-        actions.appendChild(delBtn);
-
-        card.appendChild(img);
-        card.appendChild(info);
-        card.appendChild(actions);
-
-        grid.appendChild(card);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const saved = localStorage.getItem('productsData');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length) {
-                if (Array.isArray(productsData)) {
-                    productsData.length = 0;
-                    parsed.forEach(p => productsData.push(p));
-                }
-            }
-        }
-    } catch (e) {
-        console.warn('Erro ao carregar productsData do localStorage', e);
-    }
-
-    if (typeof renderAdminProducts === 'function') renderAdminProducts();
-    if (typeof renderProducts === 'function') renderProducts();
-    if (typeof updateAdminStats === 'function') updateAdminStats();
-});
-/* ---------- END ADMIN SCRIPT ---------- */
-</script></body>
+    </script>
+</body>
 </html>
