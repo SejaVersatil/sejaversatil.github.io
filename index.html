@@ -95,12 +95,32 @@
             cursor: pointer;
             transition: transform 0.2s;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .nav-icon-symbol {
             font-size: 1.2rem;
             color: var(--primary);
         }
 
+        .nav-icon-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+        }
+
         .nav-icon:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
+        }
+
+        .nav-icon:hover .nav-icon-symbol,
+        .nav-icon:hover .nav-icon-label {
+            color: var(--secondary);
         }
 
         .cart-count {
@@ -1040,6 +1060,667 @@
             opacity: 0.9;
         }
 
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 3500;
+            overflow-y: auto;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h2 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .admin-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .admin-content {
+            padding: 2rem 4%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--gray);
+        }
+
+        .admin-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .admin-tab:hover {
+            color: var(--primary);
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .admin-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .admin-product-card {
+            border: 1px solid var(--gray);
+            padding: 1rem;
+            background: white;
+        }
+
+        .admin-product-image {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .admin-product-info {
+            margin-bottom: 1rem;
+        }
+
+        .admin-product-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-product-info p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .admin-btn-edit {
+            background: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+
+        .admin-btn-edit:hover {
+            background: var(--accent-light);
+        }
+
+        .admin-btn-delete {
+            background: #e74c3c;
+            color: white;
+            flex: 1;
+        }
+
+        .admin-btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .admin-btn-add {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-btn-add:hover {
+            background: #333;
+        }
+
+        /* Admin Modal */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3600;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .admin-modal.active {
+            display: flex;
+        }
+
+        .admin-modal-content {
+            background: white;
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray);
+        }
+
+        .admin-modal-header h3 {
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-form-group input,
+        .admin-form-group select,
+        .admin-form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .admin-form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .admin-form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .admin-form-actions button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .admin-btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-btn-save:hover {
+            background: #333;
+        }
+
+        .admin-btn-cancel {
+            background: var(--gray);
+            color: var(--text);
+        }
+
+        .admin-btn-cancel:hover {
+            background: #ccc;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 3500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-content {
+            background: white;
+            padding: 3rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-content h3 {
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .login-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background: #333;
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .login-error.active {
+            display: block;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--gray-light);
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .stat-card h4 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .admin-access-link {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(0,0,0,0.05);
+            color: rgba(0,0,0,0.3);
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 1999;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .admin-access-link:hover {
+            background: rgba(0,0,0,0.1);
+            color: rgba(0,0,0,0.5);
+        }
+
+        /* User Panel */
+        .user-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 3500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-panel.active {
+            display: flex;
+        }
+
+        .user-panel-content {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .user-panel-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-panel-header h3 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-panel-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .user-panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .user-panel-tab {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .user-panel-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .user-panel-body {
+            padding: 2rem;
+        }
+
+        .user-tab-content {
+            display: none;
+        }
+
+        .user-tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 1px solid var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .form-btn:hover {
+            background: #333;
+        }
+
+        .form-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .form-error.active {
+            display: block;
+        }
+
+        .form-success {
+            color: #27ae60;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .form-success.active {
+            display: block;
+        }
+
+        .user-logged-in {
+            text-align: center;
+        }
+
+        .user-logged-in h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .user-info {
+            background: var(--gray-light);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .user-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .user-info strong {
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .user-action-btn {
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .user-action-btn:hover {
+            background: var(--gray-light);
+        }
+
+        .user-action-btn.logout {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        .user-action-btn.logout:hover {
+            background: #c0392b;
+        }
+
+        .user-action-btn.admin {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .user-action-btn.admin:hover {
+            background: var(--accent-light);
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+            border-radius: 3px;
+        }
+
+        .form-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .form-link a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-link a:hover {
+            text-decoration: underline;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .products-grid {
@@ -1059,6 +1740,12 @@
             }
             .nav-menu {
                 display: none;
+            }
+            .nav-icon-label {
+                font-size: 0.65rem;
+            }
+            .nav-icons {
+                gap: 0.8rem;
             }
             .products-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1164,10 +1851,20 @@
                 <li><a href="#sobre">Sobre</a></li>
             </ul>
             <div class="nav-icons">
-                <div class="nav-icon" onclick="openSearch()">🔍</div>
+                <div class="nav-icon" onclick="openSearch()">
+                    <span class="nav-icon-symbol">🔍</span>
+                    <span class="nav-icon-label">Busca</span>
+                </div>
+                <div class="nav-icon" onclick="openUserPanel()">
+                    <span class="nav-icon-symbol">👤</span>
+                    <span class="nav-icon-label">Login</span>
+                </div>
                 <div class="nav-icon" onclick="toggleCart()">
-                    🛍️
-                    <span class="cart-count" id="cartCount">0</span>
+                    <div style="position: relative;">
+                        <span class="nav-icon-symbol">🛍️</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    <span class="nav-icon-label">Carrinho</span>
                 </div>
             </div>
         </nav>
@@ -1378,6 +2075,221 @@
         </div>
     </div>
 
+    <!-- Admin Access Link (discreto) -->
+    <div class="admin-access-link" onclick="openUserPanel(); switchUserTab('login')">Admin</div>
+
+    <!-- User Panel (Login/Cadastro) -->
+    <div class="user-panel" id="userPanel">
+        <div class="user-panel-content">
+            <div class="user-panel-header">
+                <h3>Minha Conta</h3>
+                <button class="user-panel-close" onclick="closeUserPanel()">✕</button>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="user-panel-tabs" id="userPanelTabs">
+                <button class="user-panel-tab active" onclick="switchUserTab('login')">Entrar</button>
+                <button class="user-panel-tab" onclick="switchUserTab('register')">Cadastrar</button>
+            </div>
+
+            <div class="user-panel-body">
+                <!-- Login Tab -->
+                <div class="user-tab-content active" id="loginTab">
+                    <form onsubmit="userLogin(event)">
+                        <div class="form-group">
+                            <label>E-mail ou Usuário</label>
+                            <input type="text" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="form-btn">Entrar</button>
+                        <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
+                    </form>
+                    <div class="form-link">
+                        Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
+                    </div>
+                </div>
+
+                <!-- Register Tab -->
+                <div class="user-tab-content" id="registerTab">
+                    <form onsubmit="userRegister(event)">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="registerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="registerPassword" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Senha</label>
+                            <input type="password" id="registerConfirmPassword" minlength="6" required>
+                        </div>
+                        <button type="submit" class="form-btn">Criar Conta</button>
+                        <div class="form-error" id="registerError">Erro ao criar conta</div>
+                        <div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
+                    </form>
+                    <div class="form-link">
+                        Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
+                    </div>
+                </div>
+
+                <!-- User Logged In -->
+                <div class="user-tab-content" id="userLoggedTab">
+                    <div class="user-logged-in">
+                        <h4>Bem-vindo(a)! <span id="userName"></span></h4>
+                        <div class="user-info">
+                            <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
+                            <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
+                        </div>
+                        <div class="user-actions">
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Pedidos</button>
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
+                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Endereços</button>
+                            <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">
+                                🔧 Painel Administrativo
+                            </button>
+                            <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (deprecated - mantido para compatibilidade) -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <h3>Acesso Administrativo</h3>
+            <div class="login-form-group">
+                <label>Usuário</label>
+                <input type="text" id="adminUsername" placeholder="Digite o usuário">
+            </div>
+            <div class="login-form-group">
+                <label>Senha</label>
+                <input type="password" id="adminPassword" placeholder="Digite a senha">
+            </div>
+            <button class="login-btn" onclick="adminLogin()">Entrar</button>
+            <div class="login-error" id="loginError">Usuário ou senha incorretos</div>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #999;">
+                Acesso restrito a administradores
+            </p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2>🔧 Painel Administrativo - Seja Versátil</h2>
+            <button class="admin-close" onclick="closeAdminPanel()">Sair do Painel</button>
+        </div>
+        <div class="admin-content">
+            <!-- Statistics -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h4 id="totalProducts">0</h4>
+                    <p>Total de Produtos</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="totalRevenue">R$ 0</h4>
+                    <p>Valor em Estoque</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="totalOrders">0</h4>
+                    <p>Pedidos (simulado)</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="activeProducts">0</h4>
+                    <p>Produtos Ativos</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
+                <button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="admin-tab-content active" id="productsTab">
+                <button class="admin-btn admin-btn-add" onclick="openProductModal()">+ Adicionar Novo Produto</button>
+                <div class="admin-products-grid" id="adminProductsGrid"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="admin-tab-content" id="settingsTab">
+                <h3 style="margin-bottom: 1.5rem;">Configurações do Site</h3>
+                <div class="admin-form-group">
+                    <label>Banner Principal - Texto 1</label>
+                    <input type="text" id="settingBannerTitle" value="Seja Versátil">
+                </div>
+                <div class="admin-form-group">
+                    <label>Banner Principal - Subtítulo</label>
+                    <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
+                </div>
+                <div class="admin-form-group">
+                    <label>Mensagem do Banner de Promoção</label>
+                    <input type="text" id="settingTopBanner" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros">
+                </div>
+                <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Edit Modal -->
+    <div class="admin-modal" id="productModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 id="modalTitle">Adicionar Produto</h3>
+                <button class="admin-close" onclick="closeProductModal()">✕</button>
+            </div>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <div class="admin-form-group">
+                    <label>Nome do Produto *</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="admin-form-group">
+                    <label>Categoria *</label>
+                    <select id="productCategory" required>
+                        <option value="leggings">Leggings</option>
+                        <option value="tops">Tops</option>
+                        <option value="conjuntos">Conjuntos</option>
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label>Preço Atual (R$) *</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                </div>
+                <div class="admin-form-group">
+                    <label>Preço Antigo (R$) - Opcional</label>
+                    <input type="number" id="productOldPrice" step="0.01">
+                </div>
+                <div class="admin-form-group">
+                    <label>Badge - Opcional</label>
+                    <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
+                </div>
+                <div class="admin-form-group">
+                    <label>Cor/Gradiente (CSS) *</label>
+                    <input type="text" id="productImage" value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" required>
+                    <small style="font-size: 0.75rem; color: #666; display: block; margin-top: 0.5rem;">
+                        Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+                    </small>
+                </div>
+                <input type="hidden" id="productId">
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn-save">Salvar Produto</button>
+                    <button type="button" class="admin-btn-cancel" onclick="closeProductModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Products Database
         const productsData = [
@@ -1408,9 +2320,433 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadCart();
+            loadProducts();
             renderProducts();
             updateCartUI();
             initCarousel();
+        });
+
+        // Admin System
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'sejaversatil2025',
+            email: 'admin@sejaversatil.com.br'
+        };
+
+        let isAdminLoggedIn = false;
+        let currentUser = null;
+        let editingProductId = null;
+
+        // User System
+        function openUserPanel() {
+            const panel = document.getElementById('userPanel');
+            panel.classList.add('active');
+            
+            // Check if user is logged in
+            checkUserSession();
+        }
+
+        function closeUserPanel() {
+            document.getElementById('userPanel').classList.remove('active');
+        }
+
+        function switchUserTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
+            
+            // Update tab content
+            document.querySelectorAll('.user-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            if (tab === 'login') {
+                document.querySelectorAll('.user-panel-tab')[0].classList.add('active');
+                document.getElementById('loginTab').classList.add('active');
+            } else if (tab === 'register') {
+                document.querySelectorAll('.user-panel-tab')[1].classList.add('active');
+                document.getElementById('registerTab').classList.add('active');
+            }
+        }
+
+        function checkUserSession() {
+            const savedUser = localStorage.getItem('sejaVersatilCurrentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showLoggedInView();
+            }
+        }
+
+        function showLoggedInView() {
+            // Hide tabs
+            document.getElementById('userPanelTabs').style.display = 'none';
+            
+            // Hide login/register tabs
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerTab').classList.remove('active');
+            
+            // Show logged in view
+            document.getElementById('userLoggedTab').classList.add('active');
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            
+            // Check if admin
+            if (currentUser.isAdmin) {
+                document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+                document.getElementById('adminAccessBtn').style.display = 'block';
+                isAdminLoggedIn = true;
+            } else {
+                document.getElementById('userStatus').textContent = 'Cliente';
+                document.getElementById('adminAccessBtn').style.display = 'none';
+            }
+        }
+
+        function hideLoggedInView() {
+            document.getElementById('userPanelTabs').style.display = 'flex';
+            document.getElementById('userLoggedTab').classList.remove('active');
+            switchUserTab('login');
+        }
+
+        function userLogin(event) {
+            event.preventDefault();
+            
+            const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('loginError');
+
+            // Check if admin
+            if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
+                password === ADMIN_CREDENTIALS.password) {
+                currentUser = {
+                    name: 'Administrador',
+                    email: ADMIN_CREDENTIALS.email,
+                    isAdmin: true
+                };
+                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                showLoggedInView();
+                errorMsg.classList.remove('active');
+                return;
+            }
+
+            // Check regular users
+            const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
+            const user = users.find(u => u.email.toLowerCase() === emailOrUsername && u.password === password);
+
+            if (user) {
+                currentUser = {
+                    name: user.name,
+                    email: user.email,
+                    isAdmin: false
+                };
+                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                showLoggedInView();
+                errorMsg.classList.remove('active');
+            } else {
+                errorMsg.classList.add('active');
+            }
+        }
+
+        function userRegister(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value.toLowerCase();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const errorMsg = document.getElementById('registerError');
+            const successMsg = document.getElementById('registerSuccess');
+
+            // Clear previous messages
+            errorMsg.classList.remove('active');
+            successMsg.classList.remove('active');
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMsg.textContent = 'As senhas não coincidem';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Check if email already exists
+            const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
+            if (users.some(u => u.email === email)) {
+                errorMsg.textContent = 'Este e-mail já está cadastrado';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Check if trying to use admin email
+            if (email === ADMIN_CREDENTIALS.email) {
+                errorMsg.textContent = 'Este e-mail não pode ser usado';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Create new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('sejaVersatilUsers', JSON.stringify(users));
+
+            // Show success message
+            successMsg.classList.add('active');
+            
+            // Clear form
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+
+            // Switch to login after 2 seconds
+            setTimeout(() => {
+                switchUserTab('login');
+                successMsg.classList.remove('active');
+            }, 2000);
+        }
+
+        function userLogout() {
+            if (confirm('Deseja realmente sair da sua conta?')) {
+                currentUser = null;
+                isAdminLoggedIn = false;
+                localStorage.removeItem('sejaVersatilCurrentUser');
+                hideLoggedInView();
+            }
+        }
+
+        // Load products from localStorage or use defaults
+        function loadProducts() {
+            const saved = localStorage.getItem('sejaVersatilProducts');
+            if (saved) {
+                const loadedProducts = JSON.parse(saved);
+                // Update productsData array
+                productsData.length = 0;
+                productsData.push(...loadedProducts);
+            }
+        }
+
+        function saveProducts() {
+            localStorage.setItem('sejaVersatilProducts', JSON.stringify(productsData));
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('adminUsername').focus();
+        }
+
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorMsg = document.getElementById('loginError');
+
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                isAdminLoggedIn = true;
+                document.getElementById('loginModal').classList.remove('active');
+                openAdminPanel();
+                errorMsg.classList.remove('active');
+                // Clear inputs
+                document.getElementById('adminUsername').value = '';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                errorMsg.classList.add('active');
+            }
+        }
+
+        function openAdminPanel() {
+            if (!isAdminLoggedIn) {
+                alert('Você precisa estar logado como administrador para acessar esta área.');
+                openUserPanel();
+                return;
+            }
+            document.getElementById('adminPanel').classList.add('active');
+            renderAdminProducts();
+            updateAdminStats();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('active');
+            isAdminLoggedIn = false;
+        }
+
+        function switchAdminTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            if (tab === 'products') {
+                document.getElementById('productsTab').classList.add('active');
+            } else if (tab === 'settings') {
+                document.getElementById('settingsTab').classList.add('active');
+            }
+        }
+
+        function updateAdminStats() {
+            const totalProducts = productsData.length;
+            const totalValue = productsData.reduce((sum, p) => sum + p.price, 0);
+            const activeProducts = productsData.filter(p => !p.oldPrice).length;
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalRevenue').textContent = `R$ ${totalValue.toFixed(2)}`;
+            document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('activeProducts').textContent = activeProducts;
+        }
+
+        function renderAdminProducts() {
+            const grid = document.getElementById('adminProductsGrid');
+            grid.innerHTML = productsData.map(product => `
+                <div class="admin-product-card">
+                    <div class="admin-product-image" style="background: ${product.image}"></div>
+                    <div class="admin-product-info">
+                        <h4>${product.name}</h4>
+                        <p><strong>Categoria:</strong> ${product.category}</p>
+                        <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
+                        ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
+                        ${product.badge ? `<p><strong>Badge:</strong> ${product.badge}</p>` : ''}
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-edit" onclick="editProduct(${product.id})">Editar</button>
+                        <button class="admin-btn admin-btn-delete" onclick="deleteProduct(${product.id})">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openProductModal(productId = null) {
+            editingProductId = productId;
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('modalTitle');
+
+            if (productId) {
+                // Edit mode
+                const product = productsData.find(p => p.id === productId);
+                title.textContent = 'Editar Produto';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productOldPrice').value = product.oldPrice || '';
+                document.getElementById('productBadge').value = product.badge || '';
+                document.getElementById('productImage').value = product.image;
+            } else {
+                // Add mode
+                title.textContent = 'Adicionar Novo Produto';
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                document.getElementById('productImage').value = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            editingProductId = null;
+        }
+
+        function editProduct(productId) {
+            openProductModal(productId);
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                const index = productsData.findIndex(p => p.id === productId);
+                if (index !== -1) {
+                    productsData.splice(index, 1);
+                    saveProducts();
+                    renderAdminProducts();
+                    renderProducts();
+                    updateAdminStats();
+                    alert('Produto excluído com sucesso!');
+                }
+            }
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+
+            const productId = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+            const badge = document.getElementById('productBadge').value || null;
+            const image = document.getElementById('productImage').value;
+
+            if (productId) {
+                // Edit existing product
+                const product = productsData.find(p => p.id === parseInt(productId));
+                if (product) {
+                    product.name = name;
+                    product.category = category;
+                    product.price = price;
+                    product.oldPrice = oldPrice;
+                    product.badge = badge;
+                    product.image = image;
+                }
+            } else {
+                // Add new product
+                const newId = Math.max(...productsData.map(p => p.id)) + 1;
+                productsData.push({
+                    id: newId,
+                    name,
+                    category,
+                    price,
+                    oldPrice,
+                    badge,
+                    image
+                });
+            }
+
+            saveProducts();
+            closeProductModal();
+            renderAdminProducts();
+            renderProducts();
+            updateAdminStats();
+            alert('Produto salvo com sucesso!');
+        }
+
+        function saveSettings() {
+            const bannerTitle = document.getElementById('settingBannerTitle').value;
+            const bannerSubtitle = document.getElementById('settingBannerSubtitle').value;
+            const topBanner = document.getElementById('settingTopBanner').value;
+
+            // Update hero section
+            document.querySelector('.hero h1').textContent = bannerTitle;
+            document.querySelector('.hero-subtitle').textContent = bannerSubtitle;
+            document.querySelector('.top-banner').textContent = topBanner;
+
+            // Save to localStorage
+            localStorage.setItem('sejaVersatilSettings', JSON.stringify({
+                bannerTitle,
+                bannerSubtitle,
+                topBanner
+            }));
+
+            alert('Configurações salvas com sucesso!');
+        }
+
+        // Load settings on page load
+        function loadSettings() {
+            const saved = localStorage.getItem('sejaVersatilSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.querySelector('.hero h1').textContent = settings.bannerTitle;
+                document.querySelector('.hero-subtitle').textContent = settings.bannerSubtitle;
+                document.querySelector('.top-banner').textContent = settings.topBanner;
+
+                document.getElementById('settingBannerTitle').value = settings.bannerTitle;
+                document.getElementById('settingBannerSubtitle').value = settings.bannerSubtitle;
+                document.getElementById('settingTopBanner').value = settings.topBanner;
+            }
+        }
+
+        // Call loadSettings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
         });
 
         // Sidebar Menu
