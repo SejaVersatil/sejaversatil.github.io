@@ -3902,5 +3902,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateAdminStats === 'function') updateAdminStats();
 });
 /* ---------- END ADMIN SCRIPT ---------- */
-</script></body>
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Correção: funções do painel de administrador
+  window.abrirPainelAdmin = function() {
+    const painel = document.querySelector('#adminPanel') || document.querySelector('.admin-panel');
+    if (painel) {
+      painel.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      console.warn('Painel admin não encontrado.');
+    }
+  };
+
+  window.fecharPainelAdmin = function() {
+    const painel = document.querySelector('#adminPanel') || document.querySelector('.admin-panel');
+    if (painel) {
+      painel.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Renderização de produtos fallback se script original falhar
+  if (typeof renderProducts !== 'function' && window.productsData) {
+    const grid = document.querySelector('#productsGrid');
+    if (grid) {
+      grid.innerHTML = '';
+      window.productsData.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image" style="background:${(p.images && p.images[0]) || '#f5f5f5'};background-size:cover;background-position:center;"></div>
+          <div class="product-info">
+            <h4>${p.name}</h4>
+            <div class="product-price">R$ ${(p.price || 0).toFixed(2)}</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+  }
+
+  console.log('Script de correção carregado: painel admin e produtos restaurados.');
+});
+</script>
+</body>
 </html>
