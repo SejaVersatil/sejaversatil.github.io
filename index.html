@@ -2501,386 +2501,1406 @@
 </form>
 </div>
 </div>
-
 <script>
-// Robust site script - inserted by assistant to repair truncated JS
-(function () {
-    // Default products (used if original data missing)
-    const defaultProducts = [
-        { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'] },
-        { id: 2, name: 'Top Energy', category: 'tops', price: 79.90, oldPrice: 99.90, badge: 'Lançamento', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
-        { id: 3, name: 'Conjunto Move', category: 'conjuntos', price: 249.90, oldPrice: 299.90, badge: 'Promo', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'] },
-        { id: 4, name: 'Short Run', category: 'leggings', price: 69.90, oldPrice: null, badge: '', images: ['linear-gradient(135deg, #f6d365 0%, #fda085 100%)'] },
-        { id: 5, name: 'Top Classic', category: 'tops', price: 59.90, oldPrice: 79.90, badge: '', images: ['linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)'] },
-        { id: 6, name: 'Macacão Fit', category: 'conjuntos', price: 199.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)'] }
-    ];
+        // Products Database
+        const productsData = [
+            { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
+            { id: 2, name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
+            { id: 3, name: 'Conjunto Ribbed Marsala', category: 'conjuntos', price: 209.90, oldPrice: 299.90, badge: '-30%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)'] },
+            { id: 4, name: 'Shorts Bike Seamless', category: 'leggings', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] },
+            { id: 5, name: 'Legging Scrunch Bum', category: 'leggings', price: 169.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #fa709a 0%, #fee140 100%)'] },
+            { id: 6, name: 'Top Cropped Strappy', category: 'tops', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #30cfd0 0%, #330867 100%)'] },
+            { id: 7, name: 'Macaquinho Fitness Premium', category: 'conjuntos', price: 149.90, oldPrice: 199.90, badge: '-25%', images: ['linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'] },
+            { id: 8, name: 'Jaqueta Oversized', category: 'conjuntos', price: 189.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'] },
+            { id: 9, name: 'Legging Metallic Rose', category: 'leggings', price: 159.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'] },
+            { id: 10, name: 'Top Push Up Ribbed', category: 'tops', price: 99.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'] },
+            { id: 11, name: 'Conjunto Seamless Pro', category: 'conjuntos', price: 229.90, oldPrice: 279.90, badge: '-20%', images: ['linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'] },
+            { id: 12, name: 'Legging Cintura Alta Preta', category: 'leggings', price: 139.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #434343 0%, #000000 100%)'] },
+            { id: 13, name: 'Top Regata Fitness', category: 'tops', price: 69.90, oldPrice: 89.90, badge: '-22%', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'] },
+            { id: 14, name: 'Conjunto Power Mesh', category: 'conjuntos', price: 249.90, oldPrice: null, badge: 'Lançamento', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
+            { id: 15, name: 'Legging Tie Dye', category: 'leggings', price: 159.90, oldPrice: 199.90, badge: '-20%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'] },
+            { id: 16, name: 'Top Básico Essential', category: 'tops', price: 59.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] }
+        ];
 
-    // If productsData exists and is an array, use it; otherwise use defaultProducts.
-    let products = Array.isArray(window.productsData) && window.productsData.length ? window.productsData : defaultProducts;
+        let cart = [];
+        let currentFilter = 'all';
+        let currentSort = '';
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let tempProductImages = [];
 
-    // State
-    let filteredProducts = [...products];
-    let cart = [];
-    let currentFilter = 'all';
-    let currentSort = '';
-
-    // Helpers
-    const q = (sel, root=document) => root.querySelector(sel);
-    const qa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-    const formatPrice = p => (p==null)? '' : p.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-    // Render products to grid
-    function renderProducts(page=1, perPage=12) {
-        const grid = q('#productsGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        // Apply filter
-        let list = filteredProducts.slice();
-        // Apply sorting
-        if (currentSort === 'price-asc') list.sort((a,b)=> (a.price||0)-(b.price||0));
-        if (currentSort === 'price-desc') list.sort((a,b)=> (b.price||0)-(a.price||0));
-        if (currentSort === 'name') list.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
-
-        // Pagination (simple)
-        const total = list.length;
-        const start = (page-1)*perPage;
-        const end = start + perPage;
-        const pageItems = list.slice(start,end);
-
-        pageItems.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.tabIndex = 0;
-            card.innerHTML = `
-                <div class="product-image">
-                    <div class="product-image-carousel">
-                        <div class="product-image-slide active" style="background:${(p.images && p.images[0]) || 'var(--gray-light)'}; background-size:cover; background-position:center;"></div>
-                    </div>
-                    ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
-                    <button class="add-to-cart-btn" data-id="${p.id}">Adicionar ao Carrinho</button>
-                </div>
-                <div class="product-info">
-                    <h4>${p.name}</h4>
-                    <div class="product-price">
-                        ${p.oldPrice ? `<div class="price-old">${formatPrice(p.oldPrice)}</div>` : ''}
-                        <div class="price-new">${formatPrice(p.price)}</div>
-                    </div>
-                </div>
-            `;
-            // Add events
-            const addBtn = card.querySelector('.add-to-cart-btn');
-            addBtn && addBtn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(p.id); });
-            card.addEventListener('click', ()=> openProductQuickView(p));
-            grid.appendChild(card);
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+            loadProducts();
+            renderProducts();
+            updateCartUI();
+            initCarousel();
         });
 
-        renderPagination(Math.ceil(total/perPage), page);
-    }
+        // Admin System
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'sejaversatil2025',
+            email: 'admin@sejaversatil.com.br'
+        };
 
-    function renderPagination(totalPages, currentPage) {
-        const pag = q('#pagination');
-        if(!pag) return;
-        pag.innerHTML = '';
-        if(totalPages <= 1) return;
-        for(let i=1;i<=totalPages;i++){
-            const btn = document.createElement('button');
-            btn.className = 'page-btn' + (i===currentPage? ' active' : '');
-            btn.textContent = i;
-            btn.addEventListener('click', ()=> renderProducts(i));
-            pag.appendChild(btn);
+        let isAdminLoggedIn = false;
+        let currentUser = null;
+        let editingProductId = null;
+
+        // User System
+        function openUserPanel() {
+            const panel = document.getElementById('userPanel');
+            panel.classList.add('active');
+            
+            // Check if user is logged in
+            checkUserSession();
         }
-    }
 
-    // Filters
-    window.filterProducts = function(category) {
-        currentFilter = category || 'all';
-        // update active class on buttons
-        qa('.filter-btn').forEach(b=> b.classList.toggle('active', b.textContent.trim().toLowerCase() === (category==='all' ? 'todos' : (category||'').toLowerCase()) || (category==='all' && b.textContent.trim().toLowerCase()==='todos')));
-        if(category === 'all') filteredProducts = [...products];
-        else filteredProducts = products.filter(p=> p.category === category);
-        renderProducts(1);
-    }
-
-    window.sortProducts = function(val) {
-        currentSort = val || '';
-        renderProducts(1);
-    }
-
-    // Search
-    window.openSearch = function(){ q('#searchModal').classList.add('active'); q('#searchInput').focus(); }
-    window.performSearch = function(){
-        const term = (q('#searchInput').value||'').toLowerCase().trim();
-        const results = term ? products.filter(p=> p.name.toLowerCase().includes(term)) : [];
-        const box = q('#searchResults');
-        box.innerHTML = '';
-        if(!term) return;
-        results.forEach(r=>{
-            const div = document.createElement('div');
-            div.className = 'search-result-item';
-            div.innerHTML = `<div class="search-result-img" style="background:${(r.images && r.images[0]) || '#f5f5f5'}"></div><div><strong>${r.name}</strong><div style="color:#666">${formatPrice(r.price)}</div></div>`;
-            div.addEventListener('click', ()=> { q('#searchModal').classList.remove('active'); filterProducts(r.category||'all'); setTimeout(()=> window.scrollTo({top: document.getElementById('produtos').offsetTop-80, behavior:'smooth'}),100); });
-            box.appendChild(div);
-        });
-    }
-    document.addEventListener('click', (e)=> { if(e.target===q('#searchModal')) q('#searchModal').classList.remove('active'); });
-
-    // Cart
-    window.toggleCart = function(){
-        q('#cartSidebar').classList.toggle('active');
-        q('#cartOverlay').classList.toggle('active');
-    }
-    function updateCartUI(){
-        const count = cart.reduce((s,i)=> s + (i.qty||1), 0);
-        q('#cartCount').textContent = count;
-        const itemsBox = q('#cartItems');
-        if(!itemsBox) return;
-        itemsBox.innerHTML = '';
-        if(cart.length===0){
-            itemsBox.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
-            q('#cartFooter').style.display = 'none';
-            return;
+        function closeUserPanel() {
+            document.getElementById('userPanel').classList.remove('active');
         }
-        q('#cartFooter').style.display = 'block';
-        cart.forEach(ci=>{
-            const prod = products.find(p=> p.id === ci.id) || {};
-            const div = document.createElement('div');
-            div.className = 'cart-item';
-            div.innerHTML = `
-                <div class="cart-item-img" style="background:${(prod.images && prod.images[0]) || '#f5f5f5'}"></div>
-                <div class="cart-item-info">
-                    <div class="cart-item-title">${prod.name || 'Produto'}</div>
-                    <div class="cart-item-price">${formatPrice(prod.price)}</div>
-                    <div class="cart-item-qty">
-                        <button class="qty-btn" data-id="${ci.id}" data-op="-">-</button>
-                        <div>${ci.qty}</div>
-                        <button class="qty-btn" data-id="${ci.id}" data-op="+">+</button>
-                    </div>
-                    <div><a class="remove-item" href="#" data-id="${ci.id}">Remover</a></div>
-                </div>
-            `;
-            itemsBox.appendChild(div);
-        });
-        // attach qty handlers
-        qa('.qty-btn').forEach(b=> b.addEventListener('click', (e)=>{
-            const id = Number(e.currentTarget.dataset.id);
-            const op = e.currentTarget.dataset.op;
-            changeQty(id, op==='+'?1:-1);
-        }));
-        qa('.remove-item').forEach(a=> a.addEventListener('click', (e)=> { e.preventDefault(); removeFromCart(Number(e.currentTarget.dataset.id)); }));
-        const total = cart.reduce((s,i)=> {
-            const prod = products.find(p=> p.id===i.id);
-            return s + (prod ? (prod.price || 0) * i.qty : 0);
-        }, 0);
-        q('#cartTotal').textContent = formatPrice(total);
-    }
-    function addToCart(id){
-        const existing = cart.find(c=> c.id===id);
-        if(existing) existing.qty += 1;
-        else cart.push({ id, qty: 1 });
-        updateCartUI();
-        q('#cartSidebar').classList.add('active'); q('#cartOverlay').classList.add('active');
-    }
-    function removeFromCart(id){
-        cart = cart.filter(c=> c.id!==id);
-        updateCartUI();
-    }
-    function changeQty(id, delta){
-        const item = cart.find(c=> c.id===id);
-        if(!item) return;
-        item.qty += delta;
-        if(item.qty <= 0) removeFromCart(id);
-        else updateCartUI();
-    }
-    window.checkout = function(){ alert('Função de checkout simulada.'); }
 
-    // Sidebar / hamburger
-    window.toggleSidebar = function(){
-        q('#sidebarMenu').classList.toggle('active');
-        q('#sidebarOverlay').classList.toggle('active');
-        q('#hamburgerBtn').classList.toggle('active');
-    }
-
-    // Chat
-    window.toggleChat = function(){
-        q('#chatBox').classList.toggle('active');
-    }
-    window.sendMessage = function(){
-        const input = q('#chatInput');
-        const text = (input.value||'').trim();
-        if(!text) return;
-        const messages = q('#chatMessages');
-        const userMsg = document.createElement('div');
-        userMsg.className = 'chat-message user';
-        userMsg.innerHTML = `<div class="message-bubble">${text}</div>`;
-        messages.appendChild(userMsg);
-        input.value = '';
-        // bot reply (simulado)
-        setTimeout(()=> {
-            const bot = document.createElement('div');
-            bot.className = 'chat-message bot';
-            bot.innerHTML = `<div class="message-bubble">Obrigado pela mensagem! Em breve um atendente irá responder. 😊</div>`;
-            messages.appendChild(bot);
-            messages.scrollTop = messages.scrollHeight;
-        }, 700);
-    }
-
-    // User panel
-    window.openUserPanel = function(){ q('#userPanel').classList.add('active'); }
-    window.closeUserPanel = function(){ q('#userPanel').classList.remove('active'); }
-    window.switchUserTab = function(tab){
-        qa('.user-panel-tab').forEach(b=> b.classList.toggle('active', b.textContent.trim().toLowerCase() === tab));
-        qa('.user-tab-content').forEach(c=> c.classList.remove('active'));
-        q('#' + (tab==='register'?'registerTab': tab==='login'?'loginTab':'userLoggedTab')).classList.add('active');
-    }
-    window.userLogin = function(e){ e && e.preventDefault(); alert('Login simulado.'); closeUserPanel(); }
-    window.userRegister = function(e){ e && e.preventDefault(); q('#registerSuccess').classList.add('active'); setTimeout(()=> { switchUserTab('login'); }, 1200); }
-
-    // Admin panel simple toggles
-    window.openAdminPanel = function(){ q('#adminPanel').classList.add('active'); updateAdminStats(); }
-    window.closeAdminPanel = function(){ q('#adminPanel').classList.remove('active'); }
-    function updateAdminStats(){
-        q('#totalProducts').textContent = products.length;
-        const value = products.reduce((s,p)=> s + (p.price||0), 0);
-        q('#totalRevenue').textContent = formatPrice(value);
-        q('#activeProducts').textContent = products.length;
-    }
-
-    // Product modal basic functions (allow adding products)
-    window.openProductModal = function(){
-        q('#productModal').classList.add('active');
-        q('#modalTitle').textContent = 'Adicionar Produto';
-        // reset form
-        q('#productForm').reset && q('#productForm').reset();
-        q('#productImagesList').innerHTML = '';
-        q('#productId').value = '';
-    }
-    window.closeProductModal = function(){ q('#productModal').classList.remove('active'); }
-    function handleImageUpload(evt){
-        const files = Array.from(evt.target.files || []);
-        const list = q('#productImagesList');
-        files.forEach(f=>{
-            const url = URL.createObjectURL(f);
-            const item = document.createElement('div');
-            item.className = 'image-item';
-            item.innerHTML = `<div class="image-item-preview"><img src="${url}"/></div>`;
-            list.appendChild(item);
-        });
-    }
-    window.handleImageUpload = handleImageUpload;
-
-    window.toggleUrlInput = function(){ q('#imageUrlInputBox').classList.toggle('active'); }
-    window.addImageFromUrl = function(){
-        const url = q('#imageUrlField').value.trim();
-        if(!url) return alert('Cole o link da imagem.');
-        const list = q('#productImagesList');
-        const item = document.createElement('div');
-        item.className = 'image-item';
-        item.innerHTML = `<div class="image-item-preview"><img src="${url}" /></div>`;
-        list.appendChild(item);
-        q('#imageUrlField').value = '';
-        toggleUrlInput();
-    }
-    window.toggleGradientInput = function(){ q('#imageGradientInputBox').classList.toggle('active'); }
-    window.addGradientImage = function(){
-        const g = q('#gradientField').value.trim();
-        if(!g) return alert('Insira um gradiente válido.');
-        const list = q('#productImagesList');
-        const item = document.createElement('div');
-        item.className = 'image-item';
-        item.innerHTML = `<div class="image-item-preview" style="background:${g}"></div>`;
-        list.appendChild(item);
-        q('#gradientField').value = '';
-        toggleGradientInput();
-    }
-
-    // Save product from admin modal
-    window.saveProduct = function(e){
-        e && e.preventDefault();
-        const idVal = q('#productId').value;
-        const name = q('#productName').value.trim();
-        const category = q('#productCategory').value;
-        const price = parseFloat(q('#productPrice').value) || 0;
-        const oldPrice = parseFloat(q('#productOldPrice').value) || null;
-        const badge = q('#productBadge').value.trim();
-        // collect images from list (either img src or background style)
-        const imgs = qa('#productImagesList .image-item').map(it=>{
-            const img = it.querySelector('img');
-            if(img) return img.src;
-            const preview = it.querySelector('.image-item-preview');
-            const bg = preview && preview.style.background;
-            return bg || '';
-        }).filter(Boolean);
-        if(!name) return alert('Nome do produto é obrigatório.');
-        if(idVal){
-            // edit existing
-            const id = Number(idVal);
-            const idx = products.findIndex(p=> p.id===id);
-            if(idx !== -1){
-                products[idx] = { id, name, category, price, oldPrice, badge, images: imgs.length? imgs : ['linear-gradient(135deg, #ddd, #bbb)'] };
-            }
-        } else {
-            const newId = products.reduce((m,p)=> Math.max(m,p.id||0),0) + 1;
-            products.push({ id: newId, name, category, price, oldPrice, badge, images: imgs.length? imgs : ['linear-gradient(135deg, #ddd, #bbb)'] });
-        }
-        updateAdminStats();
-        filterProducts(currentFilter);
-        closeProductModal();
-    }
-
-    // Quick view (simple)
-    function openProductQuickView(p){
-        // scroll to top of product details or show simple alert for now
-        alert(p.name + '\\n' + formatPrice(p.price));
-    }
-
-    // Initialize UI events
-    function initEvents(){
-        q('#hamburgerBtn') && q('#hamburgerBtn').addEventListener('click', toggleSidebar);
-        q('#sidebarOverlay') && q('#sidebarOverlay').addEventListener('click', toggleSidebar);
-        q('#cartOverlay') && q('#cartOverlay').addEventListener('click', toggleCart);
-        // initial render
-        renderProducts(1);
-        updateCartUI();
-        updateAdminStats();
-
-        // carousel dots for hero
-        const slides = qa('.hero-slide');
-        const dotsWrap = q('#carouselDots');
-        if(slides.length && dotsWrap){
-            slides.forEach((s,i)=>{
-                const dot = document.createElement('div');
-                dot.className = 'carousel-dot' + (i===0? ' active' : '');
-                dot.addEventListener('click', ()=> {
-                    slides.forEach(sl=> sl.classList.remove('active'));
-                    dotsWrap.querySelectorAll('.carousel-dot').forEach(d=> d.classList.remove('active'));
-                    slides[i].classList.add('active');
-                    dot.classList.add('active');
-                });
-                dotsWrap.appendChild(dot);
+        function switchUserTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
+            
+            // Update tab content
+            document.querySelectorAll('.user-tab-content').forEach(content => {
+                content.classList.remove('active');
             });
-            // auto rotate
-            let idx = 0;
-            setInterval(()=> {
-                slides[idx].classList.remove('active');
-                dotsWrap.querySelectorAll('.carousel-dot')[idx].classList.remove('active');
-                idx = (idx + 1) % slides.length;
-                slides[idx].classList.add('active');
-                dotsWrap.querySelectorAll('.carousel-dot')[idx].classList.add('active');
+
+            if (tab === 'login') {
+                document.querySelectorAll('.user-panel-tab')[0].classList.add('active');
+                document.getElementById('loginTab').classList.add('active');
+            } else if (tab === 'register') {
+                document.querySelectorAll('.user-panel-tab')[1].classList.add('active');
+                document.getElementById('registerTab').classList.add('active');
+            }
+        }
+
+        function checkUserSession() {
+            const savedUser = localStorage.getItem('sejaVersatilCurrentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showLoggedInView();
+            }
+        }
+
+        function showLoggedInView() {
+            // Hide tabs
+            document.getElementById('userPanelTabs').style.display = 'none';
+            
+            // Hide login/register tabs
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerTab').classList.remove('active');
+            
+            // Show logged in view
+            document.getElementById('userLoggedTab').classList.add('active');
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            
+            // Check if admin
+            if (currentUser.isAdmin) {
+                document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+                document.getElementById('adminAccessBtn').style.display = 'block';
+                isAdminLoggedIn = true;
+            } else {
+                document.getElementById('userStatus').textContent = 'Cliente';
+                document.getElementById('adminAccessBtn').style.display = 'none';
+            }
+        }
+
+        function hideLoggedInView() {
+            document.getElementById('userPanelTabs').style.display = 'flex';
+            document.getElementById('userLoggedTab').classList.remove('active');
+            switchUserTab('login');
+        }
+
+        function userLogin(event) {
+            event.preventDefault();
+            
+            const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('loginError');
+
+            // Check if admin
+            if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
+                password === ADMIN_CREDENTIALS.password) {
+                currentUser = {
+                    name: 'Administrador',
+                    email: ADMIN_CREDENTIALS.email,
+                    isAdmin: true
+                };
+                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                showLoggedInView();
+                errorMsg.classList.remove('active');
+                return;
+            }
+
+            // Check regular users
+            const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
+            const user = users.find(u => u.email.toLowerCase() === emailOrUsername && u.password === password);
+
+            if (user) {
+                currentUser = {
+                    name: user.name,
+                    email: user.email,
+                    isAdmin: false
+                };
+                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                showLoggedInView();
+                errorMsg.classList.remove('active');
+            } else {
+                errorMsg.classList.add('active');
+            }
+        }
+
+        function userRegister(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value.toLowerCase();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const errorMsg = document.getElementById('registerError');
+            const successMsg = document.getElementById('registerSuccess');
+
+            // Clear previous messages
+            errorMsg.classList.remove('active');
+            successMsg.classList.remove('active');
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMsg.textContent = 'As senhas não coincidem';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Check if email already exists
+            const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
+            if (users.some(u => u.email === email)) {
+                errorMsg.textContent = 'Este e-mail já está cadastrado';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Check if trying to use admin email
+            if (email === ADMIN_CREDENTIALS.email) {
+                errorMsg.textContent = 'Este e-mail não pode ser usado';
+                errorMsg.classList.add('active');
+                return;
+            }
+
+            // Create new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('sejaVersatilUsers', JSON.stringify(users));
+
+            // Show success message
+            successMsg.classList.add('active');
+            
+            // Clear form
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+
+            // Switch to login after 2 seconds
+            setTimeout(() => {
+                switchUserTab('login');
+                successMsg.classList.remove('active');
+            }, 2000);
+        }
+
+        function userLogout() {
+            if (confirm('Deseja realmente sair da sua conta?')) {
+                currentUser = null;
+                isAdminLoggedIn = false;
+                localStorage.removeItem('sejaVersatilCurrentUser');
+                hideLoggedInView();
+            }
+        }
+
+        // Load products from localStorage or use defaults
+        function loadProducts() {
+            const saved = localStorage.getItem('sejaVersatilProducts');
+            if (saved) {
+                const loadedProducts = JSON.parse(saved);
+                // Update productsData array
+                productsData.length = 0;
+                productsData.push(...loadedProducts);
+            }
+        }
+
+        function saveProducts() {
+            localStorage.setItem('sejaVersatilProducts', JSON.stringify(productsData));
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('adminUsername').focus();
+        }
+
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorMsg = document.getElementById('loginError');
+
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                isAdminLoggedIn = true;
+                document.getElementById('loginModal').classList.remove('active');
+                openAdminPanel();
+                errorMsg.classList.remove('active');
+                // Clear inputs
+                document.getElementById('adminUsername').value = '';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                errorMsg.classList.add('active');
+            }
+        }
+
+        function openAdminPanel() {
+            if (!isAdminLoggedIn) {
+                alert('Você precisa estar logado como administrador para acessar esta área.');
+                openUserPanel();
+                return;
+            }
+            document.getElementById('adminPanel').classList.add('active');
+            renderAdminProducts();
+            updateAdminStats();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('active');
+            isAdminLoggedIn = false;
+        }
+
+        function switchAdminTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            if (tab === 'products') {
+                document.getElementById('productsTab').classList.add('active');
+            } else if (tab === 'settings') {
+                document.getElementById('settingsTab').classList.add('active');
+            }
+        }
+
+        function updateAdminStats() {
+            const totalProducts = productsData.length;
+            const totalValue = productsData.reduce((sum, p) => sum + p.price, 0);
+            const activeProducts = productsData.filter(p => !p.oldPrice).length;
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalRevenue').textContent = `R$ ${totalValue.toFixed(2)}`;
+            document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('activeProducts').textContent = activeProducts;
+        }
+
+        function renderAdminProducts() {
+            const grid = document.getElementById('adminProductsGrid');
+            grid.innerHTML = productsData.map(product => {
+                const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+                const firstImage = images[0];
+                const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+                
+                return `
+                <div class="admin-product-card">
+                    <div class="admin-product-image" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
+                    <div class="admin-product-info">
+                        <h4>${product.name}</h4>
+                        <p><strong>Categoria:</strong> ${product.category}</p>
+                        <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
+                        ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
+                        ${product.badge ? `<p><strong>Badge:</strong> ${product.badge}</p>` : ''}
+                        <p><strong>Imagens:</strong> ${images.length}</p>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-btn admin-btn-edit" onclick="editProduct(${product.id})">Editar</button>
+                        <button class="admin-btn admin-btn-delete" onclick="deleteProduct(${product.id})">Excluir</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function openProductModal(productId = null) {
+            editingProductId = productId;
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('modalTitle');
+
+            if (productId) {
+                // Edit mode
+                const product = productsData.find(p => p.id === productId);
+                title.textContent = 'Editar Produto';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productOldPrice').value = product.oldPrice || '';
+                document.getElementById('productBadge').value = product.badge || '';
+                tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
+            } else {
+                // Add mode
+                title.textContent = 'Adicionar Novo Produto';
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                tempProductImages = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+            }
+
+            renderProductImages();
+            modal.classList.add('active');
+        }
+
+        function renderProductImages() {
+            const container = document.getElementById('productImagesList');
+            if (!container) return;
+            
+            container.innerHTML = tempProductImages.map((img, index) => {
+                const isImage = img.startsWith('data:image') || img.startsWith('http');
+                return `
+                <div class="image-item">
+                    <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}">
+                        ${isImage ? `<img src="${img}" alt="Produto">` : ''}
+                    </div>
+                    <button type="button" class="image-item-remove" onclick="removeProductImage(${index})">×</button>
+                </div>
+            `}).join('');
+        }
+
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, selecione apenas arquivos de imagem!');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempProductImages.push(e.target.result);
+                    renderProductImages();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Reset input
+            event.target.value = '';
+        }
+
+        function toggleImageInput() {
+            const input = document.getElementById('imageUrlInput');
+            if (input) {
+                input.classList.toggle('active');
+                if (input.classList.contains('active')) {
+                    const urlInput = document.getElementById('newImageUrl');
+                    if (urlInput) urlInput.focus();
+                } else {
+                    const urlInput = document.getElementById('newImageUrl');
+                    if (urlInput) urlInput.value = '';
+                }
+            }
+        }
+
+        function addGradientImage() {
+            const urlInput = document.getElementById('newImageUrl');
+            if (!urlInput) return;
+            
+            const gradient = urlInput.value.trim();
+            if (gradient) {
+                tempProductImages.push(gradient);
+                renderProductImages();
+                urlInput.value = '';
+                toggleImageInput();
+            } else {
+                alert('Digite um gradiente CSS válido!');
+            }
+        }
+
+        function removeProductImage(index) {
+            if (tempProductImages.length > 1) {
+                tempProductImages.splice(index, 1);
+                renderProductImages();
+            } else {
+                alert('O produto precisa ter pelo menos 1 imagem!');
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            editingProductId = null;
+        }
+
+        function editProduct(productId) {
+            openProductModal(productId);
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                const index = productsData.findIndex(p => p.id === productId);
+                if (index !== -1) {
+                    productsData.splice(index, 1);
+                    saveProducts();
+                    renderAdminProducts();
+                    renderProducts();
+                    updateAdminStats();
+                    alert('Produto excluído com sucesso!');
+                }
+            }
+        }
+
+        
+function saveProduct(event) {
+    event.preventDefault();
+
+    const productId = document.getElementById('productId').value;
+    const name = document.getElementById('productName').value;
+    const category = document.getElementById('productCategory').value;
+    const price = parseFloat(document.getElementById('productPrice').value) || 0;
+    const oldPrice = document.getElementById('productOldPrice') && document.getElementById('productOldPrice').value
+        ? parseFloat(document.getElementById('productOldPrice').value) : null;
+    const badge = document.getElementById('productBadge') ? document.getElementById('productBadge').value || null : null;
+
+    const images = (typeof tempProductImages !== 'undefined' && tempProductImages && tempProductImages.length)
+        ? [...tempProductImages]
+        : (document.getElementById('productImage') ? [document.getElementById('productImage').value] : []);
+
+    if (productId) {
+        const product = productsData.find(p => p.id === parseInt(productId));
+        if (product) {
+            product.name = name;
+            product.category = category;
+            product.price = price;
+            product.oldPrice = oldPrice;
+            product.badge = badge;
+            product.images = images;
+        }
+    } else {
+        const ids = productsData.length ? productsData.map(p => p.id) : [0];
+        const maxId = Math.max(...ids);
+        const newId = maxId + 1;
+
+        productsData.push({
+            id: newId,
+            name,
+            category,
+            price,
+            oldPrice,
+            badge,
+            images
+        });
+    }
+
+    saveProducts();
+    closeProductModal();
+    renderAdminProducts();
+    renderProducts();
+    updateAdminStats();
+    alert('Produto salvo com sucesso!');
+}
+} else {
+                // Add new product
+                const newId = Math.max(...productsData.map(p => p.id)) + 1;
+                productsData.push({
+                    id: newId,
+                    name,
+                    category,
+                    price,
+                    oldPrice,
+                    badge,
+                    image
+                });
+            }
+
+            saveProducts();
+            closeProductModal();
+            renderAdminProducts();
+            renderProducts();
+            updateAdminStats();
+            alert('Produto salvo com sucesso!');
+        }
+
+        function saveSettings() {
+            const bannerTitle = document.getElementById('settingBannerTitle').value;
+            const bannerSubtitle = document.getElementById('settingBannerSubtitle').value;
+            const topBanner = document.getElementById('settingTopBanner').value;
+
+            // Update hero section
+            document.querySelector('.hero h1').textContent = bannerTitle;
+            document.querySelector('.hero-subtitle').textContent = bannerSubtitle;
+            document.querySelector('.top-banner').textContent = topBanner;
+
+            // Save to localStorage
+            localStorage.setItem('sejaVersatilSettings', JSON.stringify({
+                bannerTitle,
+                bannerSubtitle,
+                topBanner
+            }));
+
+            alert('Configurações salvas com sucesso!');
+        }
+
+        // Load settings on page load
+        function loadSettings() {
+            const saved = localStorage.getItem('sejaVersatilSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.querySelector('.hero h1').textContent = settings.bannerTitle;
+                document.querySelector('.hero-subtitle').textContent = settings.bannerSubtitle;
+                document.querySelector('.top-banner').textContent = settings.topBanner;
+
+                document.getElementById('settingBannerTitle').value = settings.bannerTitle;
+                document.getElementById('settingBannerSubtitle').value = settings.bannerSubtitle;
+                document.getElementById('settingTopBanner').value = settings.topBanner;
+            }
+        }
+
+        // Call loadSettings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+
+        // Sidebar Menu
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('hamburgerBtn');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            btn.classList.toggle('active');
+        }
+
+        // Hero Carousel
+        let currentSlide = 0;
+        let carouselInterval;
+
+        function initCarousel() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dotsContainer = document.getElementById('carouselDots');
+            
+            // Create dots
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+            
+            // Start auto-play
+            startCarousel();
+        }
+
+        function startCarousel() {
+            carouselInterval = setInterval(() => {
+                nextSlide();
             }, 5000);
         }
+
+        function stopCarousel() {
+            clearInterval(carouselInterval);
+        }
+
+        function nextSlide() {
+            const slides = document.querySelectorAll('.hero-slide');
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateCarousel();
+        }
+
+        function goToSlide(index) {
+            stopCarousel();
+            currentSlide = index;
+            updateCarousel();
+            startCarousel();
+        }
+
+        function updateCarousel() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // Chat Widget
+        function toggleChat() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.classList.toggle('active');
+            
+            if (chatBox.classList.contains('active')) {
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const responses = [
+                    'Obrigado pela sua mensagem! Como posso ajudar com seus produtos fitness?',
+                    'Estou aqui para ajudar! Temos ótimas promoções hoje. O que você procura?',
+                    'Que legal! Temos leggings, tops e conjuntos incríveis. Quer que eu mostre?',
+                    'Posso te ajudar a encontrar o tamanho ideal! Qual peça te interessou?',
+                    'Nossa equipe está disponível para atendimento personalizado. Em que posso ajudar?'
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                addChatMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function addChatMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+            
+            messageDiv.appendChild(bubble);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Filter Products
+        
+function filterProducts(category, clickedElement = null) {
+    currentFilter = category;
+    currentPage = 1;
+
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+    if (clickedElement) {
+        clickedElement.classList.add('active');
+    } else {
+        const possible = Array.from(document.querySelectorAll('.filter-btn')).find(btn => {
+            const onclick = btn.getAttribute('onclick') || '';
+            return onclick.includes(`filterProducts('${category}')`) || onclick.includes(`filterProducts("${category}")`);
+        });
+        if (possible) possible.classList.add('active');
     }
 
-    // Expose a few functions for HTML inline handlers that expect them
-    window.saveSettings = function(){ alert('Configurações salvas (simulado).'); }
-    window.adminLogin = function(){ q('#loginModal').classList.add('active'); }
+    renderProducts();
+}
+);
+            event.target.classList.add('active');
+            
+            renderProducts();
+        }
 
-    // hookup image upload input (if present)
-    const uploadInput = q('.image-add-btn input[type=file]');
-    if(uploadInput) uploadInput.addEventListener('change', handleImageUpload);
+        // Sort Products
+        function sortProducts(sortType) {
+            currentSort = sortType;
+            renderProducts();
+        }
 
-    // run init
-    document.addEventListener('DOMContentLoaded', initEvents);
-})();
+        // Get Filtered Products
+        function getFilteredProducts() {
+            let filtered = productsData;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'sale') {
+                    filtered = filtered.filter(p => p.oldPrice !== null);
+                } else {
+                    filtered = filtered.filter(p => p.category === currentFilter);
+                }
+            }
+            
+            // Apply sorting
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+            
+            return filtered;
+        }
+
+        // Render Products
+        function renderProducts() {
+            const filtered = getFilteredProducts();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedProducts = filtered.slice(start, end);
+            
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = paginatedProducts.map(product => {
+                const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+                const hasMultipleImages = images.length > 1;
+                
+                return `
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="product-image-carousel">
+                            ${images.map((img, index) => {
+                                const isRealImage = img.startsWith('data:image') || img.startsWith('http');
+                                return `
+                                    <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="${isRealImage ? `background-image: url(${img}); background-size: cover; background-position: center;` : `background: ${img}`}"></div>
+                                `;
+                            }).join('')}
+                        </div>
+                        ${hasMultipleImages ? `
+                            <div class="product-carousel-arrows">
+                                <button class="product-carousel-arrow" onclick="prevProductImage(${product.id}, event)">‹</button>
+                                <button class="product-carousel-arrow" onclick="nextProductImage(${product.id}, event)">›</button>
+                            </div>
+                            <div class="product-carousel-dots">
+                                ${images.map((_, index) => `
+                                    <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToProductImage(${product.id}, ${index}, event)"></div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Adicionar ao Carrinho</button>
+                    </div>
+                    <div class="product-info">
+                        <h4>${product.name}</h4>
+                        <div class="product-price">
+                            ${product.oldPrice ? `<span class="price-old">R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                            <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+            
+            renderPagination(totalPages);
+        }
+
+        // Product Image Carousel Functions
+        function nextProductImage(productId, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+            
+            slides[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            
+            currentIndex = (currentIndex + 1) % slides.length;
+            
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function prevProductImage(productId, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+            
+            slides[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function goToProductImage(productId, index, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+        }
+
+        // Render Pagination
+        function renderPagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                html += `<button class="page-btn" onclick="changePage(${currentPage - 1})">‹</button>`;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="page-btn" style="border: none; cursor: default;">...</span>`;
+                }
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                html += `<button class="page-btn" onclick="changePage(${currentPage + 1})">›</button>`;
+            }
+            
+            pagination.innerHTML = html;
+        }
+
+        // Change Page
+        function changePage(page) {
+            currentPage = page;
+            renderProducts();
+            document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = productsData.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            
+            // Show feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Adicionado!';
+            btn.style.background = 'rgba(76, 175, 80, 0.9)';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'rgba(0,0,0,0.8)';
+            }, 1500);
+        }
+
+        // Update Cart UI
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
+                cartFooter.style.display = 'none';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-img" style="background: ${item.image}"></div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                            <div class="remove-item" onclick="removeFromCart(${item.id})">Remover</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartTotal.textContent = `R$ ${total.toFixed(2)}`;
+                cartFooter.style.display = 'block';
+            }
+        }
+
+        // Update Quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            updateCartUI();
+        }
+
+        // Toggle Cart
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Save Cart to LocalStorage
+        function saveCart() {
+            const cartData = cart.map(item => ({
+                id: item.id,
+                quantity: item.quantity
+            }));
+            localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        }
+
+        // Load Cart from LocalStorage
+        function loadCart() {
+            const saved = localStorage.getItem('sejaVersatilCart');
+            if (saved) {
+                const cartData = JSON.parse(saved);
+                cart = cartData.map(item => {
+                    const product = productsData.find(p => p.id === item.id);
+                    return { ...product, quantity: item.quantity };
+                }).filter(item => item.name);
+            }
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) return;
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            alert(`Finalizando compra!\n\nTotal: R$ ${total.toFixed(2)}\n\nEm breve você será redirecionado para o pagamento.`);
+        }
+
+        // Search Functions
+        function openSearch() {
+            const modal = document.getElementById('searchModal');
+            modal.classList.add('active');
+            document.getElementById('searchInput').focus();
+        }
+
+        function closeSearch() {
+            const modal = document.getElementById('searchModal');
+            modal.classList.remove('active');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        // Close search when clicking outside
+        document.getElementById('searchModal').addEventListener('click', (e) => {
+            if (e.target.id === 'searchModal') {
+                closeSearch();
+            }
+        });
+
+        // Perform Search
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const results = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                results.innerHTML = '';
+                return;
+            }
+            
+            const filtered = productsData.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query)
+            );
+            
+            if (filtered.length === 0) {
+                results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #999;">Nenhum produto encontrado</div>';
+                return;
+            }
+            
+            results.innerHTML = filtered.map(product => `
+                <div class="search-result-item" onclick="selectSearchResult(${product.id})">
+                    <div class="search-result-img" style="background: ${product.image}"></div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.3rem;">${product.name}</div>
+                        <div style="color: var(--primary); font-weight: 700;">R$ ${product.price.toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectSearchResult(productId) {
+            addToCart(productId);
+            closeSearch();
+            toggleCart();
+        }
+
+        // Close modals with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSearch();
+                if (document.getElementById('cartSidebar').classList.contains('active')) {
+                    toggleCart();
+                }
+            }
+        });
+    
+function toggleUrlInput() {
+    const box = document.getElementById('imageUrlInputBox');
+    if (!box) return;
+    const gradBox = document.getElementById('imageGradientInputBox');
+    if (gradBox) gradBox.style.display = 'none';
+    box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    if (box.style.display === 'block') {
+        const field = document.getElementById('imageUrlField');
+        if (field) field.focus();
+    } else {
+        const field = document.getElementById('imageUrlField');
+        if (field) field.value = '';
+    }
+}
+
+function toggleGradientInput() {
+    const box = document.getElementById('imageGradientInputBox');
+    if (!box) return;
+    const urlBox = document.getElementById('imageUrlInputBox');
+    if (urlBox) urlBox.style.display = 'none';
+    box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    if (box.style.display === 'block') {
+        const field = document.getElementById('gradientField');
+        if (field) field.focus();
+    } else {
+        const field = document.getElementById('gradientField');
+        if (field) field.value = '';
+    }
+}
+
+function addImageFromUrl() {
+    const field = document.getElementById('imageUrlField');
+    if (!field) return alert('Campo de URL não encontrado.');
+    const url = field.value.trim();
+    if (!url) return alert('Cole o link da imagem antes de adicionar.');
+    if (!/^https?:\/\//i.test(url)) return alert('Cole uma URL válida (começando com http ou https).');
+    if (typeof tempProductImages === 'undefined' || !Array.isArray(tempProductImages)) tempProductImages = [];
+    tempProductImages.push(url);
+    renderProductImages();
+    field.value = '';
+    const box = document.getElementById('imageUrlInputBox');
+    if (box) box.style.display = 'none';
+}
+
+function addGradientImage() {
+    const field = document.getElementById('gradientField') || document.getElementById('newImageUrl');
+    if (!field) return alert('Campo de gradiente não encontrado.');
+    const gradient = field.value.trim();
+    if (!gradient) return alert('Digite um gradiente CSS válido!');
+    if (typeof tempProductImages === 'undefined' || !Array.isArray(tempProductImages)) tempProductImages = [];
+    tempProductImages.push(gradient);
+    renderProductImages();
+    field.value = '';
+    const box = document.getElementById('imageGradientInputBox');
+    if (box) box.style.display = 'none';
+}
 </script>
-</body>
+<script>
+/* ---------- ADMIN PRODUCT EDITING & IMAGE MANAGEMENT (OVERWRITE/ADD) ---------- */
+let tempProductImages = [];
+
+function openProductModal(productId = null) {
+    const modal = document.getElementById('productModal');
+    const title = document.getElementById('modalTitle');
+    const form = document.getElementById('productForm');
+    try { form.reset(); } catch(e){}
+    document.getElementById('productId').value = '';
+
+    tempProductImages = [];
+
+    if (productId) {
+        title.textContent = 'Editar Produto';
+        const product = productsData.find(p => p.id === productId || p.id === parseInt(productId));
+        if (product) {
+            document.getElementById('productName').value = product.name || '';
+            document.getElementById('productCategory').value = product.category || '';
+            document.getElementById('productPrice').value = (product.price !== undefined) ? product.price : '';
+            document.getElementById('productOldPrice').value = (product.oldPrice !== undefined && product.oldPrice !== null) ? product.oldPrice : '';
+            document.getElementById('productBadge').value = product.badge || '';
+            document.getElementById('productId').value = product.id;
+            tempProductImages = (Array.isArray(product.images) ? [...product.images] : (product.image ? [product.image] : []));
+        }
+    } else {
+        title.textContent = 'Adicionar Produto';
+    }
+
+    renderProductImages();
+    modal.classList.add('active');
+    setTimeout(()=> {
+        const el = document.getElementById('productName');
+        if (el) el.focus();
+    },100);
+}
+
+function closeProductModal() {
+    const modal = document.getElementById('productModal');
+    modal.classList.remove('active');
+    tempProductImages = [];
+    renderProductImages();
+}
+
+function renderProductImages() {
+    const container = document.getElementById('productImagesList');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!Array.isArray(tempProductImages)) tempProductImages = [];
+
+    if (tempProductImages.length === 0) {
+        container.innerHTML = '<div style="padding:1rem;color:#666;">Nenhuma imagem adicionada. Use upload, cole um link ou adicione um gradiente.</div>';
+        return;
+    }
+
+    tempProductImages.forEach((img, idx) => {
+        const item = document.createElement('div');
+        item.className = 'image-item';
+        item.style.position = 'relative';
+
+        const preview = document.createElement('div');
+        preview.className = 'image-item-preview';
+
+        if (typeof img === 'string' && img.trim().startsWith('linear-gradient')) {
+            preview.style.background = img;
+        } else {
+            preview.style.backgroundImage = `url('${img}')`;
+            preview.style.backgroundSize = 'cover';
+            preview.style.backgroundPosition = 'center';
+        }
+        preview.style.width = '100%';
+        preview.style.height = '100%';
+        preview.style.display = 'block';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'image-item-remove';
+        removeBtn.title = 'Remover imagem';
+        removeBtn.innerHTML = '×';
+        removeBtn.style.position = 'absolute';
+        removeBtn.style.top = '6px';
+        removeBtn.style.right = '6px';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteImageAtIndex(idx);
+        };
+
+        item.appendChild(preview);
+        item.appendChild(removeBtn);
+
+        preview.onclick = () => {
+            if (typeof tempProductImages[idx] === 'string' && /^https?:\/\//i.test(tempProductImages[idx])) {
+                window.open(tempProductImages[idx], '_blank');
+            }
+        };
+
+        container.appendChild(item);
+    });
+}
+
+function handleImageUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    for (let i=0;i<files.length;i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            tempProductImages.push(e.target.result);
+            renderProductImages();
+        };
+        reader.readAsDataURL(file);
+    }
+    event.target.value = '';
+}
+
+function addImageFromUrl() {
+    const field = document.getElementById('imageUrlField');
+    if (!field) return alert('Campo de URL não encontrado.');
+    const url = field.value.trim();
+    if (!url) return alert('Cole o link da imagem antes de adicionar.');
+    if (!/^https?:\/\//i.test(url)) return alert('Cole uma URL válida (começando com http ou https).');
+    tempProductImages.push(url);
+    field.value = '';
+    renderProductImages();
+}
+
+function addGradientImage() {
+    const field = document.getElementById('gradientField');
+    if (!field) return alert('Campo de gradiente não encontrado.');
+    const gradient = field.value.trim();
+    if (!gradient) return alert('Digite um gradiente CSS válido!');
+    tempProductImages.push(gradient);
+    field.value = '';
+    renderProductImages();
+}
+
+function deleteImageAtIndex(index) {
+    if (!Array.isArray(tempProductImages)) return;
+    tempProductImages.splice(index,1);
+    renderProductImages();
+}
+
+function saveProduct(event) {
+    if (event && event.preventDefault) event.preventDefault();
+
+    const productId = document.getElementById('productId').value;
+    const name = document.getElementById('productName').value.trim();
+    const category = document.getElementById('productCategory').value;
+    const priceRaw = document.getElementById('productPrice').value;
+    const price = priceRaw !== '' ? parseFloat(priceRaw) : 0;
+    const oldPriceRaw = document.getElementById('productOldPrice').value;
+    const oldPrice = oldPriceRaw !== '' ? parseFloat(oldPriceRaw) : null;
+    const badge = document.getElementById('productBadge').value.trim() || null;
+
+    if (!name) return alert('Preencha o nome do produto.');
+
+    const images = Array.isArray(tempProductImages) ? [...tempProductImages] : [];
+
+    if (productId) {
+        const idx = productsData.findIndex(p => p.id === parseInt(productId));
+        if (idx > -1) {
+            productsData[idx].name = name;
+            productsData[idx].category = category;
+            productsData[idx].price = price;
+            productsData[idx].oldPrice = oldPrice;
+            productsData[idx].badge = badge;
+            productsData[idx].images = images;
+        } else {
+            alert('Produto não encontrado para edição.');
+            return;
+        }
+    } else {
+        const ids = productsData.length ? productsData.map(p => p.id) : [0];
+        const maxId = Math.max(...ids);
+        const newId = maxId + 1;
+        productsData.push({
+            id: newId,
+            name,
+            category,
+            price,
+            oldPrice,
+            badge,
+            images
+        });
+        document.getElementById('productId').value = newId;
+    }
+
+    try {
+        localStorage.setItem('productsData', JSON.stringify(productsData));
+    } catch (e) {
+        console.warn('Erro ao salvar no localStorage:', e);
+    }
+
+    closeProductModal();
+    if (typeof renderAdminProducts === 'function') renderAdminProducts();
+    if (typeof renderProducts === 'function') renderProducts();
+    if (typeof updateAdminStats === 'function') updateAdminStats();
+
+    alert('Produto salvo com sucesso!');
+}
+
+function renderAdminProducts() {
+    const grid = document.getElementById('adminProductsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    productsData.forEach(prod => {
+        const card = document.createElement('div');
+        card.className = 'admin-product-card';
+
+        const img = document.createElement('div');
+        img.className = 'admin-product-image';
+        img.style.height = '180px';
+        img.style.background = prod.images && prod.images[0] ? (prod.images[0].startsWith('linear-gradient') ? prod.images[0] : `url('${prod.images[0]}') center/cover no-repeat`) : '#f0f0f0';
+        img.style.marginBottom = '1rem';
+
+        const info = document.createElement('div');
+        info.className = 'admin-product-info';
+        info.innerHTML = `<h4>${prod.name}</h4><p>Categoria: ${prod.category || ''} • Preço: R$ ${prod.price != null ? prod.price.toFixed(2) : '0.00'}</p>`;
+
+        const actions = document.createElement('div');
+        actions.className = 'admin-actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'admin-btn admin-btn-edit';
+        editBtn.textContent = 'Editar';
+        editBtn.onclick = () => openProductModal(prod.id);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'admin-btn admin-btn-delete';
+        delBtn.textContent = 'Remover';
+        delBtn.onclick = () => {
+            if (!confirm('Remover este produto?')) return;
+            const idx = productsData.findIndex(p => p.id === prod.id);
+            if (idx > -1) {
+                productsData.splice(idx,1);
+                localStorage.setItem('productsData', JSON.stringify(productsData));
+                renderAdminProducts();
+                if (typeof renderProducts === 'function') renderProducts();
+                if (typeof updateAdminStats === 'function') updateAdminStats();
+            }
+        };
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        card.appendChild(img);
+        card.appendChild(info);
+        card.appendChild(actions);
+
+        grid.appendChild(card);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const saved = localStorage.getItem('productsData');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length) {
+                if (Array.isArray(productsData)) {
+                    productsData.length = 0;
+                    parsed.forEach(p => productsData.push(p));
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Erro ao carregar productsData do localStorage', e);
+    }
+
+    if (typeof renderAdminProducts === 'function') renderAdminProducts();
+    if (typeof renderProducts === 'function') renderProducts();
+    if (typeof updateAdminStats === 'function') updateAdminStats();
+});
+/* ---------- END ADMIN SCRIPT ---------- */
+</script></body>
 </html>
