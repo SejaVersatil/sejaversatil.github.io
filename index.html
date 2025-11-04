@@ -2486,27 +2486,40 @@
                     
                     <div class="image-upload-options">
                         <button type="button" class="image-add-btn">
-                            📁 Upload de Imagem
+                            📁 Upload Local
                             <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
                         </button>
-                        <button type="button" class="image-add-btn" onclick="toggleImageInput()" style="border-style: dashed;">
-                            🎨 Usar Gradiente
+                        <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">
+                            🔗 URL de Imagem
+                        </button>
+                        <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">
+                            🎨 Gradiente CSS
                         </button>
                     </div>
                     
-                    <div class="image-url-input" id="imageUrlInput">
-                        <input type="text" id="newImageUrl" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                    <!-- URL Input -->
+                    <div class="image-url-input" id="imageUrlInputBox">
+                        <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
+                        <div class="image-url-actions">
+                            <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
+                            <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Gradient Input -->
+                    <div class="image-url-input" id="imageGradientInputBox">
+                        <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
                         <div class="image-url-actions">
                             <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
-                            <button type="button" onclick="toggleImageInput()" style="background: var(--gray);">Cancelar</button>
+                            <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
                         </div>
                     </div>
                     
                     <div class="image-helper">
-                        💡 <strong>Dicas:</strong><br>
-                        • Faça upload de fotos reais dos produtos (JPG, PNG)<br>
-                        • Ou use gradientes CSS para um visual moderno<br>
-                        • Primeira imagem será a principal do produto
+                        💡 <strong>Como adicionar imagens:</strong><br>
+                        • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
+                        • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente) - <a href="https://imgur.com/upload" target="_blank" style="color: var(--secondary); text-decoration: underline;">Ir para Imgur</a><br>
+                        • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
                     </div>
                 </div>
                 
