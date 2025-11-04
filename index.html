@@ -550,6 +550,85 @@
             overflow: hidden;
         }
 
+        .product-image-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-image-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .product-image-slide.active {
+            opacity: 1;
+        }
+
+        .product-carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .product-carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-carousel-dot.active {
+            background: white;
+            width: 20px;
+            border-radius: 3px;
+        }
+
+        .product-carousel-arrows {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .product-card:hover .product-carousel-arrows {
+            opacity: 1;
+        }
+
+        .product-carousel-arrow {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .product-carousel-arrow:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
         .product-badge {
             position: absolute;
             top: 0.8rem;
@@ -1452,22 +1531,125 @@
         }
 
         .admin-access-link {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: rgba(0,0,0,0.05);
-            color: rgba(0,0,0,0.3);
-            padding: 0.3rem 0.6rem;
-            font-size: 0.7rem;
-            cursor: pointer;
-            z-index: 1999;
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s;
+            display: none;
         }
 
         .admin-access-link:hover {
-            background: rgba(0,0,0,0.1);
-            color: rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        /* Image Manager */
+        .image-manager {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 2px dashed var(--gray);
+            background: var(--gray-light);
+        }
+
+        .image-manager-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .image-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .image-item {
+            position: relative;
+            aspect-ratio: 3/4;
+            border: 2px solid var(--gray);
+            background: white;
+        }
+
+        .image-item-preview {
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-item-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-item-remove:hover {
+            background: #c0392b;
+        }
+
+        .image-add-btn {
+            padding: 0.8rem;
+            background: white;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .image-add-btn:hover {
+            background: var(--gray-light);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .image-url-input {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .image-url-input.active {
+            display: block;
+        }
+
+        .image-url-input input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .image-url-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .image-url-actions button {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .image-helper {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.5rem;
+            line-height: 1.6;
         }
 
         /* User Panel */
@@ -2075,9 +2257,6 @@
         </div>
     </div>
 
-    <!-- Admin Access Link (discreto) -->
-    <div class="admin-access-link" onclick="openUserPanel(); switchUserTab('login')">Admin</div>
-
     <!-- User Panel (Login/Cadastro) -->
     <div class="user-panel" id="userPanel">
         <div class="user-panel-content">
@@ -2274,13 +2453,24 @@
                     <label>Badge - Opcional</label>
                     <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
                 </div>
-                <div class="admin-form-group">
-                    <label>Cor/Gradiente (CSS) *</label>
-                    <input type="text" id="productImage" value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" required>
-                    <small style="font-size: 0.75rem; color: #666; display: block; margin-top: 0.5rem;">
-                        Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
-                    </small>
+                
+                <!-- Image Manager -->
+                <div class="image-manager">
+                    <div class="image-manager-title">Imagens do Produto</div>
+                    <div class="image-list" id="productImagesList"></div>
+                    <button type="button" class="image-add-btn" onclick="toggleImageInput()">+ Adicionar Imagem</button>
+                    <div class="image-url-input" id="imageUrlInput">
+                        <input type="text" id="newImageUrl" placeholder="Cole a URL da imagem ou use um gradiente CSS">
+                        <div class="image-url-actions">
+                            <button type="button" onclick="addProductImage()" style="background: var(--primary); color: white;">Adicionar</button>
+                            <button type="button" onclick="toggleImageInput()" style="background: var(--gray);">Cancelar</button>
+                        </div>
+                    </div>
+                    <div class="image-helper">
+                        💡 <strong>Dica:</strong> Você pode usar URLs de imagens (ex: https://exemplo.com/foto.jpg) ou gradientes CSS (ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%))
+                    </div>
                 </div>
+                
                 <input type="hidden" id="productId">
                 <div class="admin-form-actions">
                     <button type="submit" class="admin-btn-save">Salvar Produto</button>
@@ -2293,22 +2483,22 @@
     <script>
         // Products Database
         const productsData = [
-            { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', image: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-            { id: 2, name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', image: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-            { id: 3, name: 'Conjunto Ribbed Marsala', category: 'conjuntos', price: 209.90, oldPrice: 299.90, badge: '-30%', image: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-            { id: 4, name: 'Shorts Bike Seamless', category: 'leggings', price: 79.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
-            { id: 5, name: 'Legging Scrunch Bum', category: 'leggings', price: 169.90, oldPrice: null, badge: 'Novo', image: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
-            { id: 6, name: 'Top Cropped Strappy', category: 'tops', price: 79.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)' },
-            { id: 7, name: 'Macaquinho Fitness Premium', category: 'conjuntos', price: 149.90, oldPrice: 199.90, badge: '-25%', image: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
-            { id: 8, name: 'Jaqueta Oversized', category: 'conjuntos', price: 189.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)' },
-            { id: 9, name: 'Legging Metallic Rose', category: 'leggings', price: 159.90, oldPrice: null, badge: 'Novo', image: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' },
-            { id: 10, name: 'Top Push Up Ribbed', category: 'tops', price: 99.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)' },
-            { id: 11, name: 'Conjunto Seamless Pro', category: 'conjuntos', price: 229.90, oldPrice: 279.90, badge: '-20%', image: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)' },
-            { id: 12, name: 'Legging Cintura Alta Preta', category: 'leggings', price: 139.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #434343 0%, #000000 100%)' },
-            { id: 13, name: 'Top Regata Fitness', category: 'tops', price: 69.90, oldPrice: 89.90, badge: '-22%', image: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-            { id: 14, name: 'Conjunto Power Mesh', category: 'conjuntos', price: 249.90, oldPrice: null, badge: 'Lançamento', image: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-            { id: 15, name: 'Legging Tie Dye', category: 'leggings', price: 159.90, oldPrice: 199.90, badge: '-20%', image: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-            { id: 16, name: 'Top Básico Essential', category: 'tops', price: 59.90, oldPrice: null, badge: null, image: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' }
+            { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
+            { id: 2, name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
+            { id: 3, name: 'Conjunto Ribbed Marsala', category: 'conjuntos', price: 209.90, oldPrice: 299.90, badge: '-30%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)'] },
+            { id: 4, name: 'Shorts Bike Seamless', category: 'leggings', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] },
+            { id: 5, name: 'Legging Scrunch Bum', category: 'leggings', price: 169.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #fa709a 0%, #fee140 100%)'] },
+            { id: 6, name: 'Top Cropped Strappy', category: 'tops', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #30cfd0 0%, #330867 100%)'] },
+            { id: 7, name: 'Macaquinho Fitness Premium', category: 'conjuntos', price: 149.90, oldPrice: 199.90, badge: '-25%', images: ['linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'] },
+            { id: 8, name: 'Jaqueta Oversized', category: 'conjuntos', price: 189.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'] },
+            { id: 9, name: 'Legging Metallic Rose', category: 'leggings', price: 159.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'] },
+            { id: 10, name: 'Top Push Up Ribbed', category: 'tops', price: 99.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'] },
+            { id: 11, name: 'Conjunto Seamless Pro', category: 'conjuntos', price: 229.90, oldPrice: 279.90, badge: '-20%', images: ['linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'] },
+            { id: 12, name: 'Legging Cintura Alta Preta', category: 'leggings', price: 139.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #434343 0%, #000000 100%)'] },
+            { id: 13, name: 'Top Regata Fitness', category: 'tops', price: 69.90, oldPrice: 89.90, badge: '-22%', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'] },
+            { id: 14, name: 'Conjunto Power Mesh', category: 'conjuntos', price: 249.90, oldPrice: null, badge: 'Lançamento', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
+            { id: 15, name: 'Legging Tie Dye', category: 'leggings', price: 159.90, oldPrice: 199.90, badge: '-20%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'] },
+            { id: 16, name: 'Top Básico Essential', category: 'tops', price: 59.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] }
         ];
 
         let cart = [];
@@ -2316,6 +2506,7 @@
         let currentSort = '';
         let currentPage = 1;
         const itemsPerPage = 12;
+        let tempProductImages = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -2597,22 +2788,25 @@
 
         function renderAdminProducts() {
             const grid = document.getElementById('adminProductsGrid');
-            grid.innerHTML = productsData.map(product => `
+            grid.innerHTML = productsData.map(product => {
+                const images = product.images || [product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+                return `
                 <div class="admin-product-card">
-                    <div class="admin-product-image" style="background: ${product.image}"></div>
+                    <div class="admin-product-image" style="background: ${images[0]}"></div>
                     <div class="admin-product-info">
                         <h4>${product.name}</h4>
                         <p><strong>Categoria:</strong> ${product.category}</p>
                         <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
                         ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
                         ${product.badge ? `<p><strong>Badge:</strong> ${product.badge}</p>` : ''}
+                        <p><strong>Imagens:</strong> ${images.length}</p>
                     </div>
                     <div class="admin-actions">
                         <button class="admin-btn admin-btn-edit" onclick="editProduct(${product.id})">Editar</button>
                         <button class="admin-btn admin-btn-delete" onclick="deleteProduct(${product.id})">Excluir</button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function openProductModal(productId = null) {
@@ -2630,16 +2824,56 @@
                 document.getElementById('productPrice').value = product.price;
                 document.getElementById('productOldPrice').value = product.oldPrice || '';
                 document.getElementById('productBadge').value = product.badge || '';
-                document.getElementById('productImage').value = product.image;
+                tempProductImages = [...(product.images || [product.image] || [])];
             } else {
                 // Add mode
                 title.textContent = 'Adicionar Novo Produto';
                 document.getElementById('productForm').reset();
                 document.getElementById('productId').value = '';
-                document.getElementById('productImage').value = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                tempProductImages = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
             }
 
+            renderProductImages();
             modal.classList.add('active');
+        }
+
+        function renderProductImages() {
+            const container = document.getElementById('productImagesList');
+            container.innerHTML = tempProductImages.map((img, index) => `
+                <div class="image-item">
+                    <div class="image-item-preview" style="background: ${img}"></div>
+                    <button type="button" class="image-item-remove" onclick="removeProductImage(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function toggleImageInput() {
+            const input = document.getElementById('imageUrlInput');
+            input.classList.toggle('active');
+            if (input.classList.contains('active')) {
+                document.getElementById('newImageUrl').focus();
+            } else {
+                document.getElementById('newImageUrl').value = '';
+            }
+        }
+
+        function addProductImage() {
+            const url = document.getElementById('newImageUrl').value.trim();
+            if (url) {
+                tempProductImages.push(url);
+                renderProductImages();
+                document.getElementById('newImageUrl').value = '';
+                toggleImageInput();
+            }
+        }
+
+        function removeProductImage(index) {
+            if (tempProductImages.length > 1) {
+                tempProductImages.splice(index, 1);
+                renderProductImages();
+            } else {
+                alert('O produto precisa ter pelo menos 1 imagem!');
+            }
         }
 
         function closeProductModal() {
@@ -2920,9 +3154,29 @@
             const paginatedProducts = filtered.slice(start, end);
             
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = paginatedProducts.map(product => `
+            grid.innerHTML = paginatedProducts.map(product => {
+                const images = product.images || [product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+                const hasMultipleImages = images.length > 1;
+                
+                return `
                 <div class="product-card">
-                    <div class="product-image" style="background: ${product.image}">
+                    <div class="product-image">
+                        <div class="product-image-carousel">
+                            ${images.map((img, index) => `
+                                <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="background: ${img}"></div>
+                            `).join('')}
+                        </div>
+                        ${hasMultipleImages ? `
+                            <div class="product-carousel-arrows">
+                                <button class="product-carousel-arrow" onclick="prevProductImage(${product.id}, event)">‹</button>
+                                <button class="product-carousel-arrow" onclick="nextProductImage(${product.id}, event)">›</button>
+                            </div>
+                            <div class="product-carousel-dots">
+                                ${images.map((_, index) => `
+                                    <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToProductImage(${product.id}, ${index}, event)"></div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
                         ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                         <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Adicionar ao Carrinho</button>
                     </div>
@@ -2934,9 +3188,55 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             
             renderPagination(totalPages);
+        }
+
+        // Product Image Carousel Functions
+        function nextProductImage(productId, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+            
+            slides[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            
+            currentIndex = (currentIndex + 1) % slides.length;
+            
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function prevProductImage(productId, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+            
+            slides[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function goToProductImage(productId, index, event) {
+            event.stopPropagation();
+            const card = event.target.closest('.product-card');
+            const slides = card.querySelectorAll('.product-image-slide');
+            const dots = card.querySelectorAll('.product-carousel-dot');
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
         }
 
         // Render Pagination
