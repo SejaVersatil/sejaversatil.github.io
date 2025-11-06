@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seja Versátil - Moda Fitness Feminina</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -3059,51 +3065,48 @@
         }
 
         function saveProduct(event) {
-    event.preventDefault();
+            event.preventDefault();
 
-    // Validar se tem pelo menos uma imagem
-    if (tempProductImages.length === 0) {
-        alert('Adicione pelo menos uma imagem ao produto!');
-        return;
-    }
+            const productId = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+            const badge = document.getElementById('productBadge').value || null;
+            const image = document.getElementById('productImage').value;
 
-    const productId = document.getElementById('productId').value;
-    const name = document.getElementById('productName').value;
-    const category = document.getElementById('productCategory').value;
-    const price = parseFloat(document.getElementById('productPrice').value);
-    const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
-    const badge = document.getElementById('productBadge').value || null;
+            if (productId) {
+                // Edit existing product
+                const product = productsData.find(p => p.id === parseInt(productId));
+                if (product) {
+                    product.name = name;
+                    product.category = category;
+                    product.price = price;
+                    product.oldPrice = oldPrice;
+                    product.badge = badge;
+                    product.image = image;
+                }
+            } else {
+                // Add new product
+                const newId = Math.max(...productsData.map(p => p.id)) + 1;
+                productsData.push({
+                    id: newId,
+                    name,
+                    category,
+                    price,
+                    oldPrice,
+                    badge,
+                    image
+                });
+            }
 
-    if (productId) {
-        const product = productsData.find(p => p.id === parseInt(productId));
-        if (product) {
-            product.name = name;
-            product.category = category;
-            product.price = price;
-            product.oldPrice = oldPrice;
-            product.badge = badge;
-            product.images = [...tempProductImages]; // ✅ ESTA LINHA
+            saveProducts();
+            closeProductModal();
+            renderAdminProducts();
+            renderProducts();
+            updateAdminStats();
+            alert('Produto salvo com sucesso!');
         }
-    } else {
-        const newId = productsData.length > 0 ? Math.max(...productsData.map(p => p.id)) + 1 : 1;
-        productsData.push({
-            id: newId,
-            name,
-            category,
-            price,
-            oldPrice,
-            badge,
-            images: [...tempProductImages] // ✅ E ESTA LINHA
-        });
-    }
-
-    saveProducts();
-    closeProductModal();
-    renderAdminProducts();
-    renderProducts();
-    updateAdminStats();
-    alert('Produto salvo com sucesso!');
-}
 
         function saveSettings() {
             const bannerTitle = document.getElementById('settingBannerTitle').value;
