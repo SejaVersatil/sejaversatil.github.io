@@ -2624,13 +2624,13 @@
         let tempProductImages = [];
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCart();
-            loadProducts();
-            renderProducts();
-            updateCartUI();
-            initCarousel();
-        });
+        document.addEventListener('DOMContentLoaded', async () => {
+    loadCart();
+    await loadProducts(); // Agora é async
+    renderProducts();
+    updateCartUI();
+    initCarousel();
+});
 
         // Admin System
         const ADMIN_CREDENTIALS = {
@@ -2820,15 +2820,21 @@
         }
 
         // Load products from localStorage or use defaults
-        function loadProducts() {
-            const saved = localStorage.getItem('sejaVersatilProducts');
-            if (saved) {
-                const loadedProducts = JSON.parse(saved);
-                // Update productsData array
-                productsData.length = 0;
-                productsData.push(...loadedProducts);
-            }
+        async function loadProducts() {
+    // Tenta carregar do Firestore primeiro
+    try {
+        await carregarProdutosDoFirestore();
+    } catch (error) {
+        console.error("Erro ao carregar do Firestore:", error);
+        // Se falhar, carrega do localStorage
+        const saved = localStorage.getItem('sejaVersatilProducts');
+        if (saved) {
+            const loadedProducts = JSON.parse(saved);
+            productsData.length = 0;
+            productsData.push(...loadedProducts);
         }
+    }
+}
 
         function saveProducts() {
             localStorage.setItem('sejaVersatilProducts', JSON.stringify(productsData));
@@ -2933,10 +2939,10 @@
             const title = document.getElementById('modalTitle');
 
             if (productId) {
-                // Edit mode
-                const product = productsData.find(p => p.id === productId);
+    // Edit mode
+    const product = productsData.find(p => p.id === productId);
                 title.textContent = 'Editar Produto';
-                document.getElementById('productId').value = product.id;
+                document.getElementById('productId').value = productId; // Agora salva o ID do Firestore
                 document.getElementById('productName').value = product.name;
                 document.getElementById('productCategory').value = product.category;
                 document.getElementById('productPrice').value = product.price;
@@ -3107,63 +3113,89 @@
             openProductModal(productId);
         }
 
-        function deleteProduct(productId) {
-            if (confirm('Tem certeza que deseja excluir este produto?')) {
-                const index = productsData.findIndex(p => p.id === productId);
-                if (index !== -1) {
-                    productsData.splice(index, 1);
-                    saveProducts();
-                    renderAdminProducts();
-                    renderProducts();
-                    updateAdminStats();
-                    alert('Produto excluído com sucesso!');
-                }
+        async function deleteProduct(productId) {
+    if (confirm('Tem certeza que deseja excluir este produto?')) {
+        try {
+            // Deletar do Firestore
+            await db.collection("produtos").doc(productId).delete();
+            
+            // Deletar do array local
+            const index = productsData.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                productsData.splice(index, 1);
             }
-        }
-
-        function saveProduct(event) {
-            event.preventDefault();
-
-            const productId = document.getElementById('productId').value;
-            const name = document.getElementById('productName').value;
-            const category = document.getElementById('productCategory').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
-            const badge = document.getElementById('productBadge').value || null;
-            const image = document.getElementById('productImage').value;
-
-            if (productId) {
-                // Edit existing product
-                const product = productsData.find(p => p.id === parseInt(productId));
-                if (product) {
-                    product.name = name;
-                    product.category = category;
-                    product.price = price;
-                    product.oldPrice = oldPrice;
-                    product.badge = badge;
-                    product.image = image;
-                }
-            } else {
-                // Add new product
-                const newId = Math.max(...productsData.map(p => p.id)) + 1;
-                productsData.push({
-                    id: newId,
-                    name,
-                    category,
-                    price,
-                    oldPrice,
-                    badge,
-                    image
-                });
-            }
-
+            
             saveProducts();
-            closeProductModal();
             renderAdminProducts();
             renderProducts();
             updateAdminStats();
-            alert('Produto salvo com sucesso!');
+            alert('Produto excluído com sucesso!');
+            
+        } catch (error) {
+            console.error("Erro ao excluir produto:", error);
+            alert('Erro ao excluir produto: ' + error.message);
         }
+    }
+}
+
+        async function saveProduct(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('productName').value;
+    const category = document.getElementById('productCategory').value;
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+    const badge = document.getElementById('productBadge').value || null;
+    const productId = document.getElementById('productId').value;
+
+    const productData = {
+        name: name,
+        category: category,
+        price: price,
+        oldPrice: oldPrice,
+        badge: badge,
+        images: tempProductImages,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        if (productId) {
+            // EDITAR produto existente
+            await db.collection("produtos").doc(productId).update(productData);
+            
+            // Atualizar no array local também
+            const product = productsData.find(p => p.id === productId);
+            if (product) {
+                Object.assign(product, productData);
+                product.id = productId;
+            }
+        } else {
+            // ADICIONAR novo produto
+            productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            const docRef = await db.collection("produtos").add(productData);
+            
+            // Adicionar ao array local
+            productsData.push({
+                id: docRef.id,
+                ...productData
+            });
+        }
+
+        saveProducts(); // Salva no localStorage também
+        closeProductModal();
+        renderAdminProducts();
+        renderProducts();
+        updateAdminStats();
+        alert('Produto salvo com sucesso no Firestore!');
+        
+        // Recarregar produtos do Firestore
+        await carregarProdutosDoFirestore();
+        
+    } catch (error) {
+        console.error("Erro ao salvar produto:", error);
+        alert('Erro ao salvar produto: ' + error.message);
+    }
+}
 
         function saveSettings() {
             const bannerTitle = document.getElementById('settingBannerTitle').value;
