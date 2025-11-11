@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 <script>
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -26,6 +27,7 @@
   const app = firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const auth = firebase.auth();
+  const storage = firebase.storage();
   
   console.log("Firebase inicializado com sucesso!");
 </script>
@@ -1953,6 +1955,43 @@
         .form-link a:hover {
             text-decoration: underline;
         }
+/* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            color: white;
+            font-size: 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -2818,7 +2857,25 @@
                 hideLoggedInView();
             }
         }
-
+async function carregarProdutosDoFirestore() {
+    try {
+        const snapshot = await db.collection("produtos").get();
+        productsData.length = 0; // Limpa o array
+        
+        snapshot.forEach((doc) => {
+            productsData.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        console.log("✅ Produtos carregados do Firestore:", productsData.length);
+        return productsData;
+    } catch (error) {
+        console.error("❌ Erro ao carregar produtos:", error);
+        throw error;
+    }
+}
         // Load products from localStorage or use defaults
         async function loadProducts() {
     // Tenta carregar do Firestore primeiro
@@ -2977,27 +3034,49 @@
             `}).join('');
         }
 
-        function handleImageUpload(event) {
-            const files = event.target.files;
-            if (!files.length) return;
+        async function handleImageUpload(event) {
+    const files = event.target.files;
+    if (!files.length) return;
 
-            Array.from(files).forEach(file => {
-                if (!file.type.startsWith('image/')) {
-                    alert('Por favor, selecione apenas arquivos de imagem!');
-                    return;
-                }
+    // Mostrar loading
+    const loadingMsg = document.createElement('div');
+    loadingMsg.style.cssText = 'padding: 1rem; background: #f0f0f0; margin-bottom: 1rem; border-radius: 4px;';
+    loadingMsg.textContent = '⏳ Fazendo upload das imagens...';
+    document.getElementById('productImagesList').parentElement.insertBefore(loadingMsg, document.getElementById('productImagesList'));
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempProductImages.push(e.target.result);
-                    renderProductImages();
-                };
-                reader.readAsDataURL(file);
-            });
-
-            // Reset input
-            event.target.value = '';
+    for (const file of files) {
+        if (!file.type.startsWith('image/')) {
+            alert('Por favor, selecione apenas arquivos de imagem!');
+            continue;
         }
+
+        try {
+            // Upload para Firebase Storage
+            const storageRef = storage.ref();
+            const imageRef = storageRef.child(`produtos/${Date.now()}_${file.name}`);
+            
+            // Upload do arquivo
+            await imageRef.put(file);
+            
+            // Obter URL pública
+            const imageUrl = await imageRef.getDownloadURL();
+            
+            // Adicionar à lista de imagens
+            tempProductImages.push(imageUrl);
+            renderProductImages();
+            
+        } catch (error) {
+            console.error('Erro ao fazer upload:', error);
+            alert('Erro ao fazer upload da imagem: ' + error.message);
+        }
+    }
+
+    // Remover loading
+    loadingMsg.remove();
+    
+    // Reset input
+    event.target.value = '';
+}
 
         function toggleUrlInput() {
             const urlBox = document.getElementById('imageUrlInputBox');
@@ -3115,6 +3194,9 @@
 
         async function deleteProduct(productId) {
     if (confirm('Tem certeza que deseja excluir este produto?')) {
+        // ADICIONE AQUI:
+        document.getElementById('loadingOverlay').classList.add('active');
+        
         try {
             // Deletar do Firestore
             await db.collection("produtos").doc(productId).delete();
@@ -3134,13 +3216,17 @@
         } catch (error) {
             console.error("Erro ao excluir produto:", error);
             alert('Erro ao excluir produto: ' + error.message);
+        } finally {
+            // ADICIONE O FINALLY:
+            document.getElementById('loadingOverlay').classList.remove('active');
         }
     }
 }
 
         async function saveProduct(event) {
     event.preventDefault();
-
+// Mostrar loading
+    document.getElementById('loadingOverlay').classList.add('active');
     const name = document.getElementById('productName').value;
     const category = document.getElementById('productCategory').value;
     const price = parseFloat(document.getElementById('productPrice').value);
@@ -3156,6 +3242,7 @@
         badge: badge,
         images: tempProductImages,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        
     };
 
     try {
@@ -3194,6 +3281,21 @@
     } catch (error) {
         console.error("Erro ao salvar produto:", error);
         alert('Erro ao salvar produto: ' + error.message);
+        return; // Adicione este return
+    }
+    
+    // ADICIONE estas linhas APÓS o catch, ANTES do fechamento da função
+    // Recarregar produtos do Firestore para garantir sincronia
+   // Recarregar produtos do Firestore para garantir sincronia
+    try {
+        await carregarProdutosDoFirestore();
+        renderProducts();
+        updateAdminStats();
+    } catch (error) {
+        console.error("Erro ao recarregar produtos:", error);
+    } finally {
+        // Esconder loading
+        document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
 
@@ -3726,42 +3828,11 @@
             }
         });
     </script>
-    <!-- Container para exibir os produtos -->
-<div id="produtos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;"></div>
+<!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">⏳</div>
+        <div class="loading-text">Carregando...</div>
+    </div>
 
-<script>
-// Buscar produtos do Firestore
-db.collection("produtos").get().then((querySnapshot) => {
-    const container = document.getElementById('produtos-container');
-    
-    querySnapshot.forEach((doc) => {
-        const produto = doc.data();
-        
-        const produtoHTML = `
-            <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white;">
-                <img src="${produto.imagem}" alt="${produto.nome}" style="max-width: 100%; border-radius: 4px;">
-                <h3 style="color: var(--primary); margin: 10px 0;">${produto.nome}</h3>
-                <p style="color: #666;">${produto.descricao}</p>
-                <p style="font-size: 24px; font-weight: bold; color: var(--primary);">R$ ${produto.preco.toFixed(2)}</p>
-                <button onclick="adicionarAoCarrinho('${doc.id}')" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%;">
-                    Adicionar ao Carrinho
-                </button>
-            </div>
-        `;
-        
-        container.innerHTML += produtoHTML;
-    });
-}).catch((error) => {
-    console.error("Erro ao buscar produtos:", error);
-    document.getElementById('produtos-container').innerHTML = '<p style="color: red;">Erro ao carregar produtos. Verifique o console.</p>';
-});
-
-// Função para adicionar ao carrinho
-function adicionarAoCarrinho(produtoId) {
-    console.log("Produto adicionado:", produtoId);
-    alert("Produto adicionado ao carrinho!");
-    // Aqui você pode adicionar lógica para salvar no localStorage ou Firestore
-}
-</script>
 </body>
 </html>
