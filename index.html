@@ -2,33 +2,42 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Loja de moda fitness feminina premium. Leggings, tops e conjuntos versáteis. Frete grátis acima de R$ 299.">
+    <meta name="keywords" content="moda fitness feminina, legging, top fitness, conjunto fitness">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Seja Versátil - Moda Fitness Feminina">
+    <meta property="og:description" content="Moda fitness premium com estilo e conforto">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seja Versátil - Moda Fitness Feminina</title>
-    
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://firebasestorage.googleapis.com">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script>
+        
+        
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-    authDomain: "seja-versatil.firebaseapp.com",
-    projectId: "seja-versatil",
-    storageBucket: "seja-versatil.firebasestorage.app",
-    messagingSenderId: "102339207381",
-    appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-    measurementId: "G-86E5CX4S3T"
-};
-
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-const storage = firebase.storage();
-
-console.log("Firebase inicializado com sucesso!");
+        apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+        authDomain: "seja-versatil.firebaseapp.com",
+        projectId: "seja-versatil",
+        storageBucket: "seja-versatil.firebasestorage.app",
+        messagingSenderId: "102339207381",
+        appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+        measurementId: "G-86E5CX4S3T"
+    };
+    
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+    
+    console.log("✅ Firebase inicializado");
 </script>
     
     <!-- Link para o CSS -->
@@ -37,6 +46,7 @@ console.log("Firebase inicializado com sucesso!");
 
 </head>
 <body>
+    <a href="#produtos" class="skip-link">Pular para conteúdo principal</a>
     <!-- Hamburger Menu Button -->
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
         <span class="hamburger-line"></span>
@@ -576,5 +586,16 @@ console.log("Firebase inicializado com sucesso!");
 
     <!-- Link para o JavaScript -->
     <script src="script2.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Seja Versátil",
+      "description": "Moda fitness feminina premium",
+      "url": "https://sejaversatil.github.io/",
+      "telephone": "+55-71-99142-7103",
+      "email": "contato@sejaversatil.com.br"
+    }
+    </script>
 </body>
 </html>
