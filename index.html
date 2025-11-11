@@ -10,6 +10,26 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script>
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+    authDomain: "seja-versatil.firebaseapp.com",
+    projectId: "seja-versatil",
+    storageBucket: "seja-versatil.firebasestorage.app",
+    messagingSenderId: "102339207381",
+    appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+    measurementId: "G-86E5CX4S3T"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const storage = firebase.storage();
+
+console.log("Firebase inicializado com sucesso!");
+</script>
     
     <!-- Link para o CSS -->
     <link rel="stylesheet" href="css2.css">
@@ -162,54 +182,56 @@
     </section>
 
     <!-- Categories Section -->
-    <section class="categories-section">
-        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
-            <div class="category-info">
-                <h3>MACAQUINHO</h3>
-                <p>Conforto e performance</p>
-            </div>
+<section class="categories-section">
+    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
+        <div class="category-info">
+            <h3>MACAQUINHO</h3>
+            <p>Conforto e performance</p>
         </div>
-        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
-            <div class="category-info">
-                <h3>MACACÃO</h3>
-                <p>Suporte e estilo</p>
-            </div>
+    </div>
+    
+    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
+        <div class="category-info">
+            <h3>MACACÃO</h3>
+            <p>Suporte e estilo</p>
         </div>
-        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
-            <div class="category-info">
-                <h3>CONJUNTOS</h3>
-                <p>Looks completos</p>
-            </div>
+    </div>
+    
+    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
+        <div class="category-info">
+            <h3>CONJUNTOS</h3>
+            <p>Looks completos</p>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Products Section -->
-    <section class="products-section" id="produtos">
-        <h2 class="section-title">Nossos Produtos</h2>
-        
-        <div class="filters-bar">
-            <div class="filter-group">
-                <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
-                <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
-                <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
-                <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
-                <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
-            </div>
-            <select class="sort-select" onchange="sortProducts(this.value)">
-                <option value="">Ordenar por</option>
-                <option value="price-asc">Menor preço</option>
-                <option value="price-desc">Maior preço</option>
-                <option value="name">Nome A-Z</option>
-            </select>
+<!-- Products Section -->
+<section class="products-section" id="produtos">
+    <h2 class="section-title">Nossos Produtos</h2>
+    
+    <div class="filters-bar">
+        <div class="filter-group">
+            <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+            <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
+            <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
+            <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
+            <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
         </div>
+        <select class="sort-select" onchange="sortProducts(this.value)">
+            <option value="">Ordenar por</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+            <option value="name">Nome A-Z</option>
+        </select>
+    </div>
 
-        <div class="products-grid" id="productsGrid"></div>
+    <div class="products-grid" id="productsGrid"></div>
 
-        <div class="pagination" id="pagination"></div>
-    </section>
+    <div class="pagination" id="pagination"></div>
+</section>
 
     <!-- Info Bar -->
     <section class="info-bar">
@@ -443,6 +465,15 @@
                 <div class="admin-form-group">
                     <label>Mensagem do Banner de Promoção</label>
                     <input type="text" id="settingTopBanner" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros">
+                </div>
+                <div class="admin-form-group">
+                    <label style="color: #e74c3c;">⚠️ Área de Perigo</label>
+                    <button class="admin-btn admin-btn-delete" onclick="limparTodosProdutos()" style="width: 100%;">
+                        🗑️ Limpar TODOS os Produtos do Firestore
+                    </button>
+                    <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
+                        Esta ação não pode ser desfeita! Use apenas para testes.
+                    </p>
                 </div>
                 <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
             </div>
