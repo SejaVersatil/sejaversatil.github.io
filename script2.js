@@ -257,29 +257,33 @@ function userLogout() {
 async function carregarProdutosDoFirestore() {
     try {
         console.log('🔄 Carregando produtos do Firestore...');
-        const snapshot = await db.collection("produtos").get();
-        productsData.length = 0;
         
+        // Obter referência à coleção "products" (ou "produtos" se esse for o nome certo)
+        const produtosRef = collection(db, "products"); // 🔁 mude para "produtos" se for esse o nome real no Firestore
+        const snapshot = await getDocs(produtosRef);
+
+        productsData.length = 0;
+
         snapshot.forEach((doc) => {
             productsData.push({
                 id: doc.id,
                 ...doc.data()
             });
         });
-        
+
         console.log(`✅ ${productsData.length} produtos carregados do Firestore`);
         return productsData;
         
     } catch (error) {
         console.error("❌ Erro ao carregar produtos do Firestore:", error);
-        
+
         // Mensagens de erro mais específicas
         if (error.code === 'permission-denied') {
             console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
         } else if (error.code === 'unavailable') {
             console.error('🌐 Firestore indisponível. Verifique sua conexão com a internet.');
         }
-        
+
         throw error;
     }
 }
@@ -1266,3 +1270,4 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
