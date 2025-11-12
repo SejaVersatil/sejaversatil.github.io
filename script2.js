@@ -1,21 +1,3 @@
-        // Products Database
-        const productsData = [];
-            { id: 1, name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
-            { id: 2, name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
-            { id: 3, name: 'Conjunto Ribbed Marsala', category: 'conjuntos', price: 209.90, oldPrice: 299.90, badge: '-30%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)'] },
-            { id: 4, name: 'Shorts Bike Seamless', category: 'leggings', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] },
-            { id: 5, name: 'Legging Scrunch Bum', category: 'leggings', price: 169.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #fa709a 0%, #fee140 100%)'] },
-            { id: 6, name: 'Top Cropped Strappy', category: 'tops', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #30cfd0 0%, #330867 100%)'] },
-            { id: 7, name: 'Macaquinho Fitness Premium', category: 'conjuntos', price: 149.90, oldPrice: 199.90, badge: '-25%', images: ['linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'] },
-            { id: 8, name: 'Jaqueta Oversized', category: 'conjuntos', price: 189.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'] },
-            { id: 9, name: 'Legging Metallic Rose', category: 'leggings', price: 159.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'] },
-            { id: 10, name: 'Top Push Up Ribbed', category: 'tops', price: 99.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'] },
-            { id: 11, name: 'Conjunto Seamless Pro', category: 'conjuntos', price: 229.90, oldPrice: 279.90, badge: '-20%', images: ['linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'] },
-            { id: 12, name: 'Legging Cintura Alta Preta', category: 'leggings', price: 139.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #434343 0%, #000000 100%)'] },
-            { id: 13, name: 'Top Regata Fitness', category: 'tops', price: 69.90, oldPrice: 89.90, badge: '-22%', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'] },
-            { id: 14, name: 'Conjunto Power Mesh', category: 'conjuntos', price: 249.90, oldPrice: null, badge: 'Lançamento', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
-            { id: 15, name: 'Legging Tie Dye', category: 'leggings', price: 159.90, oldPrice: 199.90, badge: '-20%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'] },
-            { id: 16, name: 'Top Básico Essential', category: 'tops', price: 59.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] }
         ];
 
         let cart = [];
@@ -479,7 +461,8 @@ async function carregarProdutosDoFirestore() {
             alert(`❌ Arquivo "${file.name}" é muito grande! Máximo: 5MB`);
             event.target.value = '';
             return;
-
+        }
+    }
     // Mostrar loading
     const loadingMsg = document.createElement('div');
     loadingMsg.style.cssText = 'padding: 1rem; background: #f0f0f0; margin-bottom: 1rem; border-radius: 4px;';
@@ -1286,3 +1269,4 @@ async function carregarProdutosDoFirestore() {
             }
 
         });
+
