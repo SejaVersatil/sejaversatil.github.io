@@ -17,6 +17,12 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://www.gstatic.com">
     <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+    
+    <!-- Google Fonts - Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -160,39 +166,17 @@ const firebaseConfig = {
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-carousel">
-            <div class="hero-slide active" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="hero-content">
-                    <h1>Seja Versátil</h1>
-                    <p class="hero-subtitle">Seja Você, Seja Versátil</p>
-                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-                        Explore a Coleção
-                    </button>
-                </div>
-            </div>
-            <div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="hero-content">
-                    <h1>Nova Coleção</h1>
-                    <p class="hero-subtitle">Performance em Movimento</p>
-                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-                        Comprar Agora
-                    </button>
-                </div>
-            </div>
-            <div class="hero-slide" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
-                <div class="hero-content">
-                    <h1>Fitness Premium</h1>
-                    <p class="hero-subtitle">Estilo e Conforto</p>
-                    <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-                        Ver Produtos
-                    </button>
-                </div>
-            </div>
-            <div class="carousel-dots" id="carouselDots"></div>
-        </div>
-    </section>
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80');"></div>
+    <div class="hero-content">
+        <h1>SEJA VERSÁTIL</h1>
+        <p class="hero-subtitle">Moda Fitness de Alta Performance</p>
+        <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            DESCOBRIR COLEÇÃO
+        </button>
+    </div>
+</section>
 
     <!-- Categories Section -->
 <section class="categories-section">
