@@ -258,9 +258,8 @@ async function carregarProdutosDoFirestore() {
     try {
         console.log('🔄 Carregando produtos do Firestore...');
         
-        // Obter referência à coleção "products" (ou "produtos" se esse for o nome certo)
-        const produtosRef = collection(db, "products"); // 🔁 mude para "produtos" se for esse o nome real no Firestore
-        const snapshot = await getDocs(produtosRef);
+        // ✅ CORRETO: Usar API compat
+        const snapshot = await db.collection("produtos").get();
 
         productsData.length = 0;
 
@@ -1270,4 +1269,5 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
