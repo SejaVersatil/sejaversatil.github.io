@@ -390,8 +390,6 @@ nav {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .hero::before {
@@ -403,6 +401,18 @@ nav {
     bottom: 0;
     background: rgba(0,0,0,0.25);
     z-index: 1;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7);
+    z-index: 0;
 }
 
 .hero-content {
@@ -2068,6 +2078,11 @@ footer {
     .hero h1 {
         font-size: 3rem;
     }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
     .info-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2100,7 +2115,38 @@ footer {
     }
     
     .hero h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+    }
+    
+    .btn-primary {
+        padding: 1rem 2rem;
+        font-size: 0.8rem;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .filters-bar {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 2rem 1rem;
+        gap: 1rem;
+    }
+    
+    .filter-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    .product-card:nth-child(n) {
+        animation-delay: 0.1s;
     }
     
     .nav-menu {
@@ -2189,5 +2235,6 @@ footer {
         font-size: 0.9rem;
     }
 }
+
 
 
