@@ -175,6 +175,11 @@ async function inicializarProdutosPadrao() {
             const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase();
             const password = document.getElementById('loginPassword').value;
             const errorMsg = document.getElementById('loginError');
+                if (password !== confirmPassword) {
+        document.getElementById('registerError').textContent = 'As senhas não coincidem';
+        document.getElementById('registerError').style.display = 'block';
+        return;
+    }
 
             // Check if admin
             if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
@@ -1279,4 +1284,5 @@ async function carregarProdutosDoFirestore() {
                     toggleCart();
                 }
             }
+
         });
