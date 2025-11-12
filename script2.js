@@ -948,16 +948,17 @@ async function carregarProdutosDoFirestore() {
                         ${hasMultipleImages ? `
                             <div class="product-carousel-arrows">
                                 <button class="product-carousel-arrow" onclick="prevProductImage(${product.id}, event)">‹</button>
-                                <button class="product-carousel-arrow" onclick="nextProductImage(${product.id}, event)">›</button>
+                                <button class="product-carousel-arrow" onclick="nextProductImage('${product.id}', event)">›</button>
                             </div>
                             <div class="product-carousel-dots">
                                 ${images.map((_, index) => `
-                                    <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToProductImage(${product.id}, ${index}, event)"></div>
+                                    <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToProductImage(${product.id}, ${index}, event1+
+                                    )"></div>        
                                 `).join('')}
                             </div>
                         ` : ''}
                         ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Adicionar ao Carrinho</button>
+                        <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
                     </div>
                     <div class="product-info">
                         <h4>${product.name}</h4>
@@ -1054,7 +1055,7 @@ async function carregarProdutosDoFirestore() {
         // Change Page
         function changePage(page) {
             currentPage = page;
-            renderProducts();
+            renderProducts(');
             document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1264,6 +1265,7 @@ async function carregarProdutosDoFirestore() {
             }
 
         });
+
 
 
 
