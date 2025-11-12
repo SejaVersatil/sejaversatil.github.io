@@ -1,11 +1,12 @@
         ];
 
-        let cart = [];
-        let currentFilter = 'all';
-        let currentSort = '';
-        let currentPage = 1;
-        const itemsPerPage = 12;
-        let tempProductImages = [];
+        let productsData = [];
+let cart = [];
+let currentFilter = 'all';
+let currentSort = '';
+let currentPage = 1;
+const itemsPerPage = 12;
+let tempProductImages = [];
         // Produtos padrão (usados apenas se Firestore estiver vazio)
 const DEFAULT_PRODUCTS = [
     { name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
@@ -48,23 +49,21 @@ async function inicializarProdutosPadrao() {
 }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-    // Mostrar loading
+document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loadingOverlay').classList.add('active');
     
     try {
+        loadSettings(); // ✅ Adicionar aqui
         loadCart();
         await loadProducts();
         renderProducts();
         updateCartUI();
         initCarousel();
-        
         console.log('✅ Site carregado com sucesso!');
     } catch (error) {
         console.error('❌ Erro ao inicializar:', error);
         alert('Erro ao carregar o site. Por favor, recarregue a página.');
     } finally {
-        // Esconder loading
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 });
@@ -758,10 +757,6 @@ async function carregarProdutosDoFirestore() {
                 document.getElementById('settingTopBanner').value = settings.topBanner;
             }
         }
-
-        // Call loadSettings on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSettings();
         });
 
         // Sidebar Menu
@@ -1269,4 +1264,5 @@ async function carregarProdutosDoFirestore() {
             }
 
         });
+
 
