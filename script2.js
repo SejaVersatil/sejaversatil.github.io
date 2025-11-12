@@ -1248,6 +1248,7 @@ async function carregarProdutosDoFirestore() {
         </div>
     `;
 }).join('');
+        }
 
         function selectSearchResult(productId) {
             addToCart(productId);
@@ -1265,6 +1266,7 @@ async function carregarProdutosDoFirestore() {
             }
 
         });
+
 
 
 
