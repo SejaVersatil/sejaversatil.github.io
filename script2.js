@@ -374,14 +374,14 @@ async function carregarProdutosDoFirestore() {
         }
 
         function renderAdminProducts() {
-            const grid = document.getElementById('adminProductsGrid');
-            grid.innerHTML = productsData.map(product => {
+    const grid = document.getElementById('adminProductsGrid');
+    grid.innerHTML = productsData.map(product => {
                 const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
                 const firstImage = images[0];
                 const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
                 
-                return `
-                <div class="admin-product-card">
+                 return `
+            <div class="admin-product-card">
                     <div class="admin-product-image" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                     <div class="admin-product-info">
                         <h4>${product.name}</h4>
@@ -392,12 +392,12 @@ async function carregarProdutosDoFirestore() {
                         <p><strong>Imagens:</strong> ${images.length}</p>
                     </div>
                     <div class="admin-actions">
-                        <button class="admin-btn admin-btn-edit" onclick="editProduct(${product.id})">Editar</button>
-                        <button class="admin-btn admin-btn-delete" onclick="deleteProduct(${product.id})">Excluir</button>
-                    </div>
+                    <button class="admin-btn admin-btn-edit" onclick="editProduct('${product.id}')">Editar</button>
+                    <button class="admin-btn admin-btn-delete" onclick="deleteProduct('${product.id}')">Excluir</button>
                 </div>
-            `}).join('');
-        }
+            </div>
+        `}).join('');
+}
 
         function openProductModal(productId = null) {
             editingProductId = productId;
@@ -1264,5 +1264,6 @@ async function carregarProdutosDoFirestore() {
             }
 
         });
+
 
 
