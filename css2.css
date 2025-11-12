@@ -2174,15 +2174,6 @@ footer {
         right: -100%;
     }
     
-    .filter-group {
-        width: 100%;
-    }
-    
-    .filter-btn {
-        flex: 1;
-        text-align: center;
-    }
-    
     .categories-section {
         grid-template-columns: 1fr;
     }
@@ -2230,6 +2221,7 @@ footer {
         font-size: 0.9rem;
     }
 }
+
 
 
 
