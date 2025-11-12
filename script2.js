@@ -1174,10 +1174,17 @@ function renderProducts() {
         const isFav = isFavorite(product.id);
         
         return `
-            <div class="product-card">
-                <div class="product-image">
-                    <div class="product-image-carousel">
-                        ${images.map((img, index) => {
+    <div class="product-card">
+        <div class="product-image">
+            <!-- ✅ ADICIONAR botão de favorito -->
+            <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                    aria-label="Adicionar aos favoritos">
+                ${isFav ? '❤️' : '🤍'}
+            </button>
+            
+            <div class="product-image-carousel">
+                ${images.map((img, index) => {
                             const isRealImage = img.startsWith('data:image') || img.startsWith('http');
                             return `
                                 <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="${isRealImage ? `background-image: url(${img}); background-size: cover; background-position: center;` : `background: ${img}`}"></div>
@@ -1567,5 +1574,6 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
 
