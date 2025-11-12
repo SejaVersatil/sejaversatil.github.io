@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
             renderProducts();
             updateCartUI();
-            initCarousel();
+            // initCarousel();  // ✅ COMENTADO - Hero agora é estático
             setupConnectionMonitor();
             setupCartAbandonmentTracking();
             injectToastStyles();
@@ -1005,6 +1005,7 @@ function toggleSidebar() {
 let currentSlide = 0;
 let carouselInterval;
 
+/* CARROSSEL DESATIVADO - Hero agora é estático
 function initCarousel() {
     const slides = document.querySelectorAll('.hero-slide');
     const dotsContainer = document.getElementById('carouselDots');
@@ -1054,6 +1055,7 @@ function updateCarousel() {
         dot.classList.toggle('active', index === currentSlide);
     });
 }
+*/
 
 // ==================== CHAT WIDGET ====================
 
@@ -1564,3 +1566,4 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
