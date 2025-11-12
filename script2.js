@@ -742,7 +742,57 @@ function saveSettings() {
 
     alert('Configurações salvas com sucesso!');
 }
-
+// Função para limpar todos os produtos do Firestore
+async function limparTodosProdutos() {
+    const confirmacao = confirm(
+        '⚠️ ATENÇÃO! Esta ação irá DELETAR TODOS os produtos do Firestore.\n\n' +
+        'Esta ação NÃO pode ser desfeita!\n\n' +
+        'Tem CERTEZA ABSOLUTA que deseja continuar?'
+    );
+    
+    if (!confirmacao) return;
+    
+    const confirmacaoDupla = prompt(
+        'Digite "DELETAR TUDO" (sem aspas) para confirmar:'
+    );
+    
+    if (confirmacaoDupla !== 'DELETAR TUDO') {
+        alert('❌ Ação cancelada. Texto não corresponde.');
+        return;
+    }
+    
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        const snapshot = await db.collection("produtos").get();
+        
+        if (snapshot.empty) {
+            alert('ℹ️ Não há produtos para deletar.');
+            return;
+        }
+        
+        const batch = db.batch();
+        snapshot.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        
+        await batch.commit();
+        
+        productsData.length = 0;
+        
+        renderAdminProducts();
+        renderProducts();
+        updateAdminStats();
+        
+        alert(`✅ ${snapshot.size} produtos foram deletados do Firestore!`);
+        
+    } catch (error) {
+        console.error("Erro ao limpar produtos:", error);
+        alert('❌ Erro ao limpar produtos: ' + error.message);
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
 // Load settings on page load
 function loadSettings() {
     const saved = localStorage.getItem('sejaVersatilSettings');
@@ -1269,5 +1319,6 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
 
