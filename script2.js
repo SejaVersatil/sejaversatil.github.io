@@ -1002,8 +1002,9 @@ function toggleSidebar() {
 
 // ==================== CARROSSEL ====================
 
-let currentSlide = 0;
-let carouselInterval;
+// DESATIVADO - Hero agora é estático
+// let currentSlide = 0;
+// let carouselInterval;
 
 /* CARROSSEL DESATIVADO - Hero agora é estático
 function initCarousel() {
@@ -1566,4 +1567,5 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
