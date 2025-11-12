@@ -1,3 +1,4 @@
+// ==================== VARIÁVEIS GLOBAIS ====================
 let productsData = [];
 let cart = [];
 let currentFilter = 'all';
@@ -5,8 +6,143 @@ let currentSort = '';
 let currentPage = 1;
 const itemsPerPage = 12;
 let tempProductImages = [];
+let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 
-// Produtos padrão (usados apenas se Firestore estiver vazio)
+// ==================== CLASSES UTILITÁRIAS ====================
+
+// Cache Manager
+class CacheManager {
+    constructor(ttl = 300000) { // 5 minutos
+        this.cache = new Map();
+        this.ttl = ttl;
+    }
+    
+    set(key, value) {
+        this.cache.set(key, {
+            value,
+            timestamp: Date.now()
+        });
+    }
+    
+    get(key) {
+        const item = this.cache.get(key);
+        if (!item) return null;
+        
+        if (Date.now() - item.timestamp > this.ttl) {
+            this.cache.delete(key);
+            return null;
+        }
+        
+        return item.value;
+    }
+    
+    clear() {
+        this.cache.clear();
+    }
+}
+
+// Rate Limiter
+class RateLimiter {
+    constructor(maxRequests, timeWindow) {
+        this.maxRequests = maxRequests;
+        this.timeWindow = timeWindow;
+        this.requests = [];
+    }
+    
+    canMakeRequest() {
+        const now = Date.now();
+        this.requests = this.requests.filter(time => now - time < this.timeWindow);
+        
+        if (this.requests.length < this.maxRequests) {
+            this.requests.push(now);
+            return true;
+        }
+        return false;
+    }
+}
+
+const productCache = new CacheManager();
+const firestoreRateLimiter = new RateLimiter(10, 60000); // 10 requests por minuto
+
+// ==================== FUNÇÕES UTILITÁRIAS ====================
+
+// Debounce
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+            <span class="toast-message">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Validação de Email
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Sanitização de Input
+function sanitizeInput(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+}
+
+// Validação de Dados do Produto
+function validateProductData(data) {
+    const errors = [];
+    
+    if (!data.name || data.name.trim().length < 3) {
+        errors.push('Nome deve ter pelo menos 3 caracteres');
+    }
+    if (data.price <= 0) {
+        errors.push('Preço deve ser maior que zero');
+    }
+    if (data.oldPrice && data.oldPrice <= data.price) {
+        errors.push('Preço antigo deve ser maior que o atual');
+    }
+    
+    return errors;
+}
+
+// Event Tracking
+function trackEvent(category, action, label) {
+    console.log(`📊 Event: ${category} - ${action} - ${label}`);
+    
+    if (typeof gtag !== 'undefined') {
+        gtag('event', action, {
+            event_category: category,
+            event_label: label
+        });
+    }
+}
+
+// ==================== PRODUTOS PADRÃO ====================
+
 const DEFAULT_PRODUCTS = [
     { name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
     { name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
@@ -42,12 +178,12 @@ async function inicializarProdutosPadrao() {
             }
         }
         
-        // Recarregar do Firestore após adicionar
         await carregarProdutosDoFirestore();
     }
 }
 
-// Initialize
+// ==================== INICIALIZAÇÃO ====================
+
 document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loadingOverlay').classList.add('active');
     
@@ -55,19 +191,97 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadSettings();
         loadCart();
         await loadProducts();
-        renderProducts();
-        updateCartUI();
-        initCarousel();
-        console.log('✅ Site carregado com sucesso!');
+        renderProductsSkeleton();
+        setTimeout(() => {
+            renderProducts();
+            updateCartUI();
+            initCarousel();
+            setupConnectionMonitor();
+            setupCartAbandonmentTracking();
+            injectToastStyles();
+            console.log('✅ Site carregado com sucesso!');
+        }, 100);
     } catch (error) {
         console.error('❌ Erro ao inicializar:', error);
-        alert('Erro ao carregar o site. Por favor, recarregue a página.');
+        showToast('Erro ao carregar o site. Por favor, recarregue a página.', 'error');
     } finally {
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 });
 
-// Admin System
+// Injetar estilos do Toast
+function injectToastStyles() {
+    if (document.getElementById('toast-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'toast-styles';
+    style.textContent = `
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 10000;
+            min-width: 250px;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast-success { border-left: 4px solid #27ae60; }
+        .toast-error { border-left: 4px solid #e74c3c; }
+        .toast-info { border-left: 4px solid #3498db; }
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .toast-icon {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .toast-success .toast-icon { color: #27ae60; }
+        .toast-error .toast-icon { color: #e74c3c; }
+        .toast-info .toast-icon { color: #3498db; }
+        .toast-message {
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .product-skeleton {
+            animation: pulse 1.5s infinite;
+        }
+        .skeleton-image {
+            width: 100%;
+            height: 420px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        .skeleton-text {
+            height: 20px;
+            background: #f0f0f0;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .skeleton-text.short {
+            width: 60%;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// ==================== SISTEMA DE ADMIN ====================
+
 const ADMIN_CREDENTIALS = {
     username: 'admin',
     password: 'sejaversatil2025',
@@ -78,12 +292,11 @@ let isAdminLoggedIn = false;
 let currentUser = null;
 let editingProductId = null;
 
-// User System
+// ==================== SISTEMA DE USUÁRIOS ====================
+
 function openUserPanel() {
     const panel = document.getElementById('userPanel');
     panel.classList.add('active');
-    
-    // Check if user is logged in
     checkUserSession();
 }
 
@@ -92,10 +305,7 @@ function closeUserPanel() {
 }
 
 function switchUserTab(tab) {
-    // Update tab buttons
     document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
-    
-    // Update tab content
     document.querySelectorAll('.user-tab-content').forEach(content => {
         content.classList.remove('active');
     });
@@ -118,21 +328,14 @@ function checkUserSession() {
 }
 
 function showLoggedInView() {
-    // Hide tabs
     document.getElementById('userPanelTabs').style.display = 'none';
-    
-    // Hide login/register tabs
     document.getElementById('loginTab').classList.remove('active');
     document.getElementById('registerTab').classList.remove('active');
-    
-    // Show logged in view
     document.getElementById('userLoggedTab').classList.add('active');
     
-    // Update user info
     document.getElementById('userName').textContent = currentUser.name;
     document.getElementById('userEmail').textContent = currentUser.email;
     
-    // Check if admin
     if (currentUser.isAdmin) {
         document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
         document.getElementById('adminAccessBtn').style.display = 'block';
@@ -152,11 +355,16 @@ function hideLoggedInView() {
 function userLogin(event) {
     event.preventDefault();
     
-    const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase();
+    const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase().trim();
     const password = document.getElementById('loginPassword').value;
     const errorMsg = document.getElementById('loginError');
 
-    // Check if admin
+    if (!emailOrUsername || !password) {
+        errorMsg.textContent = 'Preencha todos os campos';
+        errorMsg.classList.add('active');
+        return;
+    }
+
     if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
         password === ADMIN_CREDENTIALS.password) {
         currentUser = {
@@ -167,10 +375,10 @@ function userLogin(event) {
         localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
         showLoggedInView();
         errorMsg.classList.remove('active');
+        showToast('Login realizado com sucesso!', 'success');
         return;
     }
 
-    // Check regular users
     const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
     const user = users.find(u => u.email.toLowerCase() === emailOrUsername && u.password === password);
 
@@ -183,7 +391,9 @@ function userLogin(event) {
         localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
         showLoggedInView();
         errorMsg.classList.remove('active');
+        showToast('Login realizado com sucesso!', 'success');
     } else {
+        errorMsg.textContent = 'E-mail ou senha incorretos';
         errorMsg.classList.add('active');
     }
 }
@@ -191,25 +401,40 @@ function userLogin(event) {
 function userRegister(event) {
     event.preventDefault();
 
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value.toLowerCase();
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.toLowerCase().trim();
     const password = document.getElementById('registerPassword').value;
     const confirmPassword = document.getElementById('registerConfirmPassword').value;
     const errorMsg = document.getElementById('registerError');
     const successMsg = document.getElementById('registerSuccess');
 
-    // Clear previous messages
     errorMsg.classList.remove('active');
     successMsg.classList.remove('active');
 
-    // Validate passwords match
+    if (!name || !email || !password || !confirmPassword) {
+        errorMsg.textContent = 'Preencha todos os campos';
+        errorMsg.classList.add('active');
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        errorMsg.textContent = 'E-mail inválido';
+        errorMsg.classList.add('active');
+        return;
+    }
+
+    if (password.length < 6) {
+        errorMsg.textContent = 'Senha deve ter pelo menos 6 caracteres';
+        errorMsg.classList.add('active');
+        return;
+    }
+
     if (password !== confirmPassword) {
         errorMsg.textContent = 'As senhas não coincidem';
         errorMsg.classList.add('active');
         return;
     }
 
-    // Check if email already exists
     const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
     if (users.some(u => u.email === email)) {
         errorMsg.textContent = 'Este e-mail já está cadastrado';
@@ -217,28 +442,24 @@ function userRegister(event) {
         return;
     }
 
-    // Check if trying to use admin email
     if (email === ADMIN_CREDENTIALS.email) {
         errorMsg.textContent = 'Este e-mail não pode ser usado';
         errorMsg.classList.add('active');
         return;
     }
 
-    // Create new user
     const newUser = { name, email, password };
     users.push(newUser);
     localStorage.setItem('sejaVersatilUsers', JSON.stringify(users));
 
-    // Show success message
     successMsg.classList.add('active');
+    showToast('Conta criada com sucesso!', 'success');
     
-    // Clear form
     document.getElementById('registerName').value = '';
     document.getElementById('registerEmail').value = '';
     document.getElementById('registerPassword').value = '';
     document.getElementById('registerConfirmPassword').value = '';
 
-    // Switch to login after 2 seconds
     setTimeout(() => {
         switchUserTab('login');
         successMsg.classList.remove('active');
@@ -251,16 +472,30 @@ function userLogout() {
         isAdminLoggedIn = false;
         localStorage.removeItem('sejaVersatilCurrentUser');
         hideLoggedInView();
+        showToast('Logout realizado com sucesso', 'info');
     }
 }
+
+// ==================== FIRESTORE ====================
 
 async function carregarProdutosDoFirestore() {
     try {
         console.log('🔄 Carregando produtos do Firestore...');
         
-        // ✅ CORRETO: Usar API compat
-        const snapshot = await db.collection("produtos").get();
+        const cached = productCache.get('products');
+        if (cached) {
+            console.log('✅ Produtos carregados do cache');
+            productsData = cached;
+            return productsData;
+        }
 
+        if (!firestoreRateLimiter.canMakeRequest()) {
+            console.warn('⚠️ Rate limit atingido');
+            showToast('Muitas requisições. Aguarde um momento.', 'error');
+            return productsData;
+        }
+
+        const snapshot = await db.collection("produtos").get();
         productsData.length = 0;
 
         snapshot.forEach((doc) => {
@@ -270,34 +505,32 @@ async function carregarProdutosDoFirestore() {
             });
         });
 
+        productCache.set('products', productsData);
         console.log(`✅ ${productsData.length} produtos carregados do Firestore`);
         return productsData;
         
     } catch (error) {
         console.error("❌ Erro ao carregar produtos do Firestore:", error);
 
-        // Mensagens de erro mais específicas
         if (error.code === 'permission-denied') {
             console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
+            showToast('Erro de permissão ao carregar produtos', 'error');
         } else if (error.code === 'unavailable') {
             console.error('🌐 Firestore indisponível. Verifique sua conexão com a internet.');
+            showToast('Sem conexão com o servidor', 'error');
         }
 
         throw error;
     }
 }
 
-// Load products from localStorage or use defaults
 async function loadProducts() {
     try {
         await carregarProdutosDoFirestore();
-        
-        // Se não houver produtos, inicializar com padrões
         await inicializarProdutosPadrao();
-        
     } catch (error) {
         console.error("Erro ao carregar do Firestore:", error);
-        alert('⚠️ Erro ao conectar com o banco de dados. Verifique sua conexão.');
+        showToast('⚠️ Erro ao conectar com o banco de dados', 'error');
     }
 }
 
@@ -305,32 +538,11 @@ function saveProducts() {
     localStorage.setItem('sejaVersatilProducts', JSON.stringify(productsData));
 }
 
-function openLoginModal() {
-    document.getElementById('loginModal').classList.add('active');
-    document.getElementById('adminUsername').focus();
-}
-
-function adminLogin() {
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
-    const errorMsg = document.getElementById('loginError');
-
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        isAdminLoggedIn = true;
-        document.getElementById('loginModal').classList.remove('active');
-        openAdminPanel();
-        errorMsg.classList.remove('active');
-        // Clear inputs
-        document.getElementById('adminUsername').value = '';
-        document.getElementById('adminPassword').value = '';
-    } else {
-        errorMsg.classList.add('active');
-    }
-}
+// ==================== PAINEL ADMIN ====================
 
 function openAdminPanel() {
     if (!isAdminLoggedIn) {
-        alert('Você precisa estar logado como administrador para acessar esta área.');
+        showToast('Você precisa estar logado como administrador', 'error');
         openUserPanel();
         return;
     }
@@ -345,11 +557,9 @@ function closeAdminPanel() {
 }
 
 function switchAdminTab(tab) {
-    // Update tab buttons
     document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 
-    // Update tab content
     document.querySelectorAll('.admin-tab-content').forEach(content => {
         content.classList.remove('active');
     });
@@ -383,11 +593,11 @@ function renderAdminProducts() {
             <div class="admin-product-card">
                 <div class="admin-product-image" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                 <div class="admin-product-info">
-                    <h4>${product.name}</h4>
+                    <h4>${sanitizeInput(product.name)}</h4>
                     <p><strong>Categoria:</strong> ${product.category}</p>
                     <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
                     ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
-                    ${product.badge ? `<p><strong>Badge:</strong> ${product.badge}</p>` : ''}
+                    ${product.badge ? `<p><strong>Badge:</strong> ${sanitizeInput(product.badge)}</p>` : ''}
                     <p><strong>Imagens:</strong> ${images.length}</p>
                 </div>
                 <div class="admin-actions">
@@ -405,7 +615,6 @@ function openProductModal(productId = null) {
     const title = document.getElementById('modalTitle');
 
     if (productId) {
-        // Edit mode
         const product = productsData.find(p => p.id === productId);
         title.textContent = 'Editar Produto';
         document.getElementById('productId').value = productId;
@@ -416,7 +625,6 @@ function openProductModal(productId = null) {
         document.getElementById('productBadge').value = product.badge || '';
         tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
     } else {
-        // Add mode
         title.textContent = 'Adicionar Novo Produto';
         document.getElementById('productForm').reset();
         document.getElementById('productId').value = '';
@@ -448,24 +656,21 @@ async function handleImageUpload(event) {
     const files = event.target.files;
     if (!files.length) return;
     
-    // Verificar se Storage está configurado
     if (!storage) {
-        alert('⚠️ Firebase Storage não está configurado. Use URLs de imagem ou gradientes.');
+        showToast('Firebase Storage não está configurado', 'error');
         event.target.value = '';
         return;
     }
 
-    // Verificar tamanho dos arquivos
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_SIZE = 5 * 1024 * 1024;
     for (const file of files) {
         if (file.size > MAX_SIZE) {
-            alert(`❌ Arquivo "${file.name}" é muito grande! Máximo: 5MB`);
+            showToast(`Arquivo "${file.name}" é muito grande! Máximo: 5MB`, 'error');
             event.target.value = '';
             return;
         }
     }
     
-    // Mostrar loading
     const loadingMsg = document.createElement('div');
     loadingMsg.style.cssText = 'padding: 1rem; background: #f0f0f0; margin-bottom: 1rem; border-radius: 4px;';
     loadingMsg.textContent = '⏳ Fazendo upload das imagens...';
@@ -473,35 +678,24 @@ async function handleImageUpload(event) {
 
     for (const file of files) {
         if (!file.type.startsWith('image/')) {
-            alert('Por favor, selecione apenas arquivos de imagem!');
+            showToast('Por favor, selecione apenas arquivos de imagem!', 'error');
             continue;
         }
 
         try {
-            // Upload para Firebase Storage
             const storageRef = storage.ref();
             const imageRef = storageRef.child(`produtos/${Date.now()}_${file.name}`);
-            
-            // Upload do arquivo
             await imageRef.put(file);
-            
-            // Obter URL pública
             const imageUrl = await imageRef.getDownloadURL();
-            
-            // Adicionar à lista de imagens
             tempProductImages.push(imageUrl);
             renderProductImages();
-            
         } catch (error) {
             console.error('Erro ao fazer upload:', error);
-            alert('Erro ao fazer upload da imagem: ' + error.message);
+            showToast('Erro ao fazer upload da imagem: ' + error.message, 'error');
         }
     }
 
-    // Remover loading
     loadingMsg.remove();
-    
-    // Reset input
     event.target.value = '';
 }
 
@@ -510,7 +704,6 @@ function toggleUrlInput() {
     const gradientBox = document.getElementById('imageGradientInputBox');
     
     if (urlBox) {
-        // Close gradient if open
         if (gradientBox && gradientBox.classList.contains('active')) {
             gradientBox.classList.remove('active');
         }
@@ -531,7 +724,6 @@ function toggleGradientInput() {
     const urlBox = document.getElementById('imageUrlInputBox');
     
     if (gradientBox) {
-        // Close URL if open
         if (urlBox && urlBox.classList.contains('active')) {
             urlBox.classList.remove('active');
         }
@@ -554,26 +746,25 @@ function addImageFromUrl() {
     const imageUrl = urlField.value.trim();
     
     if (!imageUrl) {
-        alert('Cole o link da imagem!');
+        showToast('Cole o link da imagem!', 'error');
         return;
     }
 
-    // Validate URL format
     if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-        alert('URL inválida! Deve começar com http:// ou https://');
+        showToast('URL inválida! Deve começar com http:// ou https://', 'error');
         return;
     }
 
-    // Test if image loads
     const img = new Image();
     img.onload = function() {
         tempProductImages.push(imageUrl);
         renderProductImages();
         urlField.value = '';
         toggleUrlInput();
+        showToast('Imagem adicionada com sucesso!', 'success');
     };
     img.onerror = function() {
-        alert('Não foi possível carregar a imagem desta URL. Verifique se o link está correto e tente novamente.');
+        showToast('Não foi possível carregar a imagem desta URL', 'error');
     };
     img.src = imageUrl;
 }
@@ -585,13 +776,12 @@ function addGradientImage() {
     const gradient = gradientField.value.trim();
     
     if (!gradient) {
-        alert('Digite um gradiente CSS!');
+        showToast('Digite um gradiente CSS!', 'error');
         return;
     }
 
-    // Basic validation for CSS gradient
     if (!gradient.includes('gradient')) {
-        alert('Formato inválido! Exemplo: linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+        showToast('Formato inválido! Exemplo: linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'error');
         return;
     }
 
@@ -599,14 +789,16 @@ function addGradientImage() {
     renderProductImages();
     gradientField.value = '';
     toggleGradientInput();
+    showToast('Gradiente adicionado com sucesso!', 'success');
 }
 
 function removeProductImage(index) {
     if (tempProductImages.length > 1) {
         tempProductImages.splice(index, 1);
         renderProductImages();
+        showToast('Imagem removida', 'info');
     } else {
-        alert('O produto precisa ter pelo menos 1 imagem!');
+        showToast('O produto precisa ter pelo menos 1 imagem!', 'error');
     }
 }
 
@@ -624,24 +816,23 @@ async function deleteProduct(productId) {
         document.getElementById('loadingOverlay').classList.add('active');
         
         try {
-            // Deletar do Firestore
             await db.collection("produtos").doc(productId).delete();
             
-            // Deletar do array local
             const index = productsData.findIndex(p => p.id === productId);
             if (index !== -1) {
                 productsData.splice(index, 1);
             }
             
+            productCache.clear();
             saveProducts();
             renderAdminProducts();
             renderProducts();
             updateAdminStats();
-            alert('Produto excluído com sucesso!');
+            showToast('Produto excluído com sucesso!', 'success');
             
         } catch (error) {
             console.error("Erro ao excluir produto:", error);
-            alert('Erro ao excluir produto: ' + error.message);
+            showToast('Erro ao excluir produto: ' + error.message, 'error');
         } finally {
             document.getElementById('loadingOverlay').classList.remove('active');
         }
@@ -651,14 +842,13 @@ async function deleteProduct(productId) {
 async function saveProduct(event) {
     event.preventDefault();
     
-    // Mostrar loading
     document.getElementById('loadingOverlay').classList.add('active');
     
-    const name = document.getElementById('productName').value;
+    const name = sanitizeInput(document.getElementById('productName').value.trim());
     const category = document.getElementById('productCategory').value;
     const price = parseFloat(document.getElementById('productPrice').value);
     const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
-    const badge = document.getElementById('productBadge').value || null;
+    const badge = document.getElementById('productBadge').value.trim() || null;
     const productId = document.getElementById('productId').value;
 
     const productData = {
@@ -671,78 +861,69 @@ async function saveProduct(event) {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
+    const errors = validateProductData(productData);
+    if (errors.length > 0) {
+        showToast(errors[0], 'error');
+        document.getElementById('loadingOverlay').classList.remove('active');
+        return;
+    }
+
     try {
         if (productId) {
-            // EDITAR produto existente
             await db.collection("produtos").doc(productId).update(productData);
             
-            // Atualizar no array local também
             const product = productsData.find(p => p.id === productId);
             if (product) {
                 Object.assign(product, productData);
                 product.id = productId;
             }
+            showToast('Produto atualizado com sucesso!', 'success');
         } else {
-            // ADICIONAR novo produto
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             const docRef = await db.collection("produtos").add(productData);
             
-            // Adicionar ao array local
             productsData.push({
                 id: docRef.id,
                 ...productData
             });
+            showToast('Produto adicionado com sucesso!', 'success');
         }
 
+        productCache.clear();
         saveProducts();
         closeProductModal();
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
-        alert('Produto salvo com sucesso no Firestore!');
         
-        // Recarregar produtos do Firestore
         await carregarProdutosDoFirestore();
         
     } catch (error) {
         console.error("Erro ao salvar produto:", error);
-        alert('Erro ao salvar produto: ' + error.message);
-        return;
-    }
-    
-    // Recarregar produtos do Firestore para garantir sincronia
-    try {
-        await carregarProdutosDoFirestore();
-        renderProducts();
-        updateAdminStats();
-    } catch (error) {
-        console.error("Erro ao recarregar produtos:", error);
+        showToast('Erro ao salvar produto: ' + error.message, 'error');
     } finally {
-        // Esconder loading
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
 
 function saveSettings() {
-    const bannerTitle = document.getElementById('settingBannerTitle').value;
-    const bannerSubtitle = document.getElementById('settingBannerSubtitle').value;
-    const topBanner = document.getElementById('settingTopBanner').value;
+    const bannerTitle = sanitizeInput(document.getElementById('settingBannerTitle').value.trim());
+    const bannerSubtitle = sanitizeInput(document.getElementById('settingBannerSubtitle').value.trim());
+    const topBanner = sanitizeInput(document.getElementById('settingTopBanner').value.trim());
 
-    // Update hero section
     document.querySelector('.hero h1').textContent = bannerTitle;
     document.querySelector('.hero-subtitle').textContent = bannerSubtitle;
     document.querySelector('.top-banner').textContent = topBanner;
 
-    // Save to localStorage
     localStorage.setItem('sejaVersatilSettings', JSON.stringify({
         bannerTitle,
         bannerSubtitle,
         topBanner
     }));
 
-    alert('Configurações salvas com sucesso!');
+    showToast('Configurações salvas com sucesso!', 'success');
 }
-// Função para limpar todos os produtos do Firestore
+
 async function limparTodosProdutos() {
     const confirmacao = confirm(
         '⚠️ ATENÇÃO! Esta ação irá DELETAR TODOS os produtos do Firestore.\n\n' +
@@ -752,12 +933,10 @@ async function limparTodosProdutos() {
     
     if (!confirmacao) return;
     
-    const confirmacaoDupla = prompt(
-        'Digite "DELETAR TUDO" (sem aspas) para confirmar:'
-    );
+    const confirmacaoDupla = prompt('Digite "DELETAR TUDO" (sem aspas) para confirmar:');
     
     if (confirmacaoDupla !== 'DELETAR TUDO') {
-        alert('❌ Ação cancelada. Texto não corresponde.');
+        showToast('Ação cancelada', 'info');
         return;
     }
     
@@ -767,7 +946,7 @@ async function limparTodosProdutos() {
         const snapshot = await db.collection("produtos").get();
         
         if (snapshot.empty) {
-            alert('ℹ️ Não há produtos para deletar.');
+            showToast('Não há produtos para deletar', 'info');
             return;
         }
         
@@ -779,21 +958,22 @@ async function limparTodosProdutos() {
         await batch.commit();
         
         productsData.length = 0;
+        productCache.clear();
         
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
         
-        alert(`✅ ${snapshot.size} produtos foram deletados do Firestore!`);
+        showToast(`✅ ${snapshot.size} produtos foram deletados!`, 'success');
         
     } catch (error) {
         console.error("Erro ao limpar produtos:", error);
-        alert('❌ Erro ao limpar produtos: ' + error.message);
+        showToast('Erro ao limpar produtos: ' + error.message, 'error');
     } finally {
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
-// Load settings on page load
+
 function loadSettings() {
     const saved = localStorage.getItem('sejaVersatilSettings');
     if (saved) {
@@ -808,7 +988,8 @@ function loadSettings() {
     }
 }
 
-// Sidebar Menu
+// ==================== UI COMPONENTS ====================
+
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebarMenu');
     const overlay = document.getElementById('sidebarOverlay');
@@ -819,7 +1000,8 @@ function toggleSidebar() {
     btn.classList.toggle('active');
 }
 
-// Hero Carousel
+// ==================== CARROSSEL ====================
+
 let currentSlide = 0;
 let carouselInterval;
 
@@ -827,7 +1009,6 @@ function initCarousel() {
     const slides = document.querySelectorAll('.hero-slide');
     const dotsContainer = document.getElementById('carouselDots');
     
-    // Create dots
     slides.forEach((_, index) => {
         const dot = document.createElement('div');
         dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
@@ -835,7 +1016,6 @@ function initCarousel() {
         dotsContainer.appendChild(dot);
     });
     
-    // Start auto-play
     startCarousel();
 }
 
@@ -875,7 +1055,8 @@ function updateCarousel() {
     });
 }
 
-// Chat Widget
+// ==================== CHAT WIDGET ====================
+
 function toggleChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.classList.toggle('active');
@@ -891,11 +1072,9 @@ function sendMessage() {
     
     if (message === '') return;
     
-    // Add user message
     addChatMessage(message, 'user');
     input.value = '';
     
-    // Simulate bot response
     setTimeout(() => {
         const responses = [
             'Obrigado pela sua mensagem! Como posso ajudar com seus produtos fitness?',
@@ -921,35 +1100,33 @@ function addChatMessage(text, sender) {
     messageDiv.appendChild(bubble);
     messagesContainer.appendChild(messageDiv);
     
-    // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-// Filter Products
+// ==================== PRODUTOS ====================
+
 function filterProducts(category) {
     currentFilter = category;
     currentPage = 1;
     
-    // Update active button
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     event.target.classList.add('active');
     
     renderProducts();
+    trackEvent('Products', 'Filter', category);
 }
 
-// Sort Products
 function sortProducts(sortType) {
     currentSort = sortType;
     renderProducts();
+    trackEvent('Products', 'Sort', sortType);
 }
 
-// Get Filtered Products
 function getFilteredProducts() {
     let filtered = productsData;
     
-    // Apply category filter
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
             filtered = filtered.filter(p => p.oldPrice !== null);
@@ -958,7 +1135,6 @@ function getFilteredProducts() {
         }
     }
     
-    // Apply sorting
     if (currentSort === 'price-asc') {
         filtered.sort((a, b) => a.price - b.price);
     } else if (currentSort === 'price-desc') {
@@ -970,7 +1146,17 @@ function getFilteredProducts() {
     return filtered;
 }
 
-// Render Products
+function renderProductsSkeleton() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = Array(12).fill(0).map(() => `
+        <div class="product-skeleton">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+        </div>
+    `).join('');
+}
+
 function renderProducts() {
     const filtered = getFilteredProducts();
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
@@ -982,6 +1168,7 @@ function renderProducts() {
     grid.innerHTML = paginatedProducts.map(product => {
         const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
         const hasMultipleImages = images.length > 1;
+        const isFav = isFavorite(product.id);
         
         return `
             <div class="product-card">
@@ -1005,11 +1192,11 @@ function renderProducts() {
                             `).join('')}
                         </div>
                     ` : ''}
-                    ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                    ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
                     <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
                 </div>
                 <div class="product-info">
-                    <h4>${product.name}</h4>
+                    <h4>${sanitizeInput(product.name)}</h4>
                     <div class="product-price">
                         ${product.oldPrice ? `<span class="price-old">R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
                         <span class="price-new">R$ ${product.price.toFixed(2)}</span>
@@ -1022,7 +1209,6 @@ function renderProducts() {
     renderPagination(totalPages);
 }
 
-// Product Image Carousel Functions
 function nextProductImage(productId, event) {
     event.stopPropagation();
     const card = event.target.closest('.product-card');
@@ -1068,7 +1254,8 @@ function goToProductImage(productId, index, event) {
     dots[index].classList.add('active');
 }
 
-// Render Pagination
+// ==================== PAGINAÇÃO ====================
+
 function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     
@@ -1079,12 +1266,10 @@ function renderPagination(totalPages) {
     
     let html = '';
     
-    // Previous button
     if (currentPage > 1) {
         html += `<button class="page-btn" onclick="changePage(${currentPage - 1})">‹</button>`;
     }
     
-    // Page numbers
     for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
             html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
@@ -1093,7 +1278,6 @@ function renderPagination(totalPages) {
         }
     }
     
-    // Next button
     if (currentPage < totalPages) {
         html += `<button class="page-btn" onclick="changePage(${currentPage + 1})">›</button>`;
     }
@@ -1101,22 +1285,23 @@ function renderPagination(totalPages) {
     pagination.innerHTML = html;
 }
 
-// Change Page
 function changePage(page) {
     currentPage = page;
     renderProducts();
     document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Add to Cart
+// ==================== CARRINHO ====================
+
 function addToCart(productId) {
     const product = productsData.find(p => p.id === productId);
+    if (!product) return;
+    
     const existingItem = cart.find(item => item.id === productId);
     
     if (existingItem) {
         existingItem.quantity++;
     } else {
-        // Garantir que o produto tenha a primeira imagem disponível
         const productWithImage = {
             ...product,
             quantity: 1,
@@ -1127,8 +1312,8 @@ function addToCart(productId) {
     
     saveCart();
     updateCartUI();
+    trackEvent('E-commerce', 'Add to Cart', product.name);
     
-    // Show feedback
     const btn = event.target;
     const originalText = btn.textContent;
     btn.textContent = '✓ Adicionado!';
@@ -1140,7 +1325,6 @@ function addToCart(productId) {
     }, 1500);
 }
 
-// Update Cart UI
 function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
     const cartItems = document.getElementById('cartItems');
@@ -1163,7 +1347,7 @@ function updateCartUI() {
                 <div class="cart-item">
                     <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
                     <div class="cart-item-info">
-                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-title">${sanitizeInput(item.name)}</div>
                         <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
                             <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
@@ -1182,7 +1366,6 @@ function updateCartUI() {
     }
 }
 
-// Update Quantity
 function updateQuantity(productId, change) {
     const item = cart.find(i => i.id === productId);
     if (item) {
@@ -1196,14 +1379,13 @@ function updateQuantity(productId, change) {
     }
 }
 
-// Remove from Cart
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     saveCart();
     updateCartUI();
+    showToast('Item removido do carrinho', 'info');
 }
 
-// Toggle Cart
 function toggleCart() {
     const sidebar = document.getElementById('cartSidebar');
     const overlay = document.getElementById('cartOverlay');
@@ -1212,7 +1394,6 @@ function toggleCart() {
     overlay.classList.toggle('active');
 }
 
-// Save Cart to LocalStorage
 function saveCart() {
     const cartData = cart.map(item => ({
         id: item.id,
@@ -1221,7 +1402,6 @@ function saveCart() {
     localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
 }
 
-// Load Cart from LocalStorage
 function loadCart() {
     const saved = localStorage.getItem('sejaVersatilCart');
     if (saved) {
@@ -1239,15 +1419,16 @@ function loadCart() {
     }
 }
 
-// Checkout
 function checkout() {
     if (cart.length === 0) return;
     
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    alert(`Finalizando compra!\n\nTotal: R$ ${total.toFixed(2)}\n\nEm breve você será redirecionado para o pagamento.`);
+    showToast(`Total: R$ ${total.toFixed(2)} - Função de pagamento em desenvolvimento`, 'info');
+    trackEvent('E-commerce', 'Checkout', `R$ ${total.toFixed(2)}`);
 }
 
-// Search Functions
+// ==================== BUSCA ====================
+
 function openSearch() {
     const modal = document.getElementById('searchModal');
     modal.classList.add('active');
@@ -1261,15 +1442,13 @@ function closeSearch() {
     document.getElementById('searchResults').innerHTML = '';
 }
 
-// Close search when clicking outside
 document.getElementById('searchModal').addEventListener('click', (e) => {
     if (e.target.id === 'searchModal') {
         closeSearch();
     }
 });
 
-// Perform Search
-function performSearch() {
+const debouncedSearch = debounce(function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const results = document.getElementById('searchResults');
     
@@ -1296,12 +1475,18 @@ function performSearch() {
             <div class="search-result-item" onclick="selectSearchResult('${product.id}')">
                 <div class="search-result-img" style="${isRealImage ? `background-image: url(${productImage}); background-size: cover; background-position: center;` : `background: ${productImage}`}"></div>
                 <div>
-                    <div style="font-weight: 600; margin-bottom: 0.3rem;">${product.name}</div>
+                    <div style="font-weight: 600; margin-bottom: 0.3rem;">${sanitizeInput(product.name)}</div>
                     <div style="color: var(--primary); font-weight: 700;">R$ ${product.price.toFixed(2)}</div>
                 </div>
             </div>
         `;
     }).join('');
+    
+    trackEvent('Search', 'Query', query);
+}, 300);
+
+function performSearch() {
+    debouncedSearch();
 }
 
 function selectSearchResult(productId) {
@@ -1310,15 +1495,72 @@ function selectSearchResult(productId) {
     toggleCart();
 }
 
-// Close modals with ESC key
+// ==================== FAVORITOS ====================
+
+function toggleFavorite(productId) {
+    const index = favorites.indexOf(productId);
+    if (index > -1) {
+        favorites.splice(index, 1);
+        showToast('Removido dos favoritos', 'info');
+    } else {
+        favorites.push(productId);
+        showToast('Adicionado aos favoritos', 'success');
+    }
+    localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+    renderProducts();
+}
+
+function isFavorite(productId) {
+    return favorites.includes(productId);
+}
+
+// ==================== CONEXÃO E OFFLINE ====================
+
+function setupConnectionMonitor() {
+    window.addEventListener('online', () => {
+        showToast('Conexão restaurada!', 'success');
+    });
+    
+    window.addEventListener('offline', () => {
+        showToast('Você está offline', 'error');
+    });
+}
+
+function setupCartAbandonmentTracking() {
+    let cartTimer;
+    
+    const startCartTimer = () => {
+        clearTimeout(cartTimer);
+        if (cart.length > 0) {
+            cartTimer = setTimeout(() => {
+                showToast('Não esqueça de finalizar sua compra! 🛍️', 'info');
+            }, 300000); // 5 minutos
+        }
+    };
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (cart.length > 0) {
+            e.preventDefault();
+            e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
+        }
+    });
+    
+    setInterval(startCartTimer, 60000); // Check every minute
+}
+
+// ==================== ATALHOS DE TECLADO ====================
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeSearch();
         if (document.getElementById('cartSidebar').classList.contains('active')) {
             toggleCart();
         }
+        if (document.getElementById('userPanel').classList.contains('active')) {
+            closeUserPanel();
+        }
+        if (document.getElementById('productModal').classList.contains('active')) {
+            closeProductModal();
+        }
     }
 });
-
-
-
