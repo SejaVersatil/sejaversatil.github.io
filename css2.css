@@ -20,7 +20,24 @@ body {
     line-height: 1.6;
     background: var(--white);
 }
+/* Skip Link (Acessibilidade) */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    z-index: 100;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: top 0.2s;
+}
 
+.skip-link:focus {
+    top: 0;
+}
 /* Top Banner */
 .top-banner {
     background: var(--primary);
@@ -2086,3 +2103,4 @@ footer {
         font-size: 0.9rem;
     }
 }
+
