@@ -33,6 +33,26 @@ function getProductImages(product) {
 
 function isRealImage(imageSrc) {
     return imageSrc && (imageSrc.startsWith('data:image') || imageSrc.startsWith('http'));
+    // ADICIONAR APÓS isRealImage()
+function isNewProduct(product) {
+    if (!product.createdAt) return false;
+    
+    // Verificar se foi criado nos últimos 7 dias
+    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    
+    let createdTime;
+    if (product.createdAt.toMillis) {
+        // Timestamp do Firestore
+        createdTime = product.createdAt.toMillis();
+    } else if (typeof product.createdAt === 'number') {
+        // Timestamp normal
+        createdTime = product.createdAt;
+    } else {
+        return false;
+    }
+    
+    return createdTime > sevenDaysAgo;
+}
 
 // ==================== CARROSSEL HERO ====================
 let currentHeroSlide = 0;
@@ -2396,4 +2416,5 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
