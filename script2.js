@@ -2131,11 +2131,18 @@ function sendToWhatsApp() {
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     
     cart.forEach((item, index) => {
-        message += `${index + 1}. *${item.name}*\n`;
-        message += `   Qtd: ${item.quantity}\n`;
-        message += `   Valor Unit.: R$ ${item.price.toFixed(2)}\n`;
-        message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
-    });
+    message += `${index + 1}. *${item.name}*\n`;
+    
+    // ← ADICIONAR TAMANHO E COR
+    if (item.selectedSize || item.selectedColor) {
+        message += `   📏 Tamanho: ${item.selectedSize || 'Não selecionado'}\n`;
+        message += `   🎨 Cor: ${item.selectedColor || 'Não selecionada'}\n`;
+    }
+    
+    message += `   Qtd: ${item.quantity}\n`;
+    message += `   Valor Unit.: R$ ${item.price.toFixed(2)}\n`;
+    message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+});
     
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
@@ -2386,21 +2393,28 @@ function addToCartFromDetails() {
     if (!currentProductDetails) return;
     
     const product = currentProductDetails;
-    const existingItem = cart.find(item => item.id === product.id);
+    
+    // Criar identificador único para produto + tamanho + cor
+    const cartItemId = `${product.id}_${selectedSize}_${selectedColor}`;
+    
+    const existingItem = cart.find(item => item.cartItemId === cartItemId);
     
     if (existingItem) {
         existingItem.quantity += selectedQuantity;
     } else {
         cart.push({
             ...product,
+            cartItemId: cartItemId, // ID único para este item específico
             quantity: selectedQuantity,
+            selectedSize: selectedSize, // ← ADICIONAR TAMANHO
+            selectedColor: selectedColor, // ← ADICIONAR COR
             image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
         });
     }
     
     saveCart();
     updateCartUI();
-    showToast(`${selectedQuantity}x ${product.name} adicionado ao carrinho!`, 'success');
+    showToast(`${selectedQuantity}x ${product.name} (${selectedSize}, ${selectedColor}) adicionado ao carrinho!`, 'success');
 }
 
 function buyNow() {
@@ -2488,6 +2502,7 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
