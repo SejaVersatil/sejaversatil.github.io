@@ -876,8 +876,8 @@ nav {
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem 2rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
     padding: 2rem 0;
     margin-bottom: 3rem;
 }
@@ -891,6 +891,10 @@ nav {
     cursor: pointer;
     animation: fadeInUp 0.6s ease-out;
     animation-fill-mode: both;
+}
+
+.product-card {
+    min-height: 500px;
 }
 
 .product-card:hover {
@@ -908,7 +912,7 @@ nav {
 .product-image {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 4.5;
     background: #fafafa;
     overflow: hidden;
 }
@@ -1074,17 +1078,18 @@ nav {
 }
 
 .product-info {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.5rem;
     text-align: left;
 }
 
 .product-info h4 {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: var(--text);
+    line-height: 1.4;
 }
 
 .product-price {
@@ -1094,7 +1099,7 @@ nav {
 }
 
 .price-new {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--primary);
 }
@@ -2881,9 +2886,9 @@ footer {
 /* Responsive */
 @media (max-width: 1024px) {
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem 1.5rem;
-    }
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
     
     .hero-title {
         font-size: 3rem;
@@ -2958,9 +2963,9 @@ footer {
     }
     
     .products-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
     
     .filters-bar {
         overflow-x: auto;
@@ -3079,6 +3084,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
