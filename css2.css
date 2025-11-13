@@ -793,7 +793,7 @@ nav {
 
 /* Products Section */
 .products-section {
-    padding: 4rem 0;
+    padding: 2rem 0 4rem 0; /* Reduzido padding-top de 4rem para 2rem */
     max-width: 100%;
     margin: 0;
 }
@@ -807,7 +807,7 @@ nav {
     text-align: center;
     font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem; /* Reduzido de 3rem para 2rem */
     text-transform: uppercase;
     letter-spacing: 3px;
     padding: 0 2rem;
@@ -3064,6 +3064,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
