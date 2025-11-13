@@ -1927,7 +1927,250 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// ==================== PRODUCT DETAILS PAGE ====================
+
+let currentProductDetails = null;
+let selectedColor = 'Rosa';
+let selectedSize = 'M';
+let selectedQuantity = 1;
+
+function openProductDetails(productId) {
+    const product = productsData.find(p => p.id === productId);
+    if (!product) return;
+    
+    currentProductDetails = product;
+    const modal = document.getElementById('productDetailsModal');
+    
+    // Garantir que images seja array válido
+    let images = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        images = product.images;
+    } else if (product.image) {
+        images = [product.image];
+    } else {
+        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+    }
+    
+    // Renderizar galeria principal
+    const mainImage = document.getElementById('mainProductImage');
+    const firstImage = images[0];
+    const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+    mainImage.style.backgroundImage = isRealImage ? `url('${firstImage}')` : firstImage;
+    
+    // Renderizar thumbnails
+    const thumbnailList = document.getElementById('thumbnailList');
+    thumbnailList.innerHTML = images.map((img, index) => {
+        const isImg = img.startsWith('data:image') || img.startsWith('http');
+        return `
+            <div class="thumbnail ${index === 0 ? 'active' : ''}" 
+                 onclick="changeMainImage('${img}', ${index})"
+                 style="background-image: ${isImg ? `url('${img}')` : img}"></div>
+        `;
+    }).join('');
+    
+    // Preencher informações
+    document.getElementById('detailsProductName').textContent = product.name;
+    
+    // Preços
+    const priceOld = document.getElementById('detailsPriceOld');
+    const priceNew = document.getElementById('detailsPriceNew');
+    const installments = document.getElementById('detailsInstallments');
+    
+    if (product.oldPrice) {
+        priceOld.textContent = `De R$ ${product.oldPrice.toFixed(2)}`;
+        priceOld.style.display = 'block';
+    } else {
+        priceOld.style.display = 'none';
+    }
+    
+    priceNew.textContent = `R$ ${product.price.toFixed(2)}`;
+    
+    const installmentValue = (product.price / 10).toFixed(2);
+    installments.textContent = `ou 10x de R$ ${installmentValue} sem juros`;
+    
+    // Descrição
+    document.getElementById('productDescription').textContent = 
+        `${product.name} - Peça versátil e confortável para seus treinos. Tecnologia de alta performance com tecido respirável e secagem rápida.`;
+    
+    // Renderizar produtos relacionados
+    renderRelatedProducts(product.category, product.id);
+    
+    // Resetar seleções
+    selectedQuantity = 1;
+    document.getElementById('productQuantity').value = 1;
+    
+    // Mostrar modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProductDetails() {
+    const modal = document.getElementById('productDetailsModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    currentProductDetails = null;
+}
+
+function changeMainImage(imageSrc, index) {
+    const mainImage = document.getElementById('mainProductImage');
+    const isRealImage = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
+    mainImage.style.backgroundImage = isRealImage ? `url('${imageSrc}')` : imageSrc;
+    
+    // Atualizar thumbnails ativos
+    document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+    });
+}
+
+function changeQuantity(delta) {
+    const input = document.getElementById('productQuantity');
+    let newValue = parseInt(input.value) + delta;
+    
+    if (newValue < 1) newValue = 1;
+    if (newValue > 10) newValue = 10;
+    
+    input.value = newValue;
+    selectedQuantity = newValue;
+}
+
+function calculateShipping() {
+    const zipCode = document.getElementById('zipCodeInput').value.replace(/\D/g, '');
+    const resultsDiv = document.getElementById('shippingResults');
+    
+    if (zipCode.length !== 8) {
+        showToast('Digite um CEP válido', 'error');
+        return;
+    }
+    
+    // Simulação de frete
+    resultsDiv.innerHTML = `
+        <div class="shipping-option">
+            <div>
+                <strong>PAC</strong><br>
+                <small>Entrega em 5-10 dias úteis</small>
+            </div>
+            <strong>R$ 15,90</strong>
+        </div>
+        <div class="shipping-option">
+            <div>
+                <strong>SEDEX</strong><br>
+                <small>Entrega em 2-4 dias úteis</small>
+            </div>
+            <strong>R$ 25,90</strong>
+        </div>
+        <div class="shipping-option">
+            <div>
+                <strong>GRÁTIS</strong><br>
+                <small>Entrega em 7-12 dias úteis</small>
+            </div>
+            <strong>R$ 0,00</strong>
+        </div>
+    `;
+    
+    resultsDiv.classList.add('active');
+}
+
+function addToCartFromDetails() {
+    if (!currentProductDetails) return;
+    
+    const product = currentProductDetails;
+    const existingItem = cart.find(item => item.id === product.id);
+    
+    if (existingItem) {
+        existingItem.quantity += selectedQuantity;
+    } else {
+        cart.push({
+            ...product,
+            quantity: selectedQuantity,
+            image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        });
+    }
+    
+    saveCart();
+    updateCartUI();
+    showToast(`${selectedQuantity}x ${product.name} adicionado ao carrinho!`, 'success');
+}
+
+function buyNow() {
+    addToCartFromDetails();
+    closeProductDetails();
+    toggleCart();
+    setTimeout(() => {
+        checkout();
+    }, 500);
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (tabName === 'description') {
+        document.querySelector('.tab-btn:first-child').classList.add('active');
+        document.getElementById('descriptionTab').classList.add('active');
+    } else {
+        document.querySelector('.tab-btn:last-child').classList.add('active');
+        document.getElementById('specsTab').classList.add('active');
+    }
+}
+
+function renderRelatedProducts(category, currentId) {
+    const related = productsData
+        .filter(p => p.category === category && p.id !== currentId)
+        .slice(0, 4);
+    
+    const grid = document.getElementById('relatedProductsGrid');
+    grid.innerHTML = related.map(product => {
+        const images = product.images || ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        const firstImage = images[0];
+        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        
+        return `
+            <div class="product-card" onclick="openProductDetails('${product.id}')">
+                <div class="product-image">
+                    <div class="product-image-slide active" 
+                         style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}"></div>
+                </div>
+                <div class="product-info">
+                    <h4>${sanitizeInput(product.name)}</h4>
+                    <div class="product-price">
+                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Listeners de seleção
+document.addEventListener('click', function(e) {
+    // Color selector
+    if (e.target.classList.contains('color-option')) {
+        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedColor = e.target.dataset.color;
+    }
+    
+    // Size selector
+    if (e.target.classList.contains('size-option')) {
+        document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedSize = e.target.dataset.size;
+    }
+});
+
+// Máscara de CEP
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'zipCodeInput') {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.slice(0, 5) + '-' + value.slice(5, 8);
+        }
+        e.target.value = value;
+    }
+});
+
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
