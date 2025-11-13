@@ -3090,7 +3090,63 @@ footer {
     .promo-value {
         font-size: 3.5rem;
     }
+    /* ==================== TOAST NOTIFICATIONS ==================== */
+.toast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    z-index: 10000;
+    transition: bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
 }
+
+.toast.show {
+    bottom: 30px;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+}
+
+.toast-message {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.toast-success .toast-icon {
+    color: #27ae60;
+}
+
+.toast-error .toast-icon {
+    color: #e74c3c;
+}
+
+.toast-info .toast-icon {
+    color: #3498db;
+}
+
+@media (max-width: 768px) {
+    .toast {
+        min-width: auto;
+        max-width: 90%;
+    }
+}
+}
+
 
 
 
