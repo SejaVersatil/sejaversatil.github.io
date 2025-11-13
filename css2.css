@@ -2540,6 +2540,7 @@ footer {
 
 .product-details-overlay {
     position: fixed;
+    cursor: pointer;
     top: 0;
     left: 0;
     width: 100%;
@@ -3144,6 +3145,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
