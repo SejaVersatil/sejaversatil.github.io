@@ -2492,12 +2492,8 @@ window.addEventListener('unhandledrejection', function(event) {
     console.warn('⚠️ Promise não tratada:', event.reason);
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
-
-// Capturar erros JavaScript gerais
-window.addEventListener('error', function(event) {
-    console.error('❌ Erro capturado:', event.error);
-});
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
