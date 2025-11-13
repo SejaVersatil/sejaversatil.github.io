@@ -262,22 +262,6 @@
     <!-- Products Section -->
     <section class="products-section" id="produtos">
         <h2 class="section-title">Nossos Produtos</h2>
-        
-        <div class="filters-bar">
-            <div class="filter-group">
-                <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
-                <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
-                <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
-                <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
-                <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
-            </div>
-            <select class="sort-select" onchange="sortProducts(this.value)">
-                <option value="">Ordenar por</option>
-                <option value="price-asc">Menor preço</option>
-                <option value="price-desc">Maior preço</option>
-                <option value="name">Nome A-Z</option>
-            </select>
-        </div>
 
         <div class="products-grid" id="productsGrid"></div>
 
