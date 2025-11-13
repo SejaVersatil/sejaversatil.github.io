@@ -2525,18 +2525,3 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
