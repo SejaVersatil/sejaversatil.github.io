@@ -1234,9 +1234,6 @@ function renderProducts() {
 
 // ==================== AUTO CAROUSEL NO HOVER ====================
 
-// Controle de eventos já registrados
-const carouselEventsRegistered = new Set();
-
 function setupAutoCarousel() {
     const productCards = document.querySelectorAll('.product-card');
     
@@ -1754,3 +1751,4 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
