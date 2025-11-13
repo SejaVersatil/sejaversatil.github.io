@@ -3162,7 +3162,8 @@ footer {
         opacity: 0;
     }
 }
-    /* ==================== ANIMAÇÕES FALTANTES ==================== */
+/* ==================== ANIMAÇÕES ==================== */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -3192,6 +3193,7 @@ footer {
     }
 }
 }
+
 
 
 
