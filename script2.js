@@ -612,8 +612,20 @@ function updateAdminStats() {
 
 function renderAdminProducts() {
     const grid = document.getElementById('adminProductsGrid');
+    if (!grid) return;
+    
     grid.innerHTML = productsData.map(product => {
-        const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+        // CORREÇÃO: Garantir que images sempre seja um array válido
+        let images = [];
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
         const firstImage = images[0];
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
         
@@ -1148,8 +1160,25 @@ function renderProducts() {
     const paginatedProducts = filtered.slice(start, end);
     
     const grid = document.getElementById('productsGrid');
+    
+    // Verificar se o grid existe
+    if (!grid) {
+        console.error('Elemento #productsGrid não encontrado');
+        return;
+    }
+    
     grid.innerHTML = paginatedProducts.map(product => {
-        const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+        // CORREÇÃO: Garantir que images sempre seja um array válido
+        let images = [];
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
         const hasMultipleImages = images.length > 1;
         const isFav = isFavorite(product.id);
         
@@ -1233,6 +1262,9 @@ function renderProducts() {
 }
 
 // ==================== AUTO CAROUSEL NO HOVER ====================
+
+// Controle de eventos já registrados
+const carouselEventsRegistered = new Set();
 
 function setupAutoCarousel() {
     const productCards = document.querySelectorAll('.product-card');
@@ -1381,7 +1413,17 @@ function renderBestSellers() {
     }
     
     bestSellersGrid.innerHTML = bestSellers.map(product => {
-        const images = product.images || ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        // CORREÇÃO: Garantir que images sempre seja um array válido
+        let images = [];
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
         const isFav = isFavorite(product.id);
         const firstImage = images[0];
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
@@ -1751,4 +1793,3 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== FIM DO ARQUIVO ====================
-
