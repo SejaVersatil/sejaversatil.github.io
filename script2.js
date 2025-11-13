@@ -122,20 +122,57 @@ function navigateToCategory(category) {
     currentFilter = category;
     currentPage = 1;
     
+    // Atualizar badge de categoria ativa
+    const badge = document.getElementById('activeCategoryBadge');
+    const categoryName = document.getElementById('categoryNameDisplay');
+    
+    if (badge && categoryName) {
+        categoryName.textContent = getCategoryName(category);
+        badge.style.display = 'flex';
+    }
+    
     // Renderizar produtos filtrados
     renderProducts();
     
     // Scroll suave até a seção de produtos
     const productsSection = document.getElementById('produtos');
     if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Adicionar pequeno delay para melhor UX
+        setTimeout(() => {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
     
     // Tracking
     trackEvent('Promo Cards', 'Navigate to Category', category);
     
     // Feedback visual
-    showToast(`Mostrando produtos de: ${getCategoryName(category)}`, 'info');
+    showToast(`📦 ${getCategoryName(category)}`, 'info');
+}
+
+// Função para limpar filtro
+function clearCategoryFilter() {
+    currentFilter = 'all';
+    currentPage = 1;
+    
+    const badge = document.getElementById('activeCategoryBadge');
+    if (badge) {
+        badge.style.display = 'none';
+    }
+    
+    renderProducts();
+    showToast('Mostrando todos os produtos', 'info');
+}
+
+// Função auxiliar para nomes amigáveis
+function getCategoryName(category) {
+    const names = {
+        'tops': 'Tops e Blusas',
+        'leggings': 'Leggings e Peças Únicas',
+        'conjuntos': 'Conjuntos',
+        'all': 'Todos os Produtos'
+    };
+    return names[category] || category;
 }
 
 // Função auxiliar para nomes amigáveis
@@ -2191,6 +2228,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
