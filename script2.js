@@ -1359,97 +1359,92 @@ function renderProducts() {
     }
     
     grid.innerHTML = paginatedProducts.map(product => {
-        // CORREÇÃO: Garantir que images sempre seja um array válido
-        let images = [];
-        
-        if (Array.isArray(product.images) && product.images.length > 0) {
-            images = product.images;
-        } else if (product.image) {
-            images = [product.image];
-        } else {
-            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
-        }
-        
-        const hasMultipleImages = images.length > 1;
-        const isFav = isFavorite(product.id);
-        
-        // Calcular desconto percentual
-        const discountPercent = product.oldPrice ? 
-            Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
-        
-        // Calcular parcelas
-        const installments = 10;
-        const installmentValue = (product.price / installments).toFixed(2);
-        
-        return `
-    <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
-                <div class="product-image">
-                    <!-- Favorite Button -->
-                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
-                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
-                            aria-label="Adicionar aos favoritos">
-                        ${isFav ? '❤️' : '🤍'}
-                    </button>
-                    
-                    <!-- Discount Badge -->
-                    ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
-                    ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
-                    
-                    <!-- Image Carousel -->
-                    <div class="product-image-carousel">
-                        ${images.map((img, index) => {
-                            const isRealImage = img.startsWith('data:image') || img.startsWith('http');
-                            return `
-                                <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
-                                     style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
-                                    ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy">` : ''}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    
-                    <!-- Navigation Arrows (only if multiple images) -->
-                    ${hasMultipleImages ? `
-                        <div class="product-carousel-arrows">
-                            <button class="product-carousel-arrow" 
-                                    onclick="event.stopPropagation(); prevProductImage('${product.id}', event)" 
-                                    aria-label="Imagem anterior">‹</button>
-                            <button class="product-carousel-arrow" 
-                                    onclick="event.stopPropagation(); nextProductImage('${product.id}', event)" 
-                                    aria-label="Próxima imagem">›</button>
-                        </div>
-                        
-                        <!-- Carousel Dots -->
-                        <div class="product-carousel-dots">
-                            ${images.map((_, index) => `
-                                <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" 
-                                     onclick="event.stopPropagation(); goToProductImage('${product.id}', ${index}, event)"></div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                    
-                    <!-- Add to Cart Button -->
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
-                        Adicionar ao Carrinho
-                    </button>
+    // CORREÇÃO: Garantir que images sempre seja um array válido
+    let images = [];
+    
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        images = product.images;
+    } else if (product.image) {
+        images = [product.image];
+    } else {
+        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+    }
+    
+    const hasMultipleImages = images.length > 1;
+    const isFav = isFavorite(product.id);
+    
+    // Calcular desconto percentual
+    const discountPercent = product.oldPrice ? 
+        Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+    
+    return `
+        <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
+            <div class="product-image">
+                <!-- Favorite Button -->
+                <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                        onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                        aria-label="Adicionar aos favoritos">
+                    ${isFav ? '❤️' : '🤍'}
+                </button>
+                
+                <!-- Discount Badge -->
+                ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+                ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
+                
+                <!-- Image Carousel -->
+                <div class="product-image-carousel">
+                    ${images.map((img, index) => {
+                        const isRealImage = img.startsWith('data:image') || img.startsWith('http');
+                        return `
+                            <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
+                                 style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
+                                ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy">` : ''}
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
                 
-                <!-- Product Info -->
-                <div class="product-info">
-                    <h4>${sanitizeInput(product.name)}</h4>
-                    <div class="product-price">
-                        ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
-                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
-                        <span class="price-installment">ou ${installments}x de R$ ${installmentValue}</span>
+                <!-- Navigation Arrows (only if multiple images) -->
+                ${hasMultipleImages ? `
+                    <div class="product-carousel-arrows">
+                        <button class="product-carousel-arrow" 
+                                onclick="event.stopPropagation(); prevProductImage('${product.id}', event)" 
+                                aria-label="Imagem anterior">‹</button>
+                        <button class="product-carousel-arrow" 
+                                onclick="event.stopPropagation(); nextProductImage('${product.id}', event)" 
+                                aria-label="Próxima imagem">›</button>
                     </div>
+                    
+                    <!-- Carousel Dots -->
+                    <div class="product-carousel-dots">
+                        ${images.map((_, index) => `
+                            <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" 
+                                 onclick="event.stopPropagation(); goToProductImage('${product.id}', ${index}, event)"></div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                <!-- Add to Cart Button -->
+                <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
+                    Adicionar ao Carrinho
+                </button>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="product-info">
+                <h4>${sanitizeInput(product.name)}</h4>
+                <div class="product-price">
+                    ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                    <span class="price-new">R$ ${product.price.toFixed(2)}</span>
                 </div>
             </div>
-        `;
-    }).join('');
-    
-    // Adicionar hover automático no carrossel
-    setupAutoCarousel();
-    renderPagination(totalPages);
+        </div>
+    `;
+}).join('');
+
+// Adicionar hover automático no carrossel
+setupAutoCarousel();
+renderPagination(totalPages);
 }
 
 // ==================== AUTO CAROUSEL NO HOVER ====================
@@ -2493,6 +2488,7 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
