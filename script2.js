@@ -318,14 +318,41 @@ function sanitizeInput(input) {
 function validateProductData(data) {
     const errors = [];
     
+    // Validar nome
     if (!data.name || data.name.trim().length < 3) {
         errors.push('Nome deve ter pelo menos 3 caracteres');
     }
-    if (data.price <= 0) {
+    if (data.name && data.name.length > 100) {
+        errors.push('Nome deve ter no máximo 100 caracteres');
+    }
+    
+    // Validar preço
+    if (!data.price || data.price <= 0) {
         errors.push('Preço deve ser maior que zero');
     }
+    if (data.price > 10000) {
+        errors.push('Preço não pode exceder R$ 10.000');
+    }
+    
+    // Validar oldPrice
     if (data.oldPrice && data.oldPrice <= data.price) {
-        errors.push('Preço antigo deve ser maior que o atual');
+        errors.push('Preço antigo deve ser maior que o preço atual');
+    }
+    
+    // Validar badge
+    if (data.badge && data.badge.length > 20) {
+        errors.push('Badge deve ter no máximo 20 caracteres');
+    }
+    
+    // Validar imagens
+    if (!data.images || !Array.isArray(data.images) || data.images.length === 0) {
+        errors.push('Produto deve ter pelo menos 1 imagem');
+    }
+    
+    // Validar categoria
+    const validCategories = ['blusas', 'conjunto calca', 'peca unica', 'conjunto short saia', 'conjunto short'];
+    if (!data.category || !validCategories.includes(data.category)) {
+        errors.push('Categoria inválida');
     }
     
     return errors;
@@ -2367,6 +2394,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
