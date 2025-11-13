@@ -3090,6 +3090,7 @@ footer {
     .promo-value {
         font-size: 3.5rem;
     }
+}
     /* ==================== TOAST NOTIFICATIONS ==================== */
 .toast {
     position: fixed;
@@ -3193,4 +3194,5 @@ footer {
     }
 }
 }
+
 
