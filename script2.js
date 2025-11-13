@@ -1092,13 +1092,6 @@ function filterProducts(category) {
 }
 
 function sortProducts(sortType) {
-    // Limpar carrosséis e eventos ao mudar ordenação
-    Object.keys(carouselIntervals).forEach(key => {
-        clearInterval(carouselIntervals[key]);
-    });
-    carouselIntervals = {};
-    carouselEventsRegistered.clear();
-    
     currentSort = sortType;
     renderProducts();
     trackEvent('Products', 'Sort', sortType);
@@ -2157,6 +2150,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
