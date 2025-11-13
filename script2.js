@@ -10,6 +10,7 @@ let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]'
 let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 let carouselIntervals = {};
 const carouselEventsRegistered = new Set();
+let carouselsPaused = false;
 // ==================== FUNÇÕES UTILITÁRIAS DE IMAGEM ====================
 function getProductImage(product) {
     if (Array.isArray(product.images) && product.images.length > 0) {
@@ -1484,6 +1485,9 @@ function setupAutoCarousel() {
         let currentSlideIndex = 0;
         
         const handleMouseEnter = () => {
+            if (carouselsPaused) {
+        return; // Não cria interval se estiver pausado
+    }
             // Limpar intervalo anterior se existir
             if (carouselIntervals[productId]) {
                 clearInterval(carouselIntervals[productId]);
@@ -2538,4 +2542,5 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
