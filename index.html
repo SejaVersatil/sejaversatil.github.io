@@ -266,10 +266,14 @@
 </section>
     
     <!-- Products Section -->
-    <section class="products-section" id="produtos">
-        <h2 class="section-title">Nossos Produtos</h2>
+    <h2 class="section-title">Nossos Produtos</h2>
 
-        <div class="products-grid" id="productsGrid"></div>
+<div class="active-category-badge" id="activeCategoryBadge" style="display: none;">
+    Filtrando: <strong id="categoryNameDisplay"></strong>
+    <button class="clear-filter-btn" onclick="clearCategoryFilter()">✕ Limpar Filtro</button>
+</div>
+
+<div class="products-grid" id="productsGrid"></div>
 
         <div class="pagination" id="pagination"></div>
     </section>
