@@ -33,7 +33,8 @@ function getProductImages(product) {
 
 function isRealImage(imageSrc) {
     return imageSrc && (imageSrc.startsWith('data:image') || imageSrc.startsWith('http'));
-    // ADICIONAR APÓS isRealImage()
+}
+// ADICIONAR APÓS isRealImage()
 function isNewProduct(product) {
     if (!product.createdAt) return false;
     
@@ -2471,6 +2472,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
