@@ -1193,6 +1193,7 @@ function renderProducts() {
         return `
     <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
                 <div class="product-image">
+                style="cursor: pointer;"
                     <!-- Favorite Button -->
                     <button class="favorite-btn ${isFav ? 'active' : ''}" 
                             onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
@@ -2170,6 +2171,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
