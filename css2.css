@@ -2211,6 +2211,44 @@ footer {
     50% { transform: scale(1.2); }
 }
 
+/* ==================== SKELETON LOADING ==================== */
+.skeleton-loading {
+    pointer-events: none;
+    user-select: none;
+}
+
+.skeleton-image {
+    width: 100%;
+    aspect-ratio: 3 / 4.5;
+    background: #f0f0f0;
+}
+
+.skeleton-info {
+    padding: 2rem 1.5rem;
+}
+
+.skeleton-line {
+    height: 20px;
+    background: #f0f0f0;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* Empty Section Message */
 .empty-section-message {
     text-align: center;
@@ -3053,6 +3091,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
