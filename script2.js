@@ -1646,11 +1646,12 @@ function loadCart() {
 }
 
 function checkout() {
-    if (cart.length === 0) return;
+    if (cart.length === 0) {
+        showToast('Seu carrinho está vazio!', 'error');
+        return;
+    }
     
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    showToast(`Total: R$ ${total.toFixed(2)} - Função de pagamento em desenvolvimento`, 'info');
-    trackEvent('E-commerce', 'Checkout', `R$ ${total.toFixed(2)}`);
+    openPaymentModal();
 }
 
 // ==================== BUSCA ====================
@@ -1792,4 +1793,5 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
