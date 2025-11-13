@@ -644,7 +644,86 @@
             </form>
         </div>
     </div>
-
+    
+<!-- Payment Modal -->
+<div class="payment-modal" id="paymentModal">
+    <div class="payment-modal-content">
+        <div class="payment-modal-header">
+            <h3>Escolha a Forma de Pagamento</h3>
+            <button class="payment-modal-close" onclick="closePaymentModal()">✕</button>
+        </div>
+        
+        <div class="payment-summary">
+            <h4>Resumo do Pedido</h4>
+            <div id="paymentCartItems"></div>
+            <div class="payment-total">
+                <span>Total:</span>
+                <span id="paymentTotal">R$ 0,00</span>
+            </div>
+        </div>
+        
+        <div class="payment-options">
+            <h4>Forma de Pagamento</h4>
+            
+            <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="pix" checked>
+                <div class="payment-option-content">
+                    <span class="payment-icon">💳</span>
+                    <div class="payment-info">
+                        <strong>PIX</strong>
+                        <small>Aprovação imediata</small>
+                    </div>
+                </div>
+            </label>
+            
+            <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="boleto">
+                <div class="payment-option-content">
+                    <span class="payment-icon">📄</span>
+                    <div class="payment-info">
+                        <strong>Boleto Bancário</strong>
+                        <small>Vencimento em 3 dias úteis</small>
+                    </div>
+                </div>
+            </label>
+            
+            <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="credito-avista">
+                <div class="payment-option-content">
+                    <span class="payment-icon">💳</span>
+                    <div class="payment-info">
+                        <strong>Cartão de Crédito à Vista</strong>
+                        <small>Pagamento único</small>
+                    </div>
+                </div>
+            </label>
+            
+            <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="credito-parcelado">
+                <div class="payment-option-content">
+                    <span class="payment-icon">💳</span>
+                    <div class="payment-info">
+                        <strong>Cartão de Crédito Parcelado</strong>
+                        <small>Até 3x sem juros</small>
+                    </div>
+                </div>
+            </label>
+            
+            <div id="installmentsBox" class="installments-box" style="display: none;">
+                <label for="installments">Número de Parcelas:</label>
+                <select id="installments">
+                    <option value="2">2x sem juros</option>
+                    <option value="3">3x sem juros</option>
+                </select>
+            </div>
+        </div>
+        
+        <button class="payment-confirm-btn" onclick="sendToWhatsApp()">
+            📱 Finalizar Pedido via WhatsApp
+        </button>
+    </div>
+</div>
+    
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">⏳</div>
