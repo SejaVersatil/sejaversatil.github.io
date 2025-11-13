@@ -1,738 +1,3 @@
-// ==================== VARIÁVEIS GLOBAIS ====================
-let productsData = [];
-let cart = [];
-let currentFilter = 'all';
-let currentSort = '';
-let currentPage = 1;
-const itemsPerPage = 12;
-let tempProductImages = [];
-let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
-let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
-
-// ==================== CARROSSEL HERO ====================
-let currentHeroSlide = 0;
-let heroCarouselInterval;
-
-const heroSlides = [
-    {
-        image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80',
-        title: 'COLEÇÃO INVERNO 2025',
-        subtitle: 'Conforto e estilo para seus treinos',
-        cta: 'EXPLORAR AGORA'
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1540331547168-8b63109225b7?w=1920&q=80',
-        title: 'LANÇAMENTO SEAMLESS',
-        subtitle: 'Tecnologia sem costura para máxima performance',
-        cta: 'VER COLEÇÃO'
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80',
-        title: 'FITNESS & LIFESTYLE',
-        subtitle: 'Do treino ao dia a dia com versatilidade',
-        cta: 'DESCOBRIR'
-    }
-];
-
-function initHeroCarousel() {
-    const heroContainer = document.getElementById('heroCarousel');
-    if (!heroContainer) return;
-
-    heroContainer.innerHTML = heroSlides.map((slide, index) => `
-        <div class="hero-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${slide.image}')">
-            <div class="hero-overlay"></div>
-            <div class="hero-content">
-                <h1 class="hero-title">${slide.title}</h1>
-                <p class="hero-subtitle">${slide.subtitle}</p>
-                <button class="hero-cta" onclick="scrollToProducts()">${slide.cta}</button>
-            </div>
-        </div>
-    `).join('');
-
-    const dotsContainer = document.getElementById('heroCarouselDots');
-    if (dotsContainer) {
-        dotsContainer.innerHTML = heroSlides.map((_, index) => `
-            <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
-        `).join('');
-    }
-
-    startHeroCarousel();
-}
-
-function startHeroCarousel() {
-    heroCarouselInterval = setInterval(() => {
-        nextHeroSlide();
-    }, 5000);
-}
-
-function stopHeroCarousel() {
-    clearInterval(heroCarouselInterval);
-}
-
-function nextHeroSlide() {
-    currentHeroSlide = (currentHeroSlide + 1) % heroSlides.length;
-    updateHeroCarousel();
-}
-
-function prevHeroSlide() {
-    currentHeroSlide = (currentHeroSlide - 1 + heroSlides.length) % heroSlides.length;
-    updateHeroCarousel();
-}
-
-function goToHeroSlide(index) {
-    stopHeroCarousel();
-    currentHeroSlide = index;
-    updateHeroCarousel();
-    startHeroCarousel();
-}
-
-function updateHeroCarousel() {
-    const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.hero-dot');
-    
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('active', index === currentHeroSlide);
-    });
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentHeroSlide);
-    });
-}
-
-function scrollToProducts() {
-    const productsSection = document.getElementById('produtos');
-    if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// ==================== CLASSES UTILITÁRIAS ====================
-
-// Cache Manager
-class CacheManager {
-    constructor(ttl = 300000) { // 5 minutos
-        this.cache = new Map();
-        this.ttl = ttl;
-    }
-    
-    set(key, value) {
-        this.cache.set(key, {
-            value,
-            timestamp: Date.now()
-        });
-    }
-    
-    get(key) {
-        const item = this.cache.get(key);
-        if (!item) return null;
-        
-        if (Date.now() - item.timestamp > this.ttl) {
-            this.cache.delete(key);
-            return null;
-        }
-        
-        return item.value;
-    }
-    
-    clear() {
-        this.cache.clear();
-    }
-}
-
-// Rate Limiter
-class RateLimiter {
-    constructor(maxRequests, timeWindow) {
-        this.maxRequests = maxRequests;
-        this.timeWindow = timeWindow;
-        this.requests = [];
-    }
-    
-    canMakeRequest() {
-        const now = Date.now();
-        this.requests = this.requests.filter(time => now - time < this.timeWindow);
-        
-        if (this.requests.length < this.maxRequests) {
-            this.requests.push(now);
-            return true;
-        }
-        return false;
-    }
-}
-
-const productCache = new CacheManager();
-const firestoreRateLimiter = new RateLimiter(10, 60000);
-
-// ==================== FUNÇÕES UTILITÁRIAS ====================
-
-// Debounce
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Toast Notifications
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <div class="toast-content">
-            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-            <span class="toast-message">${message}</span>
-        </div>
-    `;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Validação de Email
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-// Sanitização de Input
-function sanitizeInput(input) {
-    const div = document.createElement('div');
-    div.textContent = input;
-    return div.innerHTML;
-}
-
-// Validação de Dados do Produto
-function validateProductData(data) {
-    const errors = [];
-    
-    if (!data.name || data.name.trim().length < 3) {
-        errors.push('Nome deve ter pelo menos 3 caracteres');
-    }
-    if (data.price <= 0) {
-        errors.push('Preço deve ser maior que zero');
-    }
-    if (data.oldPrice && data.oldPrice <= data.price) {
-        errors.push('Preço antigo deve ser maior que o atual');
-    }
-    
-    return errors;
-}
-
-// Event Tracking
-function trackEvent(category, action, label) {
-    console.log(`📊 Event: ${category} - ${action} - ${label}`);
-    
-    if (typeof gtag !== 'undefined') {
-        gtag('event', action, {
-            event_category: category,
-            event_label: label
-        });
-    }
-}
-
-// ==================== PRODUTOS PADRÃO ====================
-
-const DEFAULT_PRODUCTS = [
-    { name: 'Legging High Waist Premium', category: 'leggings', price: 149.90, oldPrice: 189.90, badge: 'Novo', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'] },
-    { name: 'Top Fitness Sem Costura', category: 'tops', price: 89.90, oldPrice: null, badge: 'Destaque', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
-    { name: 'Conjunto Ribbed Marsala', category: 'conjuntos', price: 209.90, oldPrice: 299.90, badge: '-30%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)'] },
-    { name: 'Shorts Bike Seamless', category: 'leggings', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] },
-    { name: 'Legging Scrunch Bum', category: 'leggings', price: 169.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #fa709a 0%, #fee140 100%)'] },
-    { name: 'Top Cropped Strappy', category: 'tops', price: 79.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #30cfd0 0%, #330867 100%)'] },
-    { name: 'Macaquinho Fitness Premium', category: 'conjuntos', price: 149.90, oldPrice: 199.90, badge: '-25%', images: ['linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'] },
-    { name: 'Jaqueta Oversized', category: 'conjuntos', price: 189.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'] },
-    { name: 'Legging Metallic Rose', category: 'leggings', price: 159.90, oldPrice: null, badge: 'Novo', images: ['linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'] },
-    { name: 'Top Push Up Ribbed', category: 'tops', price: 99.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'] },
-    { name: 'Conjunto Seamless Pro', category: 'conjuntos', price: 229.90, oldPrice: 279.90, badge: '-20%', images: ['linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'] },
-    { name: 'Legging Cintura Alta Preta', category: 'leggings', price: 139.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #434343 0%, #000000 100%)'] },
-    { name: 'Top Regata Fitness', category: 'tops', price: 69.90, oldPrice: 89.90, badge: '-22%', images: ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'] },
-    { name: 'Conjunto Power Mesh', category: 'conjuntos', price: 249.90, oldPrice: null, badge: 'Lançamento', images: ['linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'] },
-    { name: 'Legging Tie Dye', category: 'leggings', price: 159.90, oldPrice: 199.90, badge: '-20%', images: ['linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'] },
-    { name: 'Top Básico Essential', category: 'tops', price: 59.90, oldPrice: null, badge: null, images: ['linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'] }
-];
-
-async function inicializarProdutosPadrao() {
-    if (productsData.length === 0) {
-        console.log('📦 Nenhum produto no Firestore, adicionando produtos padrão...');
-        
-        for (const produto of DEFAULT_PRODUCTS) {
-            try {
-                const docRef = await db.collection("produtos").add({
-                    ...produto,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                console.log(`✅ Produto "${produto.name}" adicionado com ID: ${docRef.id}`);
-            } catch (error) {
-                console.error(`❌ Erro ao adicionar "${produto.name}":`, error);
-            }
-        }
-        
-        await carregarProdutosDoFirestore();
-    }
-}
-
-// ==================== INICIALIZAÇÃO ====================
-
-document.addEventListener('DOMContentLoaded', async () => {
-    document.getElementById('loadingOverlay').classList.add('active');
-    
-    try {
-        loadSettings();
-        loadCart();
-        await loadProducts();
-        renderProductsSkeleton();
-        setTimeout(() => {
-            renderProducts();
-            renderBestSellers();
-            updateCartUI();
-            initHeroCarousel();
-            setupConnectionMonitor();
-            setupCartAbandonmentTracking();
-            injectToastStyles();
-            console.log('✅ Site carregado com sucesso!');
-        }, 100);
-    } catch (error) {
-        console.error('❌ Erro ao inicializar:', error);
-        showToast('Erro ao carregar o site. Por favor, recarregue a página.', 'error');
-    } finally {
-        document.getElementById('loadingOverlay').classList.remove('active');
-    }
-});
-
-// Injetar estilos do Toast
-function injectToastStyles() {
-    if (document.getElementById('toast-styles')) return;
-    
-    const style = document.createElement('style');
-    style.id = 'toast-styles';
-    style.textContent = `
-        .toast {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateX(400px);
-            transition: transform 0.3s;
-            z-index: 10000;
-            min-width: 250px;
-        }
-        .toast.show { transform: translateX(0); }
-        .toast-success { border-left: 4px solid #27ae60; }
-        .toast-error { border-left: 4px solid #e74c3c; }
-        .toast-info { border-left: 4px solid #3498db; }
-        .toast-content {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .toast-icon {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .toast-success .toast-icon { color: #27ae60; }
-        .toast-error .toast-icon { color: #e74c3c; }
-        .toast-info .toast-icon { color: #3498db; }
-        .toast-message {
-            font-size: 0.9rem;
-            color: #333;
-        }
-        .product-skeleton {
-            animation: pulse 1.5s infinite;
-        }
-        .skeleton-image {
-            width: 100%;
-            height: 420px;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        .skeleton-text {
-            height: 20px;
-            background: #f0f0f0;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-        .skeleton-text.short {
-            width: 60%;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// ==================== SISTEMA DE ADMIN ====================
-
-const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'sejaversatil2025',
-    email: 'admin@sejaversatil.com.br'
-};
-
-let isAdminLoggedIn = false;
-let currentUser = null;
-let editingProductId = null;
-
-// ==================== SISTEMA DE USUÁRIOS ====================
-
-function openUserPanel() {
-    const panel = document.getElementById('userPanel');
-    panel.classList.add('active');
-    checkUserSession();
-}
-
-function closeUserPanel() {
-    document.getElementById('userPanel').classList.remove('active');
-}
-
-function switchUserTab(tab) {
-    document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.user-tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-
-    if (tab === 'login') {
-        document.querySelectorAll('.user-panel-tab')[0].classList.add('active');
-        document.getElementById('loginTab').classList.add('active');
-    } else if (tab === 'register') {
-        document.querySelectorAll('.user-panel-tab')[1].classList.add('active');
-        document.getElementById('registerTab').classList.add('active');
-    }
-}
-
-function checkUserSession() {
-    const savedUser = localStorage.getItem('sejaVersatilCurrentUser');
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        showLoggedInView();
-    }
-}
-
-function showLoggedInView() {
-    document.getElementById('userPanelTabs').style.display = 'none';
-    document.getElementById('loginTab').classList.remove('active');
-    document.getElementById('registerTab').classList.remove('active');
-    document.getElementById('userLoggedTab').classList.add('active');
-    
-    document.getElementById('userName').textContent = currentUser.name;
-    document.getElementById('userEmail').textContent = currentUser.email;
-    
-    if (currentUser.isAdmin) {
-        document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
-        document.getElementById('adminAccessBtn').style.display = 'block';
-        isAdminLoggedIn = true;
-    } else {
-        document.getElementById('userStatus').textContent = 'Cliente';
-        document.getElementById('adminAccessBtn').style.display = 'none';
-    }
-}
-
-function hideLoggedInView() {
-    document.getElementById('userPanelTabs').style.display = 'flex';
-    document.getElementById('userLoggedTab').classList.remove('active');
-    switchUserTab('login');
-}
-
-function userLogin(event) {
-    event.preventDefault();
-    
-    const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase().trim();
-    const password = document.getElementById('loginPassword').value;
-    const errorMsg = document.getElementById('loginError');
-
-    if (!emailOrUsername || !password) {
-        errorMsg.textContent = 'Preencha todos os campos';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
-        password === ADMIN_CREDENTIALS.password) {
-        currentUser = {
-            name: 'Administrador',
-            email: ADMIN_CREDENTIALS.email,
-            isAdmin: true
-        };
-        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-        showLoggedInView();
-        errorMsg.classList.remove('active');
-        showToast('Login realizado com sucesso!', 'success');
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
-    const user = users.find(u => u.email.toLowerCase() === emailOrUsername && u.password === password);
-
-    if (user) {
-        currentUser = {
-            name: user.name,
-            email: user.email,
-            isAdmin: false
-        };
-        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-        showLoggedInView();
-        errorMsg.classList.remove('active');
-        showToast('Login realizado com sucesso!', 'success');
-    } else {
-        errorMsg.textContent = 'E-mail ou senha incorretos';
-        errorMsg.classList.add('active');
-    }
-}
-
-function userRegister(event) {
-    event.preventDefault();
-
-    const name = document.getElementById('registerName').value.trim();
-    const email = document.getElementById('registerEmail').value.toLowerCase().trim();
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('registerConfirmPassword').value;
-    const errorMsg = document.getElementById('registerError');
-    const successMsg = document.getElementById('registerSuccess');
-
-    errorMsg.classList.remove('active');
-    successMsg.classList.remove('active');
-
-    if (!name || !email || !password || !confirmPassword) {
-        errorMsg.textContent = 'Preencha todos os campos';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if (!validateEmail(email)) {
-        errorMsg.textContent = 'E-mail inválido';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if (password.length < 6) {
-        errorMsg.textContent = 'Senha deve ter pelo menos 6 caracteres';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        errorMsg.textContent = 'As senhas não coincidem';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
-    if (users.some(u => u.email === email)) {
-        errorMsg.textContent = 'Este e-mail já está cadastrado';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if (email === ADMIN_CREDENTIALS.email) {
-        errorMsg.textContent = 'Este e-mail não pode ser usado';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    const newUser = { name, email, password };
-    users.push(newUser);
-    localStorage.setItem('sejaVersatilUsers', JSON.stringify(users));
-
-    successMsg.classList.add('active');
-    showToast('Conta criada com sucesso!', 'success');
-    
-    document.getElementById('registerName').value = '';
-    document.getElementById('registerEmail').value = '';
-    document.getElementById('registerPassword').value = '';
-    document.getElementById('registerConfirmPassword').value = '';
-
-    setTimeout(() => {
-        switchUserTab('login');
-        successMsg.classList.remove('active');
-    }, 2000);
-}
-
-function userLogout() {
-    if (confirm('Deseja realmente sair da sua conta?')) {
-        currentUser = null;
-        isAdminLoggedIn = false;
-        localStorage.removeItem('sejaVersatilCurrentUser');
-        hideLoggedInView();
-        showToast('Logout realizado com sucesso', 'info');
-    }
-}
-
-// ==================== FIRESTORE ====================
-
-async function carregarProdutosDoFirestore() {
-    try {
-        console.log('🔄 Carregando produtos do Firestore...');
-        
-        const cached = productCache.get('products');
-        if (cached) {
-            console.log('✅ Produtos carregados do cache');
-            productsData = cached;
-            return productsData;
-        }
-
-        if (!firestoreRateLimiter.canMakeRequest()) {
-            console.warn('⚠️ Rate limit atingido');
-            showToast('Muitas requisições. Aguarde um momento.', 'error');
-            return productsData;
-        }
-
-        const snapshot = await db.collection("produtos").get();
-        productsData.length = 0;
-
-        snapshot.forEach((doc) => {
-            productsData.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-
-        productCache.set('products', productsData);
-        console.log(`✅ ${productsData.length} produtos carregados do Firestore`);
-        return productsData;
-        
-    } catch (error) {
-        console.error("❌ Erro ao carregar produtos do Firestore:", error);
-
-        if (error.code === 'permission-denied') {
-            console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
-            showToast('Erro de permissão ao carregar produtos', 'error');
-        } else if (error.code === 'unavailable') {
-            console.error('🌐 Firestore indisponível. Verifique sua conexão com a internet.');
-            showToast('Sem conexão com o servidor', 'error');
-        }
-
-        throw error;
-    }
-}
-
-async function loadProducts() {
-    try {
-        await carregarProdutosDoFirestore();
-        await inicializarProdutosPadrao();
-    } catch (error) {
-        console.error("Erro ao carregar do Firestore:", error);
-        showToast('⚠️ Erro ao conectar com o banco de dados', 'error');
-    }
-}
-
-function saveProducts() {
-    localStorage.setItem('sejaVersatilProducts', JSON.stringify(productsData));
-}
-
-// ==================== PAINEL ADMIN ====================
-
-function openAdminPanel() {
-    if (!isAdminLoggedIn) {
-        showToast('Você precisa estar logado como administrador', 'error');
-        openUserPanel();
-        return;
-    }
-    document.getElementById('adminPanel').classList.add('active');
-    renderAdminProducts();
-    updateAdminStats();
-}
-
-function closeAdminPanel() {
-    document.getElementById('adminPanel').classList.remove('active');
-    isAdminLoggedIn = false;
-}
-
-function switchAdminTab(tab) {
-    document.querySelectorAll('.admin-tab').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-
-    document.querySelectorAll('.admin-tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-
-    if (tab === 'products') {
-        document.getElementById('productsTab').classList.add('active');
-    } else if (tab === 'settings') {
-        document.getElementById('settingsTab').classList.add('active');
-    }
-}
-
-function updateAdminStats() {
-    const totalProducts = productsData.length;
-    const totalValue = productsData.reduce((sum, p) => sum + p.price, 0);
-    const activeProducts = productsData.filter(p => !p.oldPrice).length;
-
-    document.getElementById('totalProducts').textContent = totalProducts;
-    document.getElementById('totalRevenue').textContent = `R$ ${totalValue.toFixed(2)}`;
-    document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 50) + 10;
-    document.getElementById('activeProducts').textContent = activeProducts;
-}
-
-function renderAdminProducts() {
-    const grid = document.getElementById('adminProductsGrid');
-    grid.innerHTML = productsData.map(product => {
-        const images = product.images || (product.image ? [product.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
-        const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-        
-        return `
-            <div class="admin-product-card">
-                <div class="admin-product-image" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
-                <div class="admin-product-info">
-                    <h4>${sanitizeInput(product.name)}</h4>
-                    <p><strong>Categoria:</strong> ${product.category}</p>
-                    <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
-                    ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
-                    ${product.badge ? `<p><strong>Badge:</strong> ${sanitizeInput(product.badge)}</p>` : ''}
-                    <p><strong>Imagens:</strong> ${images.length}</p>
-                </div>
-                <div class="admin-actions">
-                    <button class="admin-btn admin-btn-edit" onclick="editProduct('${product.id}')">Editar</button>
-                    <button class="admin-btn admin-btn-delete" onclick="deleteProduct('${product.id}')">Excluir</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function openProductModal(productId = null) {
-    editingProductId = productId;
-    const modal = document.getElementById('productModal');
-    const title = document.getElementById('modalTitle');
-
-    if (productId) {
-        const product = productsData.find(p => p.id === productId);
-        title.textContent = 'Editar Produto';
-        document.getElementById('productId').value = productId;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productCategory').value = product.category;
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productOldPrice').value = product.oldPrice || '';
-        document.getElementById('productBadge').value = product.badge || '';
-        tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
-    } else {
-        title.textContent = 'Adicionar Novo Produto';
-        document.getElementById('productForm').reset();
-        document.getElementById('productId').value = '';
-        tempProductImages = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
-    }
-
-    renderProductImages();
-    modal.classList.add('active');
-}
-
 function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
@@ -1207,6 +472,12 @@ function renderProducts() {
         const hasMultipleImages = images.length > 1;
         const isFav = isFavorite(product.id);
         
+        // Calcular desconto
+        const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        
+        // Calcular parcelas
+        const installmentValue = (product.price / 10).toFixed(2);
+        
         return `
             <div class="product-card">
                 <div class="product-image">
@@ -1216,6 +487,8 @@ function renderProducts() {
                         ${isFav ? '❤️' : '🤍'}
                     </button>
                     
+                    ${discount > 0 ? `<span class="product-badge">-${discount}%</span>` : (product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : '')}
+                    
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
                             const isRealImage = img.startsWith('data:image') || img.startsWith('http');
@@ -1224,6 +497,7 @@ function renderProducts() {
                             `;
                         }).join('')}
                     </div>
+                    
                     ${hasMultipleImages ? `
                         <div class="product-carousel-arrows">
                             <button class="product-carousel-arrow" onclick="prevProductImage('${product.id}', event)">‹</button>
@@ -1235,14 +509,20 @@ function renderProducts() {
                             `).join('')}
                         </div>
                     ` : ''}
-                    ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
+                    
                     <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
                 </div>
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
+                    ${product.oldPrice ? `<span class="product-original-price">De: R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
                     <div class="product-price">
-                        ${product.oldPrice ? `<span class="price-old">R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
                         <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                    <div class="price-installment">Ou 10x de R$ ${installmentValue} s/juros</div>
+                    <div class="product-sizes">
+                        <div class="size-option">P</div>
+                        <div class="size-option">M</div>
+                        <div class="size-option">G</div>
                     </div>
                 </div>
             </div>
@@ -1271,6 +551,12 @@ function renderBestSellers() {
         const firstImage = images[0];
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
         
+        // Calcular desconto
+        const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        
+        // Calcular parcelas
+        const installmentValue = (product.price / 10).toFixed(2);
+        
         return `
             <div class="product-card">
                 <div class="product-image">
@@ -1280,17 +566,24 @@ function renderBestSellers() {
                         ${isFav ? '❤️' : '🤍'}
                     </button>
                     
+                    ${discount > 0 ? `<span class="product-badge">-${discount}%</span>` : (product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : '')}
+                    
                     <div class="product-image-carousel">
                         <div class="product-image-slide active" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                     </div>
-                    ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
                     <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
                 </div>
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
+                    ${product.oldPrice ? `<span class="product-original-price">De: R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
                     <div class="product-price">
-                        ${product.oldPrice ? `<span class="price-old">R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
                         <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                    <div class="price-installment">Ou 10x de R$ ${installmentValue} s/juros</div>
+                    <div class="product-sizes">
+                        <div class="size-option">P</div>
+                        <div class="size-option">M</div>
+                        <div class="size-option">G</div>
                     </div>
                 </div>
             </div>
@@ -1306,12 +599,12 @@ function nextProductImage(productId, event) {
     let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
     
     slides[currentIndex].classList.remove('active');
-    dots[currentIndex].classList.remove('active');
+    if (dots.length > 0) dots[currentIndex].classList.remove('active');
     
     currentIndex = (currentIndex + 1) % slides.length;
     
     slides[currentIndex].classList.add('active');
-    dots[currentIndex].classList.add('active');
+    if (dots.length > 0) dots[currentIndex].classList.add('active');
 }
 
 function prevProductImage(productId, event) {
@@ -1322,12 +615,12 @@ function prevProductImage(productId, event) {
     let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
     
     slides[currentIndex].classList.remove('active');
-    dots[currentIndex].classList.remove('active');
+    if (dots.length > 0) dots[currentIndex].classList.remove('active');
     
     currentIndex = (currentIndex - 1 + slides.length) % slides.length;
     
     slides[currentIndex].classList.add('active');
-    dots[currentIndex].classList.add('active');
+    if (dots.length > 0) dots[currentIndex].classList.add('active');
 }
 
 function goToProductImage(productId, index, event) {
@@ -1341,6 +634,21 @@ function goToProductImage(productId, index, event) {
     
     slides[index].classList.add('active');
     dots[index].classList.add('active');
+}
+
+// ==================== SELEÇÃO DE TAMANHO ====================
+
+function setupSizeSelection() {
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('size-option')) {
+            const card = e.target.closest('.product-card');
+            if (card) {
+                const sizes = card.querySelectorAll('.size-option');
+                sizes.forEach(s => s.classList.remove('selected'));
+                e.target.classList.add('selected');
+            }
+        }
+    });
 }
 
 // ==================== PAGINAÇÃO ====================
@@ -1653,12 +961,3 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
-
-// ==================== SCROLL TO PRODUCTS ====================
-
-function scrollToProducts() {
-    const productsSection = document.getElementById('produtos');
-    if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
