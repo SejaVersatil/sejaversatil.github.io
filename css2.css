@@ -813,68 +813,6 @@ nav {
     padding: 0 2rem;
 }
 
-.filters-bar {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 3rem 2rem;
-    border-bottom: 1px solid #e5e5e5;
-    margin-bottom: 3rem;
-    flex-wrap: wrap;
-}
-
-.filter-group {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.filter-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-light);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 0.8rem 1.5rem;
-    cursor: pointer;
-    position: relative;
-    transition: color 0.3s;
-}
-
-.filter-btn::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 80%;
-    height: 2px;
-    background: var(--primary);
-    transition: transform 0.3s;
-}
-
-.filter-btn.active,
-.filter-btn:hover {
-    color: var(--primary);
-}
-
-.filter-btn.active::after,
-.filter-btn:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
-
-.sort-select {
-    padding: 0.6rem 1.2rem;
-    border: 1px solid var(--gray);
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
 .products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1051,7 +989,23 @@ nav {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    z-index: 1;
+    z-index: 3;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    background: #e74c3c;
+    color: white;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 3;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .add-to-cart-btn {
@@ -3110,6 +3064,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
