@@ -1690,6 +1690,7 @@ function renderPagination(totalPages) {
 }
 
 function changePage(page) {
+    carouselsPaused = true;
     // Limpar todos os carrosséis ativos
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
@@ -1701,6 +1702,10 @@ function changePage(page) {
     
     currentPage = page;
     renderProducts();
+    setTimeout(() => {
+        carouselsPaused = false;
+        setupAutoCarousel(); // Re-configurar carousels
+    }, 300);
     document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -2540,7 +2545,24 @@ document.addEventListener('input', function(e) {
 window.addEventListener('unhandledrejection', function(event) {
     console.warn('⚠️ Promise não tratada:', event.reason);
     event.preventDefault(); // Evita que o erro seja mostrado no console
+// Limpar carousels quando usuário sai da aba/janela
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // Página ficou oculta (usuário trocou de aba)
+        carouselsPaused = true;
+        stopHeroCarousel();
+        clearCarouselIntervals();
+        console.log('🛑 Carousels pausados (aba inativa)');
+    } else {
+        // Usuário voltou para a aba
+        carouselsPaused = false;
+        startHeroCarousel();
+        setupAutoCarousel();
+        console.log('▶️ Carousels reativados (aba ativa)');
+    }
 });
+
 // ==================== FIM DO ARQUIVO ====================
+
 
 
