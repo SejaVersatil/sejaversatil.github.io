@@ -9,6 +9,7 @@ let tempProductImages = [];
 let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
 let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 let carouselIntervals = {};
+const carouselEventsRegistered = new Set();
 
 // ==================== CARROSSEL HERO ====================
 let currentHeroSlide = 0;
@@ -36,7 +37,7 @@ const heroSlides = [
 ];
 
 function initHeroCarousel() {
-    const heroContainer = document.getElementById('heroCarousel');
+    const heroContainer = document.querySelector('.hero-carousel');
     if (!heroContainer) return;
 
     heroContainer.innerHTML = heroSlides.map((slide, index) => `
@@ -50,7 +51,7 @@ function initHeroCarousel() {
         </div>
     `).join('');
 
-    const dotsContainer = document.getElementById('heroCarouselDots');
+    const dotsContainer = document.querySelector('.carousel-dots');
     if (dotsContainer) {
         dotsContainer.innerHTML = heroSlides.map((_, index) => `
             <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
@@ -1072,6 +1073,13 @@ function addChatMessage(text, sender) {
 // ==================== PRODUTOS ====================
 
 function filterProducts(category) {
+    // Limpar carrosséis e eventos ao mudar filtro
+    Object.keys(carouselIntervals).forEach(key => {
+        clearInterval(carouselIntervals[key]);
+    });
+    carouselIntervals = {};
+    carouselEventsRegistered.clear();
+    
     currentFilter = category;
     currentPage = 1;
     
@@ -1085,6 +1093,13 @@ function filterProducts(category) {
 }
 
 function sortProducts(sortType) {
+    // Limpar carrosséis e eventos ao mudar ordenação
+    Object.keys(carouselIntervals).forEach(key => {
+        clearInterval(carouselIntervals[key]);
+    });
+    carouselIntervals = {};
+    carouselEventsRegistered.clear();
+    
     currentSort = sortType;
     renderProducts();
     trackEvent('Products', 'Sort', sortType);
@@ -1219,6 +1234,9 @@ function renderProducts() {
 
 // ==================== AUTO CAROUSEL NO HOVER ====================
 
+// Controle de eventos já registrados
+const carouselEventsRegistered = new Set();
+
 function setupAutoCarousel() {
     const productCards = document.querySelectorAll('.product-card');
     
@@ -1228,22 +1246,40 @@ function setupAutoCarousel() {
         
         if (slides.length <= 1) return;
         
+        // Verificar se já registrou eventos para este card
+        if (carouselEventsRegistered.has(productId)) {
+            return;
+        }
+        
+        carouselEventsRegistered.add(productId);
+        
         let currentSlideIndex = 0;
         
-        card.addEventListener('mouseenter', () => {
+        const handleMouseEnter = () => {
+            // Limpar intervalo anterior se existir
+            if (carouselIntervals[productId]) {
+                clearInterval(carouselIntervals[productId]);
+            }
+            
             // Iniciar rotação automática das imagens
             carouselIntervals[productId] = setInterval(() => {
-                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                const cardSlides = card.querySelectorAll('.product-image-slide');
+                currentSlideIndex = (currentSlideIndex + 1) % cardSlides.length;
                 updateCarouselSlides(card, currentSlideIndex);
             }, 1500);
-        });
+        };
         
-        card.addEventListener('mouseleave', () => {
+        const handleMouseLeave = () => {
             // Parar rotação e voltar para primeira imagem
-            clearInterval(carouselIntervals[productId]);
+            if (carouselIntervals[productId]) {
+                clearInterval(carouselIntervals[productId]);
+            }
             currentSlideIndex = 0;
             updateCarouselSlides(card, 0);
-        });
+        };
+        
+        card.addEventListener('mouseenter', handleMouseEnter);
+        card.addEventListener('mouseleave', handleMouseLeave);
     });
 }
 
@@ -1417,6 +1453,9 @@ function changePage(page) {
         clearInterval(carouselIntervals[key]);
     });
     carouselIntervals = {};
+    
+    // Limpar registro de eventos para permitir re-registro na nova página
+    carouselEventsRegistered.clear();
     
     currentPage = page;
     renderProducts();
