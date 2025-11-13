@@ -2108,10 +2108,16 @@ function closeProductDetails() {
 
 function changeMainImage(imageSrc, index) {
     const mainImage = document.getElementById('mainProductImage');
+    
+    // ADICIONAR VALIDAÇÃO
+    if (!imageSrc) {
+        console.error('Imagem inválida');
+        return;
+    }
+    
     const isRealImage = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
     mainImage.style.backgroundImage = isRealImage ? `url('${imageSrc}')` : imageSrc;
     
-    // Atualizar thumbnails ativos
     document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
         thumb.classList.toggle('active', i === index);
     });
@@ -2265,6 +2271,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
