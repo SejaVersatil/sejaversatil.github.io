@@ -9,6 +9,103 @@ let tempProductImages = [];
 let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
 let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 
+// ==================== CARROSSEL HERO ====================
+let currentHeroSlide = 0;
+let heroCarouselInterval;
+
+const heroSlides = [
+    {
+        image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80',
+        title: 'COLEÇÃO INVERNO 2025',
+        subtitle: 'Conforto e estilo para seus treinos',
+        cta: 'EXPLORAR AGORA'
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1540331547168-8b63109225b7?w=1920&q=80',
+        title: 'LANÇAMENTO SEAMLESS',
+        subtitle: 'Tecnologia sem costura para máxima performance',
+        cta: 'VER COLEÇÃO'
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80',
+        title: 'FITNESS & LIFESTYLE',
+        subtitle: 'Do treino ao dia a dia com versatilidade',
+        cta: 'DESCOBRIR'
+    }
+];
+
+function initHeroCarousel() {
+    const heroContainer = document.getElementById('heroCarousel');
+    if (!heroContainer) return;
+
+    heroContainer.innerHTML = heroSlides.map((slide, index) => `
+        <div class="hero-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${slide.image}')">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">${slide.title}</h1>
+                <p class="hero-subtitle">${slide.subtitle}</p>
+                <button class="hero-cta" onclick="scrollToProducts()">${slide.cta}</button>
+            </div>
+        </div>
+    `).join('');
+
+    const dotsContainer = document.getElementById('heroCarouselDots');
+    if (dotsContainer) {
+        dotsContainer.innerHTML = heroSlides.map((_, index) => `
+            <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
+        `).join('');
+    }
+
+    startHeroCarousel();
+}
+
+function startHeroCarousel() {
+    heroCarouselInterval = setInterval(() => {
+        nextHeroSlide();
+    }, 5000);
+}
+
+function stopHeroCarousel() {
+    clearInterval(heroCarouselInterval);
+}
+
+function nextHeroSlide() {
+    currentHeroSlide = (currentHeroSlide + 1) % heroSlides.length;
+    updateHeroCarousel();
+}
+
+function prevHeroSlide() {
+    currentHeroSlide = (currentHeroSlide - 1 + heroSlides.length) % heroSlides.length;
+    updateHeroCarousel();
+}
+
+function goToHeroSlide(index) {
+    stopHeroCarousel();
+    currentHeroSlide = index;
+    updateHeroCarousel();
+    startHeroCarousel();
+}
+
+function updateHeroCarousel() {
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.hero-dot');
+    
+    slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentHeroSlide);
+    });
+    
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentHeroSlide);
+    });
+}
+
+function scrollToProducts() {
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 // ==================== CLASSES UTILITÁRIAS ====================
 
 // Cache Manager
@@ -63,7 +160,7 @@ class RateLimiter {
 }
 
 const productCache = new CacheManager();
-const firestoreRateLimiter = new RateLimiter(10, 60000); // 10 requests por minuto
+const firestoreRateLimiter = new RateLimiter(10, 60000);
 
 // ==================== FUNÇÕES UTILITÁRIAS ====================
 
@@ -194,8 +291,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProductsSkeleton();
         setTimeout(() => {
             renderProducts();
+            renderBestSellers();
             updateCartUI();
-            // initCarousel();  // ✅ COMENTADO - Hero agora é estático
+            initHeroCarousel();
             setupConnectionMonitor();
             setupCartAbandonmentTracking();
             injectToastStyles();
@@ -911,10 +1009,6 @@ function saveSettings() {
     const bannerSubtitle = sanitizeInput(document.getElementById('settingBannerSubtitle').value.trim());
     const topBanner = sanitizeInput(document.getElementById('settingTopBanner').value.trim());
 
-    document.querySelector('.hero h1').textContent = bannerTitle;
-    document.querySelector('.hero-subtitle').textContent = bannerSubtitle;
-    document.querySelector('.top-banner').textContent = topBanner;
-
     localStorage.setItem('sejaVersatilSettings', JSON.stringify({
         bannerTitle,
         bannerSubtitle,
@@ -978,8 +1072,6 @@ function loadSettings() {
     const saved = localStorage.getItem('sejaVersatilSettings');
     if (saved) {
         const settings = JSON.parse(saved);
-        document.querySelector('.hero h1').textContent = settings.bannerTitle;
-        document.querySelector('.hero-subtitle').textContent = settings.bannerSubtitle;
         document.querySelector('.top-banner').textContent = settings.topBanner;
 
         document.getElementById('settingBannerTitle').value = settings.bannerTitle;
@@ -999,64 +1091,6 @@ function toggleSidebar() {
     overlay.classList.toggle('active');
     btn.classList.toggle('active');
 }
-
-// ==================== CARROSSEL ====================
-
-// DESATIVADO - Hero agora é estático
- let currentSlide = 0;
- let carouselInterval;
-
-/* CARROSSEL DESATIVADO - Hero agora é estático
-function initCarousel() {
-    const slides = document.querySelectorAll('.hero-slide');
-    const dotsContainer = document.getElementById('carouselDots');
-    
-    slides.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
-        dot.onclick = () => goToSlide(index);
-        dotsContainer.appendChild(dot);
-    });
-    
-    startCarousel();
-}
-
-function startCarousel() {
-    carouselInterval = setInterval(() => {
-        nextSlide();
-    }, 5000);
-}
-
-function stopCarousel() {
-    clearInterval(carouselInterval);
-}
-
-function nextSlide() {
-    const slides = document.querySelectorAll('.hero-slide');
-    currentSlide = (currentSlide + 1) % slides.length;
-    updateCarousel();
-}
-
-function goToSlide(index) {
-    stopCarousel();
-    currentSlide = index;
-    updateCarousel();
-    startCarousel();
-}
-
-function updateCarousel() {
-    const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.carousel-dot');
-    
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('active', index === currentSlide);
-    });
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentSlide);
-    });
-}
-*/
 
 // ==================== CHAT WIDGET ====================
 
@@ -1174,17 +1208,16 @@ function renderProducts() {
         const isFav = isFavorite(product.id);
         
         return `
-    <div class="product-card">
-        <div class="product-image">
-            <!-- ✅ ADICIONAR botão de favorito -->
-            <button class="favorite-btn ${isFav ? 'active' : ''}" 
-                    onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
-                    aria-label="Adicionar aos favoritos">
-                ${isFav ? '❤️' : '🤍'}
-            </button>
-            
-            <div class="product-image-carousel">
-                ${images.map((img, index) => {
+            <div class="product-card">
+                <div class="product-image">
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                            aria-label="Adicionar aos favoritos">
+                        ${isFav ? '❤️' : '🤍'}
+                    </button>
+                    
+                    <div class="product-image-carousel">
+                        ${images.map((img, index) => {
                             const isRealImage = img.startsWith('data:image') || img.startsWith('http');
                             return `
                                 <div class="product-image-slide ${index === 0 ? 'active' : ''}" style="${isRealImage ? `background-image: url(${img}); background-size: cover; background-position: center;` : `background: ${img}`}"></div>
@@ -1217,6 +1250,52 @@ function renderProducts() {
     }).join('');
     
     renderPagination(totalPages);
+}
+
+// ==================== RENDER BEST SELLERS ====================
+
+function renderBestSellers() {
+    const bestSellersGrid = document.getElementById('bestSellersGrid');
+    if (!bestSellersGrid) return;
+    
+    const bestSellers = productsData.filter(p => p.oldPrice).slice(0, 6);
+    
+    if (bestSellers.length === 0) {
+        bestSellersGrid.innerHTML = '<p class="empty-section-message">Nenhum produto em destaque no momento</p>';
+        return;
+    }
+    
+    bestSellersGrid.innerHTML = bestSellers.map(product => {
+        const images = product.images || ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        const isFav = isFavorite(product.id);
+        const firstImage = images[0];
+        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        
+        return `
+            <div class="product-card">
+                <div class="product-image">
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                            aria-label="Adicionar aos favoritos">
+                        ${isFav ? '❤️' : '🤍'}
+                    </button>
+                    
+                    <div class="product-image-carousel">
+                        <div class="product-image-slide active" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
+                    </div>
+                    ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
+                    <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
+                </div>
+                <div class="product-info">
+                    <h4>${sanitizeInput(product.name)}</h4>
+                    <div class="product-price">
+                        ${product.oldPrice ? `<span class="price-old">R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function nextProductImage(productId, event) {
@@ -1544,7 +1623,7 @@ function setupCartAbandonmentTracking() {
         if (cart.length > 0) {
             cartTimer = setTimeout(() => {
                 showToast('Não esqueça de finalizar sua compra! 🛍️', 'info');
-            }, 300000); // 5 minutos
+            }, 300000);
         }
     };
     
@@ -1555,7 +1634,7 @@ function setupCartAbandonmentTracking() {
         }
     });
     
-    setInterval(startCartTimer, 60000); // Check every minute
+    setInterval(startCartTimer, 60000);
 }
 
 // ==================== ATALHOS DE TECLADO ====================
@@ -1575,6 +1654,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ==================== SCROLL TO PRODUCTS ====================
 
-
-
+function scrollToProducts() {
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
