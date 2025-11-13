@@ -221,17 +221,6 @@ function getCategoryName(category) {
     return names[category] || category.toUpperCase();
 }
 
-// Função auxiliar para nomes amigáveis
-function getCategoryName(category) {
-    const names = {
-        'tops': 'Tops e Blusas',
-        'leggings': 'Leggings e Peças',
-        'conjuntos': 'Conjuntos',
-        'all': 'Todos os Produtos'
-    };
-    return names[category] || category;
-}
-
 // ==================== CLASSES UTILITÁRIAS ====================
 
 // Cache Manager
@@ -2472,6 +2461,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
