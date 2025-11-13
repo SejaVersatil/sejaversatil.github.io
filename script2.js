@@ -1766,15 +1766,24 @@ function updateCartUI() {
         cartFooter.style.display = 'none';
     } else {
         cartItems.innerHTML = cart.map(item => {
-            const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
-            
-            return `
-                <div class="cart-item">
-                    <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
-                    <div class="cart-item-info">
-                        <div class="cart-item-title">${sanitizeInput(item.name)}</div>
-                        <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
+    const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
+    
+    return `
+        <div class="cart-item">
+            <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
+            <div class="cart-item-info">
+                <div class="cart-item-title">${sanitizeInput(item.name)}</div>
+                
+                ${item.selectedSize || item.selectedColor ? `
+                    <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+                        ${item.selectedSize ? `Tamanho: <strong>${item.selectedSize}</strong>` : ''}
+                        ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+                        ${item.selectedColor ? `Cor: <strong>${item.selectedColor}</strong>` : ''}
+                    </div>
+                ` : ''}
+                
+                <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
                             <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
                             <span>${item.quantity}</span>
@@ -2502,6 +2511,7 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
