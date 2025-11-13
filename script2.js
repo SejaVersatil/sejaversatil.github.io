@@ -1785,11 +1785,11 @@ function updateCartUI() {
                 
                 <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+<button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', -1)">-</button>
+<span>${item.quantity}</span>
+<button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', 1)">+</button>
                         </div>
-                        <div class="remove-item" onclick="removeFromCart('${item.id}')">Remover</div>
+                        <div class="remove-item" onclick="removeFromCart('${item.cartItemId || item.id}')">Remover</div>
                     </div>
                 </div>
             `;
@@ -1801,12 +1801,16 @@ function updateCartUI() {
     }
 }
 
-function updateQuantity(productId, change) {
-    const item = cart.find(i => i.id === productId);
+function updateQuantity(identifier, change) {
+    const item = cart.find(i => {
+        const itemId = i.cartItemId || i.id;
+        return itemId === identifier;
+    });
+    
     if (item) {
         item.quantity += change;
         if (item.quantity <= 0) {
-            removeFromCart(productId);
+            removeFromCart(identifier);
         } else {
             saveCart();
             updateCartUI();
@@ -1814,8 +1818,11 @@ function updateQuantity(productId, change) {
     }
 }
 
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
+function removeFromCart(identifier) {
+    cart = cart.filter(item => {
+        const itemId = item.cartItemId || item.id;
+        return itemId !== identifier;
+    });
     saveCart();
     updateCartUI();
     showToast('Item removido do carrinho', 'info');
@@ -1832,7 +1839,10 @@ function toggleCart() {
 function saveCart() {
     const cartData = cart.map(item => ({
         id: item.id,
-        quantity: item.quantity
+        quantity: item.quantity,
+        selectedSize: item.selectedSize,
+        selectedColor: item.selectedColor,
+        cartItemId: item.cartItemId
     }));
     localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
 }
@@ -1853,10 +1863,13 @@ function loadCart() {
                 }
                 
                 validItems.push({ 
-                    ...product, 
-                    quantity: item.quantity,
-                    image: getProductImage(product)
-                });
+    ...product, 
+    quantity: item.quantity,
+    selectedSize: item.selectedSize,
+    selectedColor: item.selectedColor,
+    cartItemId: item.cartItemId,
+    image: getProductImage(product)
+});
             });
             
             cart = validItems;
@@ -2525,3 +2538,4 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
