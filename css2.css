@@ -2949,13 +2949,6 @@ footer {
         max-width: 100%;
     }
 }
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-}
     
     .hero-title {
         font-size: 3rem;
@@ -3151,6 +3144,7 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
 
