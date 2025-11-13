@@ -1085,21 +1085,8 @@ function addChatMessage(text, sender) {
 // ==================== PRODUTOS ====================
 
 function filterProducts(category) {
-    // Limpar carrosséis e eventos ao mudar filtro
-    Object.keys(carouselIntervals).forEach(key => {
-        clearInterval(carouselIntervals[key]);
-    });
-    carouselIntervals = {};
-    carouselEventsRegistered.clear();
-    
     currentFilter = category;
     currentPage = 1;
-    
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
     renderProducts();
     trackEvent('Products', 'Filter', category);
 }
@@ -2170,6 +2157,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
