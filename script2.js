@@ -108,6 +108,47 @@ function scrollToProducts() {
     }
 }
 
+// ==================== NAVEGAÇÃO POR CATEGORIA ====================
+
+function navigateToCategory(category) {
+    // Limpar carrosséis ativos
+    Object.keys(carouselIntervals).forEach(key => {
+        clearInterval(carouselIntervals[key]);
+    });
+    carouselIntervals = {};
+    carouselEventsRegistered.clear();
+    
+    // Definir o filtro
+    currentFilter = category;
+    currentPage = 1;
+    
+    // Renderizar produtos filtrados
+    renderProducts();
+    
+    // Scroll suave até a seção de produtos
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // Tracking
+    trackEvent('Promo Cards', 'Navigate to Category', category);
+    
+    // Feedback visual
+    showToast(`Mostrando produtos de: ${getCategoryName(category)}`, 'info');
+}
+
+// Função auxiliar para nomes amigáveis
+function getCategoryName(category) {
+    const names = {
+        'tops': 'Tops e Blusas',
+        'leggings': 'Leggings e Peças',
+        'conjuntos': 'Conjuntos',
+        'all': 'Todos os Produtos'
+    };
+    return names[category] || category;
+}
+
 // ==================== CLASSES UTILITÁRIAS ====================
 
 // Cache Manager
@@ -2150,6 +2191,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
