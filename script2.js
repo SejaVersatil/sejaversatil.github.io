@@ -2277,7 +2277,7 @@ function closeProductDetails() {
 function changeMainImage(imageSrc, index) {
     const mainImage = document.getElementById('mainProductImage');
     
-    // ✅ Validação NO INÍCIO da função
+    // Validação
     if (!imageSrc) {
         console.error('Imagem inválida');
         return;
@@ -2285,7 +2285,7 @@ function changeMainImage(imageSrc, index) {
     
     const isImg = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
     
-    // ✅ Aplicar imagem/gradiente
+    // Aplicar imagem/gradiente
     if (isImg) {
         mainImage.style.backgroundImage = `url('${imageSrc}')`;
         mainImage.style.backgroundSize = 'cover';
@@ -2294,12 +2294,12 @@ function changeMainImage(imageSrc, index) {
         mainImage.style.background = imageSrc;
     }
     
-    // ✅ Atualizar thumbnails
+    // Atualizar thumbnails
     document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
         thumb.classList.toggle('active', i === index);
     });
     
-    // ✅ Adicionar zoom (apenas para imagens reais)
+    // Zoom (apenas para imagens reais)
     if (isImg) {
         mainImage.style.cursor = 'zoom-in';
         mainImage.onclick = () => {
@@ -2337,20 +2337,6 @@ function changeMainImage(imageSrc, index) {
         mainImage.style.cursor = 'default';
         mainImage.onclick = null;
     }
-}
-    
-    // ADICIONAR VALIDAÇÃO
-    if (!imageSrc) {
-        console.error('Imagem inválida');
-        return;
-    }
-    
-    const isRealImage = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
-    mainImage.style.backgroundImage = isRealImage ? `url('${imageSrc}')` : imageSrc;
-    
-    document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-    });
 }
 
 function changeQuantity(delta) {
@@ -2498,6 +2484,7 @@ document.addEventListener('input', function(e) {
         }
         e.target.value = value;
     }
+}); 
 // ==================== TRATAMENTO DE ERROS GLOBAIS ====================
 
 // Capturar erros de Promise não tratadas
@@ -2511,6 +2498,7 @@ window.addEventListener('error', function(event) {
     console.error('❌ Erro capturado:', event.error);
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
