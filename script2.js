@@ -1930,18 +1930,55 @@ function setupCartAbandonmentTracking() {
 }
 
 // ==================== ATALHOS DE TECLADO ====================
-
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        closeSearch();
-        if (document.getElementById('cartSidebar').classList.contains('active')) {
+        // Fechar search
+        const searchModal = document.getElementById('searchModal');
+        if (searchModal && searchModal.classList.contains('active')) {
+            closeSearch();
+            return;
+        }
+        
+        // Fechar carrinho
+        const cartSidebar = document.getElementById('cartSidebar');
+        if (cartSidebar && cartSidebar.classList.contains('active')) {
             toggleCart();
+            return;
         }
-        if (document.getElementById('userPanel').classList.contains('active')) {
+        
+        // Fechar user panel
+        const userPanel = document.getElementById('userPanel');
+        if (userPanel && userPanel.classList.contains('active')) {
             closeUserPanel();
+            return;
         }
-        if (document.getElementById('productModal').classList.contains('active')) {
+        
+        // Fechar product modal (admin)
+        const productModal = document.getElementById('productModal');
+        if (productModal && productModal.classList.contains('active')) {
             closeProductModal();
+            return;
+        }
+        
+        // Fechar payment modal
+        const paymentModal = document.getElementById('paymentModal');
+        if (paymentModal && paymentModal.classList.contains('active')) {
+            closePaymentModal();
+            return;
+        }
+        
+        // Fechar product details modal
+        const detailsModal = document.getElementById('productDetailsModal');
+        if (detailsModal && detailsModal.classList.contains('active')) {
+            closeProductDetails();
+            return;
+        }
+        
+        // Fechar admin panel
+        const adminPanel = document.getElementById('adminPanel');
+        if (adminPanel && adminPanel.classList.contains('active')) {
+            closeAdminPanel();
+            return;
         }
     }
 });
@@ -2330,6 +2367,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
