@@ -2454,8 +2454,21 @@ function renderRelatedProducts(category, currentId) {
         .slice(0, 4);
     
     const grid = document.getElementById('relatedProductsGrid');
+    
+    if (!grid) return;
+    
     grid.innerHTML = related.map(product => {
-        const images = product.images || ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        // CORREÇÃO: Garantir que images seja array válido
+        let images = [];
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
         const firstImage = images[0];
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
         
@@ -2463,7 +2476,8 @@ function renderRelatedProducts(category, currentId) {
             <div class="product-card" onclick="openProductDetails('${product.id}')">
                 <div class="product-image">
                     <div class="product-image-slide active" 
-                         style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}"></div>
+                         style="${isRealImage ? `background-image: url('${firstImage}'); background-size: cover; background-position: center;` : `background: ${firstImage}`}">
+                    </div>
                 </div>
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
@@ -2511,6 +2525,7 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault(); // Evita que o erro seja mostrado no console
 });
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
