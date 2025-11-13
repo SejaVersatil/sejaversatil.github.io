@@ -2277,6 +2277,7 @@ function closeProductDetails() {
 function changeMainImage(imageSrc, index) {
     const mainImage = document.getElementById('mainProductImage');
     
+    // VALIDAÇÃO NO INÍCIO DA FUNÇÃO
     if (!imageSrc) {
         console.error('Imagem inválida');
         return;
@@ -2295,10 +2296,10 @@ function changeMainImage(imageSrc, index) {
         thumb.classList.toggle('active', i === index);
     });
     
-    // ← ADICIONAR ZOOM NO CLICK
-    mainImage.style.cursor = 'zoom-in';
+    // Adicionar zoom no click (apenas para imagens reais)
+    mainImage.style.cursor = isImg ? 'zoom-in' : 'default';
     mainImage.onclick = () => {
-        if (!isImg) return; // Não permitir zoom em gradientes
+        if (!isImg) return;
         
         const zoomModal = document.createElement('div');
         zoomModal.style.cssText = `
@@ -2494,6 +2495,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
