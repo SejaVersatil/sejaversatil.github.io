@@ -1183,12 +1183,27 @@ function sortProducts(sortType) {
 function getFilteredProducts() {
     let filtered = productsData;
     
+    console.log('🔍 Filtro atual:', currentFilter);
+    console.log('📦 Total de produtos:', productsData.length);
+    
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
             filtered = filtered.filter(p => p.oldPrice !== null);
         } else {
-            filtered = filtered.filter(p => p.category === currentFilter);
+            // Filtrar por categoria exata
+            filtered = filtered.filter(p => {
+                const match = p.category === currentFilter;
+                console.log(`Produto: "${p.name}" | Categoria: "${p.category}" | Match: ${match}`);
+                return match;
+            });
         }
+    }
+    
+    console.log('✅ Produtos filtrados:', filtered.length);
+    
+    // Se não encontrar produtos, mostrar aviso
+    if (filtered.length === 0 && currentFilter !== 'all') {
+        console.warn('⚠️ Nenhum produto encontrado para a categoria:', currentFilter);
     }
     
     if (currentSort === 'price-asc') {
@@ -1224,9 +1239,26 @@ function renderProducts() {
     
     const grid = document.getElementById('productsGrid');
     
-    // Verificar se o grid existe
     if (!grid) {
         console.error('Elemento #productsGrid não encontrado');
+        return;
+    }
+    
+    if (paginatedProducts.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #666;">
+                    Nenhum produto encontrado
+                </h3>
+                <p style="color: #999; margin-bottom: 2rem;">
+                    Não encontramos produtos para: <strong>${getCategoryName(currentFilter)}</strong>
+                </p>
+                <button onclick="clearCategoryFilter()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; font-weight: 600; cursor: pointer; border-radius: 50px;">
+                    Ver Todos os Produtos
+                </button>
+            </div>
+        `;
         return;
     }
     
@@ -2233,6 +2265,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
