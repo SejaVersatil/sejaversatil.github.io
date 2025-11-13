@@ -2259,6 +2259,227 @@ footer {
     font-style: italic;
 }
 
+/* Payment Modal */
+.payment-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 3500;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.payment-modal.active {
+    display: flex;
+}
+
+.payment-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+.payment-modal-header {
+    background: var(--primary);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+}
+
+.payment-modal-header h3 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.payment-modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-summary {
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--gray);
+}
+
+.payment-summary h4 {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#paymentCartItems {
+    margin-bottom: 1rem;
+}
+
+.payment-cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--gray-light);
+}
+
+.payment-cart-item:last-child {
+    border-bottom: none;
+}
+
+.payment-cart-item-name {
+    font-weight: 600;
+}
+
+.payment-cart-item-details {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.payment-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid var(--primary);
+    margin-top: 1rem;
+}
+
+.payment-options {
+    padding: 1.5rem;
+}
+
+.payment-options h4 {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.payment-option {
+    display: block;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--gray);
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.payment-option input[type="radio"]:checked + .payment-option-content {
+    border-color: var(--primary);
+    background: rgba(0,0,0,0.03);
+}
+
+.payment-icon {
+    font-size: 1.8rem;
+}
+
+.payment-info {
+    flex: 1;
+}
+
+.payment-info strong {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.payment-info small {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.installments-box {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--gray-light);
+    border-radius: 8px;
+}
+
+.installments-box label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.installments-box select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.payment-confirm-btn {
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.5rem;
+    padding: 1.2rem;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.payment-confirm-btn:hover {
+    background: #1fb855;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+}
+
+/* Responsive Payment Modal */
+@media (max-width: 768px) {
+    .payment-modal {
+        padding: 1rem;
+    }
+    
+    .payment-modal-content {
+        max-width: 100%;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .products-grid {
@@ -2460,5 +2681,6 @@ footer {
         font-size: 3.5rem;
     }
 }
+
 
 
