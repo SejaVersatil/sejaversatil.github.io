@@ -1792,6 +1792,142 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ==================== CHECKOUT VIA WHATSAPP ====================
+
+const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
+
+function openPaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    const cartItemsContainer = document.getElementById('paymentCartItems');
+    const totalContainer = document.getElementById('paymentTotal');
+    
+    // Renderizar itens do carrinho
+    cartItemsContainer.innerHTML = cart.map(item => `
+        <div class="payment-cart-item">
+            <div>
+                <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
+                <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+            </div>
+            <div style="font-weight: 700;">
+                R$ ${(item.price * item.quantity).toFixed(2)}
+            </div>
+        </div>
+    `).join('');
+    
+    // Calcular e mostrar total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    totalContainer.textContent = `R$ ${total.toFixed(2)}`;
+    
+    // Mostrar modal
+    modal.classList.add('active');
+    
+    // Setup listeners para opções de pagamento
+    setupPaymentListeners();
+}
+
+function closePaymentModal() {
+    document.getElementById('paymentModal').classList.remove('active');
+}
+
+function setupPaymentListeners() {
+    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+    const installmentsBox = document.getElementById('installmentsBox');
+    
+    paymentOptions.forEach(option => {
+        option.addEventListener('change', function() {
+            if (this.value === 'credito-parcelado') {
+                installmentsBox.style.display = 'block';
+            } else {
+                installmentsBox.style.display = 'none';
+            }
+        });
+    });
+}
+
+function sendToWhatsApp() {
+    if (cart.length === 0) {
+        showToast('Carrinho vazio!', 'error');
+        return;
+    }
+    
+    // Obter forma de pagamento selecionada
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const installments = document.getElementById('installments').value;
+    
+    // Mapear forma de pagamento para texto legível
+    const paymentMethods = {
+        'pix': 'PIX',
+        'boleto': 'Boleto Bancário',
+        'credito-avista': 'Cartão de Crédito à Vista',
+        'credito-parcelado': `Cartão de Crédito Parcelado em ${installments}x sem juros`
+    };
+    
+    const paymentText = paymentMethods[paymentMethod];
+    
+    // Calcular total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Montar mensagem
+    let message = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
+    message += `*📦 PRODUTOS:*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    
+    cart.forEach((item, index) => {
+        message += `${index + 1}. *${item.name}*\n`;
+        message += `   Qtd: ${item.quantity}\n`;
+        message += `   Valor Unit.: R$ ${item.price.toFixed(2)}\n`;
+        message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+    });
+    
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
+    message += `*💳 FORMA DE PAGAMENTO:*\n`;
+    message += `${paymentText}\n\n`;
+    
+    if (paymentMethod === 'credito-parcelado') {
+        const installmentValue = (total / installments).toFixed(2);
+        message += `📊 *${installments}x de R$ ${installmentValue}*\n\n`;
+    }
+    
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `_Pedido gerado automaticamente via site_`;
+    
+    // Codificar mensagem para URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Montar URL do WhatsApp
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    
+    // Abrir WhatsApp
+    window.open(whatsappURL, '_blank');
+    
+    // Fechar modal e limpar carrinho
+    closePaymentModal();
+    showToast('Redirecionando para WhatsApp...', 'success');
+    
+    // Opcional: Limpar carrinho após envio
+    setTimeout(() => {
+        if (confirm('Pedido enviado! Deseja limpar o carrinho?')) {
+            cart = [];
+            saveCart();
+            updateCartUI();
+            toggleCart();
+        }
+    }, 2000);
+    
+    // Tracking
+    trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
+}
+
+// Fechar modal ao clicar fora
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('paymentModal');
+    if (e.target === modal) {
+        closePaymentModal();
+    }
+});
+
 // ==================== FIM DO ARQUIVO ====================
+
 
 
