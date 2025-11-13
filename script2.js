@@ -2277,60 +2277,66 @@ function closeProductDetails() {
 function changeMainImage(imageSrc, index) {
     const mainImage = document.getElementById('mainProductImage');
     
-    // VALIDAÇÃO NO INÍCIO DA FUNÇÃO
+    // ✅ Validação NO INÍCIO da função
     if (!imageSrc) {
         console.error('Imagem inválida');
         return;
     }
     
-    const isImg = isRealImage(imageSrc);
+    const isImg = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
     
+    // ✅ Aplicar imagem/gradiente
     if (isImg) {
         mainImage.style.backgroundImage = `url('${imageSrc}')`;
+        mainImage.style.backgroundSize = 'cover';
+        mainImage.style.backgroundPosition = 'center';
     } else {
         mainImage.style.background = imageSrc;
     }
     
-    // Atualizar thumbnails ativos
+    // ✅ Atualizar thumbnails
     document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
         thumb.classList.toggle('active', i === index);
     });
     
-    // Adicionar zoom no click (apenas para imagens reais)
-    mainImage.style.cursor = isImg ? 'zoom-in' : 'default';
-    mainImage.onclick = () => {
-        if (!isImg) return;
-        
-        const zoomModal = document.createElement('div');
-        zoomModal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-out;
-            animation: fadeIn 0.3s;
-        `;
-        
-        zoomModal.innerHTML = `
-            <img src="${imageSrc}" 
-                 style="max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" 
-                 alt="Zoom">
-            <button style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">✕</button>
-        `;
-        
-        zoomModal.onclick = () => {
-            zoomModal.style.animation = 'fadeOut 0.3s';
-            setTimeout(() => zoomModal.remove(), 300);
+    // ✅ Adicionar zoom (apenas para imagens reais)
+    if (isImg) {
+        mainImage.style.cursor = 'zoom-in';
+        mainImage.onclick = () => {
+            const zoomModal = document.createElement('div');
+            zoomModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.95);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: zoom-out;
+                animation: fadeIn 0.3s;
+            `;
+            
+            zoomModal.innerHTML = `
+                <img src="${imageSrc}" 
+                     style="max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" 
+                     alt="Zoom">
+                <button style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">✕</button>
+            `;
+            
+            zoomModal.onclick = () => {
+                zoomModal.style.animation = 'fadeOut 0.3s';
+                setTimeout(() => zoomModal.remove(), 300);
+            };
+            
+            document.body.appendChild(zoomModal);
         };
-        
-        document.body.appendChild(zoomModal);
-    };
+    } else {
+        mainImage.style.cursor = 'default';
+        mainImage.onclick = null;
+    }
 }
     
     // ADICIONAR VALIDAÇÃO
@@ -2495,6 +2501,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
