@@ -1191,7 +1191,7 @@ function renderProducts() {
         const installmentValue = (product.price / installments).toFixed(2);
         
         return `
-            <div class="product-card" data-product-id="${product.id}">
+    <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
                 <div class="product-image">
                     <!-- Favorite Button -->
                     <button class="favorite-btn ${isFav ? 'active' : ''}" 
@@ -2170,6 +2170,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
