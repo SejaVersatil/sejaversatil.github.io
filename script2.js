@@ -2544,17 +2544,17 @@ document.addEventListener('input', function(e) {
 // Capturar erros de Promise não tratadas
 window.addEventListener('unhandledrejection', function(event) {
     console.warn('⚠️ Promise não tratada:', event.reason);
-    event.preventDefault(); // Evita que o erro seja mostrado no console
+    event.preventDefault();
+}); // ← FIX: Fechar função corretamente
+
 // Limpar carousels quando usuário sai da aba/janela
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
-        // Página ficou oculta (usuário trocou de aba)
         carouselsPaused = true;
         stopHeroCarousel();
         clearCarouselIntervals();
         console.log('🛑 Carousels pausados (aba inativa)');
     } else {
-        // Usuário voltou para a aba
         carouselsPaused = false;
         startHeroCarousel();
         setupAutoCarousel();
@@ -2563,6 +2563,3 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
-
-
-
