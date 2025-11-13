@@ -1270,10 +1270,12 @@ function getFilteredProducts() {
 function renderProductsSkeleton() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = Array(12).fill(0).map(() => `
-        <div class="product-skeleton">
-            <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
-            <div class="skeleton-text short"></div>
+        <div class="product-card skeleton-loading">
+            <div class="skeleton-image shimmer"></div>
+            <div class="skeleton-info">
+                <div class="skeleton-line shimmer"></div>
+                <div class="skeleton-line short shimmer"></div>
+            </div>
         </div>
     `).join('');
 }
@@ -2394,6 +2396,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
