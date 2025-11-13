@@ -10,6 +10,29 @@ let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]'
 let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 let carouselIntervals = {};
 const carouselEventsRegistered = new Set();
+// ==================== FUNÇÕES UTILITÁRIAS DE IMAGEM ====================
+function getProductImage(product) {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        return product.images[0];
+    }
+    if (product.image) {
+        return product.image;
+    }
+    return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+}
+
+function getProductImages(product) {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        return product.images;
+    }
+    if (product.image) {
+        return [product.image];
+    }
+    return ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+}
+
+function isRealImage(imageSrc) {
+    return imageSrc && (imageSrc.startsWith('data:image') || imageSrc.startsWith('http'));
 
 // ==================== CARROSSEL HERO ====================
 let currentHeroSlide = 0;
@@ -1231,6 +1254,7 @@ function renderProductsSkeleton() {
 // ==================== RENDER PRODUCTS - VERSÃO MODERNIZADA ====================
 
 function renderProducts() {
+    clearCarouselIntervals();
     const filtered = getFilteredProducts();
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const start = (currentPage - 1) * itemsPerPage;
@@ -1359,6 +1383,20 @@ function renderProducts() {
 // ==================== AUTO CAROUSEL NO HOVER ====================
 
 // Controle de eventos já registrados
+function clearCarouselIntervals() {
+    console.log('🧹 Limpando carousels ativos:', Object.keys(carouselIntervals).length);
+    
+    // Limpar todos os intervalos
+    Object.keys(carouselIntervals).forEach(key => {
+        clearInterval(carouselIntervals[key]);
+    });
+    
+    // Resetar objetos
+    carouselIntervals = {};
+    carouselEventsRegistered.clear();
+    
+    console.log('✅ Carousels limpos');
+}
 
 function setupAutoCarousel() {
     const productCards = document.querySelectorAll('.product-card');
@@ -1726,17 +1764,38 @@ function saveCart() {
 function loadCart() {
     const saved = localStorage.getItem('sejaVersatilCart');
     if (saved) {
-        const cartData = JSON.parse(saved);
-        cart = cartData.map(item => {
-            const product = productsData.find(p => p.id === item.id);
-            if (!product) return null;
+        try {
+            const cartData = JSON.parse(saved);
+            const validItems = [];
             
-            return { 
-                ...product, 
-                quantity: item.quantity,
-                image: product.images ? product.images[0] : (product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
-            };
-        }).filter(item => item && item.name);
+            cartData.forEach(item => {
+                const product = productsData.find(p => p.id === item.id);
+                
+                if (!product) {
+                    console.warn(`⚠️ Produto ${item.id} não encontrado, removendo do carrinho`);
+                    return; // Pula este item
+                }
+                
+                validItems.push({ 
+                    ...product, 
+                    quantity: item.quantity,
+                    image: getProductImage(product)
+                });
+            });
+            
+            cart = validItems;
+            
+            // Se removeu algum item, salvar carrinho atualizado
+            if (validItems.length !== cartData.length) {
+                console.log(`🧹 Removidos ${cartData.length - validItems.length} itens inválidos do carrinho`);
+                saveCart();
+            }
+            
+        } catch (error) {
+            console.error('❌ Erro ao carregar carrinho:', error);
+            cart = [];
+            localStorage.removeItem('sejaVersatilCart');
+        }
     }
 }
 
@@ -2271,6 +2330,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
