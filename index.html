@@ -723,6 +723,130 @@
         </button>
     </div>
 </div>
+
+<!-- Product Details Modal -->
+<div class="product-details-modal" id="productDetailsModal">
+    <div class="product-details-overlay" onclick="closeProductDetails()"></div>
+    <div class="product-details-container">
+        <button class="product-details-close" onclick="closeProductDetails()">✕</button>
+        
+        <div class="product-details-content">
+            <!-- Galeria de Imagens -->
+            <div class="product-details-gallery">
+                <div class="main-image" id="mainProductImage"></div>
+                <div class="thumbnail-list" id="thumbnailList"></div>
+            </div>
+            
+            <!-- Informações do Produto -->
+            <div class="product-details-info">
+                <h1 id="detailsProductName"></h1>
+                
+                <!-- Preços -->
+                <div class="product-details-prices">
+                    <span class="details-price-old" id="detailsPriceOld"></span>
+                    <span class="details-price-new" id="detailsPriceNew"></span>
+                    <span class="details-installments" id="detailsInstallments"></span>
+                </div>
+                
+                <!-- Seleção de Cor -->
+                <div class="product-option">
+                    <label>Cor:</label>
+                    <div class="color-selector" id="colorSelector">
+                        <div class="color-option active" data-color="Rosa" style="background: #FFB6C1;"></div>
+                        <div class="color-option" data-color="Preto" style="background: #000;"></div>
+                        <div class="color-option" data-color="Azul" style="background: #4169E1;"></div>
+                        <div class="color-option" data-color="Verde" style="background: #32CD32;"></div>
+                    </div>
+                </div>
+                
+                <!-- Seleção de Tamanho -->
+                <div class="product-option">
+                    <label>Tamanho:</label>
+                    <div class="size-selector" id="sizeSelector">
+                        <button class="size-option" data-size="P">P</button>
+                        <button class="size-option active" data-size="M">M</button>
+                        <button class="size-option" data-size="G">G</button>
+                        <button class="size-option" data-size="GG">GG</button>
+                    </div>
+                    <a href="#" class="size-guide">Guia de Medidas</a>
+                </div>
+                
+                <!-- Quantidade -->
+                <div class="product-option">
+                    <label>Quantidade:</label>
+                    <div class="quantity-selector">
+                        <button onclick="changeQuantity(-1)">-</button>
+                        <input type="number" id="productQuantity" value="1" min="1" max="10" readonly>
+                        <button onclick="changeQuantity(1)">+</button>
+                    </div>
+                </div>
+                
+                <!-- Cálculo de Frete -->
+                <div class="product-option shipping-calc">
+                    <label>Calcular Frete:</label>
+                    <div class="shipping-input">
+                        <input type="text" id="zipCodeInput" placeholder="00000-000" maxlength="9">
+                        <button onclick="calculateShipping()">Calcular</button>
+                    </div>
+                    <div id="shippingResults"></div>
+                </div>
+                
+                <!-- Botões de Ação -->
+                <div class="product-actions">
+                    <button class="btn-add-cart-large" onclick="addToCartFromDetails()">
+                        Adicionar ao Carrinho
+                    </button>
+                    <button class="btn-buy-now" onclick="buyNow()">
+                        Comprar Agora
+                    </button>
+                </div>
+                
+                <!-- Informações Extras -->
+                <div class="product-features">
+                    <div class="feature-item">
+                        <span>↔️</span>
+                        <span>Alta Compressão</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>↕️</span>
+                        <span>Alta Durabilidade</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>☀️</span>
+                        <span>UV 50+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Descrição e Produtos Relacionados -->
+        <div class="product-details-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('description')">Descrição</button>
+                <button class="tab-btn" onclick="switchTab('specs')">Especificações</button>
+            </div>
+            
+            <div class="tab-content active" id="descriptionTab">
+                <p id="productDescription"></p>
+            </div>
+            
+            <div class="tab-content" id="specsTab">
+                <ul>
+                    <li><strong>Tecido:</strong> Tecnológico de alta cobertura</li>
+                    <li><strong>Estampa:</strong> Ajudam a modelar a silhueta</li>
+                    <li><strong>Modelo:</strong> Veste tamanho P</li>
+                    <li><strong>Composição:</strong> 58% PA - 30% PES - 12% ELAST.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Produtos Relacionados -->
+        <div class="related-products">
+            <h3>VOCÊ TAMBÉM PODE GOSTAR</h3>
+            <div class="related-products-grid" id="relatedProductsGrid"></div>
+        </div>
+    </div>
+</div>
     
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
