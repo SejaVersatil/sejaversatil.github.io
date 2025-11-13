@@ -29,33 +29,30 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+            authDomain: "seja-versatil.firebaseapp.com",
+            projectId: "seja-versatil",
+            storageBucket: "seja-versatil.appspot.com",
+            messagingSenderId: "102339207381",
+            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+            measurementId: "G-86E5CX4S3T"
+        };
         
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
         
-// Your web app's Firebase configuration
-const firebaseConfig = {
-        apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-        authDomain: "seja-versatil.firebaseapp.com",
-        projectId: "seja-versatil",
-        storageBucket: "seja-versatil.appspot.com",
-        messagingSenderId: "102339207381",
-        appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-        measurementId: "G-86E5CX4S3T"
-    };
-    
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-    const storage = firebase.storage();
-    
-    console.log("✅ Firebase inicializado");
-</script>
+        console.log("✅ Firebase inicializado");
+    </script>
     
     <!-- Link para o CSS -->
     <link rel="stylesheet" href="css2.css">
-
 </head>
 <body>
     <a href="#produtos" class="skip-link">Pular para conteúdo principal</a>
+    
     <!-- Hamburger Menu Button -->
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
         <span class="hamburger-line"></span>
@@ -166,69 +163,97 @@ const firebaseConfig = {
         </div>
     </div>
 
-<!-- Hero Section -->
-<!-- <section class="hero" id="hero">
-    <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80');"></div>
-    <div class="hero-content">
-        <h1>SEJA VERSÁTIL</h1>
-        <p class="hero-subtitle">Moda Fitness de Alta Performance</p>
-        <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-            DESCOBRIR COLEÇÃO
-        </button>
-    </div>
-</section>-->
+    <!-- Hero Carousel Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-carousel" id="heroCarousel">
+            <!-- Slides serão injetados via JavaScript -->
+        </div>
+        <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
+        <button class="hero-nav-arrow hero-nav-next" onclick="nextHeroSlide()">›</button>
+        <div class="hero-carousel-dots" id="heroCarouselDots">
+            <!-- Dots serão injetados via JavaScript -->
+        </div>
+    </section>
 
     <!-- Categories Section -->
-<section class="categories-section">
-    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
-        <div class="category-info">
-            <h3>MACAQUINHO</h3>
-            <p>Conforto e performance</p>
+    <section class="categories-section">
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.3) 0%, rgba(139, 122, 184, 0.6) 100%)"></div>
+            <div class="category-info">
+                <h3>MACAQUINHO</h3>
+                <p>Conforto e performance</p>
+            </div>
         </div>
-    </div>
-    
-    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
-        <div class="category-info">
-            <h3>MACACÃO</h3>
-            <p>Suporte e estilo</p>
+        
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.4) 0%, rgba(139, 122, 184, 0.7) 100%)"></div>
+            <div class="category-info">
+                <h3>MACACÃO</h3>
+                <p>Suporte e estilo</p>
+            </div>
         </div>
-    </div>
-    
-    <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
-        <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
-        <div class="category-info">
-            <h3>CONJUNTOS</h3>
-            <p>Looks completos</p>
+        
+        <div class="category-card" onclick="filterProducts('conjuntos'); document.getElementById('produtos').scrollIntoView({behavior: 'smooth'})">
+            <div class="category-image" style="background: linear-gradient(135deg, rgba(139, 122, 184, 0.5) 0%, rgba(139, 122, 184, 0.8) 100%)"></div>
+            <div class="category-info">
+                <h3>CONJUNTOS</h3>
+                <p>Looks completos</p>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Products Section -->
-<section class="products-section" id="produtos">
-    <h2 class="section-title">Nossos Produtos</h2>
-    
-    <div class="filters-bar">
-        <div class="filter-group">
-            <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
-            <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
-            <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
-            <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
-            <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
+    <!-- Products Section -->
+    <section class="products-section" id="produtos">
+        <h2 class="section-title">Nossos Produtos</h2>
+        
+        <div class="filters-bar">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+                <button class="filter-btn" onclick="filterProducts('leggings')">Leggings</button>
+                <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
+                <button class="filter-btn" onclick="filterProducts('conjuntos')">Conjuntos</button>
+                <button class="filter-btn" onclick="filterProducts('sale')">Promoções</button>
+            </div>
+            <select class="sort-select" onchange="sortProducts(this.value)">
+                <option value="">Ordenar por</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="name">Nome A-Z</option>
+            </select>
         </div>
-        <select class="sort-select" onchange="sortProducts(this.value)">
-            <option value="">Ordenar por</option>
-            <option value="price-asc">Menor preço</option>
-            <option value="price-desc">Maior preço</option>
-            <option value="name">Nome A-Z</option>
-        </select>
-    </div>
 
-    <div class="products-grid" id="productsGrid"></div>
+        <div class="products-grid" id="productsGrid"></div>
 
-    <div class="pagination" id="pagination"></div>
-</section>
+        <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- Feature Banner 1 -->
+    <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80')">
+        <div class="feature-banner-overlay"></div>
+        <div class="feature-banner-content">
+            <h2>NOVA COLEÇÃO SEAMLESS</h2>
+            <p>Tecnologia sem costura para máximo conforto nos treinos</p>
+            <button class="feature-banner-btn" onclick="filterProducts('all'); scrollToProducts()">EXPLORAR COLEÇÃO</button>
+        </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section class="products-section bestsellers-section">
+        <h2 class="section-title">Mais Vendidos</h2>
+        <div class="products-grid" id="bestSellersGrid">
+            <!-- Será preenchido dinamicamente -->
+        </div>
+    </section>
+
+    <!-- Feature Banner 2 -->
+    <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&q=80')">
+        <div class="feature-banner-overlay"></div>
+        <div class="feature-banner-content">
+            <h2>PERFORMANCE & ESTILO</h2>
+            <p>Do treino ao dia a dia com versatilidade</p>
+            <button class="feature-banner-btn" onclick="filterProducts('all'); scrollToProducts()">VER PRODUTOS</button>
+        </div>
+    </section>
 
     <!-- Info Bar -->
     <section class="info-bar">
@@ -265,10 +290,10 @@ const firebaseConfig = {
                     Moda fitness feminina com estilo e qualidade. Criamos roupas versáteis, funcionais e confortáveis para mulheres que querem se tornar a sua melhor versão.
                 </p>
                 <div class="social-icons">
-    <a href="https://instagram.com/_sejaversatil" aria-label="Instagram" target="_blank" rel="noopener">📷</a>
-    <a href="https://facebook.com/sejaversatil" aria-label="Facebook" target="_blank" rel="noopener">📘</a>
-    <a href="https://wa.me/5571991427103" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
-</div>
+                    <a href="https://instagram.com/_sejaversatil" aria-label="Instagram" target="_blank" rel="noopener">📷</a>
+                    <a href="https://facebook.com/sejaversatil" aria-label="Facebook" target="_blank" rel="noopener">📘</a>
+                    <a href="https://wa.me/5571991427103" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
+                </div>
             </div>
             <div class="footer-section">
                 <h4>Institucional</h4>
@@ -292,7 +317,7 @@ const firebaseConfig = {
                 <h4>Contato</h4>
                 <ul>
                     <li><a href="mailto:contato@sejaversatil.com.br">contato@sejaversatil.com.br</a></li>
-                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li><a href="tel:+5571991427103">(71) 99142-7103</a></li>
                     <li style="color: #666; font-size: 0.8rem;">Seg - Sex: 9h às 18h</li>
                 </ul>
             </div>
