@@ -427,14 +427,28 @@ async function inicializarProdutosPadrao() {
 // ==================== INICIALIZAÇÃO ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    document.getElementById('loadingOverlay').classList.add('active');
+    console.log('🚀 Iniciando carregamento do site...');
+    
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('active');
+    }
     
     try {
+        console.log('📋 Carregando configurações...');
         loadSettings();
+        
+        console.log('🛒 Carregando carrinho...');
         loadCart();
+        
+        console.log('📦 Carregando produtos...');
         await loadProducts();
+        
+        console.log('🎨 Renderizando skeleton...');
         renderProductsSkeleton();
+        
         setTimeout(() => {
+            console.log('✅ Renderizando produtos...');
             renderProducts();
             renderBestSellers();
             updateCartUI();
@@ -443,11 +457,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             setupCartAbandonmentTracking();
             console.log('✅ Site carregado com sucesso!');
         }, 100);
+        
     } catch (error) {
-        console.error('❌ Erro ao inicializar:', error);
-        showToast('Erro ao carregar o site. Por favor, recarregue a página.', 'error');
+        console.error('❌ ERRO CRÍTICO ao inicializar:', error);
+        console.error('Stack trace:', error.stack);
+        showToast('Erro ao carregar o site. Recarregue a página.', 'error');
+        
+        // Mostrar erro na tela
+        const grid = document.getElementById('productsGrid');
+        if (grid) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+                    <h2 style="color: #e74c3c; margin-bottom: 1rem;">❌ Erro ao Carregar</h2>
+                    <p style="color: #666; margin-bottom: 2rem;">${error.message}</p>
+                    <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; cursor: pointer; border-radius: 8px;">
+                        🔄 Recarregar Página
+                    </button>
+                </div>
+            `;
+        }
+        
     } finally {
-        document.getElementById('loadingOverlay').classList.remove('active');
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+        }
     }
 });
 
@@ -2461,6 +2494,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
