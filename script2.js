@@ -1405,7 +1405,7 @@ function renderProducts() {
                         return `
                             <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
                                  style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
-                                ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy">` : ''}
+                                ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy" decoding="async">` : ''}
                             </div>
                         `;
                     }).join('')}
@@ -3036,5 +3036,6 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
