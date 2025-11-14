@@ -62,15 +62,15 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/Iur0gbb.jpeg',
-        title: 'COLEÇÃO INVERNO 2025',
+        image: 'https://i.imgur.com/LDfk5K9.png',
+        title: 'COLEÇÃO 2025',
         subtitle: 'Conforto e estilo para seus treinos',
         cta: 'EXPLORAR AGORA'
     },
     {
-        image: 'https://images.unsplash.com/photo-1540331547168-8b63109225b7?w=1920&q=80',
-        title: 'LANÇAMENTO SEAMLESS',
-        subtitle: 'Tecnologia sem costura para máxima performance',
+        image: 'https://i.imgur.com/eum0W2N.jpeg',
+        title: 'LANÇAMENTO',
+        subtitle: 'Tecnologia para máxima performance',
         cta: 'VER COLEÇÃO'
     },
     {
@@ -2690,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
