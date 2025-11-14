@@ -182,9 +182,6 @@ nav {
 }
 
 .nav-icon:hover .nav-icon-symbol,
-
-}
-
 .nav-icon:hover .nav-icon-label {
     color: var(--secondary);
 }
@@ -197,6 +194,7 @@ nav {
         transform: scale(1.1);
     }
 }
+
 
 .cart-count {
     position: absolute;
@@ -3250,6 +3248,7 @@ footer {
         letter-spacing: 1.5px;
     }
 }
+
 
 
 
