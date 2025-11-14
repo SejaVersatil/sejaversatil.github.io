@@ -685,8 +685,9 @@ function userLogout() {
 
 async function carregarProdutosDoFirestore() {
     try {
-        console.log('🔄 Carregando produtos do Firestore...');
+        console.log('📄 Carregando produtos do Firestore...');
         
+        // Verificar cache primeiro
         const cached = productCache.get('products');
         if (cached) {
             console.log('✅ Produtos carregados do cache');
@@ -694,14 +695,16 @@ async function carregarProdutosDoFirestore() {
             return productsData;
         }
 
+        // Rate limiting
         if (!firestoreRateLimiter.canMakeRequest()) {
             console.warn('⚠️ Rate limit atingido');
             showToast('Muitas requisições. Aguarde um momento.', 'error');
             return productsData;
         }
 
+        // Buscar do Firestore
         const snapshot = await db.collection("produtos").get();
-        productsData.length = 0;
+        productsData.length = 0; // Limpar array
 
         snapshot.forEach((doc) => {
             productsData.push({
@@ -717,15 +720,17 @@ async function carregarProdutosDoFirestore() {
     } catch (error) {
         console.error("❌ Erro ao carregar produtos do Firestore:", error);
 
+        // Tratamento de erros específicos
         if (error.code === 'permission-denied') {
             console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
             showToast('Erro de permissão ao carregar produtos', 'error');
         } else if (error.code === 'unavailable') {
-            console.error('🌐 Firestore indisponível. Verifique sua conexão com a internet.');
+            console.error('🌐 Firestore indisponível. Verifique sua conexão.');
             showToast('Sem conexão com o servidor', 'error');
         }
 
-        throw error;
+        // Se falhar, retornar array vazio (será preenchido por inicializarProdutosPadrao)
+        return productsData;
     }
 }
 
@@ -2690,6 +2695,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
