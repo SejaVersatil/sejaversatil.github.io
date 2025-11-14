@@ -717,8 +717,8 @@ nav {
 .promo-category {
     font-family: 'Oswald', sans-serif !important;
     display: inline-block;
-    background: #FF6B35; /* ← LARANJA VIBRANTE */
-    color: #FFFFFF; /* ← Texto branco para melhor contraste */
+    background: #FF6B35; /* Laranja */
+    color: #FFFFFF;
     padding: 0.5rem 1.2rem;
     font-size: 0.8rem;
     font-weight: 700;
@@ -726,7 +726,9 @@ nav {
     letter-spacing: 1.5px;
     margin-bottom: 0.8rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 8px; /* ← ADICIONAR ESTA LINHA */
 }
+
 
 .promo-text {
     display: block;
@@ -3227,6 +3229,7 @@ footer {
         letter-spacing: 1.5px;
     }
 }
+
 
 
 
