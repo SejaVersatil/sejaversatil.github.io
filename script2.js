@@ -2709,7 +2709,7 @@ document.addEventListener('input', function(e) {
 window.addEventListener('unhandledrejection', function(event) {
     console.warn('⚠️ Promise não tratada:', event.reason);
     event.preventDefault();
-}); // ← FIX: Fechar função corretamente
+});
 
 // Limpar carousels quando usuário sai da aba/janela
 document.addEventListener('visibilitychange', function() {
@@ -3055,6 +3055,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
