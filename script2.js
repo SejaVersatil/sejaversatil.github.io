@@ -1833,47 +1833,63 @@ function updateCartUI() {
     const cartTotal = document.getElementById('cartTotal');
     
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCount.textContent = totalItems;
-    cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
     
-    if (cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
-        cartFooter.style.display = 'none';
-    } else {
-        cartItems.innerHTML = cart.map(item => {
-    const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-    const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
-    
-    return `
-        <div class="cart-item">
-            <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
-            <div class="cart-item-info">
-                <div class="cart-item-title">${sanitizeInput(item.name)}</div>
+    // ✅ Batch de atualizações DOM usando requestAnimationFrame
+    requestAnimationFrame(() => {
+        // Atualizar contador
+        cartCount.textContent = totalItems;
+        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+        
+        if (cart.length === 0) {
+            cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
+            cartFooter.style.display = 'none';
+        } else {
+            // ✅ Usar DocumentFragment (mais rápido)
+            const fragment = document.createDocumentFragment();
+            
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
                 
-                ${item.selectedSize || item.selectedColor ? `
-                    <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
-                        ${item.selectedSize ? `Tamanho: <strong>${item.selectedSize}</strong>` : ''}
-                        ${item.selectedSize && item.selectedColor ? ' | ' : ''}
-                        ${item.selectedColor ? `Cor: <strong>${item.selectedColor}</strong>` : ''}
-                    </div>
-                ` : ''}
+                const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
                 
-                <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
+                itemDiv.innerHTML = `
+                    <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${sanitizeInput(item.name)}</div>
+                        
+                        ${item.selectedSize || item.selectedColor ? `
+                            <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+                                ${item.selectedSize ? `Tamanho: <strong>${item.selectedSize}</strong>` : ''}
+                                ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+                                ${item.selectedColor ? `Cor: <strong>${item.selectedColor}</strong>` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
-<button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', -1)">-</button>
-<span>${item.quantity}</span>
-<button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', 1)">+</button>
+                            <button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', 1)">+</button>
                         </div>
                         <div class="remove-item" onclick="removeFromCart('${item.cartItemId || item.id}')">Remover</div>
                     </div>
-                </div>
-            `;
-        }).join('');
-        
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        cartTotal.textContent = `R$ ${total.toFixed(2)}`;
-        cartFooter.style.display = 'block';
-    }
+                `;
+                
+                fragment.appendChild(itemDiv);
+            });
+            
+            // ✅ Atualizar DOM de uma vez
+            cartItems.innerHTML = '';
+            cartItems.appendChild(fragment);
+            
+            // Atualizar total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = `R$ ${total.toFixed(2)}`;
+            cartFooter.style.display = 'block';
+        }
+    });
 }
 
 function updateQuantity(identifier, change) {
@@ -3055,6 +3071,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
