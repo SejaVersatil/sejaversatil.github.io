@@ -1473,7 +1473,14 @@ function setupAutoCarousel() {
         const productId = card.getAttribute('data-product-id');
         const slides = card.querySelectorAll('.product-image-slide');
         
-        if (slides.length <= 1) return;
+        if (slides.length <= 1) {
+    // Esconder setas e dots
+    const arrows = card.querySelector('.product-carousel-arrows');
+    const dots = card.querySelector('.product-carousel-dots');
+    if (arrows) arrows.style.display = 'none';
+    if (dots) dots.style.display = 'none';
+    return;
+}
         
         // Verificar se já registrou eventos para este card
         if (carouselEventsRegistered.has(productId)) {
@@ -2563,3 +2570,4 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
