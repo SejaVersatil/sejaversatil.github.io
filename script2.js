@@ -2704,23 +2704,333 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+// ==================== INTEGRAÇÃO DE ESTOQUE ====================
+let productVariants = {};
+
+// Carregar variantes de um produto
+async function loadProductVariants(productId) {
+    if (productVariants[productId]) {
+        return productVariants[productId];
+    }
+    
+    try {
+        const variantsSnapshot = await db.collection('produtos')
+            .doc(productId)
+            .collection('variants')
+            .get();
+        
+        const variants = [];
+        variantsSnapshot.forEach(doc => {
+            variants.push({ id: doc.id, ...doc.data() });
+        });
+        
+        productVariants[productId] = variants;
+        return variants;
+    } catch (error) {
+        console.error('Erro ao carregar variantes:', error);
+        return [];
+    }
+}
+
+// Verificar disponibilidade de tamanho/cor específicos
+function isVariantAvailable(productId, size, color) {
+    const variants = productVariants[productId] || [];
+    const variant = variants.find(v => v.size === size && v.color === color);
+    
+    if (!variant) return false;
+    return variant.available && variant.stock > 0;
+}
+
+// Obter estoque de uma variante
+function getVariantStock(productId, size, color) {
+    const variants = productVariants[productId] || [];
+    const variant = variants.find(v => v.size === size && v.color === color);
+    return variant ? variant.stock : 0;
+}
+
+// SUBSTITUIR openProductDetails() existente por esta versão:
+async function openProductDetails(productId) {
+    const product = productsData.find(p => p.id === productId);
+    if (!product) return;
+    
+    currentProductDetails = product;
+    const modal = document.getElementById('productDetailsModal');
+    
+    // Carregar variantes do produto
+    await loadProductVariants(productId);
+    
+    // Garantir que images seja array válido
+    let images = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        images = product.images;
+    } else if (product.image) {
+        images = [product.image];
+    } else {
+        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+    }
+    
+    // Renderizar galeria principal
+    const mainImage = document.getElementById('mainProductImage');
+    const firstImage = images[0];
+    const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+    mainImage.style.backgroundImage = isRealImage ? `url('${firstImage}')` : firstImage;
+    
+    // Renderizar thumbnails
+    const thumbnailList = document.getElementById('thumbnailList');
+    thumbnailList.innerHTML = images.map((img, index) => {
+        const isImg = img.startsWith('data:image') || img.startsWith('http');
+        return `
+            <div class="thumbnail ${index === 0 ? 'active' : ''}" 
+                 onclick="changeMainImage('${img}', ${index})"
+                 style="background-image: ${isImg ? `url('${img}')` : img}"></div>
+        `;
+    }).join('');
+    
+    // Preencher informações
+    document.getElementById('detailsProductName').textContent = product.name;
+    
+    // Preços
+    const priceOld = document.getElementById('detailsPriceOld');
+    const priceNew = document.getElementById('detailsPriceNew');
+    const installments = document.getElementById('detailsInstallments');
+    
+    if (product.oldPrice) {
+        priceOld.textContent = `De R$ ${product.oldPrice.toFixed(2)}`;
+        priceOld.style.display = 'block';
+    } else {
+        priceOld.style.display = 'none';
+    }
+    
+    priceNew.textContent = `R$ ${product.price.toFixed(2)}`;
+    
+    const installmentValue = (product.price / 10).toFixed(2);
+    installments.textContent = `ou 10x de R$ ${installmentValue} sem juros`;
+    
+    // Descrição
+    document.getElementById('productDescription').textContent = 
+        `${product.name} - Peça versátil e confortável para seus treinos. Tecnologia de alta performance com tecido respirável e secagem rápida.`;
+    
+    // NOVO: Renderizar cores disponíveis dinamicamente
+    await renderAvailableColors(productId);
+    
+    // NOVO: Renderizar tamanhos disponíveis dinamicamente
+    await renderAvailableSizes(productId);
+    
+    // Renderizar produtos relacionados
+    renderRelatedProducts(product.category, product.id);
+    
+    // Resetar seleções
+    selectedQuantity = 1;
+    document.getElementById('productQuantity').value = 1;
+    
+    // Mostrar modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Renderizar cores disponíveis
+async function renderAvailableColors(productId) {
+    const variants = productVariants[productId] || [];
+    const colorSelector = document.getElementById('colorSelector');
+    
+    if (!colorSelector) return;
+    
+    // Cores únicas disponíveis
+    const availableColors = [...new Set(variants.map(v => v.color))];
+    
+    const colorMap = {
+        'Rosa': '#FFB6C1',
+        'Preto': '#000000',
+        'Azul': '#4169E1',
+        'Verde': '#32CD32',
+        'Branco': '#FFFFFF',
+        'Vermelho': '#DC143C',
+        'Amarelo': '#FFD700'
+    };
+    
+    colorSelector.innerHTML = availableColors.map((color, index) => {
+        const bgColor = colorMap[color] || '#999';
+        const hasStock = variants.some(v => v.color === color && v.stock > 0);
+        
+        return `
+            <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+                 data-color="${color}"
+                 style="background: ${bgColor}; ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
+                 onclick="${hasStock ? `selectColor('${color}')` : 'event.preventDefault()'}">
+                ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
+            </div>
+        `;
+    }).join('');
+    
+    // Selecionar primeira cor disponível
+    const firstAvailable = availableColors.find(color => 
+        variants.some(v => v.color === color && v.stock > 0)
+    );
+    if (firstAvailable) {
+        selectedColor = firstAvailable;
+    }
+}
+
+// Renderizar tamanhos disponíveis
+async function renderAvailableSizes(productId) {
+    const variants = productVariants[productId] || [];
+    const sizeSelector = document.getElementById('sizeSelector');
+    
+    if (!sizeSelector) return;
+    
+    const sizes = ['P', 'M', 'G', 'GG'];
+    
+    sizeSelector.innerHTML = sizes.map((size, index) => {
+        const hasStock = variants.some(v => v.size === size && v.color === selectedColor && v.stock > 0);
+        const stock = variants.find(v => v.size === size && v.color === selectedColor)?.stock || 0;
+        
+        return `
+            <button class="size-option ${index === 1 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+                    data-size="${size}"
+                    ${!hasStock ? 'disabled' : ''}
+                    onclick="selectSize('${size}')">
+                ${size}
+                ${hasStock ? `<br><small style="font-size: 0.7rem; opacity: 0.7;">${stock} un.</small>` : '<br><small style="font-size: 0.7rem; color: red;">Esgotado</small>'}
+            </button>
+        `;
+    }).join('');
+    
+    // Selecionar primeiro tamanho disponível
+    const firstAvailable = sizes.find(size => 
+        variants.some(v => v.size === size && v.color === selectedColor && v.stock > 0)
+    );
+    if (firstAvailable) {
+        selectedSize = firstAvailable;
+    }
+}
+
+// Selecionar cor
+function selectColor(color) {
+    selectedColor = color;
+    
+    // Atualizar visual
+    document.querySelectorAll('.color-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.color === color);
+    });
+    
+    // Atualizar tamanhos disponíveis para essa cor
+    if (currentProductDetails) {
+        renderAvailableSizes(currentProductDetails.id);
+    }
+}
+
+// Selecionar tamanho
+function selectSize(size) {
+    // Verificar se está disponível
+    if (!isVariantAvailable(currentProductDetails.id, size, selectedColor)) {
+        showToast('Este tamanho está esgotado', 'error');
+        return;
+    }
+    
+    selectedSize = size;
+    
+    // Atualizar visual
+    document.querySelectorAll('.size-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.size === size);
+    });
+    
+    // Mostrar estoque
+    const stock = getVariantStock(currentProductDetails.id, size, selectedColor);
+    showToast(`✅ ${stock} unidades disponíveis`, 'info');
+}
+
+// SUBSTITUIR addToCartFromDetails() por esta versão:
+function addToCartFromDetails() {
+    if (!currentProductDetails) return;
+    
+    const product = currentProductDetails;
+    
+    // Verificar disponibilidade
+    if (!isVariantAvailable(product.id, selectedSize, selectedColor)) {
+        showToast('❌ Esta combinação está indisponível', 'error');
+        return;
+    }
+    
+    // Verificar estoque
+    const stock = getVariantStock(product.id, selectedSize, selectedColor);
+    if (stock < selectedQuantity) {
+        showToast(`❌ Apenas ${stock} unidades disponíveis`, 'error');
+        return;
+    }
+    
+    const addButton = document.querySelector('.btn-add-cart-large');
+    
+    // Criar identificador único para produto + tamanho + cor
+    const cartItemId = `${product.id}_${selectedSize}_${selectedColor}`;
+    
+    const existingItem = cart.find(item => item.cartItemId === cartItemId);
+    
+    if (existingItem) {
+        // Verificar se não excede estoque
+        if (existingItem.quantity + selectedQuantity > stock) {
+            showToast(`❌ Estoque insuficiente. Máximo: ${stock}`, 'error');
+            return;
+        }
+        existingItem.quantity += selectedQuantity;
+    } else {
+        cart.push({
+            ...product,
+            cartItemId: cartItemId,
+            quantity: selectedQuantity,
+            selectedSize: selectedSize,
+            selectedColor: selectedColor,
+            image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        });
+    }
+    
+    saveCart();
+    updateCartUI();
+    
+    if (addButton) {
+        animateProductToCart(addButton, product);
+    }
+    
+    setTimeout(() => {
+        showToast(`✅ ${selectedQuantity}x ${product.name} (${selectedSize}, ${selectedColor}) adicionado!`, 'success');
+    }, 300);
+}
+
+// Adicionar CSS para itens indisponíveis
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    .size-option.unavailable,
+    .color-option.unavailable {
+        opacity: 0.3;
+        cursor: not-allowed !important;
+        position: relative;
+    }
+    
+    .size-option.unavailable::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #dc3545;
+        transform: translateY(-50%) rotate(-45deg);
+    }
+`;
+document.head.appendChild(styleSheet);
+
+// Carregar variantes ao carregar produtos
+const originalLoadProducts = loadProducts;
+loadProducts = async function() {
+    await originalLoadProducts();
+    
+    // Pré-carregar variantes dos primeiros produtos
+    const firstProducts = productsData.slice(0, 12);
+    for (const product of firstProducts) {
+        await loadProductVariants(product.id);
+    }
+};
+
+console.log('✅ Sistema de estoque integrado ao site');
+
 // ==================== FIM DO ARQUIVO ====================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
