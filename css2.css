@@ -3215,8 +3215,42 @@ footer {
     to {
         opacity: 0;
     }
+/* ==================== AJUSTES MOBILE PARA OSWALD ==================== */
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 3rem;
+        letter-spacing: 3px;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+    
+    .logo {
+        font-size: 1.6rem;
+        letter-spacing: 2px;
+    }
+    
+    .feature-banner-content h2 {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+    }
 }
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        letter-spacing: 1.5px;
+    }
 }
+
 
 
 
