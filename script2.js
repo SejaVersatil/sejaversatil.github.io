@@ -314,8 +314,9 @@ function showToast(message, type = 'success') {
 
 // Validação de Email
 function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    // ← Regex mais rigorosa
+    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return re.test(email.trim().toLowerCase());
 }
 
 // Sanitização de Input
@@ -2699,6 +2700,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
