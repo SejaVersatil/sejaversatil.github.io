@@ -1671,9 +1671,14 @@ function renderBestSellers() {
                     
                     ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
                     
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
-                        Adicionar ao Carrinho
-                    </button>
+                    <div class="product-quick-actions" style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; opacity: 0; transition: opacity 0.3s;">
+    <button class="add-to-cart-btn" style="flex: 1; border-radius: 0;" onclick="event.stopPropagation(); addToCart('${product.id}')">
+        🛒 Carrinho
+    </button>
+    <button class="add-to-cart-btn" style="flex: 1; background: #27ae60; border-radius: 0;" onclick="event.stopPropagation(); quickBuy('${product.id}')">
+        ⚡ Comprar
+    </button>
+</div>
                 </div>
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
@@ -3040,6 +3045,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
