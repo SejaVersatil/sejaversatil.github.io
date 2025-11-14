@@ -1697,29 +1697,33 @@ function renderPagination(totalPages) {
 }
 
 function changePage(page) {
-    // 🔥 MOVER O SCROLL PARA O INÍCIO (antes de renderizar)
+    // Tentar múltiplas formas de scroll (garantia máxima)
     const productsSection = document.getElementById('produtos');
+    const sectionTitle = document.querySelector('.section-title');
+    const productsGrid = document.getElementById('productsGrid');
+    
+    // Scroll para o elemento que existir
     if (productsSection) {
         productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (sectionTitle) {
+        const titlePosition = sectionTitle.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: titlePosition, behavior: 'smooth' });
+    } else if (productsGrid) {
+        const gridPosition = productsGrid.getBoundingClientRect().top + window.scrollY - 150;
+        window.scrollTo({ top: gridPosition, behavior: 'smooth' });
     }
     
     carouselsPaused = true;
     
-    // Limpar todos os carrosséis ativos
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
     });
     carouselIntervals = {};
-    
-    // Limpar registro de eventos para permitir re-registro na nova página
     carouselEventsRegistered.clear();
     
     currentPage = page;
-    
-    // Renderizar produtos (pode demorar um pouco)
     renderProducts();
     
-    // Re-ativar carousels após renderização
     setTimeout(() => {
         carouselsPaused = false;
         setupAutoCarousel();
@@ -2686,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
