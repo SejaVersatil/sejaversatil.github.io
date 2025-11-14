@@ -144,7 +144,7 @@ nav {
 .nav-icons {
     display: flex;
     gap: 1.2rem;
-    align-items: center;
+    align-items: center; /* ← ADICIONE ESTA REGRA (estava faltando) */
 }
 
 .nav-icon {
@@ -154,21 +154,22 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start; /* Alinhar pelo topo */
     gap: 0.3rem;
     padding: 0.5rem;
+    min-height: 60px; /* Altura consistente */
 }
 
 .nav-icon svg {
     color: var(--primary);
     transition: all 0.3s;
-    width: 22px;     /* ajuste aqui até alinhar */
-    height: 22px;    /* idem */
+    width: 20px; /* Tamanho fixo */
+    height: 20px; /* Tamanho fixo */
 }
-
 
 .nav-icon:hover svg {
     color: var(--secondary);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* ← ADICIONE (animação no hover) */
 }
 
 .nav-icon-label {
@@ -178,15 +179,15 @@ nav {
     font-weight: 600;
     letter-spacing: 1px;
     color: var(--primary);
+    white-space: nowrap; /* Evitar quebra de linha */
 }
 
 .nav-icon:hover {
-    transform: scale(1.05);
+    transform: scale(1.05); /* ← ADICIONE (zoom suave no hover) */
 }
 
-.nav-icon:hover .nav-icon-symbol,
 .nav-icon:hover .nav-icon-label {
-    color: var(--secondary);
+    color: var(--secondary); /* ← ADICIONE (cor no hover) */
 }
 
 @keyframes pulse {
@@ -197,7 +198,6 @@ nav {
         transform: scale(1.1);
     }
 }
-
 
 .cart-count {
     position: absolute;
@@ -3227,6 +3227,7 @@ footer {
         letter-spacing: 1.5px;
     }
 }
+
 
 
 
