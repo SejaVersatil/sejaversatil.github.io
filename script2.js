@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadProducts();
         
         console.log('🎨 Renderizando skeleton...');
-        renderProductsSkeleton();
+        
         
         setTimeout(() => {
             console.log('✅ Renderizando produtos...');
@@ -3036,6 +3036,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
