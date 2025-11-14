@@ -74,7 +74,7 @@ const heroSlides = [
         cta: 'VER COLEÇÃO'
     },
     {
-        image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80',
+        image: 'https://i.imgur.com/8xFc08F.jpeg',
         title: 'FITNESS & LIFESTYLE',
         subtitle: 'Do treino ao dia a dia com versatilidade',
         cta: 'DESCOBRIR'
@@ -2690,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
