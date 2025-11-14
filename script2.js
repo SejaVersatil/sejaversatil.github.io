@@ -62,7 +62,7 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/LDfk5K9.png',
+        image: 'https://i.imgur.com/xM6NaBn.png',
         title: 'COLEÇÃO 2025',
         subtitle: 'Conforto e estilo para seus treinos',
         cta: 'EXPLORAR AGORA'
@@ -2690,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
