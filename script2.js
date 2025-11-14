@@ -68,7 +68,7 @@ const heroSlides = [
         cta: 'EXPLORAR AGORA'
     },
     {
-        image: 'https://i.imgur.com/WeSHB5P.jpeg',
+        image: 'https://i.imgur.com/iapKUtF.jpeg',
         title: 'LANÇAMENTO',
         subtitle: 'Tecnologia para máxima performance',
         cta: 'VER COLEÇÃO'
@@ -2690,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
