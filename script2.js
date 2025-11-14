@@ -226,7 +226,7 @@ function getCategoryName(category) {
 
 // Cache Manager
 class CacheManager {
-    constructor(ttl = 300000) { // 5 minutos
+    constructor(ttl = 1800000) { // 5 minutos
         this.cache = new Map();
         this.ttl = ttl;
     }
@@ -3036,6 +3036,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
