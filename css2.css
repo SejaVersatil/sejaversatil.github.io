@@ -95,6 +95,11 @@ nav {
     color: var(--primary);
     letter-spacing: 3px;
     cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.logo:hover {
+    opacity: 0.8;
 }
 
 .nav-menu {
@@ -111,10 +116,26 @@ nav {
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: color 0.3s;
+    position: relative;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--secondary);
+    transition: width 0.3s;
 }
 
 .nav-menu a:hover {
     color: var(--secondary);
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
 }
 
 .nav-icons {
@@ -125,17 +146,23 @@ nav {
 
 .nav-icon {
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.3s;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
+    padding: 0.5rem;
 }
 
-.nav-icon-symbol {
-    font-size: 1.2rem;
+.nav-icon svg {
     color: var(--primary);
+    transition: all 0.3s;
+}
+
+.nav-icon:hover svg {
+    color: var(--secondary);
+    transform: translateY(-2px);
 }
 
 .nav-icon-label {
@@ -151,14 +178,26 @@ nav {
 }
 
 .nav-icon:hover .nav-icon-symbol,
+
+}
+
 .nav-icon:hover .nav-icon-label {
     color: var(--secondary);
 }
 
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
 .cart-count {
     position: absolute;
-    top: -8px;
-    right: -8px;
+    top: -5px;
+    right: -5px;
     background: var(--secondary);
     color: white;
     border-radius: 50%;
@@ -169,6 +208,7 @@ nav {
     justify-content: center;
     font-size: 0.65rem;
     font-weight: 700;
+    animation: pulse 2s infinite;
 }
 
 /* Hero Carousel Section */
@@ -3164,6 +3204,7 @@ footer {
     }
 }
 }
+
 
 
 
