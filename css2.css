@@ -853,6 +853,10 @@ nav {
     margin: 0;
 }
 
+.product-card:hover .product-quick-actions {
+    opacity: 1 !important;
+}
+
 .bestsellers-section {
     background: var(--gray-light);
     padding: 4rem 0;
@@ -3229,6 +3233,7 @@ footer {
         letter-spacing: 1.5px;
     }
 }
+
 
 
 
