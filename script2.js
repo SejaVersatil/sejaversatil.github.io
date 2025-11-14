@@ -1801,7 +1801,6 @@ function addToCart(productId) {
             cartIcon.style.animation = 'heartBeat 0.5s';
         }, 10);
     }
-}
 
 function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
@@ -2684,5 +2683,6 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
