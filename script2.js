@@ -1779,6 +1779,16 @@ function addToCart(productId) {
     saveCart();
     updateCartUI();
     trackEvent('E-commerce', 'Add to Cart', product.name);
+
+    function quickBuy(productId) {
+    addToCart(productId);
+    setTimeout(() => {
+        toggleCart();
+        setTimeout(() => {
+            checkout();
+        }, 500);
+    }, 600);
+}
     
     // 🎬 ANIMAÇÃO DO CARD PARA O CARRINHO
     const clickedButton = event.target;
@@ -3045,6 +3055,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
