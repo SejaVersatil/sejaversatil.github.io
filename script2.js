@@ -1477,22 +1477,24 @@ function setupAutoCarousel() {
     
     productCards.forEach(card => {
         const productId = card.getAttribute('data-product-id');
+        
+        // ✅ CORREÇÃO: Limpar interval existente
         if (carouselIntervals[productId]) {
             clearInterval(carouselIntervals[productId]);
             delete carouselIntervals[productId];
         }
+        
         const slides = card.querySelectorAll('.product-image-slide');
         
         if (slides.length <= 1) {
-    // Esconder setas e dots
-    const arrows = card.querySelector('.product-carousel-arrows');
-    const dots = card.querySelector('.product-carousel-dots');
-    if (arrows) arrows.style.display = 'none';
-    if (dots) dots.style.display = 'none';
-    return;
-}
+            const arrows = card.querySelector('.product-carousel-arrows');
+            const dots = card.querySelector('.product-carousel-dots');
+            if (arrows) arrows.style.display = 'none';
+            if (dots) dots.style.display = 'none';
+            return;
+        }
         
-        // Verificar se já registrou eventos para este card
+        // ✅ CORREÇÃO: Verificar se já tem listeners
         if (carouselEventsRegistered.has(productId)) {
             return;
         }
@@ -1501,16 +1503,14 @@ function setupAutoCarousel() {
         
         let currentSlideIndex = 0;
         
+        // ✅ CORREÇÃO: Usar função nomeada para poder remover listener
         const handleMouseEnter = () => {
-            if (carouselsPaused) {
-        return; // Não cria interval se estiver pausado
-    }
-            // Limpar intervalo anterior se existir
+            if (carouselsPaused) return;
+            
             if (carouselIntervals[productId]) {
                 clearInterval(carouselIntervals[productId]);
             }
             
-            // Iniciar rotação automática das imagens
             carouselIntervals[productId] = setInterval(() => {
                 const cardSlides = card.querySelectorAll('.product-image-slide');
                 currentSlideIndex = (currentSlideIndex + 1) % cardSlides.length;
@@ -1519,13 +1519,16 @@ function setupAutoCarousel() {
         };
         
         const handleMouseLeave = () => {
-            // Parar rotação e voltar para primeira imagem
             if (carouselIntervals[productId]) {
                 clearInterval(carouselIntervals[productId]);
             }
             currentSlideIndex = 0;
             updateCarouselSlides(card, 0);
         };
+        
+        // ✅ CORREÇÃO: Remover listeners antigos antes de adicionar novos
+        card.removeEventListener('mouseenter', handleMouseEnter);
+        card.removeEventListener('mouseleave', handleMouseLeave);
         
         card.addEventListener('mouseenter', handleMouseEnter);
         card.addEventListener('mouseleave', handleMouseLeave);
@@ -3033,4 +3036,5 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
