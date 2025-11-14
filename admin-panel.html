@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>🔒 Admin - Seja Versátil</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .admin-dashboard {
+            display: none;
+            background: white;
+            width: 95vw;
+            height: 95vh;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .admin-body {
+            display: flex;
+            height: calc(100% - 80px);
+        }
+        
+        .admin-sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            padding: 2rem 0;
+            border-right: 1px solid #e5e5e5;
+            overflow-y: auto;
+        }
+        
+        .sidebar-item {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background: white;
+            color: #667eea;
+            border-left: 4px solid #667eea;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #777;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .products-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e5e5e5;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .products-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .products-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .product-img {
+            width: 60px;
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stock-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .stock-ok { background: #d4edda; color: #155724; }
+        .stock-low { background: #fff3cd; color: #856404; }
+        .stock-out { background: #f8d7da; color: #721c24; }
+        
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .btn-stock {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-stock:hover {
+            background: #138496;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e5e5;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .variants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .variant-card {
+            background: #f8f9fa;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 2px solid #e5e5e5;
+            transition: all 0.3s;
+        }
+        
+        .variant-card:hover {
+            border-color: #667eea;
+        }
+        
+        .variant-card.unavailable {
+            opacity: 0.6;
+            border-color: #dc3545;
+        }
+        
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .variant-label {
+            font-weight: 700;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .stock-input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .stock-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .toggle-available {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .toggle-available input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-save {
+            background: #28a745;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .btn-save:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginScreen">
+        <h1>🔒 Admin Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="loginPassword" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login">Entrar</button>
+            <div class="error-message" id="loginError"></div>
+        </form>
+    </div>
+
+    <div class="admin-dashboard" id="adminDashboard">
+        <div class="admin-header">
+            <h2>🛍️ Painel Admin - Seja Versátil</h2>
+            <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+        
+        <div class="admin-body">
+            <div class="admin-sidebar">
+                <div class="sidebar-item active" onclick="showSection('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="sidebar-item" onclick="showSection('products')">
+                    📦 Produtos
+                </div>
+                <div class="sidebar-item" onclick="showSection('stock')">
+                    📋 Estoque Detalhado
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <div id="dashboardSection">
+                    <h2 style="margin-bottom: 2rem;">Dashboard</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalProducts">0</div>
+                            <div class="stat-label">Total de Produtos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalStock">0</div>
+                            <div class="stat-label">Total em Estoque</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="lowStock">0</div>
+                            <div class="stat-label">Estoque Baixo</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="outOfStock">0</div>
+                            <div class="stat-label">Sem Estoque</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="productsSection" style="display: none;">
+                    <h2 style="margin-bottom: 2rem;">Gerenciar Produtos</h2>
+                    <div id="productsTableContainer"></div>
+                </div>
+                
+                <div id="stockSection" style="display: none;">
+                    <h2 style="margin-bottom: 2rem;">Controle de Estoque Detalhado</h2>
+                    <div id="stockTableContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="stockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalProductName"></h3>
+                <button class="modal-close" onclick="closeStockModal()">×</button>
+            </div>
+            <div id="variantsContainer"></div>
+            <button class="btn-save" onclick="saveStock()">💾 Salvar Alterações</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+            authDomain: "seja-versatil.firebaseapp.com",
+            projectId: "seja-versatil",
+            storageBucket: "seja-versatil.appspot.com",
+            messagingSenderId: "102339207381",
+            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c"
+        };
+        
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let currentProduct = null;
+        let currentVariants = [];
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const btn = document.querySelector('.btn-login');
+            
+            btn.disabled = true;
+            btn.textContent = 'Entrando...';
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const adminDoc = await db.collection('admins').doc(userCredential.user.uid).get();
+                
+                if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+                    await auth.signOut();
+                    errorDiv.textContent = '❌ Acesso negado. Você não é administrador.';
+                    errorDiv.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = 'Entrar';
+                    return;
+                }
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'flex';
+                loadDashboard();
+                
+            } catch (error) {
+                errorDiv.textContent = '❌ Email ou senha incorretos';
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+            }
+        });
+        
+        async function logout() {
+            await auth.signOut();
+            location.reload();
+        }
+        
+        function showSection(section) {
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('productsSection').style.display = 'none';
+            document.getElementById('stockSection').style.display = 'none';
+            
+            if (section === 'dashboard') {
+                document.getElementById('dashboardSection').style.display = 'block';
+                loadDashboard();
+            } else if (section === 'products') {
+                document.getElementById('productsSection').style.display = 'block';
+                loadProducts();
+            } else if (section === 'stock') {
+                document.getElementById('stockSection').style.display = 'block';
+                loadStockControl();
+            }
+        }
+        
+        async function loadDashboard() {
+            try {
+                const productsSnapshot = await db.collection('produtos').get();
+                let totalStock = 0;
+                let lowStock = 0;
+                let outOfStock = 0;
+                
+                for (const doc of productsSnapshot.docs) {
+                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    
+                    variantsSnapshot.forEach(variantDoc => {
+                        const variant = variantDoc.data();
+                        totalStock += variant.stock || 0;
+                        
+                        if (variant.stock === 0) {
+                            outOfStock++;
+                        } else if (variant.stock < 5) {
+                            lowStock++;
+                        }
+                    });
+                }
+                
+                document.getElementById('totalProducts').textContent = productsSnapshot.size;
+                document.getElementById('totalStock').textContent = totalStock;
+                document.getElementById('lowStock').textContent = lowStock;
+                document.getElementById('outOfStock').textContent = outOfStock;
+                
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+        
+        async function loadProducts() {
+            const container = document.getElementById('productsTableContainer');
+            container.innerHTML = '<div class="loading">⏳ Carregando produtos</div>';
+            
+            try {
+                const productsSnapshot = await db.collection('produtos').get();
+                
+                let html = `
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Estoque Total</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (const doc of productsSnapshot.docs) {
+                    const product = doc.data();
+                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    
+                    let totalStock = 0;
+                    variantsSnapshot.forEach(v => totalStock += v.data().stock || 0);
+                    
+                    const stockClass = totalStock === 0 ? 'stock-out' : totalStock < 20 ? 'stock-low' : 'stock-ok';
+                    const stockText = totalStock === 0 ? 'SEM ESTOQUE' : totalStock < 20 ? `BAIXO (${totalStock})` : `OK (${totalStock})`;
+                    
+                    const firstImage = product.images && product.images[0] ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    const isRealImage = firstImage.startsWith('http') || firstImage.startsWith('data:');
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="product-img" style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}"></div>
+                            </td>
+                            <td><strong>${product.name}</strong></td>
+                            <td>${product.category}</td>
+                            <td>R$ ${product.price.toFixed(2)}</td>
+                            <td><span class="stock-badge ${stockClass}">${stockText}</span></td>
+                            <td>
+                                <button class="btn-action btn-stock" onclick="openStockModal('${doc.id}')">📋 Gerenciar</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                container.innerHTML = '<div class="loading">❌ Erro ao carregar produtos</div>';
+            }
+        }
+        
+        async function loadStockControl() {
+            const container = document.getElementById('stockTableContainer');
+            container.innerHTML = '<div class="loading">⏳ Carregando estoque</div>';
+            
+            try {
+                const productsSnapshot = await db.collection('produtos').get();
+                
+                let html = `
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Tamanho</th>
+                                <th>Cor</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>SKU</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (const doc of productsSnapshot.docs) {
+                    const product = doc.data();
+                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    
+                    variantsSnapshot.forEach(variantDoc => {
+                        const variant = variantDoc.data();
+                        const stockClass = variant.stock === 0 ? 'stock-out' : variant.stock < 5 ? 'stock-low' : 'stock-ok';
+                        const stockText = variant.stock === 0 ? 'SEM ESTOQUE' : variant.stock < 5 ? 'BAIXO' : 'OK';
+                        const availableText = variant.available ? '✅ Disponível' : '❌ Indisponível';
+                        
+                        html += `
+                            <tr>
+                                <td><strong>${product.name}</strong></td>
+                                <td>${variant.size}</td>
+                                <td>${variant.color}</td>
+                                <td><strong>${variant.stock}</strong></td>
+                                <td><span class="stock-badge ${stockClass}">${stockText}</span><br><small>${availableText}</small></td>
+                                <td><small>${variant.sku}</small></td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Erro ao carregar estoque:', error);
+                container.innerHTML = '<div class="loading">❌ Erro ao carregar estoque</div>';
+            }
+        }
+        
+        async function openStockModal(productId) {
+            try {
+                const productDoc = await db.collection('produtos').doc(productId).get();
+                const product = productDoc.data();
+                
+                currentProduct = { id: productId, ...product };
+                
+                document.getElementById('modalProductName').textContent = product.name;
+                
+                const variantsSnapshot = await db.collection('produtos').doc(productId).collection('variants').get();
+                currentVariants = [];
+                
+                let html = '<div class="variants-grid">';
+                
+                variantsSnapshot.forEach(doc => {
+                    const variant = doc.data();
+                    currentVariants.push({ id: doc.id, ...variant });
+                    
+                    html += `
+                        <div class="variant-card ${!variant.available ? 'unavailable' : ''}">
+                            <div class="variant-header">
+                                <span class="variant-label">${variant.size} - ${variant.color}</span>
+                            </div>
+                            <input type="number" class="stock-input" 
+                                   value="${variant.stock}" 
+                                   min="0"
+                                   data-variant-id="${doc.id}"
+                                   placeholder="Quantidade">
+                            <label class="toggle-available">
+                                <input type="checkbox" 
+                                       ${variant.available ? 'checked' : ''}
+                                       data-variant-id="${doc.id}">
+                                Disponível para venda
+                            </label>
+                            <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${variant.sku}</small>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                document.getElementById('variantsContainer').innerHTML = html;
+                document.getElementById('stockModal').classList.add('active');
+                
+            } catch (error) {
+                console.error('Erro ao abrir modal:', error);
+                alert('Erro ao carregar variantes do produto');
+            }
+        }
+        
+        function closeStockModal() {
+            document.getElementById('stockModal').classList.remove('active');
+            currentProduct = null;
+            currentVariants = [];
+        }
+        
+        async function saveStock() {
+            if (!currentProduct) return;
+            
+            try {
+                const stockInputs = document.querySelectorAll('.stock-input');
+                const availableInputs = document.querySelectorAll('.toggle-available input');
+                
+                let totalStock = 0;
+                const batch = db.batch();
+                
+                stockInputs.forEach((input, index) => {
+                    const variantId = input.dataset.variantId;
+                    const stock = parseInt(input.value) || 0;
+                    const available = availableInputs[index].checked;
+                    
+                    totalStock += stock;
+                    
+                    const variantRef = db.collection('produtos')
+                        .doc(currentProduct.id)
+                        .collection('variants')
+                        .doc(variantId);
+                    
+                    batch.update(variantRef, {
+                        stock: stock,
+                        available: available,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                const productRef = db.collection('produtos').doc(currentProduct.id);
+                batch.update(productRef, {
+                    totalStock: totalStock,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await batch.commit();
+                
+                alert('✅ Estoque atualizado com sucesso!');
+                closeStockModal();
+                loadProducts();
+                loadDashboard();
+                
+            } catch (error) {
+                console.error('Erro ao salvar estoque:', error);
+                alert('❌ Erro ao salvar estoque: ' + error.message);
+            }
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const adminDoc = await db.collection('admins').doc(user.uid).get();
+                if (adminDoc.exists && adminDoc.data().role === 'admin') {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminDashboard').style.display = 'flex';
+                    loadDashboard();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
