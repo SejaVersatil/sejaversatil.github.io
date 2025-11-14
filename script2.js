@@ -1697,7 +1697,14 @@ function renderPagination(totalPages) {
 }
 
 function changePage(page) {
+    // 🔥 MOVER O SCROLL PARA O INÍCIO (antes de renderizar)
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
     carouselsPaused = true;
+    
     // Limpar todos os carrosséis ativos
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
@@ -1708,12 +1715,15 @@ function changePage(page) {
     carouselEventsRegistered.clear();
     
     currentPage = page;
+    
+    // Renderizar produtos (pode demorar um pouco)
     renderProducts();
+    
+    // Re-ativar carousels após renderização
     setTimeout(() => {
         carouselsPaused = false;
-        setupAutoCarousel(); // Re-configurar carousels
+        setupAutoCarousel();
     }, 300);
-    document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ==================== CARRINHO ====================
@@ -2683,6 +2693,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
