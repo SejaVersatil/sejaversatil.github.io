@@ -1383,6 +1383,10 @@ function renderProducts() {
     // Calcular desconto percentual
     const discountPercent = product.oldPrice ? 
         Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+
+        const variants = productVariants[product.id] || [];
+const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+const lowStockWarning = totalStock > 0 && totalStock <= 10;
     
     return `
         <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
@@ -3036,6 +3040,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
