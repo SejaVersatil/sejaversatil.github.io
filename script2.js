@@ -1633,7 +1633,7 @@ function renderBestSellers() {
     }
     
     bestSellersGrid.innerHTML = bestSellers.map(product => {
-        // CORREÇÃO: Garantir que images sempre seja um array válido
+        // Garantir que images sempre seja um array válido
         let images = [];
         
         if (Array.isArray(product.images) && product.images.length > 0) {
@@ -1649,7 +1649,8 @@ function renderBestSellers() {
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
         
         return `
-            <div class="product-card">
+            <div class="product-card" onclick="openProductDetails('${product.id}')">
+                <!-- ↑ ADICIONAR onclick AQUI -->
                 <div class="product-image">
                     <button class="favorite-btn ${isFav ? 'active' : ''}" 
                             onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
@@ -1660,8 +1661,12 @@ function renderBestSellers() {
                     <div class="product-image-carousel">
                         <div class="product-image-slide active" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                     </div>
+                    
                     ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
-                    <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</button>
+                    
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
+                        Adicionar ao Carrinho
+                    </button>
                 </div>
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
@@ -2700,6 +2705,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
