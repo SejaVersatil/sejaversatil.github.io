@@ -1785,33 +1785,6 @@ function addToCart(productId) {
     }
 }
     
-    // Feedback visual melhorado
-    const btn = event.target;
-    const originalText = btn.textContent;
-    const originalBg = btn.style.background;
-    
-    btn.textContent = '✓ Adicionado!';
-    btn.style.background = '#27ae60';
-    btn.style.transform = 'scale(1.05)';
-    
-    setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = originalBg;
-        btn.style.transform = 'scale(1)';
-    }, 2000);
-    
-    // Mostrar toast
-    showToast(`${product.name} adicionado ao carrinho!`, 'success');
-    
-    // Pequena animação no ícone do carrinho
-    const cartIcon = document.querySelector('.nav-icon:last-child');
-    if (cartIcon) {
-        cartIcon.style.animation = 'none';
-        setTimeout(() => {
-            cartIcon.style.animation = 'heartBeat 0.5s';
-        }, 10);
-    }
-
 function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
     const cartItems = document.getElementById('cartItems');
@@ -2587,6 +2560,26 @@ function addToCartFromDetails() {
     }, 300);
 }
 
+function buyNow() {
+    if (!currentProductDetails) return;
+    
+    // Adicionar ao carrinho primeiro
+    addToCartFromDetails();
+    
+    // Fechar modal de detalhes
+    closeProductDetails();
+    
+    // Abrir carrinho
+    setTimeout(() => {
+        toggleCart();
+    }, 500);
+    
+    // Abrir modal de pagamento após 1 segundo
+    setTimeout(() => {
+        checkout();
+    }, 1000);
+}
+
 function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -2693,6 +2686,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
