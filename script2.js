@@ -62,7 +62,7 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80',
+        image: 'https://i.imgur.com/Iur0gbb.jpeg',
         title: 'COLEÇÃO INVERNO 2025',
         subtitle: 'Conforto e estilo para seus treinos',
         cta: 'EXPLORAR AGORA'
@@ -2690,6 +2690,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
