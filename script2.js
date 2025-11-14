@@ -1476,6 +1476,10 @@ function setupAutoCarousel() {
     
     productCards.forEach(card => {
         const productId = card.getAttribute('data-product-id');
+        if (carouselIntervals[productId]) {
+            clearInterval(carouselIntervals[productId]);
+            delete carouselIntervals[productId];
+        }
         const slides = card.querySelectorAll('.product-image-slide');
         
         if (slides.length <= 1) {
