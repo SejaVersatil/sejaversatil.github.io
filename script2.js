@@ -1739,6 +1739,42 @@ function addToCart(productId) {
     updateCartUI();
     trackEvent('E-commerce', 'Add to Cart', product.name);
     
+    // 🎬 ANIMAÇÃO DO CARD PARA O CARRINHO
+    const clickedButton = event.target;
+    if (clickedButton) {
+        animateProductToCart(clickedButton, product);
+    }
+    
+    // Feedback visual no botão
+    const btn = clickedButton;
+    const originalText = btn.textContent;
+    const originalBg = btn.style.background;
+    
+    btn.textContent = '✓ Adicionado!';
+    btn.style.background = '#27ae60';
+    btn.style.transform = 'scale(1.05)';
+    
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = originalBg;
+        btn.style.transform = 'scale(1)';
+    }, 2000);
+    
+    // Toast com delay
+    setTimeout(() => {
+        showToast(`${product.name} adicionado ao carrinho!`, 'success');
+    }, 300);
+    
+    // Pequena animação no ícone do carrinho
+    const cartIcon = document.querySelector('.nav-icon:last-child');
+    if (cartIcon) {
+        cartIcon.style.animation = 'none';
+        setTimeout(() => {
+            cartIcon.style.animation = 'heartBeat 0.5s';
+        }, 10);
+    }
+}
+    
     // Feedback visual melhorado
     const btn = event.target;
     const originalText = btn.textContent;
@@ -2427,10 +2463,88 @@ function calculateShipping() {
     resultsDiv.classList.add('active');
 }
 
+// ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
+function animateProductToCart(sourceElement, product) {
+    // Pegar posição do botão de origem
+    const sourceRect = sourceElement.getBoundingClientRect();
+    
+    // Pegar posição do ícone do carrinho
+    const cartIcon = document.querySelector('.nav-icon:last-child .nav-icon-symbol');
+    if (!cartIcon) return;
+    
+    const cartRect = cartIcon.getBoundingClientRect();
+    
+    // Criar elemento de animação (miniatura do produto)
+    const flyingProduct = document.createElement('div');
+    flyingProduct.style.cssText = `
+        position: fixed;
+        width: 80px;
+        height: 100px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 9999;
+        pointer-events: none;
+        left: ${sourceRect.left + (sourceRect.width / 2) - 40}px;
+        top: ${sourceRect.top + (sourceRect.height / 2) - 50}px;
+        opacity: 1;
+        transform: scale(1);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        overflow: hidden;
+        border: 2px solid var(--primary);
+    `;
+    
+    // Adicionar imagem do produto
+    const productImage = getProductImage(product);
+    const isRealImage = productImage.startsWith('data:image') || productImage.startsWith('http');
+    
+    const imageDiv = document.createElement('div');
+    imageDiv.style.cssText = `
+        width: 100%;
+        height: 100%;
+        ${isRealImage ? `background-image: url('${productImage}'); background-size: cover; background-position: center;` : `background: ${productImage}`}
+    `;
+    
+    flyingProduct.appendChild(imageDiv);
+    document.body.appendChild(flyingProduct);
+    
+    // Forçar reflow para garantir que a animação funcione
+    flyingProduct.offsetHeight;
+    
+    // Animar para o carrinho
+    setTimeout(() => {
+        flyingProduct.style.left = `${cartRect.left + (cartRect.width / 2) - 40}px`;
+        flyingProduct.style.top = `${cartRect.top + (cartRect.height / 2) - 50}px`;
+        flyingProduct.style.transform = 'scale(0.2) rotate(360deg)';
+        flyingProduct.style.opacity = '0';
+    }, 10);
+    
+    // Animação do ícone do carrinho (pulse)
+    setTimeout(() => {
+        const cartIconParent = document.querySelector('.nav-icon:last-child');
+        if (cartIconParent) {
+            cartIconParent.style.animation = 'none';
+            setTimeout(() => {
+                cartIconParent.style.animation = 'heartBeat 0.6s';
+            }, 10);
+        }
+    }, 600);
+    
+    // Remover elemento após animação
+    setTimeout(() => {
+        flyingProduct.remove();
+    }, 1000);
+}
+
+// ==================== FIM DA ANIMAÇÃO ====================
+
 function addToCartFromDetails() {
     if (!currentProductDetails) return;
     
     const product = currentProductDetails;
+    
+    // Pegar o botão que foi clicado para animar
+    const addButton = document.querySelector('.btn-add-cart-large');
     
     // Criar identificador único para produto + tamanho + cor
     const cartItemId = `${product.id}_${selectedSize}_${selectedColor}`;
@@ -2442,26 +2556,26 @@ function addToCartFromDetails() {
     } else {
         cart.push({
             ...product,
-            cartItemId: cartItemId, // ID único para este item específico
+            cartItemId: cartItemId,
             quantity: selectedQuantity,
-            selectedSize: selectedSize, // ← ADICIONAR TAMANHO
-            selectedColor: selectedColor, // ← ADICIONAR COR
+            selectedSize: selectedSize,
+            selectedColor: selectedColor,
             image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
         });
     }
     
     saveCart();
     updateCartUI();
-    showToast(`${selectedQuantity}x ${product.name} (${selectedSize}, ${selectedColor}) adicionado ao carrinho!`, 'success');
-}
-
-function buyNow() {
-    addToCartFromDetails();
-    closeProductDetails();
-    toggleCart();
+    
+    // 🎬 CHAMAR ANIMAÇÃO ANTES DO TOAST
+    if (addButton) {
+        animateProductToCart(addButton, product);
+    }
+    
+    // Toast aparece após pequeno delay para não competir visualmente
     setTimeout(() => {
-        checkout();
-    }, 500);
+        showToast(`${selectedQuantity}x ${product.name} (${selectedSize}, ${selectedColor}) adicionado ao carrinho!`, 'success');
+    }, 300);
 }
 
 function switchTab(tabName) {
@@ -2570,4 +2684,5 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ==================== FIM DO ARQUIVO ====================
+
 
