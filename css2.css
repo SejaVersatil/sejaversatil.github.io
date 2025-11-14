@@ -161,7 +161,10 @@ nav {
 .nav-icon svg {
     color: var(--primary);
     transition: all 0.3s;
+    width: 22px;     /* ajuste aqui até alinhar */
+    height: 22px;    /* idem */
 }
+
 
 .nav-icon:hover svg {
     color: var(--secondary);
@@ -3248,6 +3251,7 @@ footer {
         letter-spacing: 1.5px;
     }
 }
+
 
 
 
