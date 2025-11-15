@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.0';
+const CACHE_NAME = 'seja-versatil-v1.0.1';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -60,3 +60,4 @@ self.addEventListener('fetch', (event) => {
             })
     );
 });
+
