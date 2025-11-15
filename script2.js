@@ -455,6 +455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderBestSellers();
             updateCartUI();
             initHeroCarousel();
+            initBlackFridayCountdown();
             setupConnectionMonitor();
             setupCartAbandonmentTracking();
             setupPushNotifications();
@@ -3241,10 +3242,6 @@ function initBlackFridayCountdown() {
     // Atualizar a cada segundo
     const countdownInterval = setInterval(updateCountdown, 1000);
 }
-
-// Inicializar countdown quando a página carregar
-document.addEventListener('DOMContentLoaded', function() {
-    initBlackFridayCountdown();
 });
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
@@ -3262,3 +3259,4 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
