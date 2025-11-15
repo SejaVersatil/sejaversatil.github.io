@@ -1399,9 +1399,19 @@ const lowStockWarning = totalStock > 0 && totalStock <= 10;
                     ${isFav ? '❤️' : '🤍'}
                 </button>
                 
-                <!-- Discount Badge -->
-                ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
-                ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
+                <!-- Black Friday Badge -->
+${product.isBlackFriday ? `
+    <div class="bf-product-badge">
+        <div class="bf-badge-content">
+            <div class="bf-badge-text">
+                <span class="bf-badge-icon">🔥</span>
+                <span>BLACK FRIDAY</span>
+            </div>
+        </div>
+    </div>
+` : ''}
+${product.badge && !product.isBlackFriday && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
+${discountPercent > 0 && !product.isBlackFriday ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
                 
                 <!-- Image Carousel -->
                 <div class="product-image-carousel">
@@ -3238,6 +3248,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
