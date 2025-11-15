@@ -3244,6 +3244,54 @@ function initBlackFridayCountdown() {
 }
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
+// ==================== FUNÇÃO TEMPORÃRIA - MARCAR PRODUTOS BLACK FRIDAY ====================
+async function marcarProdutosBlackFriday() {
+    if (!isAdminLoggedIn) {
+        alert('Você precisa estar logado como admin!');
+        return;
+    }
+    
+    const confirmacao = confirm(
+        '🔥 Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
+        'Deseja continuar?'
+    );
+    
+    if (!confirmacao) return;
+    
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        let contador = 0;
+        
+        for (const product of productsData) {
+            // Se o produto tem oldPrice (desconto), marcar como Black Friday
+            if (product.oldPrice) {
+                await db.collection("produtos").doc(product.id).update({
+                    isBlackFriday: true
+                });
+                
+                product.isBlackFriday = true;
+                contador++;
+            }
+        }
+        
+        productCache.clear();
+        await carregarProdutosDoFirestore();
+        renderProducts();
+        
+        alert(`✅ ${contador} produtos foram marcados como Black Friday!`);
+        
+    } catch (error) {
+        console.error("Erro:", error);
+        alert('Erro ao marcar produtos: ' + error.message);
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
+
+// Adicionar botão no console para executar (apenas admin)
+console.log('🔥 Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
+
 // Cleanup do beforeunload
 window.addEventListener('beforeunload', function() {
     clearCarouselIntervals();
@@ -3258,5 +3306,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
