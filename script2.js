@@ -1689,7 +1689,7 @@ function renderBestSellers() {
         🛒 Carrinho
     </button>
     <button class="add-to-cart-btn" style="flex: 1; background: #27ae60; border-radius: 0;" onclick="event.stopPropagation(); quickBuy('${product.id}')">
-        ⚡ Comprar
+         Comprar
     </button>
 </div>
                 </div>
@@ -3250,6 +3250,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
