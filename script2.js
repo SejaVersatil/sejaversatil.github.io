@@ -1407,7 +1407,7 @@ ${product.isBlackFriday ? `
     <div class="bf-product-badge">
         <div class="bf-badge-content">
             <div class="bf-badge-text">
-                <span class="bf-badge-icon">🔥</span>
+                <span class="bf-badge-icon"></span>
                 <span>BLACK FRIDAY</span>
             </div>
         </div>
@@ -3211,7 +3211,7 @@ function initBlackFridayCountdown() {
         if (distance < 0) {
             document.querySelector('.top-banner').innerHTML = `
                 <div class="bf-content">
-                    <span class="bf-label">🎉 BLACK FRIDAY ENCERRADA | VOLTE EM BREVE!</span>
+                    <span class="bf-label"> BLACK FRIDAY ENCERRADA | VOLTE EM BREVE!</span>
                 </div>
             `;
             clearInterval(countdownInterval);
@@ -3252,7 +3252,7 @@ async function marcarProdutosBlackFriday() {
     }
     
     const confirmacao = confirm(
-        '🔥 Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
+        ' Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
         'Deseja continuar?'
     );
     
@@ -3290,7 +3290,7 @@ async function marcarProdutosBlackFriday() {
 }
 
 // Adicionar botão no console para executar (apenas admin)
-console.log('🔥 Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
+console.log(' Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
 
 // Cleanup do beforeunload
 window.addEventListener('beforeunload', function() {
@@ -3306,6 +3306,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
