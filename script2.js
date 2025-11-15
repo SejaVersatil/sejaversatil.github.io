@@ -3246,10 +3246,16 @@ function initBlackFridayCountdown() {
 document.addEventListener('DOMContentLoaded', function() {
     initBlackFridayCountdown();
 });
+// Cleanup do beforeunload
+window.addEventListener('beforeunload', function() {
+    clearCarouselIntervals();
+    stopHeroCarousel();
+});
 
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
