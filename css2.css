@@ -76,17 +76,145 @@ h4 { font-size: 1.25rem; }
     top: 0;
 }
 
-/* Top Banner */
+/* Black Friday Top Banner */
 .top-banner {
-    font-family: 'Oswald', sans-serif !important;
-    background: var(--primary);
+    background: linear-gradient(90deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     color: white;
     text-align: center;
-    padding: 0.6rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 1px;
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.top-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.bf-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.bf-label {
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+.bf-separator {
+    color: rgba(255,255,255,0.3);
+    font-size: 1.2rem;
+}
+
+.bf-countdown-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    text-transform: lowercase;
+}
+
+.bf-countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.bf-time-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    min-width: 45px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.bf-time-value {
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #FFD700;
+    line-height: 1;
+}
+
+.bf-time-label {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.2rem;
+}
+
+.bf-colon {
+    color: #FFD700;
+    font-size: 1.2rem;
+    font-weight: 700;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+}
+
+/* Responsive Black Friday Banner */
+@media (max-width: 768px) {
+    .top-banner {
+        padding: 0.6rem 0.5rem;
+    }
+    
+    .bf-content {
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .bf-label {
+        font-size: 0.8rem;
+    }
+    
+    .bf-time-unit {
+        min-width: 38px;
+        padding: 0.25rem 0.4rem;
+    }
+    
+    .bf-time-value {
+        font-size: 1.1rem;
+    }
+    
+    .bf-time-label {
+        font-size: 0.55rem;
+    }
 }
 
 /* Header */
@@ -3326,5 +3454,6 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
