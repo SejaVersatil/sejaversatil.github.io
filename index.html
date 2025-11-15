@@ -17,6 +17,13 @@
     <link rel="preconnect" href="https://www.gstatic.com">
     <link rel="preconnect" href="https://firebasestorage.googleapis.com">
     <link rel="preload" as="image" href="https://i.imgur.com/kvruQ8k.jpeg" fetchpriority="high">
+    <!-- Service Worker -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Seja Versátil">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
     
     <!-- Google Fonts - Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -862,5 +869,19 @@
       "email": "contato@sejaversatil.com.br"
     }
     </script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('✅ Service Worker registrado:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('❌ Erro ao registrar Service Worker:', error);
+            });
+    });
+}
+</script>
+    
 </body>
 </html>
