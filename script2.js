@@ -1407,8 +1407,11 @@ ${product.isBlackFriday && discountPercent > 0 ? `
     <div class="bf-product-badge">
         <div class="bf-badge-content">
             <div class="bf-badge-text">
-                <span>BLACK FRIDAY</span>
-                <span style="font-size: 1.2rem; font-weight: 900;">-${discountPercent}%</span>
+                <span style="font-size: 1.4rem; font-weight: 900; display: block; line-height: 1;">BLACK</span>
+                <div style="display: flex; align-items: baseline; gap: 0.3rem;">
+                    <span style="font-size: 1rem; font-weight: 700;">Friday</span>
+                    <span style="font-size: 1rem; font-weight: 900;">-${discountPercent}%</span>
+                </div>
             </div>
         </div>
     </div>
@@ -3306,6 +3309,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
