@@ -40,24 +40,29 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     // ✅ ADICIONAR NO INÍCIO DO EVENTO
     if (event.request.url.startsWith('chrome-extension://') || 
-        event.request.url.startsWith('chrome://')) {
-        return; // Ignorar requisições de extensões
-    }
-    
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                if (response && response.status === 200) {
-                    const responseToCache = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-                }
-                return response;
-            })
-            .catch(() => {
-                return caches.match(event.request);
-            })
-    );
-});
+    event.request.url.startsWith('chrome://')) {
+    return; // Ignorar requisições de extensões
+}
+
+// ← ADICIONAR ESTE FILTRO AQUI
+if (event.request.method !== 'GET') {
+    return; // Não fazer cache de POST, PUT, DELETE, etc.
+}
+
+event.respondWith(
+    fetch(event.request)
+        .then((response) => {
+            if (response && response.status === 200) {
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseToCache);
+                });
+            }
+            return response;
+        })
+        .catch(() => {
+            return caches.match(event.request);
+        })
+);
+
 
