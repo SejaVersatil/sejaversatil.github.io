@@ -2109,6 +2109,117 @@ function setupCartAbandonmentTracking() {
     setInterval(startCartTimer, 60000);
 }
 
+// Sistema de Notificações Push
+async function setupPushNotifications() {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+        console.log('❌ Push notifications não suportadas');
+        return;
+    }
+    
+    // Verificar se já tem permissão
+    if (Notification.permission === 'granted') {
+        console.log('✅ Notificações já autorizadas');
+        return;
+    }
+    
+    // Perguntar permissão após 30 segundos (não ser invasivo)
+    setTimeout(() => {
+        if (Notification.permission === 'default') {
+            showNotificationPrompt();
+        }
+    }, 30000);
+}
+
+function showNotificationPrompt() {
+    const promptHTML = `
+        <div id="notificationPrompt" style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 350px;
+            z-index: 9998;
+            animation: slideInRight 0.5s ease;
+        ">
+            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                <div style="font-size: 2rem;">🔔</div>
+                <div style="flex: 1;">
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Receber Notificações?</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                        Seja avisado sobre promoções exclusivas e lançamentos!
+                    </p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="requestNotificationPermission()" style="
+                            flex: 1;
+                            padding: 0.6rem;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            font-size: 0.85rem;
+                        ">
+                            Permitir
+                        </button>
+                        <button onclick="closeNotificationPrompt()" style="
+                            padding: 0.6rem 1rem;
+                            background: #e5e5e5;
+                            color: #666;
+                            border: none;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            font-size: 0.85rem;
+                        ">
+                            Agora não
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', promptHTML);
+}
+
+async function requestNotificationPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        
+        if (permission === 'granted') {
+            console.log('✅ Permissão de notificação concedida');
+            showToast('Você receberá notificações sobre promoções!', 'success');
+            
+            // Enviar notificação de boas-vindas
+            new Notification('Bem-vindo ao Seja Versátil! 👋', {
+                body: 'Agora você receberá ofertas exclusivas!',
+                icon: '/favicon.ico',
+                badge: '/favicon.ico'
+            });
+            
+            // Salvar no localStorage
+            localStorage.setItem('notificationsEnabled', 'true');
+        } else {
+            console.log('❌ Permissão de notificação negada');
+        }
+        
+        closeNotificationPrompt();
+        
+    } catch (error) {
+        console.error('Erro ao solicitar permissão:', error);
+    }
+}
+
+function closeNotificationPrompt() {
+    const prompt = document.getElementById('notificationPrompt');
+    if (prompt) {
+        prompt.style.animation = 'slideOutRight 0.5s ease';
+        setTimeout(() => prompt.remove(), 500);
+    }
+}
+
 // ==================== ATALHOS DE TECLADO ====================
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -3071,6 +3182,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
