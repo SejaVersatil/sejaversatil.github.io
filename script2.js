@@ -1780,8 +1780,45 @@ function addToCart(productId) {
     saveCart();
     updateCartUI();
     trackEvent('E-commerce', 'Add to Cart', product.name);
+    
+    // 🎬 ANIMAÇÃO DO CARD PARA O CARRINHO
+    const clickedButton = event.target;
+    if (clickedButton) {
+        animateProductToCart(clickedButton, product);
+    }
+    
+    // Feedback visual no botão
+    const btn = clickedButton;
+    const originalText = btn.textContent;
+    const originalBg = btn.style.background;
+    
+    btn.textContent = '✓ Adicionado!';
+    btn.style.background = '#27ae60';
+    btn.style.transform = 'scale(1.05)';
+    
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = originalBg;
+        btn.style.transform = 'scale(1)';
+    }, 2000);
+    
+    // Toast com delay
+    setTimeout(() => {
+        showToast(`${product.name} adicionado ao carrinho!`, 'success');
+    }, 300);
+    
+    // Pequena animação no ícone do carrinho
+    const cartIcon = document.querySelector('.nav-icon:last-child');
+    if (cartIcon) {
+        cartIcon.style.animation = 'none';
+        setTimeout(() => {
+            cartIcon.style.animation = 'heartBeat 0.5s';
+        }, 10);
+    }
+}
 
-    function quickBuy(productId) {
+// Quickbuy
+function quickBuy(productId) {
     addToCart(productId);
     setTimeout(() => {
         toggleCart();
@@ -3183,6 +3220,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
