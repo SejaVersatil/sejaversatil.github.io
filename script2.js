@@ -457,6 +457,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             initHeroCarousel();
             setupConnectionMonitor();
             setupCartAbandonmentTracking();
+            setupPushNotifications();
             console.log('✅ Site carregado com sucesso!');
         }, 100);
         
@@ -3182,6 +3183,7 @@ loadProducts = async function() {
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
