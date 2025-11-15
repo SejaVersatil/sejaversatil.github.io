@@ -3246,31 +3246,19 @@ function initBlackFridayCountdown() {
 document.addEventListener('DOMContentLoaded', function() {
     initBlackFridayCountdown();
 });
+// ==================== FIM BLACK FRIDAY COUNTDOWN ====================
+
 // Cleanup do beforeunload
 window.addEventListener('beforeunload', function() {
     clearCarouselIntervals();
     stopHeroCarousel();
 });
 
-// ==================== FIM BLACK FRIDAY COUNTDOWN ====================
-
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            registration.update(); // Força atualização
+        }
+    });
+}
 // ==================== FIM DO ARQUIVO ====================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
