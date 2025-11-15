@@ -3242,7 +3242,6 @@ function initBlackFridayCountdown() {
     // Atualizar a cada segundo
     const countdownInterval = setInterval(updateCountdown, 1000);
 }
-});
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
 // Cleanup do beforeunload
@@ -3259,4 +3258,5 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
