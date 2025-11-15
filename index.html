@@ -53,6 +53,19 @@
   const auth = firebase.auth();
   const storage = firebase.storage();
 
+// HANDLER GLOBAL
+  window.addEventListener('unhandledrejection', function(event) {
+    if (event.reason && event.reason.message) {
+      // Ignorar erros de extensões crypto
+      if (event.reason.message.includes('signTransaction') ||
+          event.reason.message.includes('ethereum') ||
+          event.reason.message.includes('phantom')) {
+        event.preventDefault();
+        return;
+      }
+    }
+  });
+  
   console.log("🔥 Firebase inicializado");
 </script>
 
