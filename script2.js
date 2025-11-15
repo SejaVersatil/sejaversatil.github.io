@@ -3183,7 +3183,62 @@ loadProducts = async function() {
 
 console.log('✅ Sistema de estoque integrado ao site');
 
+// ==================== BLACK FRIDAY COUNTDOWN ====================
+
+function initBlackFridayCountdown() {
+    // Definir data final da Black Friday (ajuste conforme necessário)
+    // Formato: Ano, Mês (0-11), Dia, Hora, Minuto, Segundo
+    const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59); // 30 de Novembro de 2025, 23:59:59
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = blackFridayEnd - now;
+        
+        // Se a promoção terminou
+        if (distance < 0) {
+            document.querySelector('.top-banner').innerHTML = `
+                <div class="bf-content">
+                    <span class="bf-label">🎉 BLACK FRIDAY ENCERRADA | VOLTE EM BREVE!</span>
+                </div>
+            `;
+            clearInterval(countdownInterval);
+            return;
+        }
+        
+        // Calcular tempo restante
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Atualizar elementos (com zero à esquerda)
+        const daysEl = document.getElementById('bfDays');
+        const hoursEl = document.getElementById('bfHours');
+        const minutesEl = document.getElementById('bfMinutes');
+        const secondsEl = document.getElementById('bfSeconds');
+        
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+    }
+    
+    // Atualizar imediatamente
+    updateCountdown();
+    
+    // Atualizar a cada segundo
+    const countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+// Inicializar countdown quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    initBlackFridayCountdown();
+});
+
+// ==================== FIM BLACK FRIDAY COUNTDOWN ====================
+
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
