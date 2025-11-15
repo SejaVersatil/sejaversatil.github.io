@@ -1406,11 +1406,11 @@ const lowStockWarning = totalStock > 0 && totalStock <= 10;
 ${product.isBlackFriday && discountPercent > 0 ? `
     <div class="bf-product-badge">
         <div class="bf-badge-content">
-            <div class="bf-badge-text">
-                <span style="font-size: 1.4rem; font-weight: 900; display: block; line-height: 1;">BLACK</span>
-                <div style="display: flex; align-items: baseline; gap: 0.3rem;">
-                    <span style="font-size: 1rem; font-weight: 700;">Friday</span>
-                    <span style="font-size: 1rem; font-weight: 900;">-${discountPercent}%</span>
+            <div style="display: flex; flex-direction: column; line-height: 0.9;">
+                <span style="font-size: 2rem; font-weight: 900; letter-spacing: 2px;">BLACK</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.1rem;">
+                    <span style="font-size: 0.9rem; font-weight: 700; letter-spacing: 1px;">Friday</span>
+                    <span style="font-size: 0.9rem; font-weight: 900; letter-spacing: 1px;">-${discountPercent}%</span>
                 </div>
             </div>
         </div>
@@ -3309,6 +3309,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
