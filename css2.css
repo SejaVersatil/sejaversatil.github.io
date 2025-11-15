@@ -1291,7 +1291,6 @@ nav {
     padding: 0.3rem 0.5rem;
     border-radius: 0;
     font-family: 'Oswald', sans-serif !important;
-    font-size: 1.1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -1299,7 +1298,15 @@ nav {
     border: none;
     position: relative;
     overflow: visible;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 
+        -2px -2px 0 #000,  
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000,
+        -2px  0   0 #000,
+         2px  0   0 #000,
+         0   -2px 0 #000,
+         0    2px 0 #000;
 }
 
 .bf-badge-text {
@@ -3498,6 +3505,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
