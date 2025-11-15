@@ -1403,12 +1403,12 @@ const lowStockWarning = totalStock > 0 && totalStock <= 10;
                 </button>
                 
                 <!-- Black Friday Badge -->
-${product.isBlackFriday ? `
+${product.isBlackFriday && discountPercent > 0 ? `
     <div class="bf-product-badge">
         <div class="bf-badge-content">
-            <div class="bf-badge-text">
-                <span class="bf-badge-icon"></span>
-                <span>BLACK FRIDAY</span>
+            <div class="bf-badge-text" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+                <span style="font-size: 1rem; line-height: 1;">BLACK FRIDAY</span>
+                <span style="font-size: 1rem; line-height: 1; font-weight: 800;">-${discountPercent}%</span>
             </div>
         </div>
     </div>
@@ -3306,6 +3306,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
