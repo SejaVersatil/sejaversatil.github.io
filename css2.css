@@ -3309,4 +3309,22 @@ css@keyframes slideInRight {
     }
 }
 
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.stars {
+    color: #ffc107;
+    letter-spacing: 2px;
+}
+
+.rating-count {
+    color: #999;
+    font-size: 0.8rem;
+}
+
 
