@@ -847,6 +847,7 @@ function openProductModal(productId = null) {
         document.getElementById('productPrice').value = product.price;
         document.getElementById('productOldPrice').value = product.oldPrice || '';
         document.getElementById('productBadge').value = product.badge || '';
+        document.getElementById('productBlackFriday').checked = product.isBlackFriday || false;
         tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
     } else {
         title.textContent = 'Adicionar Novo Produto';
@@ -1076,14 +1077,15 @@ async function saveProduct(event) {
     const productId = document.getElementById('productId').value;
 
     const productData = {
-        name: name,
-        category: category,
-        price: price,
-        oldPrice: oldPrice,
-        badge: badge,
-        images: tempProductImages,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
+    name: name,
+    category: category,
+    price: price,
+    oldPrice: oldPrice,
+    badge: badge,
+    isBlackFriday: document.getElementById('productBlackFriday').checked,
+    images: tempProductImages,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+};
 
     const errors = validateProductData(productData);
     if (errors.length > 0) {
@@ -3248,6 +3250,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
