@@ -38,10 +38,15 @@ self.addEventListener('activate', (event) => {
 
 // Estratégia: Network First, fallback para Cache
 self.addEventListener('fetch', (event) => {
+    // ✅ ADICIONAR NO INÍCIO DO EVENTO
+    if (event.request.url.startsWith('chrome-extension://') || 
+        event.request.url.startsWith('chrome://')) {
+        return; // Ignorar requisições de extensões
+    }
+    
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Se a resposta for válida, clonar e cachear
                 if (response && response.status === 200) {
                     const responseToCache = response.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -51,7 +56,6 @@ self.addEventListener('fetch', (event) => {
                 return response;
             })
             .catch(() => {
-                // Se falhar, buscar do cache
                 return caches.match(event.request);
             })
     );
