@@ -1276,6 +1276,78 @@ nav {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
+/* Black Friday Badge */
+.bf-product-badge {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.bf-badge-content {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+    color: #FFD700;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border: 2px solid #FFD700;
+    position: relative;
+    overflow: hidden;
+}
+
+.bf-badge-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255,215,0,0.2) 50%,
+        transparent 70%
+    );
+    animation: shine-badge 3s infinite;
+}
+
+@keyframes shine-badge {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.bf-badge-text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.bf-badge-icon {
+    font-size: 0.9rem;
+    animation: pulse-icon 2s infinite;
+}
+
+@keyframes pulse-icon {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Responsive Badge */
+@media (max-width: 768px) {
+    .bf-badge-content {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.65rem;
+    }
+}
+
 .stock-warning-badge {
     position: absolute;
     top: 0.8rem;
@@ -3454,6 +3526,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
