@@ -156,6 +156,7 @@ function scrollToProducts() {
 // ==================== NAVEGAÇÃO POR CATEGORIA ====================
 
 function navigateToCategory(category) {
+    toggleSidebar();
     // Limpar carrosséis ativos
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
@@ -3315,6 +3316,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
