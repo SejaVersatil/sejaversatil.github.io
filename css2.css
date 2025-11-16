@@ -3493,36 +3493,36 @@ footer {
     }
     
     .hero-section {
-        height: 70vh;        
-        min-height: 500px;   
+        height: 60vh;        
+        min-height: 400px;   
     }
     
     .hero-title {
-        font-size: 2.5rem;   
+        font-size: 2rem;   
     }
     
     .hero-subtitle {
-        font-size: 0.9rem;   
-        letter-spacing: 2px; 
+        font-size: 0.85rem;   
+        letter-spacing: 1.5px; 
     }
     
     .hero-cta {
-        padding: 1rem 2rem;  
-        font-size: 0.8rem;   
+        padding: 0.9rem 2rem;  
+        font-size: 0.75rem;   
     }
     
     .hero-nav-arrow {
-        width: 45px;        
-        height: 45px;       
-        font-size: 2rem;     
+        width: 40px;        
+        height: 40px;       
+        font-size: 1.8rem;     
     }
     
     .hero-nav-prev {
-        left: 1rem;         
+        left: 0.5rem;         
     }
     
     .hero-nav-next {
-        right: 1rem;        
+        right: 0.5rem;        
     }
     
     .products-grid {
@@ -3879,3 +3879,4 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
