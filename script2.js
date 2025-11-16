@@ -455,6 +455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderProducts();
             renderBestSellers();
             updateCartUI();
+            updateFavoritesCount();
             initHeroCarousel();
             initBlackFridayCountdown();
             setupConnectionMonitor();
@@ -3598,6 +3599,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
