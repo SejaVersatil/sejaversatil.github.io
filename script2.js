@@ -869,6 +869,8 @@ function openProductModal(productId = null) {
         document.getElementById('productBadge').value = product.badge || '';
         document.getElementById('productBlackFriday').checked = product.isBlackFriday || false;
         tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
+        productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
+setTimeout(() => renderProductColorsManager(), 100);
     } else {
         title.textContent = 'Adicionar Novo Produto';
         document.getElementById('productForm').reset();
@@ -1104,6 +1106,7 @@ async function saveProduct(event) {
     badge: badge,
     isBlackFriday: document.getElementById('productBlackFriday').checked,
     images: tempProductImages,
+    colors: productColors.length > 0 ? productColors : null, // 🆕 Salvar cores no Firebase
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 
@@ -1213,6 +1216,101 @@ async function limparTodosProdutos() {
         showToast('Erro ao limpar produtos: ' + error.message, 'error');
     } finally {
         document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
+
+// ==================== GERENCIAR CORES NO ADMIN ====================
+let productColors = [];
+
+function renderProductColorsManager() {
+    const container = document.getElementById('productColorsManager');
+    if (!container) return;
+    
+    if (productColors.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma cor adicionada ainda</p>';
+        return;
+    }
+    
+    container.innerHTML = productColors.map((color, index) => `
+        <div style="background: white; padding: 1rem; margin-bottom: 0.8rem; border-radius: 8px; border-left: 5px solid ${color.hex}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.8rem;">
+                    <div style="width: 45px; height: 45px; border-radius: 50%; background: ${color.hex}; border: 3px solid ${color.hex === '#FFFFFF' || color.hex === '#ffffff' ? '#ddd' : '#e5e5e5'}; box-shadow: 0 2px 6px rgba(0,0,0,0.1);"></div>
+                    <div>
+                        <strong style="display: block; font-size: 1rem; color: #333;">${color.name}</strong>
+                        <small style="color: #999; font-size: 0.75rem;">${color.hex}</small>
+                    </div>
+                </div>
+                <button type="button" onclick="removeProductColor(${index})" 
+                        style="background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.3s;">
+                    🗑️ Remover
+                </button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #f8f8f8; border-radius: 6px;">
+                <span style="color: #666; font-size: 0.85rem;">📸 <strong>${color.images.length}</strong> ${color.images.length === 1 ? 'imagem' : 'imagens'} vinculada(s)</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addColorToProduct() {
+    // Verificar se há imagens adicionadas
+    if (!tempProductImages || tempProductImages.length === 0) {
+        alert('⚠️ Adicione pelo menos 1 imagem antes de criar uma cor!\n\nFluxo correto:\n1. Adicione as imagens da cor\n2. Clique em "Adicionar Nova Cor"\n3. Preencha os dados');
+        return;
+    }
+    
+    const colorName = prompt('🎨 Nome da cor:\n\nExemplos: Rosa, Preto, Azul Marinho, Verde Militar, Branco');
+    if (!colorName || colorName.trim() === '') return;
+    
+    const colorHex = prompt('🎨 Código hexadecimal da cor:\n\nExemplos:\n#FFB6C1 (rosa)\n#000000 (preto)\n#FFFFFF (branco)\n#4169E1 (azul)\n\n💡 Use colorpicker.me se precisar de ajuda');
+    if (!colorHex || !colorHex.startsWith('#')) {
+        alert('❌ Código inválido!\n\nUse o formato #FFFFFF (6 caracteres após o #)');
+        return;
+    }
+    
+    // Validar formato hex
+    const hexPattern = /^#[0-9A-Fa-f]{6}$/;
+    if (!hexPattern.test(colorHex)) {
+        alert('❌ Código hexadecimal inválido!\n\nUse exatamente 6 caracteres (0-9, A-F) após o #\n\nExemplo correto: #FFB6C1');
+        return;
+    }
+    
+    // Verificar se cor já existe
+    if (productColors.some(c => c.name.toLowerCase() === colorName.trim().toLowerCase())) {
+        alert('⚠️ Já existe uma cor com este nome neste produto!');
+        return;
+    }
+    
+    // Adicionar cor com as imagens atuais
+    productColors.push({
+        name: colorName.trim(),
+        hex: colorHex.trim().toUpperCase(),
+        images: [...tempProductImages] // Clonar array de imagens
+    });
+    
+    renderProductColorsManager();
+    showToast(`✅ Cor "${colorName}" adicionada com ${tempProductImages.length} imagens!`, 'success');
+    
+    // Sugestão para próxima cor
+    setTimeout(() => {
+        const hasMore = confirm(`✅ Cor "${colorName}" adicionada com sucesso!\n\n📸 Total de imagens: ${tempProductImages.length}\n\n❓ Deseja adicionar outra cor?\n\n✅ Clique OK para limpar as imagens e adicionar fotos de outra cor\n❌ Clique Cancelar se este produto só tem esta cor`);
+        
+        if (hasMore) {
+            // Limpar imagens para próxima cor
+            tempProductImages = [];
+            renderProductImages();
+            showToast('📸 Imagens limpas! Adicione fotos da próxima cor.', 'info');
+        }
+    }, 500);
+}
+
+function removeProductColor(index) {
+    const color = productColors[index];
+    if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
+        productColors.splice(index, 1);
+        renderProductColorsManager();
+        showToast(`🗑️ Cor "${color.name}" removida`, 'info');
     }
 }
 
@@ -3599,3 +3697,4 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
