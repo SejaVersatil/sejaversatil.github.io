@@ -1961,6 +1961,12 @@ function loadCart() {
     if (saved) {
         try {
             const cartData = JSON.parse(saved);
+            if (productsData.length === 0) {
+                console.warn('⚠️ Produtos ainda não carregados, adiando carregamento do carrinho');
+                setTimeout(loadCart, 500); // Tentar novamente em 500ms
+                return;
+            }
+            
             const validItems = [];
             
             cartData.forEach(item => {
@@ -3309,6 +3315,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
