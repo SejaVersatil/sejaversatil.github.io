@@ -3524,6 +3524,16 @@ footer {
     .hero-nav-next {
         right: 0.5rem;        
     }
+
+    @media (max-width: 480px) {
+    .hero-section {
+        height: 50vh;
+        min-height: 350px;
+    }
+    
+    .hero-title {
+        font-size: 1.6rem;
+    }
     
     .products-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -3879,4 +3889,5 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
