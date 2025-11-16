@@ -876,6 +876,8 @@ setTimeout(() => renderProductColorsManager(), 100);
         document.getElementById('productForm').reset();
         document.getElementById('productId').value = '';
         tempProductImages = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        productColors = [];
+setTimeout(() => renderProductColorsManager(), 100);
     }
 
     renderProductImages();
@@ -3697,4 +3699,5 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
