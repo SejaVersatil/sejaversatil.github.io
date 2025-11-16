@@ -1054,6 +1054,7 @@ function removeProductImage(index) {
 function closeProductModal() {
     document.getElementById('productModal').classList.remove('active');
     editingProductId = null;
+    productColors = [];
 }
 
 function editProduct(productId) {
@@ -3386,34 +3387,53 @@ async function openProductDetails(productId) {
 }
 
 // Renderizar cores disponíveis
+// Renderizar cores disponíveis COM IMAGENS do Firebase
 async function renderAvailableColors(productId) {
+    const product = productsData.find(p => p.id === productId);
     const variants = productVariants[productId] || [];
     const colorSelector = document.getElementById('colorSelector');
     
     if (!colorSelector) return;
     
-    // Cores únicas disponíveis
-    const availableColors = [...new Set(variants.map(v => v.color))];
+    // 🆕 PRIORIZAR cores cadastradas no campo `colors`
+    let availableColors = [];
     
-    const colorMap = {
-        'Rosa': '#FFB6C1',
-        'Preto': '#000000',
-        'Azul': '#4169E1',
-        'Verde': '#32CD32',
-        'Branco': '#FFFFFF',
-        'Vermelho': '#DC143C',
-        'Amarelo': '#FFD700'
-    };
+    if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
+        // ✅ Usar cores estruturadas cadastradas no Firebase
+        availableColors = product.colors;
+        console.log(`✅ Produto "${product.name}" tem ${product.colors.length} cores cadastradas`);
+    } else if (variants.length > 0) {
+        // ⚠️ Fallback: usar cores das variantes (sistema antigo de estoque)
+        const uniqueColors = [...new Set(variants.map(v => v.color))];
+        availableColors = uniqueColors.map(colorName => ({
+            name: colorName,
+            hex: getColorHex(colorName),
+            images: product.images || []
+        }));
+        console.log(`⚠️ Produto "${product.name}" usando cores das variantes de estoque`);
+    } else {
+        // ❌ Sem cores definidas - esconder seletor
+        const colorOption = colorSelector.closest('.product-option');
+        if (colorOption) colorOption.style.display = 'none';
+        console.log(`❌ Produto "${product.name}" não tem cores cadastradas`);
+        return;
+    }
+    
+    // Mostrar seletor
+    const colorOption = colorSelector.closest('.product-option');
+    if (colorOption) colorOption.style.display = 'block';
     
     colorSelector.innerHTML = availableColors.map((color, index) => {
-        const bgColor = colorMap[color] || '#999';
-        const hasStock = variants.some(v => v.color === color && v.stock > 0);
+        const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
+        const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
         
         return `
             <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
-                 data-color="${color}"
-                 style="background: ${bgColor}; ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
-                 onclick="${hasStock ? `selectColor('${color}')` : 'event.preventDefault()'}">
+                 data-color="${color.name}"
+                 data-color-index="${index}"
+                 style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
+                 onclick="${hasStock ? `selectColor('${color.name}')` : 'event.preventDefault()'}"
+                 title="${color.name}">
                 ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
             </div>
         `;
@@ -3421,11 +3441,40 @@ async function renderAvailableColors(productId) {
     
     // Selecionar primeira cor disponível
     const firstAvailable = availableColors.find(color => 
-        variants.some(v => v.color === color && v.stock > 0)
+        variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0)
     );
+    
     if (firstAvailable) {
-        selectedColor = firstAvailable;
+        selectedColor = firstAvailable.name;
+        
+        // 🆕 Atualizar label com nome da cor
+        const colorLabel = document.querySelector('.product-option label');
+        if (colorLabel && !colorLabel.querySelector('#selectedColorName')) {
+            colorLabel.innerHTML = `Cor: <span id="selectedColorName">${firstAvailable.name}</span>`;
+        } else if (colorLabel) {
+            const span = colorLabel.querySelector('#selectedColorName');
+            if (span) span.textContent = firstAvailable.name;
+        }
     }
+}
+
+// Função auxiliar para converter nome em hex (fallback)
+function getColorHex(colorName) {
+    const colorMap = {
+        'Rosa': '#FFB6C1',
+        'Preto': '#000000',
+        'Azul': '#4169E1',
+        'Verde': '#32CD32',
+        'Branco': '#FFFFFF',
+        'Vermelho': '#DC143C',
+        'Amarelo': '#FFD700',
+        'Cinza': '#808080',
+        'Lilás': '#9370DB',
+        'Coral': '#FF7F50',
+        'Nude': '#E8BEAC',
+        'Bege': '#F5F5DC'
+    };
+    return colorMap[colorName] || '#999999';
 }
 
 // Renderizar tamanhos disponíveis
@@ -3699,5 +3748,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
