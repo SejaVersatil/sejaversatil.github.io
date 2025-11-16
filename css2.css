@@ -3535,6 +3535,16 @@ footer {
         font-size: 1.6rem;
     }
     
+    .hero-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .hero-cta {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.7rem;
+    }
+} 
+    
     .products-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -3889,5 +3899,6 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
