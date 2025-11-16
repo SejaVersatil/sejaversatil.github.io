@@ -1582,6 +1582,7 @@ footer {
 }
 
 /* Hamburger Menu */
+/* Hamburger Menu - APENAS MOBILE */
 .hamburger-btn {
     position: fixed;
     top: 20px;
@@ -1592,12 +1593,23 @@ footer {
     border: none;
     cursor: pointer;
     z-index: 3000;
-    display: flex;
+    display: none; /* ⬅️ OCULTO POR PADRÃO */
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 6px;
     transition: all 0.3s;
+}
+
+/* ⬇️ APARECE APENAS EM MOBILE */
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex; /* ⬅️ VISÍVEL NO MOBILE */
+    }
+    
+    .nav-menu {
+        display: none !important; /* ⬅️ ESCONDE MENU DESKTOP */
+    }
 }
 
 .hamburger-btn:hover {
@@ -3518,6 +3530,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
