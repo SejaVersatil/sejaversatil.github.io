@@ -231,9 +231,10 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 2rem;
+    padding: 1rem 2rem; /* ← Reduzir um pouco o padding vertical */
     max-width: 100%;
     margin: 0;
+    gap: 2rem; /* ← Adicionar espaçamento entre elementos */
 }
 
 .logo {
@@ -339,6 +340,73 @@ nav {
     }
     50% {
         transform: scale(1.1);
+    }
+}
+
+/* Barra de Pesquisa Central */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #f5f5f5;
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    flex: 1;
+    max-width: 500px;
+    margin: 0 2rem;
+    transition: all 0.3s;
+}
+
+.search-bar:focus-within {
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.search-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.9rem;
+    color: var(--text);
+    padding: 0;
+}
+
+.search-bar input::placeholder {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
+    transition: transform 0.2s;
+}
+
+.search-btn:hover {
+    transform: scale(1.1);
+}
+
+.search-btn svg {
+    color: var(--primary);
+}
+
+/* Responsivo - Esconder barra no mobile */
+@media (max-width: 768px) {
+    .search-bar {
+        display: none;
     }
 }
 
@@ -3898,6 +3966,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
