@@ -1372,8 +1372,9 @@ nav {
 }
 
 .favorite-btn:hover {
+    background: rgba(255,255,255,0.2); /* Leve transparência no hover */
+    border-color: rgba(255,255,255,1); /* Borda mais opaca */
     transform: scale(1.15);
-    background: white;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
@@ -3966,6 +3967,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
