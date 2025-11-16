@@ -1356,7 +1356,7 @@ nav {
     position: absolute;
     top: 0.8rem;
     right: 0.8rem;
-    background: rgba(255,255,255,0.95);
+    background: transparent;
     border: none;
     width: 45px;
     height: 45px;
@@ -3966,6 +3966,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
