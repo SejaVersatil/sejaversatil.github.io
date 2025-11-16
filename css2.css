@@ -1386,6 +1386,15 @@ nav {
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
+.favorite-btn svg {
+    transition: all 0.3s;
+}
+
+.favorite-btn.active svg {
+    fill: #ff6b6b;
+    stroke: #ff6b6b;
+}
+
 .product-badge {
     position: absolute;
     top: 0.8rem;
@@ -3968,6 +3977,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
