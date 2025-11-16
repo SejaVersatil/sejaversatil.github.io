@@ -579,7 +579,7 @@ function hideLoggedInView() {
     switchUserTab('login');
 }
 
-function userLogin(event) {
+async function userLogin(event) {
     event.preventDefault();
     
     const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase().trim();
@@ -592,35 +592,76 @@ function userLogin(event) {
         return;
     }
 
-    if ((emailOrUsername === ADMIN_CREDENTIALS.username || emailOrUsername === ADMIN_CREDENTIALS.email) && 
-        password === ADMIN_CREDENTIALS.password) {
-        currentUser = {
-            name: 'Administrador',
-            email: ADMIN_CREDENTIALS.email,
-            isAdmin: true
-        };
-        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-        showLoggedInView();
-        errorMsg.classList.remove('active');
-        showToast('Login realizado com sucesso!', 'success');
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
-    const user = users.find(u => u.email.toLowerCase() === emailOrUsername && u.password === password);
-
-    if (user) {
-        currentUser = {
-            name: user.name,
-            email: user.email,
-            isAdmin: false
-        };
-        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-        showLoggedInView();
-        errorMsg.classList.remove('active');
-        showToast('Login realizado com sucesso!', 'success');
-    } else {
-        errorMsg.textContent = 'E-mail ou senha incorretos';
+    // 🔑 USAR MESMA AUTENTICAÇÃO DO PAINEL DE ESTOQUE
+    try {
+        // Converter 'admin' para email completo se necessário
+        let email = emailOrUsername;
+        if (!emailOrUsername.includes('@')) {
+            if (emailOrUsername === 'admin') {
+                email = 'admin@sejaversatil.com.br';
+            } else {
+                // Usuário digitou algo que não é email e não é 'admin'
+                errorMsg.textContent = 'Use "admin" ou "admin@sejaversatil.com.br" para login';
+                errorMsg.classList.add('active');
+                return;
+            }
+        }
+        
+        // ✅ AUTENTICAR COM FIREBASE (mesma senha do estoque)
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        console.log('✅ Autenticado com Firebase:', user.email);
+        
+        // Verificar se é admin no Firestore
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            // ✅ É ADMIN
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid
+            };
+            
+            localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+            isAdminLoggedIn = true;
+            
+            showLoggedInView();
+            errorMsg.classList.remove('active');
+            showToast('Login realizado com sucesso!', 'success');
+            
+            console.log('✅ Admin logado com UID:', user.uid);
+            return;
+            
+        } else {
+            // Usuário autenticado mas NÃO é admin
+            await auth.signOut();
+            errorMsg.textContent = 'Você não tem permissões de administrador';
+            errorMsg.classList.add('active');
+            return;
+        }
+        
+    } catch (firebaseError) {
+        console.error('❌ Erro Firebase:', firebaseError.code);
+        
+        // Mensagens de erro amigáveis
+        let errorMessage = 'Email ou senha incorretos';
+        
+        if (firebaseError.code === 'auth/user-not-found') {
+            errorMessage = 'Usuário não encontrado';
+        } else if (firebaseError.code === 'auth/wrong-password') {
+            errorMessage = 'Senha incorreta';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+            errorMessage = 'Email inválido';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+            errorMessage = 'Muitas tentativas. Aguarde alguns minutos.';
+        }
+        
+        errorMsg.textContent = errorMessage;
         errorMsg.classList.add('active');
     }
 }
@@ -3792,6 +3833,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
