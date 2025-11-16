@@ -238,11 +238,13 @@ nav {
 
 .logo {
     font-family: 'Oswald', sans-serif !important;
-    font-size: 2rem;
+    font-size: 2rem; 
     font-weight: 700;
     color: var(--primary);
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     cursor: pointer;
+    margin: 0;
+    padding: 0;
 }
 
 .logo:hover {
@@ -3899,6 +3901,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
