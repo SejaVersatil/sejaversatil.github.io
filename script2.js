@@ -2083,6 +2083,21 @@ function selectSearchResult(productId) {
 
 // ==================== FAVORITOS ====================
 
+function openFavorites() {
+    const favProducts = productsData.filter(p => favorites.includes(p.id));
+    
+    if (favProducts.length === 0) {
+        showToast('Você ainda não tem favoritos', 'info');
+        return;
+    }
+    
+    // Filtrar para mostrar apenas favoritos
+    currentFilter = 'favorites';
+    renderProducts();
+    scrollToProducts();
+    showToast(`${favProducts.length} favoritos encontrados`, 'success');
+}
+
 function toggleFavorite(productId) {
     const index = favorites.indexOf(productId);
     if (index > -1) {
@@ -3316,6 +3331,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
