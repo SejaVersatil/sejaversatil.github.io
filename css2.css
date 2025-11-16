@@ -3119,20 +3119,58 @@ footer {
 .color-selector {
     display: flex;
     gap: 0.8rem;
+    flex-wrap: wrap;
 }
 
 .color-option {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    border: 2px solid #e5e5e5;
+    border: 3px solid #e5e5e5;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .color-option.active {
     border-color: var(--primary);
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary);
+    box-shadow: 0 0 0 3px white, 0 0 0 6px var(--primary);
+    transform: scale(1.15);
+}
+
+.color-option.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Cores claras precisam de indicador escuro */
+.color-option[style*="#FFF"].active::after,
+.color-option[style*="#fff"].active::after,
+.color-option[style*="white"].active::after {
+    color: var(--primary) !important;
+    text-shadow: none;
+}
+
+/* Label da cor selecionada */
+.product-option label #selectedColorName {
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
 }
 
 /* Size Selector */
@@ -3977,6 +4015,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
