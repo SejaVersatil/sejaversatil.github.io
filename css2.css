@@ -231,9 +231,9 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 2rem 1.2rem 0; /* ← Zero padding esquerdo */
-    max-width: 100%; /* ← Remove limite de largura */
-    margin: 0; /* ← Remove centralização */
+    padding: 1.2rem 2rem;
+    max-width: 100%;
+    margin: 0;
 }
 
 .logo {
@@ -3901,6 +3901,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
