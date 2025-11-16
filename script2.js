@@ -2081,6 +2081,103 @@ function selectSearchResult(productId) {
     toggleCart();
 }
 
+function performHeaderSearch() {
+    const query = document.getElementById('headerSearchInput').value.toLowerCase().trim();
+    
+    if (query.length < 2) {
+        showToast('Digite pelo menos 2 caracteres', 'info');
+        return;
+    }
+    
+    const filtered = productsData.filter(p => 
+        p.name.toLowerCase().includes(query) || 
+        p.category.toLowerCase().includes(query)
+    );
+    
+    if (filtered.length === 0) {
+        showToast(`Nenhum produto encontrado para "${query}"`, 'error');
+        return;
+    }
+    
+    // Mostrar resultados
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    
+    // Renderizar produtos filtrados
+    grid.innerHTML = filtered.map(product => {
+        let images = [];
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
+        const firstImage = images[0];
+        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isFav = isFavorite(product.id);
+        const discountPercent = product.oldPrice ? 
+            Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        
+        return `
+            <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
+                <div class="product-image">
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')">
+                        ${isFav ? '❤️' : '🤍'}
+                    </button>
+                    
+                    <div class="product-image-carousel">
+                        <div class="product-image-slide active" 
+                             style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}">
+                            ${isRealImage ? `<img src="${firstImage}" alt="${product.name}" loading="lazy">` : ''}
+                        </div>
+                    </div>
+                    
+                    ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                    ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+                    
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
+                        Adicionar ao Carrinho
+                    </button>
+                </div>
+                
+                <div class="product-info">
+                    <h4>${product.name}</h4>
+                    <div class="product-price">
+                        ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Mostrar badge
+    const badge = document.getElementById('activeCategoryBadge');
+    const categoryName = document.getElementById('categoryNameDisplay');
+    
+    if (badge && categoryName) {
+        categoryName.textContent = `🔍 "${query}" (${filtered.length} resultados)`;
+        badge.style.display = 'flex';
+    }
+    
+    // Esconder paginação
+    document.getElementById('pagination').innerHTML = '';
+    
+    // Scroll
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        setTimeout(() => {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+    
+    showToast(`🔍 ${filtered.length} produtos encontrados`, 'success');
+    trackEvent('Search', 'Header Search', query);
+}
+
 // ==================== FAVORITOS ====================
 
 function openFavorites() {
@@ -3449,6 +3546,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
