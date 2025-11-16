@@ -1311,11 +1311,14 @@ function getFilteredProducts() {
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
             filtered = filtered.filter(p => p.oldPrice !== null);
+        } else if (currentFilter === 'favorites') { // ← ADICIONE ESTA CONDIÇÃO
+            filtered = filtered.filter(p => favorites.includes(p.id));
+            console.log('❤️ Produtos favoritados:', filtered.length);
         } else {
             // Filtrar por categoria exata
             filtered = filtered.filter(p => {
                 const match = p.category === currentFilter;
-                console.log(`Produto: "${p.name}" | Categoria: "${p.category}" | Match: ${match}`);
+                console.log(`Produto: "${p.name}" | Categoria: "${p.category}" | Match: ${match}`); // ← CORRIGI O TEMPLATE STRING
                 return match;
             });
         }
@@ -2348,6 +2351,35 @@ function toggleFavorite(productId) {
 
 function isFavorite(productId) {
     return favorites.includes(productId);
+}
+
+function updateFavoritesCount() {
+    const favCount = document.getElementById('favoritesCount');
+    const totalFavorites = favorites.length;
+    
+    if (favCount) {
+        favCount.textContent = totalFavorites;
+        favCount.style.display = totalFavorites > 0 ? 'flex' : 'none';
+    }
+}
+
+function showFavorites() {
+    if (favorites.length === 0) {
+        showToast('Você ainda não tem favoritos', 'info');
+        return;
+    }
+    
+    // Filtrar apenas produtos favoritados
+    currentFilter = 'favorites';
+    currentPage = 1;
+    
+    // Modificar a função getFilteredProducts para incluir filtro de favoritos
+    renderProducts();
+    
+    // Scroll para produtos
+    scrollToProducts();
+    
+    showToast(`Mostrando ${favorites.length} favoritos`, 'info');
 }
 
 // ==================== CONEXÃO E OFFLINE ====================
@@ -3566,6 +3598,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
