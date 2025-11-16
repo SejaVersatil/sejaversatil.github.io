@@ -2197,15 +2197,36 @@ function openFavorites() {
 
 function toggleFavorite(productId) {
     const index = favorites.indexOf(productId);
+    
     if (index > -1) {
         favorites.splice(index, 1);
-        showToast('Removido dos favoritos', 'info');
+        showToast('💔 Removido dos favoritos', 'info');
+        
+        // Se estiver na tela de favoritos, recarregar
+        const badge = document.getElementById('activeCategoryBadge');
+        if (badge && badge.style.display === 'flex' && 
+            document.getElementById('categoryNameDisplay').textContent.includes('Favoritos')) {
+            
+            // Se removeu o último favorito
+            if (favorites.length === 0) {
+                clearCategoryFilter();
+                showToast('Você não tem mais favoritos', 'info');
+            } else {
+                // Recarregar tela de favoritos
+                openFavorites();
+            }
+            return;
+        }
     } else {
         favorites.push(productId);
-        showToast('Adicionado aos favoritos', 'success');
+        showToast('❤️ Adicionado aos favoritos', 'success');
     }
+    
     localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+    
+    // Atualizar visual do produto
     renderProducts();
+    trackEvent('Favorites', index > -1 ? 'Remove' : 'Add', productId);
 }
 
 function isFavorite(productId) {
@@ -3428,6 +3449,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
