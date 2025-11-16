@@ -1415,10 +1415,10 @@ const lowStockWarning = totalStock > 0 && totalStock <= 10;
             <div class="product-image">
                 <!-- Favorite Button -->
                 <button class="favorite-btn ${isFav ? 'active' : ''}" 
-                        onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
-                        aria-label="Adicionar aos favoritos">
-                    ${isFav ? '❤️' : '🤍'}
-                </button>
+        onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+        aria-label="Adicionar aos favoritos">
+    ${isFav ? '❤️' : '♡'}
+</button>
                 
                 <!-- Black Friday Badge -->
 ${product.isBlackFriday && discountPercent > 0 ? `
@@ -3563,6 +3563,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
