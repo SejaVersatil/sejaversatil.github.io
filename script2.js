@@ -2338,7 +2338,8 @@ function toggleFavorite(productId) {
         showToast('❤️ Adicionado aos favoritos', 'success');
     }
     
-    localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+   localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+   updateFavoritesCount(); // ← ADICIONE ESTA LINHA
     
     // Atualizar visual do produto
     renderProducts();
@@ -3565,6 +3566,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
