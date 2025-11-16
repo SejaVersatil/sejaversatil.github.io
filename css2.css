@@ -1665,6 +1665,34 @@ footer {
     font-size: 0.75rem;
 }
 
+/* Footer Responsivo */
+@media (max-width: 768px) {
+    footer {
+        padding: 2rem 4% 1rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    .footer-section h4 {
+        font-size: 0.8rem;
+    }
+    
+    .footer-section a,
+    .footer-section p {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
 .social-icons {
     display: flex;
     gap: 0.8rem;
@@ -3765,6 +3793,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
