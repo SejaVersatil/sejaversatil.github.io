@@ -3179,6 +3179,63 @@ footer {
     }
 }
 
+/* ==================== ADAPTAÇÕES MOBILE PROFISSIONAIS ==================== */
+
+/* Header Responsivo */
+@media (max-width: 768px) {
+    header {
+        padding: 0;
+    }
+    
+    nav {
+        padding: 1rem 4%;
+        position: relative;
+        padding-left: 80px; /* ⬅️ Espaço para hambúrguer */
+    }
+    
+    .logo {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+    }
+    
+    .nav-icons {
+        gap: 0.5rem;
+    }
+    
+    .nav-icon {
+        min-height: 50px;
+        padding: 0.3rem;
+    }
+    
+    .nav-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .nav-icon-label {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        padding-left: 70px;
+    }
+    
+    .logo {
+        font-size: 1.2rem;
+        letter-spacing: 1.5px;
+    }
+    
+    .nav-icons {
+        gap: 0.3rem;
+    }
+    
+    .nav-icon-label {
+        display: none; /* ⬅️ Oculta labels em telas muito pequenas */
+    }
+}
+
 /* Responsive Payment Modal */
 @media (max-width: 768px) {
     .payment-modal {
@@ -3530,6 +3587,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
