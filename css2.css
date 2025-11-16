@@ -81,8 +81,8 @@ h4 { font-size: 1.25rem; }
     background: linear-gradient(90deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     color: white;
     text-align: center;
-    padding: 0.8rem 1rem;
-    font-size: 0.85rem;
+    padding: 1.5rem 1rem;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
@@ -116,7 +116,7 @@ h4 { font-size: 1.25rem; }
 
 .bf-label {
     font-family: 'Oswald', sans-serif !important;
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -162,7 +162,7 @@ h4 { font-size: 1.25rem; }
 
 .bf-time-value {
     font-family: 'Oswald', sans-serif !important;
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: #FFD700;
     line-height: 1;
@@ -3899,6 +3899,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
