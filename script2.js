@@ -2084,18 +2084,115 @@ function selectSearchResult(productId) {
 // ==================== FAVORITOS ====================
 
 function openFavorites() {
-    const favProducts = productsData.filter(p => favorites.includes(p.id));
+    // Carregar favoritos do localStorage
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
     
-    if (favProducts.length === 0) {
-        showToast('Você ainda não tem favoritos', 'info');
+    if (favorites.length === 0) {
+        showToast('Você ainda não tem favoritos ❤️', 'info');
         return;
     }
     
-    // Filtrar para mostrar apenas favoritos
-    currentFilter = 'favorites';
-    renderProducts();
-    scrollToProducts();
-    showToast(`${favProducts.length} favoritos encontrados`, 'success');
+    // Filtrar produtos favoritados
+    const favProducts = productsData.filter(p => favorites.includes(p.id));
+    
+    if (favProducts.length === 0) {
+        showToast('Seus favoritos não estão mais disponíveis', 'error');
+        return;
+    }
+    
+    // Limpar produtos do grid atual
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    
+    // Renderizar APENAS favoritos
+    grid.innerHTML = favProducts.map(product => {
+        let images = [];
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
+        const firstImage = images[0];
+        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const discountPercent = product.oldPrice ? 
+            Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        
+        return `
+            <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
+                <div class="product-image">
+                    <!-- Favorite Button (já favoritado) -->
+                    <button class="favorite-btn active" 
+                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                            aria-label="Remover dos favoritos">
+                        ❤️
+                    </button>
+                    
+                    ${product.isBlackFriday && discountPercent > 0 ? `
+                        <div class="bf-product-badge">
+                            <div class="bf-badge-content">
+                                <div class="bf-badge-text">
+                                    <span style="font-size: 2.6rem; font-weight: 900; letter-spacing: 2px; color: #FFFFFF;">BLACK</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-size: 1.17rem; font-weight: 700; letter-spacing: 1px; color: #FFFFFF;">Friday</span>
+                                        <span style="font-size: 1.17rem; font-weight: 900; letter-spacing: 1px; color: #FF6B35;">-${discountPercent}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${product.badge && !product.isBlackFriday && discountPercent === 0 ? `<div class="product-badge">${product.badge}</div>` : ''}
+                    ${discountPercent > 0 && !product.isBlackFriday ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+                    
+                    <!-- Image -->
+                    <div class="product-image-carousel">
+                        <div class="product-image-slide active" 
+                             style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}">
+                            ${isRealImage ? `<img src="${firstImage}" alt="${product.name}" loading="lazy">` : ''}
+                        </div>
+                    </div>
+                    
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
+                        Adicionar ao Carrinho
+                    </button>
+                </div>
+                
+                <div class="product-info">
+                    <h4>${product.name}</h4>
+                    <div class="product-price">
+                        ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Mostrar badge de filtro ativo
+    const badge = document.getElementById('activeCategoryBadge');
+    const categoryName = document.getElementById('categoryNameDisplay');
+    
+    if (badge && categoryName) {
+        categoryName.textContent = '❤️ Meus Favoritos';
+        badge.style.display = 'flex';
+    }
+    
+    // Esconder paginação
+    document.getElementById('pagination').innerHTML = '';
+    
+    // Scroll para produtos
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        setTimeout(() => {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+    
+    showToast(`❤️ ${favProducts.length} favoritos encontrados`, 'success');
+    trackEvent('Favorites', 'View', `${favProducts.length} items`);
 }
 
 function toggleFavorite(productId) {
@@ -3331,6 +3428,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
