@@ -489,6 +489,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// ==================== LISTENER PARA BUSCA NO HEADER ====================
+
+// Aguardar 100ms para garantir que o DOM está pronto
+setTimeout(() => {
+    const headerSearchInput = document.getElementById('headerSearchInput');
+    if (headerSearchInput) {
+        headerSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performHeaderSearch();
+            }
+        });
+        console.log('✅ Listener de busca no header ativado');
+    } else {
+        console.warn('⚠️ Input de busca não encontrado no header');
+    }
+}, 100);
+
 // ==================== SISTEMA DE ADMIN ====================
 
 const ADMIN_CREDENTIALS = {
@@ -3546,6 +3563,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
