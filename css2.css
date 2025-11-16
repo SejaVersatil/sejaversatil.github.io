@@ -949,23 +949,10 @@ nav {
     margin: 0 auto;
 }
 
-/* Responsive para Promo Cards */
+/* Responsive para Promo Cards - Estilo Honeybe */
 @media (max-width: 1200px) {
     .promo-cards-grid {
         grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .promo-value {
-        font-size: 4rem;
-    }
-    
-    .promo-currency,
-    .promo-cents {
-        font-size: 1.6rem;
-    }
-    
-    .promo-card {
-        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 }
 
@@ -974,13 +961,8 @@ nav {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .promo-value {
-        font-size: 3.5rem;
-    }
-    
-    .promo-currency,
-    .promo-cents {
-        font-size: 1.4rem;
+    .promo-card {
+        aspect-ratio: 3/4.5; /* ⬅️ Mais alto no mobile */
     }
     
     .promo-card-content {
@@ -992,6 +974,15 @@ nav {
         padding: 0.4rem 1rem;
     }
     
+    .promo-value {
+        font-size: 3.5rem;
+    }
+    
+    .promo-currency,
+    .promo-cents {
+        font-size: 1.4rem;
+    }
+    
     .promo-disclaimer {
         font-size: 0.45rem;
     }
@@ -999,21 +990,15 @@ nav {
 
 @media (max-width: 480px) {
     .promo-cards-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* ⬅️ 1 coluna em telas pequenas */
     }
     
     .promo-card {
-        aspect-ratio: 3/4;
         max-height: 600px;
     }
     
     .promo-value {
         font-size: 4rem;
-    }
-    
-    .promo-currency,
-    .promo-cents {
-        font-size: 1.6rem;
     }
 }
 
@@ -3710,6 +3695,7 @@ css@keyframes slideInRight {
     color: #999;
     font-size: 0.8rem;
 }
+
 
 
 
