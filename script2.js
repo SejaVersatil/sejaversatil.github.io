@@ -3511,13 +3511,57 @@ async function renderAvailableSizes(productId) {
 }
 
 // Selecionar cor
+// Selecionar cor e TROCAR IMAGENS automaticamente
 function selectColor(color) {
     selectedColor = color;
     
-    // Atualizar visual
+    // Atualizar visual do seletor
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === color);
     });
+    
+    // 🆕 Atualizar label da cor selecionada
+    const colorNameSpan = document.getElementById('selectedColorName');
+    if (colorNameSpan) {
+        colorNameSpan.textContent = color;
+    }
+    
+    // 🆕 TROCAR IMAGENS DA GALERIA
+    if (currentProductDetails && currentProductDetails.colors && Array.isArray(currentProductDetails.colors)) {
+        const selectedColorData = currentProductDetails.colors.find(c => c.name === color);
+        
+        if (selectedColorData && selectedColorData.images && selectedColorData.images.length > 0) {
+            const mainImage = document.getElementById('mainProductImage');
+            const thumbnailList = document.getElementById('thumbnailList');
+            
+            // Atualizar imagem principal
+            const firstImage = selectedColorData.images[0];
+            const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+            
+            if (isRealImage) {
+                mainImage.style.backgroundImage = `url('${firstImage}')`;
+                mainImage.style.backgroundSize = 'cover';
+                mainImage.style.backgroundPosition = 'center';
+            } else {
+                mainImage.style.background = firstImage;
+            }
+            
+            // Atualizar thumbnails
+            thumbnailList.innerHTML = selectedColorData.images.map((img, index) => {
+                const isImg = img.startsWith('data:image') || img.startsWith('http');
+                return `
+                    <div class="thumbnail ${index === 0 ? 'active' : ''}" 
+                         onclick="changeMainImage('${img}', ${index})"
+                         style="${isImg ? `background-image: url('${img}')` : `background: ${img}`}; background-size: cover; background-position: center;"></div>
+                `;
+            }).join('');
+            
+            showToast(`🎨 Cor alterada: ${color}`, 'info');
+            console.log(`✅ Imagens trocadas para cor: ${color} (${selectedColorData.images.length} fotos)`);
+        } else {
+            console.warn(`⚠️ Cor "${color}" selecionada mas não tem imagens cadastradas`);
+        }
+    }
     
     // Atualizar tamanhos disponíveis para essa cor
     if (currentProductDetails) {
@@ -3748,6 +3792,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
