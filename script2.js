@@ -3395,14 +3395,6 @@ let selectedColor = 'Rosa';
 let selectedSize = 'M';
 let selectedQuantity = 1;
 
-/**
- * Abre a página de detalhes a partir de outra página
- */
-function openProductDetails(productId) {
-    console.log('🔗 Redirecionando para produto:', productId);
-    window.location.href = `produto.html?id=${productId}`;
-}
-
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get("id");
@@ -4254,6 +4246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
