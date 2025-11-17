@@ -2580,10 +2580,21 @@ footer {
     margin-top: 1rem;
     display: none;
     text-align: center;
+    padding: 0.8rem;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 6px;
+    border-left: 4px solid #e74c3c;
 }
 
 .form-error.active {
     display: block;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
 }
 
 .form-success {
@@ -4127,6 +4138,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
