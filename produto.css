@@ -762,6 +762,47 @@
     gap: 0.4rem;
 }
 
+/* ============================================ */
+/* LOADING OVERLAY                              */
+/* ============================================ */
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0.05em;
+}
+
 /* RESPONSIVIDADE PROFISSIONAL                  */
 
 @media (max-width: 1200px) {
@@ -857,6 +898,7 @@
         padding: 0.45rem 0.85rem;
     }
 }
+
 
 
 
