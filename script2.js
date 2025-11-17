@@ -509,12 +509,6 @@ setTimeout(() => {
 
 // ==================== SISTEMA DE ADMIN ====================
 
-const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'sejaversatil2025',
-    email: 'admin@sejaversatil.com.br'
-};
-
 let isAdminLoggedIn = false;
 let currentUser = null;
 let editingProductId = null;
@@ -546,12 +540,59 @@ function switchUserTab(tab) {
     }
 }
 
-function checkUserSession() {
+async function checkUserSession() {
+    // Verificar se há usuário salvo no localStorage
     const savedUser = localStorage.getItem('sejaVersatilCurrentUser');
+    
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        showLoggedInView();
+        
+        // ✅ VALIDAR SE AINDA ESTÁ AUTENTICADO NO FIREBASE
+        if (auth.currentUser && auth.currentUser.uid === currentUser.uid) {
+            // Usuário ainda autenticado
+            showLoggedInView();
+            
+            if (currentUser.isAdmin) {
+                isAdminLoggedIn = true;
+                console.log('✅ Sessão de admin restaurada:', currentUser.email);
+            }
+        } else {
+            // Sessão expirou - limpar
+            console.log('⚠️ Sessão expirou, fazendo logout');
+            userLogout();
+        }
     }
+    
+    // ✅ LISTENER DE MUDANÇA DE AUTENTICAÇÃO
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
+            
+            // Verificar se é admin
+            const adminDoc = await db.collection('admins').doc(user.uid).get();
+            
+            if (adminDoc.exists && adminDoc.data().role === 'admin') {
+                const adminData = adminDoc.data();
+                
+                currentUser = {
+                    name: adminData.name || 'Administrador',
+                    email: user.email,
+                    isAdmin: true,
+                    uid: user.uid,
+                    permissions: adminData.permissions || []
+                };
+                
+                isAdminLoggedIn = true;
+                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+            }
+        } else {
+            console.log('🔄 Estado de auth mudou: usuário deslogado');
+            
+            if (currentUser) {
+                userLogout();
+            }
+        }
+    });
 }
 
 function showLoggedInView() {
@@ -734,13 +775,29 @@ function userRegister(event) {
     }, 2000);
 }
 
-function userLogout() {
+async function userLogout() {
     if (confirm('Deseja realmente sair da sua conta?')) {
-        currentUser = null;
-        isAdminLoggedIn = false;
-        localStorage.removeItem('sejaVersatilCurrentUser');
-        hideLoggedInView();
-        showToast('Logout realizado com sucesso', 'info');
+        try {
+            // ✅ DESLOGAR DO FIREBASE
+            await auth.signOut();
+            
+            // Limpar variáveis locais
+            currentUser = null;
+            isAdminLoggedIn = false;
+            
+            // Limpar localStorage
+            localStorage.removeItem('sejaVersatilCurrentUser');
+            
+            // Voltar para tela de login
+            hideLoggedInView();
+            
+            showToast('Logout realizado com sucesso', 'info');
+            console.log('✅ Logout completo');
+            
+        } catch (error) {
+            console.error('❌ Erro ao fazer logout:', error);
+            showToast('Erro ao fazer logout', 'error');
+        }
     }
 }
 
@@ -3833,6 +3890,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
