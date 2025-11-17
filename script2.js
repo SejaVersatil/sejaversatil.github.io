@@ -661,7 +661,6 @@ async function userLogin(event) {
         return;
     }
 
-    // 🔑 USAR MESMA AUTENTICAÇÃO DO PAINEL DE ESTOQUE
     try {
         // Converter 'admin' para email completo se necessário
         let email = emailOrUsername;
@@ -669,31 +668,31 @@ async function userLogin(event) {
             if (emailOrUsername === 'admin') {
                 email = 'admin@sejaversatil.com.br';
             } else {
-                // Usuário digitou algo que não é email e não é 'admin'
                 errorMsg.textContent = 'Use "admin" ou "admin@sejaversatil.com.br" para login';
                 errorMsg.classList.add('active');
                 return;
             }
         }
         
-        // ✅ AUTENTICAR COM FIREBASE (mesma senha do estoque)
+        // ✅ AUTENTICAR COM FIREBASE
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
         console.log('✅ Autenticado com Firebase:', user.email);
         
-        // Verificar se é admin no Firestore
+        // ✅ VERIFICAR SE É ADMIN E CARREGAR PERMISSÕES
         const adminDoc = await db.collection('admins').doc(user.uid).get();
         
         if (adminDoc.exists && adminDoc.data().role === 'admin') {
-            // ✅ É ADMIN
             const adminData = adminDoc.data();
             
+            // ✅ SALVAR COM PERMISSÕES
             currentUser = {
                 name: adminData.name || 'Administrador',
                 email: user.email,
                 isAdmin: true,
-                uid: user.uid
+                uid: user.uid,
+                permissions: adminData.permissions || [] // ← CORREÇÃO PRINCIPAL
             };
             
             localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
@@ -704,6 +703,7 @@ async function userLogin(event) {
             showToast('Login realizado com sucesso!', 'success');
             
             console.log('✅ Admin logado com UID:', user.uid);
+            console.log('📋 Permissões carregadas:', currentUser.permissions);
             return;
             
         } else {
@@ -3972,6 +3972,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
