@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.1';
+const CACHE_NAME = 'seja-versatil-v1.0.2';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -49,20 +49,35 @@ if (event.request.method !== 'GET') {
     return; // Não fazer cache de POST, PUT, DELETE, etc.
 }
 
-event.respondWith(
-    fetch(event.request)
-        .then((response) => {
-            if (response && response.status === 200) {
-                const responseToCache = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseToCache);
-                });
-            }
-            return response;
-        })
-        .catch(() => {
-            return caches.match(event.request);
-        })
-);
+self.addEventListener('fetch', (event) => {
+    // 1️⃣ Ignorar extensões
+    if (event.request.url.startsWith('chrome-extension://') || 
+        event.request.url.startsWith('chrome://')) {
+        return;
+    }
+
+    // 2️⃣ Ignorar métodos não-GET (CRÍTICO!)
+    if (event.request.method !== 'GET') {
+        return;
+    }
+
+    // 3️⃣ Processar cache normalmente
+    event.respondWith(
+        fetch(event.request)
+            .then((response) => {
+                if (response && response.status === 200) {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
+                return response;
+            })
+            .catch(() => {
+                return caches.match(event.request);
+            })
+    );
+});
+
 
 
