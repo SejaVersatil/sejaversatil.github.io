@@ -103,94 +103,116 @@ window.productState = state;
   }
 
   // ==================== INICIALIZAÇÃO ====================
-  document.addEventListener('DOMContentLoaded', async () => {
-    const loadingOverlay = $('loadingOverlay');
-    if (loadingOverlay) loadingOverlay.classList.add('active');
+document.addEventListener('DOMContentLoaded', async () => {
+  const loadingOverlay = $('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.classList.add('active');
 
-    try {
-      console.log('🚀 Inicializando página do produto...');
+  try {
+    console.log('🚀 Inicializando página do produto...');
 
-      // carregar carrinho
-      loadCartFromStorage();
-      updateCartUI();
+    // Carregar carrinho
+    if (typeof loadCartFromStorage === 'function') loadCartFromStorage();
+    if (typeof updateCartUI === 'function') updateCartUI();
 
-      // pegar id do produto na URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const productId = urlParams.get('id');
-      if (!productId) {
-        alert('Produto não encontrado (parâmetro id ausente).');
-        window.location.href = 'index.html';
-        return;
-      }
-
-      // carregar produto (verifica se db existe)
-      if (typeof db === 'undefined' || !db) {
-        throw new Error('Firestore "db" não está inicializado. Verifique a configuração do Firebase.');
-      }
-
-      await loadProduct(productId);
-
-      initBlackFridayCountdown();
-
-    } catch (err) {
-      console.error('Erro na inicialização do produto:', err);
-      alert('Erro ao abrir o produto. Você será redirecionado.');
+    // Pegar id do produto na URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    if (!productId) {
+      alert('Produto não encontrado (parâmetro id ausente).');
       window.location.href = 'index.html';
-    } finally {
-      if (loadingOverlay) loadingOverlay.classList.remove('active');
+      return;
     }
-  });
 
-  // ==================== FUNÇÕES FIRESTORE (assumem db v8) ====================
-  async function loadProduct(productId) {
-    try {
-      const doc = await db.collection('produtos').doc(productId).get();
-      if (!doc.exists) throw new Error('Produto não encontrado no Firestore');
+    // Aguardar Firebase inicializar
+    let attempts = 0;
+    const maxAttempts = 20; // aumentar timeout total
+    const intervalMs = 100;
 
-      const data = doc.data() || {};
-      // normalizações básicas
-      data.price = safeNumber(data.price, 0);
-      data.oldPrice = data.oldPrice ? safeNumber(data.oldPrice, 0) : null;
-      data.images = Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []);
-      data.colors = Array.isArray(data.colors) ? data.colors : (data.colors ? [data.colors] : []);
-      data.sizes = Array.isArray(data.sizes) ? data.sizes : ['P', 'M', 'G', 'GG'];
-
-      state.currentProduct = Object.freeze({ id: doc.id, ...data });
-
-      // carregar variantes
-      await loadProductVariants(productId);
-
-      // renderizar
-      renderProduct();
-
-      console.log('Produto carregado:', state.currentProduct.name || state.currentProduct.id);
-    } catch (err) {
-      console.error('Erro loadProduct', err);
-      throw err;
+    while (typeof db === 'undefined' && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, intervalMs));
+      attempts++;
     }
+
+    if (typeof db === 'undefined' || !db) {
+      throw new Error('Firestore não inicializou após aguardar o tempo limite.');
+    }
+
+    // Carregar produto
+    await loadProduct(productId);
+
+    // Inicializar contagem regressiva (se existir)
+    if (typeof initBlackFridayCountdown === 'function') initBlackFridayCountdown();
+
+  } catch (err) {
+    console.error('Erro na inicialização do produto:', err);
+    alert('Erro ao abrir o produto. Você será redirecionado.');
+    window.location.href = 'index.html';
+  } finally {
+    if (loadingOverlay) loadingOverlay.classList.remove('active');
   }
+});
 
-  async function loadProductVariants(productId) {
-    try {
-      const snapshot = await db.collection('produtos').doc(productId).collection('variants').get();
-      const variants = [];
-      snapshot.forEach(doc => {
-        const d = doc.data() || {};
-        variants.push({
-          id: doc.id,
-          size: d.size || null,
-          color: d.color || null,
-          stock: safeNumber(d.stock, 0),
-          price: d.price !== undefined ? safeNumber(d.price, null) : null
-        });
+// ==================== FUNÇÕES FIRESTORE (assumem db v8) ====================
+async function loadProduct(productId) {
+  try {
+    const doc = await db.collection('produtos').doc(productId).get();
+    if (!doc.exists) throw new Error('Produto não encontrado no Firestore');
+
+    const data = doc.data() || {};
+
+    // Normalizações básicas
+    data.price = safeNumber(data.price, 0);
+    data.oldPrice = data.oldPrice !== undefined ? safeNumber(data.oldPrice, 0) : null;
+
+    data.images = Array.isArray(data.images)
+      ? data.images.filter(img => img) // remove strings vazias
+      : (data.image ? [data.image] : []);
+
+    data.colors = Array.isArray(data.colors)
+      ? data.colors.filter(c => c) // remove strings vazias
+      : (data.colors ? [data.colors].filter(c => c) : []);
+
+    data.sizes = Array.isArray(data.sizes)
+      ? data.sizes.filter(s => s)
+      : ['P', 'M', 'G', 'GG'];
+
+    // Tornar imutável
+    state.currentProduct = Object.freeze({ id: doc.id, ...data });
+
+    // Carregar variantes
+    await loadProductVariants(productId);
+
+    // Renderizar produto
+    if (typeof renderProduct === 'function') renderProduct();
+
+    console.log('Produto carregado:', state.currentProduct.name || state.currentProduct.id);
+  } catch (err) {
+    console.error('Erro loadProduct', err);
+    throw err;
+  }
+}
+
+async function loadProductVariants(productId) {
+  try {
+    const snapshot = await db.collection('produtos').doc(productId).collection('variants').get();
+    const variants = [];
+    snapshot.forEach(doc => {
+      const d = doc.data() || {};
+      variants.push({
+        id: doc.id,
+        size: d.size || null,
+        color: d.color || null,
+        stock: safeNumber(d.stock, 0),
+        price: d.price !== undefined ? safeNumber(d.price, null) : null
       });
-      state.productVariants[productId] = variants;
-      console.log(`Variants carregadas: ${variants.length}`);
-    } catch (err) {
-      console.warn('Erro ao carregar variantes, continuará sem variantes', err);
-      state.productVariants[productId] = [];
-    }
+    });
+    state.productVariants[productId] = variants;
+    console.log(`Variants carregadas: ${variants.length}`);
+  } catch (err) {
+    console.warn('Erro ao carregar variantes, continuará sem variantes', err);
+    state.productVariants[productId] = [];
   }
+}
 
   // ==================== RENDER PRINCIPAL ====================
   function renderProduct() {
@@ -896,6 +918,7 @@ window.productState = state;
   };
 
 })(); // fim do módulo
+
 
 
 
