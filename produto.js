@@ -1,16 +1,16 @@
-(function () {
-  'use strict';
+console.log('✅ produto.js carregado!');
 
-  // ==================== ESTADO (encapsulado) ====================
-  const state = {
-    currentProduct: null,
-    selectedColor: null,
-    selectedSize: null,
-    selectedQuantity: 1,
-    cart: [],
-    productVariants: {}, // { productId: [ {id, size, color, stock, price} ] }
-    countdownInterval: null
-  };
+// ==================== VARIÁVEIS GLOBAIS ====================
+let currentProduct = null;
+let selectedColor = null;
+let selectedSize = null;
+let selectedQuantity = 1;
+let cart = [];
+let productVariants = {};
+
+// ==================== INICIALIZAÇÃO ====================
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Inicializando página do produto...');
 
   // ==================== UTILIDADES ====================
   const $ = (id) => document.getElementById(id);
@@ -887,3 +887,4 @@
   };
 
 })(); // fim do módulo
+
