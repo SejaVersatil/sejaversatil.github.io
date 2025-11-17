@@ -84,7 +84,7 @@ async function loadProductVariants(productId) {
         console.log(`✅ ${variants.length} variantes carregadas`);
         
     } catch (error) {
-        console.error(⚠️ Erro ao carregar variantes:', error);
+        console.error('⚠️ Erro ao carregar variantes:', error);
         productVariants[productId] = [];
     }
 }
@@ -748,7 +748,8 @@ console.log('✅ produto.js carregado com sucesso');
 
 // ==================== TRATAMENTO DE ERROS GLOBAIS ====================
 window.addEventListener('unhandledrejection', function(event) {
-    console.warn("⚠️ Erro ao carregar variantes:", error);
+    console.warn("⚠️ Erro no carregamento:", event.reason);
     event.preventDefault();
-
 });
+
+
