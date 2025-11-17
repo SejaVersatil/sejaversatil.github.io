@@ -3399,6 +3399,7 @@ let selectedQuantity = 1;
  * Abre a página de detalhes a partir de outra página (home, categoria, etc.)
  */
 function openProductDetails(productId) {
+    console.log('🔗 Redirecionando para produto:', productId);
     window.location.href = `produto.html?id=${productId}`;
 }
 
@@ -4427,6 +4428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
