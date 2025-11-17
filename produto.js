@@ -748,6 +748,7 @@ console.log('✅ produto.js carregado com sucesso');
 
 // ==================== TRATAMENTO DE ERROS GLOBAIS ====================
 window.addEventListener('unhandledrejection', function(event) {
-    console.warn('⚠️ Promise não tratada:', event.reason);
+    console.warn("⚠️ Erro ao carregar variantes:", error);
     event.preventDefault();
+
 });
