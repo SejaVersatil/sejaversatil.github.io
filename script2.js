@@ -3386,115 +3386,135 @@ document.addEventListener('click', function(e) {
         closePaymentModal();
     }
 });
+// ==================== PRODUCT DETAILS PAGE ====================
 
 // ==================== PRODUCT DETAILS PAGE ====================
 
+// Variáveis globais
 let currentProductDetails = null;
 let selectedColor = 'Rosa';
 let selectedSize = 'M';
 let selectedQuantity = 1;
 
+/**
+ * Abre a página de detalhes a partir de outra página (home, categoria, etc.)
+ */
 function openProductDetails(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) return;
-    
-    currentProductDetails = product;
-    const modal = document.getElementById('productDetailsModal');
-    
-    // Garantir que images seja array válido
-    let images = [];
-    if (Array.isArray(product.images) && product.images.length > 0) {
-        images = product.images;
-    } else if (product.image) {
-        images = [product.image];
-    } else {
-        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+    window.location.href = `produto.html?id=${productId}`;
+}
+
+/**
+ * Inicialização da página de produto
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("🔎 Carregando página do produto...");
+
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+
+    if (!productId) {
+        console.error("❌ Nenhum ID de produto encontrado na URL.");
+        return;
     }
-    
-    // Renderizar galeria principal
-    const mainImage = document.getElementById('mainProductImage');
-    const firstImage = images[0];
-    const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-    mainImage.style.backgroundImage = isRealImage ? `url('${firstImage}')` : firstImage;
-    
-    // Renderizar thumbnails
-    const thumbnailList = document.getElementById('thumbnailList');
-    thumbnailList.innerHTML = images.map((img, index) => {
-        const isImg = img.startsWith('data:image') || img.startsWith('http');
-        return `
-            <div class="thumbnail ${index === 0 ? 'active' : ''}" 
-                 onclick="changeMainImage('${img}', ${index})"
-                 style="background-image: ${isImg ? `url('${img}')` : img}"></div>
-        `;
-    }).join('');
-    
-    // Preencher informações
+
+    // Aqui você deve buscar o produto pelo ID:
+    // currentProductDetails = await fetchProduct(productId);
+
+    // TEMPORÁRIO para não quebrar o código
+    currentProductDetails = {
+        id: productId,
+        name: "Produto Exemplo",
+        price: 89.90,
+        oldPrice: 129.90,
+        category: "fitness",
+        images: [
+            "https://via.placeholder.com/600",
+            "https://via.placeholder.com/600/ff99cc",
+            "https://via.placeholder.com/600/66ccff",
+        ]
+    };
+
+    renderProductDetails(currentProductDetails);
+});
+
+/**
+ * Renderiza detalhes principais do produto
+ */
+function renderProductDetails(product) {
+
+    // Nome
     document.getElementById('detailsProductName').textContent = product.name;
-    
+
     // Preços
     const priceOld = document.getElementById('detailsPriceOld');
     const priceNew = document.getElementById('detailsPriceNew');
     const installments = document.getElementById('detailsInstallments');
-    
+
     if (product.oldPrice) {
         priceOld.textContent = `De R$ ${product.oldPrice.toFixed(2)}`;
         priceOld.style.display = 'block';
     } else {
         priceOld.style.display = 'none';
     }
-    
+
     priceNew.textContent = `R$ ${product.price.toFixed(2)}`;
-    
+
+    // Parcelamento
     const installmentValue = (product.price / 10).toFixed(2);
     installments.textContent = `ou 10x de R$ ${installmentValue} sem juros`;
-    
-    // Descrição
-    document.getElementById('productDescription').textContent = 
+
+    // Descrição padrão
+    document.getElementById('productDescription').textContent =
         `${product.name} - Peça versátil e confortável para seus treinos. Tecnologia de alta performance com tecido respirável e secagem rápida.`;
-    
-    // Renderizar produtos relacionados
-    renderRelatedProducts(product.category, product.id);
-    
-    // Resetar seleções
-    selectedQuantity = 1;
-    document.getElementById('productQuantity').value = 1;
-    
-    // Mostrar modal
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+
+    // Galeria
+    renderProductGallery(product.images);
 }
 
-function closeProductDetails() {
-    const modal = document.getElementById('productDetailsModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-    currentProductDetails = null;
-}
-
-function changeMainImage(imageSrc, index) {
+/**
+ * Renderiza miniaturas + imagem principal
+ */
+function renderProductGallery(images) {
     const mainImage = document.getElementById('mainProductImage');
-    
-    // Validação
-    if (!imageSrc) {
-        console.error('Imagem inválida');
+    const thumbnailList = document.getElementById('thumbnailList');
+
+    if (!mainImage || !thumbnailList) {
+        console.error("❌ Elementos da galeria não encontrados no DOM.");
         return;
     }
-    
-    const isImg = imageSrc.startsWith('data:image') || imageSrc.startsWith('http');
-    
-    // Aplicar imagem/gradiente
-    if (isImg) {
-        mainImage.style.backgroundImage = `url('${imageSrc}')`;
-        mainImage.style.backgroundSize = 'cover';
-        mainImage.style.backgroundPosition = 'center';
-    } else {
-        mainImage.style.background = imageSrc;
-    }
-    
-    // Atualizar thumbnails
-    document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-    });
+
+    // Imagem inicial
+    const firstImage = images[0];
+    const isReal = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+    mainImage.style.backgroundImage = isReal ? `url('${firstImage}')` : firstImage;
+
+    // Thumbnails
+    thumbnailList.innerHTML = images
+        .map((img, index) => {
+            const isImg = img.startsWith('data:image') || img.startsWith('http');
+
+            return `
+                <div class="thumbnail ${index === 0 ? 'active' : ''}"
+                    onclick="changeMainImage('${img}', ${index})"
+                    style="background-image: ${isImg ? `url('${img}')` : img}">
+                </div>
+            `;
+        })
+        .join('');
+}
+
+/**
+ * Troca imagem principal ao clicar nas miniaturas
+ */
+function changeMainImage(img, index) {
+    const mainImage = document.getElementById('mainProductImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+
+    mainImage.style.backgroundImage = `url('${img}')`;
+
+    thumbnails.forEach(t => t.classList.remove('active'));
+    thumbnails[index].classList.add('active');
+}
     
     // Zoom (apenas para imagens reais)
     if (isImg) {
@@ -4412,6 +4432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
