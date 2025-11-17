@@ -1,449 +1,396 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="productPageTitle">Produto - Seja Versátil</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title id="productPageTitle">Produto - Seja Versátil</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <!-- Firebase (mantive as you had) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-            authDomain: "seja-versatil.firebaseapp.com",
-            projectId: "seja-versatil",
-            storageBucket: "seja-versatil.firebasestorage.app",
-            messagingSenderId: "102339207381",
-            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-            measurementId: "G-86E5CX4S3T"
-        };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+      authDomain: "seja-versatil.firebaseapp.com",
+      projectId: "seja-versatil",
+      storageBucket: "seja-versatil.firebasestorage.app",
+      messagingSenderId: "102339207381",
+      appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+      measurementId: "G-86E5CX4S3T"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+  </script>
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-        const storage = firebase.storage();
-    </script>
-
-    <!-- CSS GERAL DO SITE -->
-    <link rel="stylesheet" href="css2.css">
-
-    <!-- CSS ESPECÍFICO DA PÁGINA -->
-    <link rel="stylesheet" href="produto.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="css2.css">
+  <link rel="stylesheet" href="produto.css">
 </head>
-<body>
+<body class="product-page">
 
-    <!-- Hamburger -->
-    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
+  <!-- Hamburger (mobile) -->
+  <button id="hamburgerBtn" class="hamburger-btn" aria-label="Abrir menu" onclick="toggleSidebar()">
+    <span class="hamburger-line" aria-hidden="true"></span>
+    <span class="hamburger-line" aria-hidden="true"></span>
+    <span class="hamburger-line" aria-hidden="true"></span>
+  </button>
 
-    <!-- Sidebar -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <div class="sidebar-menu" id="sidebarMenu">
-        <div class="sidebar-section">
-            <h3>Explore</h3>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="index.html#produtos">Produtos</a></li>
-            </ul>
-        </div>
+  <!-- Sidebar -->
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
+  <aside id="sidebarMenu" class="sidebar-menu" aria-labelledby="sidebarTitle" role="navigation">
+    <h3 id="sidebarTitle" class="visually-hidden">Menu</h3>
+    <section class="sidebar-section">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="index.html#produtos">Produtos</a></li>
+      </ul>
+    </section>
 
-        <div class="sidebar-section">
-            <h3>Categorias</h3>
-            <ul>
-                <li><a href="index.html?categoria=blusas">Blusas</a></li>
-                <li><a href="index.html?categoria=conjunto calca">Conjunto Calça</a></li>
-                <li><a href="index.html?categoria=peca unica">Peça Única</a></li>
-                <li><a href="index.html?categoria=conjunto short saia">Conjunto Short Saia</a></li>
-                <li><a href="index.html?categoria=conjunto short">Conjunto Short</a></li>
-            </ul>
-        </div>
-    </div>
+    <section class="sidebar-section">
+      <h4>Categorias</h4>
+      <ul>
+        <li><a href="index.html?categoria=blusas">Blusas</a></li>
+        <li><a href="index.html?categoria=conjunto calca">Conjunto Calça</a></li>
+        <li><a href="index.html?categoria=peca unica">Peça Única</a></li>
+        <li><a href="index.html?categoria=conjunto short saia">Conjunto Short Saia</a></li>
+        <li><a href="index.html?categoria=conjunto short">Conjunto Short</a></li>
+      </ul>
+    </section>
+  </aside>
 
-    <!-- Black Friday Banner -->
-    <div class="top-banner black-friday-banner">
-        <div class="bf-content">
-            <span class="bf-label">🔥 BLACK FRIDAY | ATÉ 30% OFF</span>
-            <span class="bf-separator">|</span>
-            <span class="bf-countdown-label">termina em</span>
+  <!-- Top banner (Black Friday) -->
+  <div class="top-banner black-friday-banner" role="region" aria-label="Black Friday">
+    <div class="bf-content">
+      <span class="bf-label">🔥 BLACK FRIDAY | ATÉ 30% OFF</span>
+      <span class="bf-separator">|</span>
+      <span class="bf-countdown-label">termina em</span>
 
-            <div class="bf-countdown">
-                <div class="bf-time-unit">
-                    <span id="bfDays">00</span>
-                    <span>Dias</span>
-                </div>
-                <span>:</span>
-                <div class="bf-time-unit">
-                    <span id="bfHours">00</span>
-                    <span>Horas</span>
-                </div>
-                <span>:</span>
-                <div class="bf-time-unit">
-                    <span id="bfMinutes">00</span>
-                    <span>Minutos</span>
-                </div>
-                <span>:</span>
-                <div class="bf-time-unit">
-                    <span id="bfSeconds">00</span>
-                    <span>Segundos</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Header -->
-    <header>
-        <nav>
-            <div class="logo" onclick="window.location.href='index.html'">SEJA VERSÁTIL</div>
-
-            <div class="search-bar">
-                <img src="favicon.ico" class="search-logo">
-                <input type="text" placeholder="Encontre aqui seu próximo look">
-                <button class="search-btn">
-                    <svg width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                </button>
-            </div>
-
-            <div class="nav-icons">
-                <div class="nav-icon" onclick="window.location.href='index.html'">
-                    <svg width="20" height="20">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-
-                <div class="nav-icon" onclick="window.location.href='index.html'">
-                    <svg width="20" height="20">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                    <span class="cart-count" id="favoritesCount" style="display: none;">0</span>
-                </div>
-
-                <div class="nav-icon" onclick="toggleCart()">
-                    <svg width="20" height="20">
-                        <circle cx="9" cy="21" r="1"></circle>
-                        <circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    <span class="cart-count" id="cartCount">0</span>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Cart -->
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>Meu Carrinho</h3>
-            <span class="close-cart" onclick="toggleCart()">✕</span>
-        </div>
-
-        <div class="cart-items" id="cartItems">
-            <div class="empty-cart">Seu carrinho está vazio</div>
-        </div>
-
-        <div class="cart-footer" id="cartFooter" style="display: none;">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cartTotal">R$ 0,00</span>
-            </div>
-            <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
-        </div>
-    </div>
-
-    <!-- Main -->
-    <main class="product-page-container">
-
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
-            <a href="index.html">Início</a>
-            <span>›</span>
-            <a href="index.html#produtos">Produtos</a>
-            <span>›</span>
-            <span id="breadcrumbCategory">Categoria</span>
-            <span>›</span>
-            <span id="breadcrumbProduct">Produto</span>
-        </nav>
-
-        <div class="product-main-grid">
-
-            <!-- Galeria -->
-            <div class="product-gallery-section">
-                <div class="main-product-image" id="mainProductImage"></div>
-                <div class="product-thumbnails" id="thumbnailList"></div>
-            </div>
-
-            <!-- Info -->
-            <div class="product-info-section">
-                <h1 id="detailsProductName" class="product-title"></h1>
-
-                <!-- Preços -->
-                <div class="product-pricing">
-                    <span class="price-old-text" id="detailsPriceOld"></span>
-                    <div class="price-main-row">
-                        <span class="price-current" id="detailsPriceNew"></span>
-                        <span class="price-discount-badge" id="discountBadge"></span>
-                    </div>
-                    <span class="price-installments" id="detailsInstallments"></span>
-                </div>
-
-                <!-- Cor -->
-                <div class="product-selector-group">
-                    <label class="selector-label">COR: <span id="selectedColorName">Selecione</span></label>
-                    <div id="colorSelector" class="color-options-grid"></div>
-                </div>
-
-                <!-- Tamanho -->
-                <div class="product-selector-group">
-                    <label class="selector-label">TAMANHO: <span id="selectedSizeName">Selecione</span></label>
-                    <div id="sizeSelector" class="size-options-grid"></div>
-                    <a href="#" class="size-guide-link">Guia de Medidas</a>
-                </div>
-
-                <!-- Quantidade -->
-                <div class="product-selector-group">
-                    <label class="selector-label">QUANTIDADE:</label>
-                    <div class="quantity-controls">
-                        <button onclick="changeQuantity(-1)" class="qty-control-btn">−</button>
-                        <input type="number" id="productQuantity" value="1" readonly>
-                        <button onclick="changeQuantity(1)" class="qty-control-btn">+</button>
-                    </div>
-                </div>
-
-                <!-- Frete -->
-                <div class="product-selector-group">
-                    <label class="selector-label">CALCULAR FRETE:</label>
-                    <div class="shipping-input-row">
-                        <input type="text" placeholder="00000-000" maxlength="9" id="zipCodeInput" class="shipping-input">
-                        <button onclick="calculateShipping()" class="shipping-calc-btn">Calcular</button>
-                    </div>
-                    <div id="shippingResults" class="shipping-results"></div>
-                </div>
-
-                <!-- Ações -->
-                <div class="product-action-buttons">
-                    <button onclick="addToCartFromDetails()" class="btn-add-to-cart-new">
-                        <svg width="20" height="20"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                        ADICIONAR AO CARRINHO
-                    </button>
-
-                    <button onclick="buyNow()" class="btn-buy-now-new">
-                        COMPRAR AGORA
-                    </button>
-                </div>
-
-                <!-- Features -->
-                <div class="product-features-list">
-                    <div class="feature-badge">✔ Alta Compressão</div>
-                    <div class="feature-badge">✔ Secagem Rápida</div>
-                    <div class="feature-badge">✔ Proteção UV 50+</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Descrição -->
-        <div class="product-description-section">
-            <h3>DESCRIÇÃO DO PRODUTO</h3>
-            <p id="productDescription"></p>
-        </div>
-
-        <!-- Relacionados -->
-        <div class="related-products-section">
-            <h3>VOCÊ TAMBÉM PODE GOSTAR</h3>
-            <div id="relatedProductsGrid" class="related-products-grid"></div>
-        </div>
-    </main>
-
-    <!-- WhatsApp -->
-    <a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
-       class="whatsapp-float" target="_blank">
-       <svg viewBox="0 0 48 48" fill="white">
-           <path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/>
-       </svg>
-    </a>
-
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="payment-modal">
-        <div class="payment-modal-content">
-            <div class="payment-modal-header">
-                <h3>Escolha a Forma de Pagamento</h3>
-                <button onclick="closePaymentModal()" class="payment-modal-close">✕</button>
-            </div>
-
-            <div class="payment-summary">
-                <h4>Resumo do Pedido</h4>
-                <div id="paymentCartItems"></div>
-                <div class="payment-total">
-                    <span>Total:</span>
-                    <span id="paymentTotal">R$ 0,00</span>
-                </div>
-            </div>
-
-            <div class="payment-options">
-                <h4>Forma de Pagamento</h4>
-
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="pix" checked>
-                    <div class="payment-option-content">
-                        <span class="payment-icon">💳</span>
-                        <div class="payment-info">
-                            <strong>PIX</strong>
-                            <small>Aprovação imediata</small>
-                        </div>
-                    </div>
-                </label>
-
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="boleto">
-                    <div class="payment-option-content">
-                        <span class="payment-icon">📄</span>
-                        <div class="payment-info">
-                            <strong>Boleto Bancário</strong>
-                            <small>Vencimento em 3 dias úteis</small>
-                        </div>
-                    </div>
-                </label>
-
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="credito-avista">
-                    <div class="payment-option-content">
-                        <span class="payment-icon">💳</span>
-                        <div class="payment-info">
-                            <strong>Cartão de Crédito à Vista</strong>
-                            <small>Pagamento único</small>
-                        </div>
-                    </div>
-                </label>
-
-                <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="credito-parcelado">
-                    <div class="payment-option-content">
-                        <span class="payment-icon">💳</span>
-                        <div class="payment-info">
-                            <strong>Cartão de Crédito Parcelado</strong>
-                            <small>Até 3x sem juros</small>
-                        </div>
-                    </div>
-                </label>
-
-                <div id="installmentsBox" class="installments-box" style="display: none;">
-                    <label for="installments">Número de Parcelas:</label>
-                    <select id="installments">
-                        <option value="2">2x sem juros</option>
-                        <option value="3">3x sem juros</option>
-                    </select>
-                </div>
-            </div>
-
-            <button onclick="sendToWhatsApp()" class="payment-confirm-btn">
-                📱 Finalizar Pedido via WhatsApp
-            </button>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Seja Versátil</h4>
-                <p>Moda fitness feminina com estilo e qualidade.</p>
-                <div class="social-icons">
-                    <a href="https://instagram.com/_sejaversatil" target="_blank">📷</a>
-                    <a href="https://wa.me/5571991427103" target="_blank">💬</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h4>Links Rápidos</h4>
-                <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="index.html#produtos">Produtos</a></li>
-                    <li><a href="#">Sobre Nós</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2025 Seja Versátil. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <!-- Loading -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner">⏳</div>
-        <div class="loading-text">Carregando...</div>
-    </div>
-
-    <!-- JS da página -->
-    <script src="produto.js"></script>
-
-    <!-- Modal de detalhes do produto -->
-<div id="productDetailsModal" class="modal">
-  <div class="modal-content">
-    <!-- Botão de fechar -->
-    <button class="modal-close" onclick="closeProductDetails()">×</button>
-
-    <!-- Galeria principal -->
-    <div class="product-gallery">
-      <div id="mainProductImage" class="main-image"></div>
-      <div id="thumbnailList" class="thumbnail-list"></div>
-    </div>
-
-    <!-- Informações do produto -->
-    <div class="product-info">
-      <h1 id="detailsProductName">Produto</h1>
-      <div class="product-prices">
-        <span id="detailsPriceOld" class="price-old"></span>
-        <span id="detailsPriceNew" class="price-new"></span>
-        <span id="discountBadge" class="discount-badge"></span>
+      <div class="bf-countdown" aria-hidden="false">
+        <div class="bf-time-unit"><span id="bfDays">00</span><span class="unit-label">Dias</span></div>
+        <span class="sep">:</span>
+        <div class="bf-time-unit"><span id="bfHours">00</span><span class="unit-label">Horas</span></div>
+        <span class="sep">:</span>
+        <div class="bf-time-unit"><span id="bfMinutes">00</span><span class="unit-label">Minutos</span></div>
+        <span class="sep">:</span>
+        <div class="bf-time-unit"><span id="bfSeconds">00</span><span class="unit-label">Segundos</span></div>
       </div>
-
-      <!-- Cores -->
-      <div class="product-selector-group">
-        <label>Cores:</label>
-        <div id="colorSelector"></div>
-        <span id="selectedColorName"></span>
-      </div>
-
-      <!-- Tamanhos -->
-      <div class="product-selector-group">
-        <label>Tamanhos:</label>
-        <div id="sizeSelector"></div>
-        <span id="selectedSizeName"></span>
-      </div>
-
-      <!-- Quantidade -->
-      <div class="product-quantity">
-        <button type="button" onclick="produtoModule.changeQuantity(-1)">-</button>
-        <input type="number" id="productQuantity" value="1" min="1" max="10" readonly>
-        <button type="button" onclick="produtoModule.changeQuantity(1)">+</button>
-      </div>
-
-      <!-- Botões de ação -->
-      <div class="product-actions">
-        <button type="button" onclick="produtoModule.addToCartFromDetails()">Adicionar ao Carrinho</button>
-        <button type="button" onclick="produtoModule.buyNow()">Comprar Agora</button>
-      </div>
-
-      <!-- Descrição -->
-      <div id="productDescription" class="product-description"></div>
     </div>
   </div>
-</div>
 
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <nav class="nav" role="navigation" aria-label="Principal">
+      <div class="nav-left">
+        <div class="logo" role="link" tabindex="0" onclick="window.location.href='index.html'">SEJA VERSÁTIL</div>
+      </div>
+
+      <div class="nav-center">
+        <div class="search-bar" role="search" aria-label="Pesquisar produtos">
+          <img src="favicon.ico" alt="logo" class="search-logo" />
+          <input type="search" placeholder="Encontre aqui seu próximo look" aria-label="Pesquisar produto" />
+          <button class="search-btn" aria-label="Pesquisar"><svg width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <button class="nav-icon" aria-label="Minha conta" onclick="window.location.href='index.html'">
+          <svg width="20" height="20" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </button>
+
+        <button class="nav-icon" aria-label="Favoritos" onclick="window.location.href='index.html'">
+          <svg width="20" height="20" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span id="favoritesCount" class="cart-count" style="display:none">0</span>
+        </button>
+
+        <button class="nav-icon" aria-label="Carrinho" onclick="toggleCart()">
+          <svg width="20" height="20" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span id="cartCount" class="cart-count">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Cart sidebar -->
+  <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()" aria-hidden="true"></div>
+  <aside id="cartSidebar" class="cart-sidebar" role="dialog" aria-label="Meu carrinho" aria-hidden="true">
+    <div class="cart-header">
+      <h3>Meu Carrinho</h3>
+      <button class="close-cart" aria-label="Fechar carrinho" onclick="toggleCart()">✕</button>
+    </div>
+
+    <div id="cartItems" class="cart-items" aria-live="polite">
+      <div class="empty-cart">Seu carrinho está vazio</div>
+    </div>
+
+    <div id="cartFooter" class="cart-footer" style="display:none;">
+      <div class="cart-total"><span>Total:</span><strong id="cartTotal">R$ 0,00</strong></div>
+      <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+    </div>
+  </aside>
+
+  <!-- Main product area -->
+  <main class="product-page-container" role="main">
+    <nav class="breadcrumb" aria-label="Você está aqui">
+      <a href="index.html">Início</a><span>›</span>
+      <a href="index.html#produtos">Produtos</a><span>›</span>
+      <span id="breadcrumbCategory">Categoria</span><span>›</span>
+      <span id="breadcrumbProduct">Produto</span>
+    </nav>
+
+    <section class="product-main-grid" aria-labelledby="detailsProductName">
+
+      <!-- Left: gallery -->
+      <div class="product-gallery-section">
+        <div id="mainProductImage" class="main-product-image" role="img" aria-label="Imagem principal do produto"></div>
+
+        <div id="thumbnailList" class="product-thumbnails" role="list" aria-label="Miniaturas do produto"></div>
+
+        <!-- small text: click thumbnails -->
+        <p class="thumb-hint">Clique nas miniaturas para trocar a imagem</p>
+      </div>
+
+      <!-- Right: product info -->
+      <aside class="product-info-section" aria-labelledby="detailsProductName">
+        <h1 id="detailsProductName" class="product-title">Produto</h1>
+
+        <!-- Pricing -->
+        <div class="product-pricing" aria-live="polite">
+          <span id="detailsPriceOld" class="price-old-text" aria-hidden="true"></span>
+          <div class="price-main-row">
+            <strong id="detailsPriceNew" class="price-current">R$ 0,00</strong>
+            <span id="discountBadge" class="price-discount-badge" aria-hidden="true"></span>
+          </div>
+          <small id="detailsInstallments" class="price-installments" aria-hidden="true"></small>
+        </div>
+
+        <!-- Color selector -->
+        <div class="product-selector-group">
+          <label class="selector-label">COR: <span id="selectedColorName">Selecione</span></label>
+          <div id="colorSelector" class="color-options-grid" role="listbox" aria-label="Seleção de cores"></div>
+        </div>
+
+        <!-- Size selector -->
+        <div class="product-selector-group">
+          <label class="selector-label">TAMANHO: <span id="selectedSizeName">Selecione</span></label>
+          <div id="sizeSelector" class="size-options-grid" role="listbox" aria-label="Seleção de tamanhos"></div>
+          <a href="#" class="size-guide-link">Guia de Medidas</a>
+        </div>
+
+        <!-- Quantity -->
+        <div class="product-selector-group">
+          <label class="selector-label">QUANTIDADE:</label>
+          <div class="quantity-controls" role="group" aria-label="Controles de quantidade">
+            <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)" aria-label="Diminuir quantidade">−</button>
+            <input type="number" id="productQuantity" value="1" readonly aria-label="Quantidade do produto" />
+            <button class="qty-control-btn" type="button" onclick="changeQuantity(1)" aria-label="Aumentar quantidade">+</button>
+          </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="product-selector-group">
+          <label class="selector-label">CALCULAR FRETE:</label>
+          <div class="shipping-input-row">
+            <input id="zipCodeInput" class="shipping-input" type="text" placeholder="00000-000" maxlength="9" aria-label="CEP para cálculo de frete">
+            <button class="shipping-calc-btn" type="button" onclick="calculateShipping()">Calcular</button>
+          </div>
+          <div id="shippingResults" class="shipping-results" aria-live="polite"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="product-action-buttons">
+          <button class="btn btn-primary btn-add-to-cart" type="button" onclick="addToCartFromDetails()">
+            <svg width="18" height="18" aria-hidden="true"><circle cx="9" cy="16" r="1"></circle><circle cx="16" cy="16" r="1"></circle><path d="M2 2h4l2.68 8.39a2 2 0 0 0 2 1.61h6.72a2 2 0 0 0 2-1.61L22 7H6"></path></svg>
+            ADICIONAR AO CARRINHO
+          </button>
+
+          <button class="btn btn-ghost btn-buy-now" type="button" onclick="buyNow()">COMPRAR AGORA</button>
+        </div>
+
+        <!-- Highlights -->
+        <div class="product-features-list">
+          <div class="feature-badge">✔ Alta Compressão</div>
+          <div class="feature-badge">✔ Secagem Rápida</div>
+          <div class="feature-badge">✔ Proteção UV 50+</div>
+        </div>
+      </aside>
+
+    </section>
+
+    <!-- Description -->
+    <section class="product-description-section" aria-labelledby="descTitle">
+      <h3 id="descTitle">DESCRIÇÃO DO PRODUTO</h3>
+      <div id="productDescription" class="product-description" aria-live="polite"></div>
+    </section>
+
+    <!-- Related -->
+    <section class="related-products-section" aria-labelledby="relatedTitle">
+      <h3 id="relatedTitle">VOCÊ TAMBÉM PODE GOSTAR</h3>
+      <div id="relatedProductsGrid" class="related-products-grid" role="list"></div>
+    </section>
+  </main>
+
+  <!-- Floating WhatsApp -->
+  <a class="whatsapp-float" href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" target="_blank" aria-label="Contato via WhatsApp">
+    <svg viewBox="0 0 48 48" fill="white" aria-hidden="true"><path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/></svg>
+  </a>
+
+  <!-- Payment Modal (used by produto.js) -->
+  <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="payment-modal-content">
+      <div class="payment-modal-header">
+        <h3>Escolha a Forma de Pagamento</h3>
+        <button class="payment-modal-close" onclick="closePaymentModal()" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="payment-summary">
+        <h4>Resumo do Pedido</h4>
+        <div id="paymentCartItems" class="payment-cart-items" aria-live="polite"></div>
+        <div class="payment-total">
+          <span>Total:</span>
+          <strong id="paymentTotal">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="payment-options">
+        <h4>Forma de Pagamento</h4>
+
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="pix" checked>
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>PIX</strong><small>Aprovação imediata</small></div>
+          </div>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="boleto">
+          <div class="payment-option-content">
+            <span class="payment-icon">📄</span>
+            <div class="payment-info"><strong>Boleto</strong><small>Vencimento em 3 dias úteis</small></div>
+          </div>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-avista">
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>Cartão à vista</strong><small>Pagamento único</small></div>
+          </div>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-parcelado">
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>Cartão parcelado</strong><small>Até 3x sem juros</small></div>
+          </div>
+        </label>
+
+        <div id="installmentsBox" class="installments-box" style="display:none;">
+          <label for="installments">Número de Parcelas:</label>
+          <select id="installments">
+            <option value="2">2x sem juros</option>
+            <option value="3">3x sem juros</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="payment-confirm-btn" onclick="sendToWhatsApp()">📱 Finalizar Pedido via WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- Product details modal (single, used for expanded view) -->
+  <div id="productDetailsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" id="modalOverlay" onclick="closeProductDetails()" aria-hidden="true"></div>
+    <div class="modal-content" role="document">
+      <button class="modal-close" aria-label="Fechar" onclick="closeProductDetails()">×</button>
+
+      <div class="product-details-grid">
+        <div class="product-details-gallery">
+          <div id="mainProductImage_modal" class="main-image" aria-hidden="true"></div>
+          <!-- NOTE: mainProductImage id used in page; inside modal we use a visually-linked element for accessibility.
+               The JS will clear mainProductImage and thumbnailList; ensure product.js expects modal IDs — if not,
+               we rely on mainProductImage & thumbnailList present on page. -->
+          <div id="thumbnailList_modal" class="thumbnail-list" aria-hidden="true"></div>
+        </div>
+
+        <div class="product-details-info">
+          <h2 id="detailsProductName_modal" class="product-title">Produto</h2>
+          <div class="product-prices">
+            <span id="detailsPriceOld_modal" class="price-old" aria-hidden="true"></span>
+            <span id="detailsPriceNew_modal" class="price-new" aria-hidden="true"></span>
+            <span id="discountBadge_modal" class="discount-badge" aria-hidden="true"></span>
+          </div>
+
+          <div class="product-selector-group">
+            <label>Cores:</label>
+            <div id="colorSelector_modal" class="color-options-grid" aria-hidden="true"></div>
+            <div><span id="selectedColorName_modal" aria-hidden="true"></span></div>
+          </div>
+
+          <div class="product-selector-group">
+            <label>Tamanhos:</label>
+            <div id="sizeSelector_modal" class="size-options-grid" aria-hidden="true"></div>
+            <div><span id="selectedSizeName_modal" aria-hidden="true"></span></div>
+          </div>
+
+          <div class="product-actions">
+            <button type="button" onclick="addToCartFromDetails()">Adicionar ao Carrinho</button>
+            <button type="button" onclick="buyNow()">Comprar Agora</button>
+          </div>
+
+          <div id="productDescription_modal" class="product-description" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Seja Versátil</h4>
+        <p>Moda fitness feminina com estilo e qualidade.</p>
+        <div class="social-icons">
+          <a href="https://instagram.com/_sejaversatil" target="_blank" rel="noopener">📷</a>
+          <a href="https://wa.me/5571991427103" target="_blank" rel="noopener">💬</a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="index.html#produtos">Produtos</a></li>
+          <li><a href="#">Sobre Nós</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2025 Seja Versátil. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+    <div class="loading-spinner">⏳</div>
+    <div class="loading-text">Carregando...</div>
+  </div>
+
+  <!-- Script (keep produto.js as-is) -->
+  <script src="produto.js" defer></script>
 </body>
 </html>
-
