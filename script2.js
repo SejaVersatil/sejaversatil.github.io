@@ -4099,40 +4099,35 @@ async function renderAvailableSizes(productId) {
 function selectColor(color) {
     selectedColor = color;
 
-    // Atualiza visual dos botões de cor
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === color);
     });
 
     // Trocar imagens da galeria
-    if (
-        currentProductDetails &&
-        Array.isArray(currentProductDetails.colors)
-    ) {
+    if (currentProductDetails && Array.isArray(currentProductDetails.colors)) {
         const selectedColorData = currentProductDetails.colors.find(c => c.name === color);
 
-        if (selectedColorData?.images?.length) {
-
+        if (selectedColorData && selectedColorData.images && selectedColorData.images.length > 0) {
             const mainImage = document.getElementById('mainProductImage');
             const thumbnailList = document.getElementById('thumbnailList');
             const images = selectedColorData.images;
 
             // Atualizar imagem principal
-           const firstImage = images[0];
-const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-
-if (isImg) {
-    mainImage.style.backgroundImage = `url('${firstImage}')`;
-    mainImage.style.backgroundSize = 'cover';
-    mainImage.style.backgroundPosition = 'center';
-} else {
-    mainImage.style.background = firstImage;
-}
+            const firstImage = images[0];
+            const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+            
+            if (isImg) {
+                mainImage.style.backgroundImage = `url('${firstImage}')`;
+                mainImage.style.backgroundSize = 'cover';
+                mainImage.style.backgroundPosition = 'center';
+            } else {
+                mainImage.style.background = firstImage;
+            }
 
             // Atualizar thumbnails
             thumbnailList.innerHTML = images.map((img, index) => {
-                const isImg = img.startsWith('data:image') || img.startsWith('http');
-                const bg = isImg ? `background-image: url('${img}')` : `background: ${img}`;
+                const isImgThumb = img.startsWith('data:image') || img.startsWith('http');
+                const bg = isImgThumb ? `background-image: url('${img}')` : `background: ${img}`;
 
                 return `
                     <div class="thumbnail ${index === 0 ? 'active' : ''}"
@@ -4143,7 +4138,6 @@ if (isImg) {
                 `;
             }).join('');
 
-            // Adicionar listeners (substitui onclick inline)
             thumbnailList.querySelectorAll('.thumbnail').forEach(el => {
                 el.addEventListener('click', () => {
                     changeMainImage(el.dataset.img, Number(el.dataset.index));
@@ -4157,7 +4151,6 @@ if (isImg) {
         }
     }
 
-    // Atualizar tamanhos disponíveis
     if (currentProductDetails) {
         renderAvailableSizes(currentProductDetails.id);
     }
@@ -4433,6 +4426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
