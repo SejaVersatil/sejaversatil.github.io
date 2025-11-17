@@ -79,20 +79,34 @@ function createThumbnail(img, index) {
   thumb.className = 'thumbnail';
   thumb.dataset.index = String(index);
   thumb.dataset.src = img;
+  thumb.setAttribute('role', 'button');
+  thumb.setAttribute('aria-label', `Ver imagem ${index + 1}`);
+  thumb.setAttribute('tabindex', '0');
 
-  // style safely:
+  // Style com melhor handling
   if (isImageUrl(img)) {
     thumb.style.backgroundImage = `url("${img}")`;
+    thumb.style.backgroundSize = 'cover';
+    thumb.style.backgroundPosition = 'center';
   } else if (isGradient(img)) {
     thumb.style.background = img;
   } else {
-    thumb.style.background = '#eee';
+    thumb.style.background = '#f0f0f0';
   }
 
   if (index === 0) thumb.classList.add('active');
 
+  // Click handler
   thumb.addEventListener('click', () => {
     changeMainImageFromData(img, index);
+  });
+  
+  // Keyboard accessibility
+  thumb.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      changeMainImageFromData(img, index);
+    }
   });
 
   return thumb;
@@ -105,7 +119,7 @@ function changeMainImageFromData(imageSrc, index = 0) {
   const mainImage = $('mainProductImage');
   if (!mainImage) return;
 
-  // animation fade
+  // Animação suave LIVE! style
   mainImage.classList.add('image-fade-out');
 
   setTimeout(() => {
@@ -122,12 +136,15 @@ function changeMainImageFromData(imageSrc, index = 0) {
       mainImage.style.background = '#f5f5f5';
     }
 
-    // update thumbs active
-    const thumbs = qa('#thumbnailList .thumbnail');
-    thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+    // Update thumbnails active state
+    const thumbs = qa('.thumbnail');
+    thumbs.forEach((t, i) => {
+      t.classList.toggle('active', i === index);
+      t.setAttribute('aria-pressed', i === index ? 'true' : 'false');
+    });
 
     mainImage.classList.remove('image-fade-out');
-  }, 140);
+  }, 150); // Timing similar ao LIVE!
 }
 
 /* =========================
@@ -1004,3 +1021,4 @@ window.produtoModule = {
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
