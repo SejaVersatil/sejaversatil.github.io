@@ -8,10 +8,6 @@ let selectedQuantity = 1;
 let cart = [];
 let productVariants = {};
 
-// ==================== INICIALIZAÇÃO ====================
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Inicializando página do produto...');
-
   // ==================== UTILIDADES ====================
   const $ = (id) => document.getElementById(id);
   const elExists = (id) => !!$(id);
@@ -887,4 +883,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
 })(); // fim do módulo
+
 
