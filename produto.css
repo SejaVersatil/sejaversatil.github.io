@@ -456,39 +456,81 @@
 /* BOTÕES DE AÇÃO                  */
 /* =============================== */
 
-.button-primary {
+/* ============================================ */
+/* BOTÕES DE AÇÃO - ESTILO LIVE!               */
+/* ============================================ */
+
+.product-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn {
     width: 100%;
-    padding: 1rem;
-    background: var(--primary);
-    color: #fff;
-    border-radius: 12px;
-    font-size: 1.1rem;
+    padding: 1.1rem 2rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
     font-weight: 700;
     text-align: center;
     cursor: pointer;
-    transition: 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
-.button-primary:hover {
-    background: var(--secondary);
-}
-
-.button-secondary {
-    width: 100%;
-    padding: 1rem;
-    background: transparent;
-    border: 2px solid #222;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.button-secondary:hover {
-    background: #222;
+.btn-primary,
+.btn-add-to-cart,
+.button-primary {
+    background: #000;
     color: #fff;
+    border: 2px solid #000;
+}
+
+.btn-primary:hover,
+.btn-add-to-cart:hover,
+.button-primary:hover {
+    background: #333;
+    border-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-ghost,
+.btn-buy-now,
+.button-secondary {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+}
+
+.btn-ghost:hover,
+.btn-buy-now:hover,
+.button-secondary:hover {
+    background: #000;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* =============================== */
@@ -547,6 +589,7 @@
         font-size: 1.7rem;
     }
 }
+
 
 
 
