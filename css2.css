@@ -2486,22 +2486,29 @@ footer {
 
 .user-panel-tab {
     flex: 1;
-    padding: 1rem;
+    padding: 1.2rem 1rem;
     background: none;
     border: none;
     cursor: pointer;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    color: #666;
-    border-bottom: 3px solid transparent;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: #999;
+    border-bottom: 3px solid #e5e5e5; /* ✅ Borda visível */
     transition: all 0.3s;
+    position: relative;
+}
+
+.user-panel-tab:hover {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
 }
 
 .user-panel-tab.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: rgba(102, 126, 234, 0.08);
 }
 
 .user-panel-body {
@@ -4112,6 +4119,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
