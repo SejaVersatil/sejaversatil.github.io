@@ -3980,7 +3980,6 @@ async function openProductDetails(productId) {
     document.body.style.overflow = 'hidden';
 }
 
-// Renderizar cores disponíveis
 // Renderizar cores disponíveis COM IMAGENS do Firebase
 async function renderAvailableColors(productId) {
     const product = productsData.find(p => p.id === productId);
@@ -3989,15 +3988,13 @@ async function renderAvailableColors(productId) {
     
     if (!colorSelector) return;
     
-    // 🆕 PRIORIZAR cores cadastradas no campo `colors`
+    // Priorizar cores cadastradas no campo `colors`
     let availableColors = [];
     
     if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
-        // ✅ Usar cores estruturadas cadastradas no Firebase
         availableColors = product.colors;
         console.log(`✅ Produto "${product.name}" tem ${product.colors.length} cores cadastradas`);
     } else if (variants.length > 0) {
-        // ⚠️ Fallback: usar cores das variantes (sistema antigo de estoque)
         const uniqueColors = [...new Set(variants.map(v => v.color))];
         availableColors = uniqueColors.map(colorName => ({
             name: colorName,
@@ -4006,14 +4003,12 @@ async function renderAvailableColors(productId) {
         }));
         console.log(`⚠️ Produto "${product.name}" usando cores das variantes de estoque`);
     } else {
-        // ❌ Sem cores definidas - esconder seletor
         const colorOption = colorSelector.closest('.product-option');
         if (colorOption) colorOption.style.display = 'none';
         console.log(`❌ Produto "${product.name}" não tem cores cadastradas`);
         return;
     }
     
-    // Mostrar seletor
     const colorOption = colorSelector.closest('.product-option');
     if (colorOption) colorOption.style.display = 'block';
     
@@ -4033,19 +4028,16 @@ async function renderAvailableColors(productId) {
         `;
     }).join('');
     
-    // Selecionar primeira cor disponível
     const firstAvailable = availableColors.find(color => 
         variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0)
     );
     
     if (firstAvailable) {
         selectedColor = firstAvailable.name;
-        
-        // 🆕 Atualizar label com nome da cor
         const colorLabel = document.querySelector('.product-option label');
-if (colorLabel) {
-    colorLabel.textContent = 'Cor:';
-}
+        if (colorLabel) {
+            colorLabel.textContent = 'Cor:';
+        }
     }
 }
 
@@ -4441,6 +4433,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
