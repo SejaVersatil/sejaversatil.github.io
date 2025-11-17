@@ -549,12 +549,38 @@ async function checkUserSession() {
         
         // ✅ VALIDAR SE AINDA ESTÁ AUTENTICADO NO FIREBASE
         if (auth.currentUser && auth.currentUser.uid === currentUser.uid) {
-            // Usuário ainda autenticado
-            showLoggedInView();
-            
-            if (currentUser.isAdmin) {
-                isAdminLoggedIn = true;
-                console.log('✅ Sessão de admin restaurada:', currentUser.email);
+            // ✅ RECARREGAR PERMISSÕES EM TEMPO REAL DO FIRESTORE
+            try {
+                const adminDoc = await db.collection('admins').doc(auth.currentUser.uid).get();
+                
+                if (adminDoc.exists && adminDoc.data().role === 'admin') {
+                    const adminData = adminDoc.data();
+                    
+                    // ✅ ATUALIZAR currentUser COM PERMISSÕES ATUALIZADAS
+                    currentUser = {
+                        name: adminData.name || 'Administrador',
+                        email: auth.currentUser.email,
+                        isAdmin: true,
+                        uid: auth.currentUser.uid,
+                        permissions: adminData.permissions || [] // ← CORREÇÃO PRINCIPAL
+                    };
+                    
+                    // ✅ SALVAR ATUALIZADO NO LOCALSTORAGE
+                    localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                    
+                    showLoggedInView();
+                    isAdminLoggedIn = true;
+                    
+                    console.log('✅ Sessão de admin restaurada:', currentUser.email);
+                    console.log('📋 Permissões carregadas:', currentUser.permissions);
+                    
+                } else {
+                    console.log('⚠️ Usuário não é admin, fazendo logout');
+                    userLogout();
+                }
+            } catch (error) {
+                console.error('❌ Erro ao verificar permissões:', error);
+                userLogout();
             }
         } else {
             // Sessão expirou - limpar
@@ -579,11 +605,13 @@ async function checkUserSession() {
                     email: user.email,
                     isAdmin: true,
                     uid: user.uid,
-                    permissions: adminData.permissions || []
+                    permissions: adminData.permissions || [] // ← CORREÇÃO PRINCIPAL
                 };
                 
                 isAdminLoggedIn = true;
                 localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+                
+                console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
             }
         } else {
             console.log('🔄 Estado de auth mudou: usuário deslogado');
@@ -3944,6 +3972,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
