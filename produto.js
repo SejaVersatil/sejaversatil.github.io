@@ -1,13 +1,18 @@
 console.log('✅ produto.js carregado!');
 window.productState = window.productState || {};
 // ==================== VARIÁVEIS GLOBAIS ====================
-let currentProduct = null;
-let selectedColor = null;
-let selectedSize = null;
-let selectedQuantity = 1;
-let cart = [];
-let productVariants = {};
+let state = {
+  currentProduct: null,
+  selectedColor: null,
+  selectedSize: null,
+  selectedQuantity: 1,
+  cart: [],
+  productVariants: {},
+  countdownInterval: null
+};
 
+// Sincronizar com state global
+window.productState = state;
   // ==================== UTILIDADES ====================
   const $ = (id) => document.getElementById(id);
   const elExists = (id) => !!$(id);
@@ -883,6 +888,7 @@ let productVariants = {};
   };
 
 })(); // fim do módulo
+
 
 
 
