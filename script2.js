@@ -927,6 +927,33 @@ async function userLogout() {
             showToast('Erro ao fazer logout', 'error');
         }
     }
+
+    async function resetPassword() {
+    const email = prompt('Digite seu email para recuperar a senha:');
+    
+    if (!email || !validateEmail(email)) {
+        showToast('Email inválido', 'error');
+        return;
+    }
+    
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        await auth.sendPasswordResetEmail(email);
+        showToast('✅ Email de recuperação enviado!', 'success');
+        alert('Verifique sua caixa de entrada e spam.');
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        
+        if (error.code === 'auth/user-not-found') {
+            showToast('Email não cadastrado', 'error');
+        } else {
+            showToast('Erro ao enviar email', 'error');
+        }
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+  }
 }
 
 // ==================== FIRESTORE ====================
@@ -4318,5 +4345,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
