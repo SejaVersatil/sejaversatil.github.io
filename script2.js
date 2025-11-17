@@ -3442,16 +3442,28 @@ function renderRelatedProducts(category, currentId) {
 document.addEventListener('click', function(e) {
     // Color selector
     if (e.target.classList.contains('color-option')) {
-        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-        e.target.classList.add('active');
-        selectedColor = e.target.dataset.color;
+        const colorName = e.target.dataset.color;
+        if (colorName && typeof selectColor === 'function') {
+            selectColor(colorName);
+        } else {
+            // Fallback se função não existir
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedColor = colorName;
+        }
     }
     
     // Size selector
     if (e.target.classList.contains('size-option')) {
-        document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
-        e.target.classList.add('active');
-        selectedSize = e.target.dataset.size;
+        const sizeName = e.target.dataset.size;
+        if (sizeName && typeof selectSize === 'function') {
+            selectSize(sizeName);
+        } else {
+            // Fallback se função não existir
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedSize = sizeName;
+        }
     }
 });
 
@@ -4018,6 +4030,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
