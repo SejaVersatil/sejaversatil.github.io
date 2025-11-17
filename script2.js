@@ -920,29 +920,22 @@ async function userRegister(event) {
 async function userLogout() {
     if (confirm('Deseja realmente sair da sua conta?')) {
         try {
-            // ✅ DESLOGAR DO FIREBASE
             await auth.signOut();
-            
-            // Limpar variáveis locais
             currentUser = null;
             isAdminLoggedIn = false;
-            
-            // Limpar localStorage
             localStorage.removeItem('sejaVersatilCurrentUser');
-            
-            // Voltar para tela de login
             hideLoggedInView();
-            
             showToast('Logout realizado com sucesso', 'info');
             console.log('✅ Logout completo');
-            
         } catch (error) {
             console.error('❌ Erro ao fazer logout:', error);
             showToast('Erro ao fazer logout', 'error');
         }
     }
+}
 
-    async function resetPassword() {
+// ✅ resetPassword FORA de userLogout
+async function resetPassword() {
     const email = prompt('Digite seu email para recuperar a senha:');
     
     if (!email || !validateEmail(email)) {
@@ -967,7 +960,6 @@ async function userLogout() {
     } finally {
         document.getElementById('loadingOverlay').classList.remove('active');
     }
-  }
 }
 
 // ==================== FIRESTORE ====================
@@ -4438,6 +4430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = color;
     });
 });
+
 
 
 
