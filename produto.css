@@ -184,23 +184,61 @@
     }
 }
 
-/* Preços */
-.product-price-wrapper {
+/* ============================================ */
+/* PREÇOS ESTILO LIVE!                          */
+/* ============================================ */
+
+.product-pricing {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e8e8e8;
 }
 
-.product-price {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--primary);
-}
-
-.product-price-old {
-    font-size: 1rem;
+.price-old-text,
+.product-price-old,
+#detailsPriceOld {
+    font-size: 0.9rem;
     color: #999;
     text-decoration: line-through;
+    font-weight: 400;
+}
+
+.price-main-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.price-current,
+.product-price,
+#detailsPriceNew {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+}
+
+.price-discount-badge,
+#discountBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.6rem;
+    background: #ff4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+.price-installments,
+#detailsInstallments {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
 }
 
 /* =============================== */
@@ -408,6 +446,7 @@
         font-size: 1.7rem;
     }
 }
+
 
 
 
