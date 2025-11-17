@@ -1297,6 +1297,10 @@ async function deleteProduct(productId) {
 
 async function saveProduct(event) {
     event.preventDefault();
+    
+    if (typeof productColors === 'undefined') {
+        productColors = [];
+    }
 
     if (!auth.currentUser) {
         showToast('❌ Você precisa estar autenticado como admin', 'error');
@@ -1409,12 +1413,17 @@ async function saveProduct(event) {
             const docRef = await db.collection("produtos").add(productData);
             
             // ✅ Criar variantes automaticamente para produto novo
-            const colorsToUse = productColors.length > 0 ? productColors : [
-    { name: 'Preto', hex: '#000000', images: tempProductImages },
-    { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
-    { name: 'Cinza', hex: '#808080', images: tempProductImages },
-    { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
-];
+            let colorsToUse;
+if (productColors && productColors.length > 0) {
+    colorsToUse = productColors;
+} else {
+    colorsToUse = [
+        { name: 'Preto', hex: '#000000', images: tempProductImages },
+        { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
+        { name: 'Cinza', hex: '#808080', images: tempProductImages },
+        { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
+    ];
+}
 
 const sizes = ['P', 'M', 'G', 'GG'];
                 const batch = db.batch();
@@ -4208,6 +4217,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
