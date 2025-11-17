@@ -4296,28 +4296,30 @@ function initBlackFridayCountdown() {
     const countdownInterval = setInterval(updateCountdown, 1000);
 }
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
-
-// ==================== FUNÇÃO TEMPORÃRIA - MARCAR PRODUTOS BLACK FRIDAY ====================
+// MARCAR PRODUTOS COMO BLACK FRIDAY
+// ================================================================
 async function marcarProdutosBlackFriday() {
+    // Verifica se admin está logado
     if (!isAdminLoggedIn) {
         alert('Você precisa estar logado como admin!');
         return;
     }
-    
+
+    // Confirmação do usuário
     const confirmacao = confirm(
         'Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
         'Deseja continuar?'
     );
-    
     if (!confirmacao) return;
-    
-    document.getElementById('loadingOverlay').classList.add('active');
-    
+
+    // Exibe overlay de loading
+    document.getElementById('loadingOverlay')?.classList.add('active');
+
     try {
         let contador = 0;
 
+        // Atualiza cada produto com oldPrice
         for (const product of productsData) {
-            // Se o produto tem oldPrice (desconto), marcar como Black Friday
             if (product.oldPrice) {
                 await db.collection("produtos").doc(product.id).update({
                     isBlackFriday: true
@@ -4328,6 +4330,7 @@ async function marcarProdutosBlackFriday() {
             }
         }
 
+        // Limpa cache e recarrega produtos
         productCache.clear();
         await carregarProdutosDoFirestore();
         renderProducts();
@@ -4339,94 +4342,104 @@ async function marcarProdutosBlackFriday() {
         alert('Erro ao marcar produtos: ' + error.message);
 
     } finally {
-        document.getElementById('loadingOverlay').classList.remove('active');
+        // Remove overlay
+        document.getElementById('loadingOverlay')?.classList.remove('active');
     }
 }
 
-// Adiciona instrução no console para o admin
-console.log('Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
+// Mensagem no console para admins
+console.log(
+    'Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()'
+);
 
 
-// ================================================
-// CLEANUP DO BEFOREUNLOAD
-// ================================================
-window.addEventListener('beforeunload', function() {
+// ================================================================
+// CLEANUP AO SAIR DA PÁGINA
+// ================================================================
+window.addEventListener('beforeunload', function () {
     clearCarouselIntervals();
     stopHeroCarousel();
 });
 
 
-// ================================================
+// ================================================================
 // SERVICE WORKER - FORÇA ATUALIZAÇÃO
-// ================================================
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+// ================================================================
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
         for (let registration of registrations) {
-            registration.update(); // Força atualização
+            registration.update();
         }
     });
 }
 
 
-// ================================================
 // INDICADOR DE FORÇA DE SENHA
 // ================================================
-document.getElementById('registerPassword')?.addEventListener('input', function(e) {
-    const password = e.target.value;
+document.addEventListener('DOMContentLoaded', () => {
+    const passwordInput = document.getElementById('registerPassword');
+    if (!passwordInput) return; // Não há campo de senha de cadastro na página atual
 
     const strengthDiv = document.getElementById('passwordStrength');
     const strengthBar = document.getElementById('strengthBar');
     const strengthText = document.getElementById('strengthText');
 
-    if (!password) {
-        strengthDiv.style.display = 'none';
-        return;
-    }
+    // Se algum elemento de UI estiver faltando, segurar para não lançar erro
+    if (!strengthDiv || !strengthBar || !strengthText) return;
 
-    strengthDiv.style.display = 'block';
+    passwordInput.addEventListener('input', function (e) {
+        const password = e.target.value;
 
-    let strength = 0;
-    let text = '';
-    let color = '';
+        if (!password) {
+            strengthDiv.style.display = 'none';
+            // opcional: resetar largura e texto
+            strengthBar.style.width = '0%';
+            strengthText.textContent = '';
+            return;
+        }
 
-    // Critérios
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+        strengthDiv.style.display = 'block';
 
-    if (strength <= 1) {
-        text = '🔴 Senha muito fraca';
-        color = '#e74c3c';
-        strengthBar.style.width = '20%';
+        let strength = 0;
+        let text = '';
+        let color = '';
 
-    } else if (strength === 2) {
-        text = '🟠 Senha fraca';
-        color = '#e67e22';
-        strengthBar.style.width = '40%';
+        // Critérios de força (mantive sua ordem original)
+        if (password.length >= 8) strength++;
+        if (password.length >= 12) strength++;
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
+        if (/[^a-zA-Z0-9]/.test(password)) strength++;
 
-    } else if (strength === 3) {
-        text = '🟡 Senha média';
-        color = '#f39c12';
-        strengthBar.style.width = '60%';
+        if (strength <= 1) {
+            text = '🔴 Senha muito fraca';
+            color = '#e74c3c';
+            strengthBar.style.width = '20%';
+        } else if (strength === 2) {
+            text = '🟠 Senha fraca';
+            color = '#e67e22';
+            strengthBar.style.width = '40%';
+        } else if (strength === 3) {
+            text = '🟡 Senha média';
+            color = '#f39c12';
+            strengthBar.style.width = '60%';
+        } else if (strength === 4) {
+            text = '🟢 Senha boa';
+            color = '#27ae60';
+            strengthBar.style.width = '80%';
+        } else {
+            text = '✅ Senha muito forte';
+            color = '#2ecc71';
+            strengthBar.style.width = '100%';
+        }
 
-    } else if (strength === 4) {
-        text = '🟢 Senha boa';
-        color = '#27ae60';
-        strengthBar.style.width = '80%';
-
-    } else {
-        text = '✅ Senha muito forte';
-        color = '#2ecc71';
-        strengthBar.style.width = '100%';
-    }
-
-    strengthBar.style.background = color;
-    strengthText.textContent = text;
-    strengthText.style.color = color;
+        strengthBar.style.backgroundColor = color;
+        strengthText.textContent = text;
+        strengthText.style.color = color;
+    });
 });
-// ==================== FIM DO ARQUIVO ====================
+
+
 
 
 
