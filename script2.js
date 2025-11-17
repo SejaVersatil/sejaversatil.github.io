@@ -1078,6 +1078,25 @@ setTimeout(() => renderProductColorsManager(), 100);
     modal.classList.add('active');
 }
 
+function switchDescTab(tab) {
+    // Remover active de todas as abas
+    document.querySelectorAll('.desc-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.description-tab-content').forEach(c => c.classList.remove('active'));
+    
+    // Ativar aba clicada
+    event.target.classList.add('active');
+    
+    if (tab === 'details') {
+        document.getElementById('detailsTabContent').classList.add('active');
+    } else if (tab === 'tech') {
+        document.getElementById('techTabContent').classList.add('active');
+    } else if (tab === 'care') {
+        document.getElementById('careTabContent').classList.add('active');
+    } else if (tab === 'sustain') {
+        document.getElementById('sustainTabContent').classList.add('active');
+    }
+}
+
 function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
@@ -4222,6 +4241,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
