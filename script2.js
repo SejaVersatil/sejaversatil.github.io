@@ -3721,51 +3721,20 @@ function getVariantStock(productId, size, color) {
 }
 
 // SUBSTITUIR openProductDetails() existente por esta versão:
+/**
+ * Redireciona o usuário para a página de detalhes do produto
+ * @param {string} productId - ID do produto
+ */
 function openProductDetails(productId) {
-    console.log('🔗 Redirecionando para produto:', productId);
-    window.location.href = `produto.html?id=${productId}`;
-}
-    
-    // Preencher informações
-    document.getElementById('detailsProductName').textContent = product.name;
-    
-    // Preços
-    const priceOld = document.getElementById('detailsPriceOld');
-    const priceNew = document.getElementById('detailsPriceNew');
-    const installments = document.getElementById('detailsInstallments');
-    
-    if (product.oldPrice) {
-        priceOld.textContent = `De R$ ${product.oldPrice.toFixed(2)}`;
-        priceOld.style.display = 'block';
-    } else {
-        priceOld.style.display = 'none';
+    if (!productId) {
+        console.warn('openProductDetails: productId ausente!');
+        return;
     }
-    
-    priceNew.textContent = `R$ ${product.price.toFixed(2)}`;
-    
-    const installmentValue = (product.price / 10).toFixed(2);
-    installments.textContent = `ou 10x de R$ ${installmentValue} sem juros`;
-    
-    // Descrição
-    document.getElementById('productDescription').textContent = 
-        `${product.name} - Peça versátil e confortável para seus treinos. Tecnologia de alta performance com tecido respirável e secagem rápida.`;
-    
-    // NOVO: Renderizar cores disponíveis dinamicamente
-    await renderAvailableColors(productId);
-    
-    // NOVO: Renderizar tamanhos disponíveis dinamicamente
-    await renderAvailableSizes(productId);
-    
-    // Renderizar produtos relacionados
-    renderRelatedProducts(product.category, product.id);
-    
-    // Resetar seleções
-    selectedQuantity = 1;
-    document.getElementById('productQuantity').value = 1;
-    
-    // Mostrar modal
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+
+    console.log('🔗 Redirecionando para produto:', productId);
+
+    // Redireciona para a página de produto com query string segura
+    window.location.href = `produto.html?id=${encodeURIComponent(productId)}`;
 }
 
 // Renderizar cores disponíveis COM IMAGENS do Firebase
@@ -4214,6 +4183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
