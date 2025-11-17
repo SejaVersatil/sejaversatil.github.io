@@ -1160,8 +1160,20 @@ function editProduct(productId) {
 }
 
 async function deleteProduct(productId) {
+    // 🔒 VERIFICAR PERMISSÕES
+    if (!auth.currentUser || !currentUser.isAdmin) {
+        showToast('❌ Apenas admins podem excluir produtos', 'error');
+        return;
+    }
+    
+    if (!currentUser.permissions || !currentUser.permissions.includes('manage_products')) {
+        showToast('❌ Você não tem permissão para excluir produtos', 'error');
+        return;
+    }
+    
     if (confirm('Tem certeza que deseja excluir este produto?')) {
         document.getElementById('loadingOverlay').classList.add('active');
+        
         
         try {
             await db.collection("produtos").doc(productId).delete();
@@ -3908,6 +3920,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
