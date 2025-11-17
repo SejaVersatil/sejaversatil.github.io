@@ -3854,6 +3854,7 @@ footer {
     to {
         opacity: 0;
     }
+}
 /* ==================== AJUSTES MOBILE PARA OSWALD ==================== */
 
 @media (max-width: 768px) {
@@ -4015,6 +4016,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
