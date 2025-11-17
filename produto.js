@@ -72,19 +72,27 @@ window.productState = state;
 
   // ==================== STORAGE (carrinho) ====================
   function loadCartFromStorage() {
-    try {
-      const raw = localStorage.getItem('sejaVersatilCart');
-      state.cart = raw ? JSON.parse(raw) : [];
-      // normalizar números
-      state.cart.forEach(item => {
-        item.quantity = safeNumber(item.quantity, 1);
-        item.price = safeNumber(item.price, 0);
-      });
-    } catch (err) {
-      console.warn('Erro ao carregar carrinho do localStorage', err);
-      state.cart = [];
+  try {
+    const raw = localStorage.getItem('sejaVersatilCart');
+    const parsed = raw ? JSON.parse(raw) : [];
+    
+    // Normalizar e validar dados
+    state.cart = parsed.map(item => ({
+      ...item,
+      quantity: safeNumber(item.quantity, 1),
+      price: safeNumber(item.price, 0)
+    }));
+    
+    // Sincronizar com script.js (se existir)
+    if (window.cart) {
+      window.cart = state.cart;
     }
+    
+  } catch (err) {
+    console.warn('Erro ao carregar carrinho:', err);
+    state.cart = [];
   }
+}
 
   function saveCartToStorage() {
     try {
@@ -888,6 +896,7 @@ window.productState = state;
   };
 
 })(); // fim do módulo
+
 
 
 
