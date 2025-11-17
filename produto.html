@@ -390,5 +390,60 @@
     <!-- JS da página -->
     <script src="produto.js"></script>
 
+    <!-- Modal de detalhes do produto -->
+<div id="productDetailsModal" class="modal">
+  <div class="modal-content">
+    <!-- Botão de fechar -->
+    <button class="modal-close" onclick="closeProductDetails()">×</button>
+
+    <!-- Galeria principal -->
+    <div class="product-gallery">
+      <div id="mainProductImage" class="main-image"></div>
+      <div id="thumbnailList" class="thumbnail-list"></div>
+    </div>
+
+    <!-- Informações do produto -->
+    <div class="product-info">
+      <h1 id="detailsProductName">Produto</h1>
+      <div class="product-prices">
+        <span id="detailsPriceOld" class="price-old"></span>
+        <span id="detailsPriceNew" class="price-new"></span>
+        <span id="discountBadge" class="discount-badge"></span>
+      </div>
+
+      <!-- Cores -->
+      <div class="product-selector-group">
+        <label>Cores:</label>
+        <div id="colorSelector"></div>
+        <span id="selectedColorName"></span>
+      </div>
+
+      <!-- Tamanhos -->
+      <div class="product-selector-group">
+        <label>Tamanhos:</label>
+        <div id="sizeSelector"></div>
+        <span id="selectedSizeName"></span>
+      </div>
+
+      <!-- Quantidade -->
+      <div class="product-quantity">
+        <button type="button" onclick="produtoModule.changeQuantity(-1)">-</button>
+        <input type="number" id="productQuantity" value="1" min="1" max="10" readonly>
+        <button type="button" onclick="produtoModule.changeQuantity(1)">+</button>
+      </div>
+
+      <!-- Botões de ação -->
+      <div class="product-actions">
+        <button type="button" onclick="produtoModule.addToCartFromDetails()">Adicionar ao Carrinho</button>
+        <button type="button" onclick="produtoModule.buyNow()">Comprar Agora</button>
+      </div>
+
+      <!-- Descrição -->
+      <div id="productDescription" class="product-description"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
+
