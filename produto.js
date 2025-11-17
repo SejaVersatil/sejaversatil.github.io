@@ -947,8 +947,6 @@ function closeProductDetails() {
 };
 
 
-})(); // fim do módulo
-
 
 
 
