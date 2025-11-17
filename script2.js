@@ -3721,42 +3721,10 @@ function getVariantStock(productId, size, color) {
 }
 
 // SUBSTITUIR openProductDetails() existente por esta versão:
-async function openProductDetails(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) return;
-    
-    currentProductDetails = product;
-    const modal = document.getElementById('productDetailsModal');
-    
-    // Carregar variantes do produto
-    await loadProductVariants(productId);
-    
-    // Garantir que images seja array válido
-    let images = [];
-    if (Array.isArray(product.images) && product.images.length > 0) {
-        images = product.images;
-    } else if (product.image) {
-        images = [product.image];
-    } else {
-        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
-    }
-    
-    // Renderizar galeria principal
-    const mainImage = document.getElementById('mainProductImage');
-    const firstImage = images[0];
-    const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-    mainImage.style.backgroundImage = isRealImage ? `url('${firstImage}')` : firstImage;
-    
-    // Renderizar thumbnails
-    const thumbnailList = document.getElementById('thumbnailList');
-    thumbnailList.innerHTML = images.map((img, index) => {
-        const isImg = img.startsWith('data:image') || img.startsWith('http');
-        return `
-            <div class="thumbnail ${index === 0 ? 'active' : ''}" 
-                 onclick="changeMainImage('${img}', ${index})"
-                 style="background-image: ${isImg ? `url('${img}')` : img}"></div>
-        `;
-    }).join('');
+function openProductDetails(productId) {
+    console.log('🔗 Redirecionando para produto:', productId);
+    window.location.href = `produto.html?id=${productId}`;
+}
     
     // Preencher informações
     document.getElementById('detailsProductName').textContent = product.name;
@@ -4246,6 +4214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
