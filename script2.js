@@ -1355,6 +1355,12 @@ async function saveProduct(event) {
             // ✅ Atualizar variantes ao editar produto
             if (productColors.length > 0) {
                 const sizes = ['P', 'M', 'G', 'GG'];
+                const colorsToUse = productColors.length > 0 ? productColors : [
+        { name: 'Preto', hex: '#000000', images: tempProductImages },
+        { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
+        { name: 'Cinza', hex: '#808080', images: tempProductImages },
+        { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
+    ];
                 
                 const existingVariants = await db.collection('produtos')
                     .doc(productId)
@@ -4217,6 +4223,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
