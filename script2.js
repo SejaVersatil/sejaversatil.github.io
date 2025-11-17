@@ -32,8 +32,6 @@ class SecureStorage {
 
 const secureStorage = new SecureStorage('sejaVersatil_v1');
 
-let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
-
 // ==================== VARIÁVEIS GLOBAIS ====================
 let productsData = [];
 let cart = [];
@@ -4030,6 +4028,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
