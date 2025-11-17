@@ -931,11 +931,31 @@
             </div>
         </div>
         
-        <!-- Descrição do Produto -->
-        <div class="product-description-section">
-            <h3>DESCRIÇÃO DO PRODUTO</h3>
-            <p id="productDescription"></p>
-        </div>
+        <!-- Descrição com Abas -->
+<div class="product-description-section">
+    <div class="description-tabs">
+        <button class="desc-tab active" onclick="switchDescTab('details')">DETALHES</button>
+        <button class="desc-tab" onclick="switchDescTab('tech')">TECNOLOGIA</button>
+        <button class="desc-tab" onclick="switchDescTab('care')">INDICADO PARA</button>
+        <button class="desc-tab" onclick="switchDescTab('sustain')">SUSTENTABILIDADE</button>
+    </div>
+    
+    <div class="description-tab-content active" id="detailsTabContent">
+        <p id="productDescription"></p>
+    </div>
+    
+    <div class="description-tab-content" id="techTabContent">
+        <p id="productTechnology">Tecnologia Equilibrium™ com recortes estratégicos e proteção UV 50+.</p>
+    </div>
+    
+    <div class="description-tab-content" id="careTabContent">
+        <p id="productCare">Ideal para treinos de alta intensidade, yoga e uso casual.</p>
+    </div>
+    
+    <div class="description-tab-content" id="sustainTabContent">
+        <p id="productSustainability">Feito no Brasil com 94,5% de materiais produzidos em fábricas próprias.</p>
+    </div>
+</div>
         
         <!-- Produtos Relacionados -->
         <div class="related-products-section">
