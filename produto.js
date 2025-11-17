@@ -349,7 +349,7 @@ if (mainImage) {
   console.error('❌ Elemento #mainProductImage não encontrado no HTML!'); // ✅ ADICIONE ESTE LOG
 }
 
-  const thumbnailList = $('thumbnailList');
+const thumbnailList = $('thumbnailList');
 if (thumbnailList) {
   thumbnailList.innerHTML = '';
   images.forEach((img, idx) => {
@@ -1028,6 +1028,7 @@ window.produtoModule = {
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
