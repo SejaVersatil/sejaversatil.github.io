@@ -4305,7 +4305,7 @@ async function marcarProdutosBlackFriday() {
     }
     
     const confirmacao = confirm(
-        ' Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
+        'Esta função irá marcar TODOS os produtos com desconto (oldPrice) como Black Friday.\n\n' +
         'Deseja continuar?'
     );
     
@@ -4315,50 +4315,119 @@ async function marcarProdutosBlackFriday() {
     
     try {
         let contador = 0;
-        
+
         for (const product of productsData) {
             // Se o produto tem oldPrice (desconto), marcar como Black Friday
             if (product.oldPrice) {
                 await db.collection("produtos").doc(product.id).update({
                     isBlackFriday: true
                 });
-                
+
                 product.isBlackFriday = true;
                 contador++;
             }
         }
-        
+
         productCache.clear();
         await carregarProdutosDoFirestore();
         renderProducts();
-        
+
         alert(`✅ ${contador} produtos foram marcados como Black Friday!`);
-        
+
     } catch (error) {
         console.error("Erro:", error);
         alert('Erro ao marcar produtos: ' + error.message);
+
     } finally {
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
 
-// Adicionar botão no console para executar (apenas admin)
-console.log(' Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
+// Adiciona instrução no console para o admin
+console.log('Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()');
 
-// Cleanup do beforeunload
+
+// ================================================
+// CLEANUP DO BEFOREUNLOAD
+// ================================================
 window.addEventListener('beforeunload', function() {
     clearCarouselIntervals();
     stopHeroCarousel();
 });
 
+
+// ================================================
+// SERVICE WORKER - FORÇA ATUALIZAÇÃO
+// ================================================
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
+        for (let registration of registrations) {
             registration.update(); // Força atualização
         }
     });
 }
+
+
+// ================================================
+// INDICADOR DE FORÇA DE SENHA
+// ================================================
+document.getElementById('registerPassword')?.addEventListener('input', function(e) {
+    const password = e.target.value;
+
+    const strengthDiv = document.getElementById('passwordStrength');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+
+    if (!password) {
+        strengthDiv.style.display = 'none';
+        return;
+    }
+
+    strengthDiv.style.display = 'block';
+
+    let strength = 0;
+    let text = '';
+    let color = '';
+
+    // Critérios
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+    if (strength <= 1) {
+        text = '🔴 Senha muito fraca';
+        color = '#e74c3c';
+        strengthBar.style.width = '20%';
+
+    } else if (strength === 2) {
+        text = '🟠 Senha fraca';
+        color = '#e67e22';
+        strengthBar.style.width = '40%';
+
+    } else if (strength === 3) {
+        text = '🟡 Senha média';
+        color = '#f39c12';
+        strengthBar.style.width = '60%';
+
+    } else if (strength === 4) {
+        text = '🟢 Senha boa';
+        color = '#27ae60';
+        strengthBar.style.width = '80%';
+
+    } else {
+        text = '✅ Senha muito forte';
+        color = '#2ecc71';
+        strengthBar.style.width = '100%';
+    }
+
+    strengthBar.style.background = color;
+    strengthText.textContent = text;
+    strengthText.style.color = color;
+});
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
