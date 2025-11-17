@@ -2667,14 +2667,23 @@ footer {
     color: #666;
 }
 
+/* ✅ ADICIONAR ESTE NOVO ESTILO */
+.form-link.forgot-password {
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
 .form-link a {
     color: var(--secondary);
     text-decoration: none;
     font-weight: 600;
+    transition: all 0.3s;
 }
 
 .form-link a:hover {
     text-decoration: underline;
+    color: var(--primary);
 }
 
 /* Loading Overlay */
@@ -4099,6 +4108,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
