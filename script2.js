@@ -870,15 +870,39 @@ function saveProducts() {
 
 // ==================== PAINEL ADMIN ====================
 
-function openAdminPanel() {
-    if (!isAdminLoggedIn) {
-        showToast('Você precisa estar logado como administrador', 'error');
+async function openAdminPanel() {
+    // 🔒 VERIFICAÇÃO RIGOROSA
+    if (!auth.currentUser) {
+        showToast('❌ Você precisa fazer login como administrador', 'error');
         openUserPanel();
         return;
     }
-    document.getElementById('adminPanel').classList.add('active');
-    renderAdminProducts();
-    updateAdminStats();
+    
+    if (!currentUser || !currentUser.isAdmin) {
+        showToast('❌ Você não tem permissões de administrador', 'error');
+        return;
+    }
+    
+    // Verificar documento admin no Firestore em tempo real
+    try {
+        const adminDoc = await db.collection('admins').doc(auth.currentUser.uid).get();
+        
+        if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+            showToast('❌ Permissões de admin revogadas', 'error');
+            await userLogout();
+            return;
+        }
+        
+        // Tudo OK - abrir painel
+        document.getElementById('adminPanel').classList.add('active');
+        renderAdminProducts();
+        updateAdminStats();
+        console.log('✅ Painel admin aberto com sucesso');
+        
+    } catch (error) {
+        console.error('❌ Erro ao verificar permissões:', error);
+        showToast('❌ Erro ao verificar permissões', 'error');
+    }
 }
 
 function closeAdminPanel() {
@@ -3920,6 +3944,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
