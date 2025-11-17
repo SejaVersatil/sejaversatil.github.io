@@ -1366,7 +1366,7 @@ async function saveProduct(event) {
                 const batch = db.batch();
                 let newVariantsCount = 0;
                 
-                productColors.forEach(color => {
+                colorsToUse.forEach(color => {
                     sizes.forEach(size => {
                         const combination = `${size}-${color.name}`;
                         
@@ -1409,11 +1409,17 @@ async function saveProduct(event) {
             const docRef = await db.collection("produtos").add(productData);
             
             // ✅ Criar variantes automaticamente para produto novo
-            if (productColors.length > 0) {
-                const sizes = ['P', 'M', 'G', 'GG'];
+            const colorsToUse = productColors.length > 0 ? productColors : [
+    { name: 'Preto', hex: '#000000', images: tempProductImages },
+    { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
+    { name: 'Cinza', hex: '#808080', images: tempProductImages },
+    { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
+];
+
+const sizes = ['P', 'M', 'G', 'GG'];
                 const batch = db.batch();
                 
-                productColors.forEach(color => {
+                colorsToUse.forEach(color => {
                     sizes.forEach(size => {
                         const variantRef = db.collection('produtos')
                             .doc(docRef.id)
@@ -4202,6 +4208,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
