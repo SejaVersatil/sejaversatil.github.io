@@ -904,7 +904,35 @@ async function loadProductVariants(productId) {
 
   console.log('✅ produto.js (versão segura) carregado com sucesso');
 
-  // ==================== Expor funções úteis para o HTML (se necessário) ====================
+// ==================== FECHAR MODAL DETALHES ====================
+function closeProductDetails() {
+  const modal = document.getElementById('productDetailsModal');
+  if (!modal) return;
+
+  modal.classList.add('closing');
+
+  const animationDuration = 300; // ms
+  setTimeout(() => {
+    modal.classList.remove('active', 'closing');
+
+    // Limpar imagens principais e thumbnails
+    const mainImage = document.getElementById('mainProductImage');
+    if (mainImage) mainImage.style.backgroundImage = '';
+    const thumbnailList = document.getElementById('thumbnailList');
+    if (thumbnailList) thumbnailList.innerHTML = '';
+
+    // Resetar seleção
+    const selectedColorName = document.getElementById('selectedColorName');
+    if (selectedColorName) selectedColorName.textContent = '';
+    const selectedSizeName = document.getElementById('selectedSizeName');
+    if (selectedSizeName) selectedSizeName.textContent = '';
+  }, animationDuration);
+
+  // Fechar overlay se houver
+  const overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
   // Usar data-actions e event listeners é preferível; mas exponho algumas funções por compatibilidade:
   window.produtoModule = {
     changeQuantity,
@@ -914,10 +942,13 @@ async function loadProductVariants(productId) {
     toggleCart,
     checkout,
     sendToWhatsApp,
-    toggleSidebar
-  };
+    toggleSidebar,
+    closeProductDetails
+};
+
 
 })(); // fim do módulo
+
 
 
 
