@@ -4352,26 +4352,24 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-
 // INDICADOR DE FORÇA DE SENHA
-// ================================================
 document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('registerPassword');
-    if (!passwordInput) return; // Não há campo de senha de cadastro na página atual
-
     const strengthDiv = document.getElementById('passwordStrength');
     const strengthBar = document.getElementById('strengthBar');
     const strengthText = document.getElementById('strengthText');
 
-    // Se algum elemento de UI estiver faltando, segurar para não lançar erro
-    if (!strengthDiv || !strengthBar || !strengthText) return;
+    // Verificação crítica de existência dos elementos
+    if (!passwordInput || !strengthDiv || !strengthBar || !strengthText) {
+        console.warn('⚠️ Elementos de força de senha não encontrados.');
+        return;
+    }
 
-    passwordInput.addEventListener('input', function (e) {
-        const password = e.target.value;
+    passwordInput.addEventListener('input', (e) => {
+        const password = e.target.value.trim();
 
         if (!password) {
             strengthDiv.style.display = 'none';
-            // opcional: resetar largura e texto
             strengthBar.style.width = '0%';
             strengthText.textContent = '';
             return;
@@ -4379,44 +4377,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         strengthDiv.style.display = 'block';
 
-        let strength = 0;
-        let text = '';
-        let color = '';
+        // Regras de pontuação
+        const rules = [
+            password.length >= 8,
+            password.length >= 12,
+            /[a-z]/.test(password) && /[A-Z]/.test(password),
+            /\d/.test(password),
+            /[^a-zA-Z0-9]/.test(password)
+        ];
 
-        // Critérios de força (mantive sua ordem original)
-        if (password.length >= 8) strength++;
-        if (password.length >= 12) strength++;
-        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-        if (/\d/.test(password)) strength++;
-        if (/[^a-zA-Z0-9]/.test(password)) strength++;
+        const score = rules.filter(Boolean).length;
 
-        if (strength <= 1) {
-            text = '🔴 Senha muito fraca';
-            color = '#e74c3c';
-            strengthBar.style.width = '20%';
-        } else if (strength === 2) {
-            text = '🟠 Senha fraca';
-            color = '#e67e22';
-            strengthBar.style.width = '40%';
-        } else if (strength === 3) {
-            text = '🟡 Senha média';
-            color = '#f39c12';
-            strengthBar.style.width = '60%';
-        } else if (strength === 4) {
-            text = '🟢 Senha boa';
-            color = '#27ae60';
-            strengthBar.style.width = '80%';
-        } else {
-            text = '✅ Senha muito forte';
-            color = '#2ecc71';
-            strengthBar.style.width = '100%';
-        }
+        const levels = [
+            { text: '🔴 Senha muito fraca', color: '#e74c3c', width: '20%' },
+            { text: '🟠 Senha fraca',       color: '#e67e22', width: '40%' },
+            { text: '🟡 Senha média',       color: '#f39c12', width: '60%' },
+            { text: '🟢 Senha boa',         color: '#27ae60', width: '80%' },
+            { text: '✅ Senha muito forte', color: '#2ecc71', width: '100%' }
+        ];
 
-        strengthBar.style.backgroundColor = color;
-        strengthText.textContent = text;
-        strengthText.style.color = color;
+        // Limita o índice máximo para evitar erros
+        const level = levels[Math.min(score - 1, levels.length - 1)];
+
+        strengthBar.style.width = level.width;
+        strengthBar.style.backgroundColor = level.color;
+        strengthText.textContent = level.text;
+        strengthText.style.color = level.color;
     });
 });
+
+
 
 
 
