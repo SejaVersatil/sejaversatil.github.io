@@ -3396,14 +3396,23 @@ let selectedSize = 'M';
 let selectedQuantity = 1;
 
 /**
- * Abre a página de detalhes a partir de outra página (home, categoria, etc.)
+ * Abre a página de detalhes a partir de outra página
  */
 function openProductDetails(productId) {
     console.log('🔗 Redirecionando para produto:', productId);
     window.location.href = `produto.html?id=${productId}`;
 }
 
-    // currentProductDetails = await fetchProduct(productId);
+document.addEventListener("DOMContentLoaded", async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
+    if (!productId) {
+        console.error("❌ Nenhum ID de produto na URL");
+        return;
+    }
+
+    console.log("📦 Carregando produto ID:", productId);
 
     // TEMPORÁRIO para não quebrar o código
     currentProductDetails = {
@@ -3421,6 +3430,7 @@ function openProductDetails(productId) {
 
     renderProductDetails(currentProductDetails);
 });
+
 
 // ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
 function animateProductToCart(sourceElement, product) {
@@ -4244,6 +4254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
