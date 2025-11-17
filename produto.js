@@ -195,6 +195,11 @@ async function waitForDbReady(msTimeout = 3000) {
   while ((typeof db === 'undefined' || !db) && (nowMs() - start < msTimeout)) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
+  
+  if (typeof db === 'undefined' || !db) {
+    console.error('❌ Firebase não inicializou!');
+    throw new Error('Firebase DB não disponível');
+  }
 }
 
 /* =========================
@@ -1023,5 +1028,6 @@ window.produtoModule = {
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
