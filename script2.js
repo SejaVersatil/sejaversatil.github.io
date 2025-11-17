@@ -3575,7 +3575,7 @@ function calculateShipping() {
         showToast('Digite um CEP válido', 'error');
         return;
     }
-}   
+
     // Simulação de frete
     resultsDiv.innerHTML = `
         <div class="shipping-option">
@@ -4426,6 +4426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
