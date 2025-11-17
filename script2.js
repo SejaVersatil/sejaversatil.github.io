@@ -723,6 +723,19 @@ async function userLogin(event) {
         const user = userCredential.user;
         
         console.log('✅ Autenticado com Firebase:', user.email);
+
+        if (!user.emailVerified) {
+    await auth.signOut();
+    errorMsg.textContent = '⚠️ Verifique seu email antes de fazer login';
+    errorMsg.classList.add('active');
+    
+    const resend = confirm('Deseja reenviar o email de verificação?');
+    if (resend) {
+        await user.sendEmailVerification();
+        showToast('Email de verificação reenviado!', 'info');
+    }
+    return;
+}
         
         // ✅ VERIFICAR SE É ADMIN E CARREGAR PERMISSÕES
         const adminDoc = await db.collection('admins').doc(user.uid).get();
@@ -4305,4 +4318,5 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
