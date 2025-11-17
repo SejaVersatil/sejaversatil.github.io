@@ -1347,6 +1347,63 @@ async function saveProduct(event) {
     try {
         if (productId) {
             await db.collection("produtos").doc(productId).update(productData);
+
+} else {
+            // ⬇️ CRIANDO PRODUTO NOVO
+            const docRef = await db.collection("produtos").add(productData);
+            
+            // 🟢 ADICIONE AQUI (CASO 2)
+        }
+            
+            // ✅ Atualizar variantes ao editar produto
+if (productColors.length > 0) {
+    const sizes = ['P', 'M', 'G', 'GG'];
+    
+    // Buscar variantes existentes
+    const existingVariants = await db.collection('produtos')
+        .doc(productId)
+        .collection('variants')
+        .get();
+    
+    const existingCombinations = new Set();
+    existingVariants.forEach(doc => {
+        const v = doc.data();
+        existingCombinations.add(`${v.size}-${v.color}`);
+    });
+    
+    // Criar apenas as variantes que não existem
+    const batch = db.batch();
+    let newVariantsCount = 0;
+    
+    productColors.forEach(color => {
+        sizes.forEach(size => {
+            const combination = `${size}-${color.name}`;
+            
+            if (!existingCombinations.has(combination)) {
+                const variantRef = db.collection('produtos')
+                    .doc(productId)
+                    .collection('variants')
+                    .doc();
+                
+                batch.set(variantRef, {
+                    size: size,
+                    color: color.name,
+                    stock: 0,
+                    available: true,
+                    sku: `${productId.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                newVariantsCount++;
+            }
+        });
+    });
+    
+    if (newVariantsCount > 0) {
+        await batch.commit();
+        console.log(`✅ ${newVariantsCount} novas variantes criadas`);
+    }
+}
             
             const product = productsData.find(p => p.id === productId);
             if (product) {
@@ -4133,4 +4190,5 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
