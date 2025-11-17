@@ -499,6 +499,7 @@
                         <div class="form-group">
                             <label>Senha</label>
                             <input type="password" id="loginPassword" required>
+                         </div>
                         </div>
                         <button type="submit" class="form-btn">Entrar</button>
                         <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
@@ -509,32 +510,47 @@
                 </div>
 
                 <!-- Register Tab -->
-                <div class="user-tab-content" id="registerTab">
-                    <form onsubmit="userRegister(event)">
-                        <div class="form-group">
-                            <label>Nome Completo</label>
-                            <input type="text" id="registerName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>E-mail</label>
-                            <input type="email" id="registerEmail" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Senha</label>
-                            <input type="password" id="registerPassword" minlength="6" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirmar Senha</label>
-                            <input type="password" id="registerConfirmPassword" minlength="6" required>
-                        </div>
-                        <button type="submit" class="form-btn">Criar Conta</button>
-                        <div class="form-error" id="registerError">Erro ao criar conta</div>
-                        <div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
-                    </form>
-                    <div class="form-link">
-                        Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-                    </div>
+<div class="user-tab-content" id="registerTab">
+    <form onsubmit="userRegister(event)">
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" id="registerName" required>
+        </div>
+
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="registerEmail" required>
+        </div>
+
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="registerPassword" required>
+
+            <!-- Barra de força da senha -->
+            <div class="password-strength" id="passwordStrength" style="display: none; margin-top: 0.5rem;">
+                <div style="height: 4px; background: #e5e5e5; border-radius: 2px; overflow: hidden;">
+                    <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s; background: #e74c3c;"></div>
                 </div>
+                <small id="strengthText" style="font-size: 0.75rem; color: #666; margin-top: 0.3rem; display: block;"></small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar Senha</label>
+            <input type="password" id="registerConfirmPassword" minlength="6" required>
+        </div>
+
+        <button type="submit" class="form-btn">Criar Conta</button>
+
+        <div class="form-error" id="registerError">Erro ao criar conta</div>
+        <div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
+    </form>
+
+    <div class="form-link">
+        Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
+    </div>
+</div>
+
 
                 <!-- User Logged In -->
                 <div class="user-tab-content" id="userLoggedTab">
