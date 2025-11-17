@@ -322,9 +322,19 @@ function validateEmail(email) {
 
 // Sanitização de Input
 function sanitizeInput(input) {
+    if (typeof input !== 'string') return '';
+    
     const div = document.createElement('div');
     div.textContent = input;
-    return div.innerHTML;
+    
+    // Remover caracteres perigosos adicionais
+    return div.innerHTML
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;');
 }
 
 // Validação de Dados do Produto
@@ -3972,6 +3982,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
