@@ -1351,6 +1351,33 @@ async function saveProduct(event) {
 } else {
             // ⬇️ CRIANDO PRODUTO NOVO
             const docRef = await db.collection("produtos").add(productData);
+
+            // ✅ Criar variantes automaticamente para produto novo
+if (productColors.length > 0) {
+    const sizes = ['P', 'M', 'G', 'GG'];
+    const batch = db.batch();
+    
+    productColors.forEach(color => {
+        sizes.forEach(size => {
+            const variantRef = db.collection('produtos')
+                .doc(docRef.id)
+                .collection('variants')
+                .doc();
+            
+            batch.set(variantRef, {
+                size: size,
+                color: color.name,
+                stock: 0,
+                available: true,
+                sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+    });
+    
+    await batch.commit();
+    console.log(`✅ ${productColors.length * sizes.length} variantes criadas automaticamente`);
+}
             
             // 🟢 ADICIONE AQUI (CASO 2)
         }
@@ -4190,5 +4217,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
