@@ -779,72 +779,115 @@ async function userLogin(event) {
     }
 }
 
-function userRegister(event) {
+async function userRegister(event) {
     event.preventDefault();
-
+    
     const name = document.getElementById('registerName').value.trim();
     const email = document.getElementById('registerEmail').value.toLowerCase().trim();
     const password = document.getElementById('registerPassword').value;
     const confirmPassword = document.getElementById('registerConfirmPassword').value;
     const errorMsg = document.getElementById('registerError');
     const successMsg = document.getElementById('registerSuccess');
-
+    
     errorMsg.classList.remove('active');
     successMsg.classList.remove('active');
-
+    
+    // ✅ Validações profissionais
     if (!name || !email || !password || !confirmPassword) {
         errorMsg.textContent = 'Preencha todos os campos';
         errorMsg.classList.add('active');
         return;
     }
-
+    
     if (!validateEmail(email)) {
         errorMsg.textContent = 'E-mail inválido';
         errorMsg.classList.add('active');
         return;
     }
-
-    if (password.length < 6) {
-        errorMsg.textContent = 'Senha deve ter pelo menos 6 caracteres';
+    
+    if (password.length < 8) {
+        errorMsg.textContent = 'Senha deve ter no mínimo 8 caracteres';
         errorMsg.classList.add('active');
         return;
     }
-
+    
+    // ✅ Validação de força de senha
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+        errorMsg.textContent = 'Senha deve conter maiúsculas, minúsculas e números';
+        errorMsg.classList.add('active');
+        return;
+    }
+    
     if (password !== confirmPassword) {
         errorMsg.textContent = 'As senhas não coincidem';
         errorMsg.classList.add('active');
         return;
     }
-
-    const users = JSON.parse(localStorage.getItem('sejaVersatilUsers') || '[]');
-    if (users.some(u => u.email === email)) {
-        errorMsg.textContent = 'Este e-mail já está cadastrado';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    if (email === ADMIN_CREDENTIALS.email) {
-        errorMsg.textContent = 'Este e-mail não pode ser usado';
-        errorMsg.classList.add('active');
-        return;
-    }
-
-    const newUser = { name, email, password };
-    users.push(newUser);
-    localStorage.setItem('sejaVersatilUsers', JSON.stringify(users));
-
-    successMsg.classList.add('active');
-    showToast('Conta criada com sucesso!', 'success');
     
-    document.getElementById('registerName').value = '';
-    document.getElementById('registerEmail').value = '';
-    document.getElementById('registerPassword').value = '';
-    document.getElementById('registerConfirmPassword').value = '';
-
-    setTimeout(() => {
-        switchUserTab('login');
-        successMsg.classList.remove('active');
-    }, 2000);
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        // ✅ CRIAR USUÁRIO NO FIREBASE AUTHENTICATION
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // ✅ ATUALIZAR PERFIL COM NOME
+        await user.updateProfile({
+            displayName: name
+        });
+        
+        // ✅ SALVAR DADOS ADICIONAIS NO FIRESTORE
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            isAdmin: false,
+            newsletter: false
+        });
+        
+        // ✅ ENVIAR EMAIL DE VERIFICAÇÃO
+        await user.sendEmailVerification({
+            url: window.location.href,
+            handleCodeInApp: true
+        });
+        
+        successMsg.textContent = '✅ Conta criada! Verifique seu email.';
+        successMsg.classList.add('active');
+        showToast('Conta criada com sucesso!', 'success');
+        
+        // Limpar formulário
+        document.getElementById('registerName').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('registerConfirmPassword').value = '';
+        
+        // Trocar para aba de login após 3 segundos
+        setTimeout(() => {
+            switchUserTab('login');
+            successMsg.classList.remove('active');
+        }, 3000);
+        
+        console.log('✅ Usuário cadastrado:', user.uid);
+        
+    } catch (error) {
+        console.error('❌ Erro ao criar conta:', error);
+        
+        let errorMessage = 'Erro ao criar conta';
+        
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'Este email já está cadastrado';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Email inválido';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Senha muito fraca';
+        }
+        
+        errorMsg.textContent = errorMessage;
+        errorMsg.classList.add('active');
+        
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
 }
 
 async function userLogout() {
@@ -4262,3 +4305,4 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
