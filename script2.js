@@ -349,9 +349,23 @@ function showToast(message, type = 'success') {
 
 // Validação de Email
 function validateEmail(email) {
-    // ← Regex mais rigorosa
-    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return re.test(email.trim().toLowerCase());
+    // ✅ Regex profissional que valida domínios reais
+    const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    
+    if (!re.test(email.trim().toLowerCase())) {
+        return false;
+    }
+    
+    // ✅ Validar domínios suspeitos
+    const suspiciousDomains = ['tempmail', 'throwaway', '10minutemail', 'guerrillamail'];
+    const domain = email.split('@')[1]?.toLowerCase();
+    
+    if (suspiciousDomains.some(sus => domain?.includes(sus))) {
+        showToast('⚠️ Use um email permanente', 'error');
+        return false;
+    }
+    
+    return true;
 }
 
 // Sanitização de Input
@@ -4345,6 +4359,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
