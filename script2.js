@@ -1189,6 +1189,24 @@ async function deleteProduct(productId) {
 
 async function saveProduct(event) {
     event.preventDefault();
+
+    if (!auth.currentUser) {
+        showToast('❌ Você precisa estar autenticado como admin', 'error');
+        closeProductModal();
+        openUserPanel();
+        return;
+    }
+    
+    if (!currentUser || !currentUser.isAdmin) {
+        showToast('❌ Você não tem permissões de administrador', 'error');
+        return;
+    }
+    
+    // Verificar permissão específica
+    if (!currentUser.permissions || !currentUser.permissions.includes('manage_products')) {
+        showToast('❌ Você não tem permissão para gerenciar produtos', 'error');
+        return;
+    }
     
     document.getElementById('loadingOverlay').classList.add('active');
     
@@ -3890,6 +3908,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
