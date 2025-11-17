@@ -4079,73 +4079,60 @@ async function renderAvailableSizes(productId) {
 // Selecionar cor e TROCAR IMAGENS automaticamente
 function selectColor(color) {
     selectedColor = color;
-    
-    // Atualizar visual do seletor
+
+    // Atualiza visual dos botões de cor
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === color);
-    });   
-    
-    // 🆕 TROCAR IMAGENS DA GALERIA
-    if (currentProductDetails && currentProductDetails.colors && Array.isArray(currentProductDetails.colors)) {
+    });
+
+    // Trocar imagens da galeria
+    if (
+        currentProductDetails &&
+        Array.isArray(currentProductDetails.colors)
+    ) {
         const selectedColorData = currentProductDetails.colors.find(c => c.name === color);
-        
-        if (selectedColorData && selectedColorData.images && selectedColorData.images.length > 0) {
+
+        if (selectedColorData?.images?.length) {
+
             const mainImage = document.getElementById('mainProductImage');
             const thumbnailList = document.getElementById('thumbnailList');
-            
+            const images = selectedColorData.images;
+
             // Atualizar imagem principal
-            const firstImage = selectedColorData.images[0];
-            const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-            
-            if (isRealImage) {
-                mainImage.style.backgroundImage = `url('${firstImage}')`;
-                mainImage.style.backgroundSize = 'cover';
-                mainImage.style.backgroundPosition = 'center';
-            } else {
-                mainImage.style.background = firstImage;
-            }
-            
+            updateMainImageElement(mainImage, images[0]);
+
             // Atualizar thumbnails
-            thumbnailList.innerHTML = selectedColorData.images.map((img, index) => {
+            thumbnailList.innerHTML = images.map((img, index) => {
                 const isImg = img.startsWith('data:image') || img.startsWith('http');
+                const bg = isImg ? `background-image: url('${img}')` : `background: ${img}`;
+
                 return `
-                    <div class="thumbnail ${index === 0 ? 'active' : ''}" 
-                         onclick="changeMainImage('${img}', ${index})"
-                         style="${isImg ? `background-image: url('${img}')` : `background: ${img}`}; background-size: cover; background-position: center;"></div>
+                    <div class="thumbnail ${index === 0 ? 'active' : ''}"
+                        data-img="${img}"
+                        data-index="${index}"
+                        style="${bg}; background-size: cover; background-position: center;">
+                    </div>
                 `;
             }).join('');
-            
+
+            // Adicionar listeners (substitui onclick inline)
+            thumbnailList.querySelectorAll('.thumbnail').forEach(el => {
+                el.addEventListener('click', () => {
+                    changeMainImage(el.dataset.img, Number(el.dataset.index));
+                });
+            });
+
             showToast(`🎨 Cor alterada: ${color}`, 'info');
-            console.log(`✅ Imagens trocadas para cor: ${color} (${selectedColorData.images.length} fotos)`);
+            console.log(`✅ Imagens trocadas para cor: ${color} (${images.length} fotos)`);
         } else {
-            console.warn(`⚠️ Cor "${color}" selecionada mas não tem imagens cadastradas`);
+            console.warn(`⚠️ Cor "${color}" selecionada mas não possui imagens`);
         }
     }
-    
-    // Atualizar tamanhos disponíveis para essa cor
+
+    // Atualizar tamanhos disponíveis
     if (currentProductDetails) {
         renderAvailableSizes(currentProductDetails.id);
     }
-}
-
-// Selecionar tamanho
-function selectSize(size) {
-    // Verificar se está disponível
-    if (!isVariantAvailable(currentProductDetails.id, size, selectedColor)) {
-        showToast('Este tamanho está esgotado', 'error');
-        return;
-    }
-    
-    selectedSize = size;
-    
-    // Atualizar visual
-    document.querySelectorAll('.size-option').forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.size === size);
-    });
-    
-    // Mostrar estoque
-    const stock = getVariantStock(currentProductDetails.id, size, selectedColor);
-    showToast(`✅ ${stock} unidades disponíveis`, 'info');
 }
 
 // SUBSTITUIR addToCartFromDetails() por esta versão:
@@ -4430,6 +4417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = color;
     });
 });
+
 
 
 
