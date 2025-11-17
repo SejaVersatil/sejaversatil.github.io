@@ -54,11 +54,11 @@
   firebase.initializeApp(firebaseConfig);
 
   // ✅ ATIVAR APP CHECK
-  const appCheck = firebase.appCheck();
-  appCheck.activate(
-    '6Lfe8A4sAAAAALW4uydVsqioOIzYDlaLyCuGFdbk', // ← Cole a PRIMEIRA chave (Site Key)
-    true // auto-refresh tokens
-  );
+// const appCheck = firebase.appCheck();
+// appCheck.activate(
+//   '6Lfe8A4sAAAAALW4uydVsqioOIzYDlaLyCuGFdbk',
+//   true
+// );
 
   const db = firebase.firestore();
   const auth = firebase.auth();
