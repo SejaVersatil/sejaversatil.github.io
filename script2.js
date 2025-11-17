@@ -32,7 +32,6 @@ class SecureStorage {
 
 const secureStorage = new SecureStorage('sejaVersatil_v1');
 
-secureStorage.set('favorites', favorites);
 let favorites = secureStorage.get('favorites') || [];
 
 // ==================== VARIÁVEIS GLOBAIS ====================
@@ -4019,6 +4018,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
