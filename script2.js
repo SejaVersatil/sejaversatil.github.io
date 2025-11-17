@@ -2193,12 +2193,12 @@ function updateCartUI() {
                         <div class="cart-item-title">${sanitizeInput(item.name)}</div>
                         
                         ${item.selectedSize || item.selectedColor ? `
-                            <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
-                                ${item.selectedSize ? `Tamanho: <strong>${item.selectedSize}</strong>` : ''}
-                                ${item.selectedSize && item.selectedColor ? ' | ' : ''}
-                                ${item.selectedColor ? `Cor: <strong>${item.selectedColor}</strong>` : ''}
-                            </div>
-                        ` : ''}
+        <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+            ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
+            ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''} <!-- ✅ ADICIONE sanitizeInput -->
+        </div>
+    ` : ''}
                         
                         <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
@@ -3982,6 +3982,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
