@@ -875,6 +875,23 @@
         padding: 1rem 1.5rem;
         font-size: 0.9rem;
     }
+    .product-info-section {
+        padding: 0;
+    }
+    
+    .gallery-main-image,
+    .main-product-image {
+        border-radius: 8px;
+    }
+    
+    .related-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .payment-modal-content {
+        border-radius: 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -898,6 +915,7 @@
         padding: 0.45rem 0.85rem;
     }
 }
+
 
 
 
