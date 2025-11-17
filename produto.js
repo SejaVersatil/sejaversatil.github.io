@@ -338,19 +338,21 @@ function renderGallery() {
     : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
 
   const mainImage = $('mainProductImage');
-  if (mainImage) {
-    // set immediate to avoid flicker
-    changeMainImageFromData(images[0], 0);
-  }
+if (mainImage) {
+  changeMainImageFromData(images[0], 0);
+} else {
+  console.error('❌ Elemento #mainProductImage não encontrado no HTML!'); // ✅ ADICIONE ESTE LOG
+}
 
   const thumbnailList = $('thumbnailList');
-  if (thumbnailList) {
-    thumbnailList.innerHTML = '';
-    images.forEach((img, idx) => {
-      const thumb = createThumbnail(img, idx);
-      thumbnailList.appendChild(thumb);
-    });
-  }
+if (thumbnailList) {
+  thumbnailList.innerHTML = '';
+  images.forEach((img, idx) => {
+    const thumb = createThumbnail(img, idx);
+    thumbnailList.appendChild(thumb);
+  });
+} else {
+  console.error('❌ Elemento #thumbnailList não encontrado no HTML!'); // ✅ ADICIONE ESTE LOG
 }
 
 /* =========================
@@ -1021,4 +1023,5 @@ window.produtoModule = {
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
