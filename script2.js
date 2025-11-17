@@ -1310,7 +1310,6 @@ async function saveProduct(event) {
         return;
     }
     
-    // Verificar permissão específica
     if (!currentUser.permissions || !currentUser.permissions.includes('manage_products')) {
         showToast('❌ Você não tem permissão para gerenciar produtos', 'error');
         return;
@@ -1326,16 +1325,16 @@ async function saveProduct(event) {
     const productId = document.getElementById('productId').value;
 
     const productData = {
-    name: name,
-    category: category,
-    price: price,
-    oldPrice: oldPrice,
-    badge: badge,
-    isBlackFriday: document.getElementById('productBlackFriday').checked,
-    images: tempProductImages,
-    colors: productColors.length > 0 ? productColors : null, // 🆕 Salvar cores no Firebase
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-};
+        name: name,
+        category: category,
+        price: price,
+        oldPrice: oldPrice,
+        badge: badge,
+        isBlackFriday: document.getElementById('productBlackFriday').checked,
+        images: tempProductImages,
+        colors: productColors.length > 0 ? productColors : null,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
     const errors = validateProductData(productData);
     if (errors.length > 0) {
@@ -1346,91 +1345,56 @@ async function saveProduct(event) {
 
     try {
         if (productId) {
+            // ========== EDITANDO PRODUTO EXISTENTE ==========
             await db.collection("produtos").doc(productId).update(productData);
-
-} else {
-            // ⬇️ CRIANDO PRODUTO NOVO
-            const docRef = await db.collection("produtos").add(productData);
-
-            // ✅ Criar variantes automaticamente para produto novo
-if (productColors.length > 0) {
-    const sizes = ['P', 'M', 'G', 'GG'];
-    const batch = db.batch();
-    
-    productColors.forEach(color => {
-        sizes.forEach(size => {
-            const variantRef = db.collection('produtos')
-                .doc(docRef.id)
-                .collection('variants')
-                .doc();
-            
-            batch.set(variantRef, {
-                size: size,
-                color: color.name,
-                stock: 0,
-                available: true,
-                sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        });
-    });
-    
-    await batch.commit();
-    console.log(`✅ ${productColors.length * sizes.length} variantes criadas automaticamente`);
-}
-            
-            // 🟢 ADICIONE AQUI (CASO 2)
-        }
             
             // ✅ Atualizar variantes ao editar produto
-if (productColors.length > 0) {
-    const sizes = ['P', 'M', 'G', 'GG'];
-    
-    // Buscar variantes existentes
-    const existingVariants = await db.collection('produtos')
-        .doc(productId)
-        .collection('variants')
-        .get();
-    
-    const existingCombinations = new Set();
-    existingVariants.forEach(doc => {
-        const v = doc.data();
-        existingCombinations.add(`${v.size}-${v.color}`);
-    });
-    
-    // Criar apenas as variantes que não existem
-    const batch = db.batch();
-    let newVariantsCount = 0;
-    
-    productColors.forEach(color => {
-        sizes.forEach(size => {
-            const combination = `${size}-${color.name}`;
-            
-            if (!existingCombinations.has(combination)) {
-                const variantRef = db.collection('produtos')
+            if (productColors.length > 0) {
+                const sizes = ['P', 'M', 'G', 'GG'];
+                
+                const existingVariants = await db.collection('produtos')
                     .doc(productId)
                     .collection('variants')
-                    .doc();
+                    .get();
                 
-                batch.set(variantRef, {
-                    size: size,
-                    color: color.name,
-                    stock: 0,
-                    available: true,
-                    sku: `${productId.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                const existingCombinations = new Set();
+                existingVariants.forEach(doc => {
+                    const v = doc.data();
+                    existingCombinations.add(`${v.size}-${v.color}`);
                 });
                 
-                newVariantsCount++;
+                const batch = db.batch();
+                let newVariantsCount = 0;
+                
+                productColors.forEach(color => {
+                    sizes.forEach(size => {
+                        const combination = `${size}-${color.name}`;
+                        
+                        if (!existingCombinations.has(combination)) {
+                            const variantRef = db.collection('produtos')
+                                .doc(productId)
+                                .collection('variants')
+                                .doc();
+                            
+                            batch.set(variantRef, {
+                                size: size,
+                                color: color.name,
+                                stock: 0,
+                                available: true,
+                                sku: `${productId.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            
+                            newVariantsCount++;
+                        }
+                    });
+                });
+                
+                if (newVariantsCount > 0) {
+                    await batch.commit();
+                    console.log(`✅ ${newVariantsCount} novas variantes criadas`);
+                }
             }
-        });
-    });
-    
-    if (newVariantsCount > 0) {
-        await batch.commit();
-        console.log(`✅ ${newVariantsCount} novas variantes criadas`);
-    }
-}
             
             const product = productsData.find(p => p.id === productId);
             if (product) {
@@ -1438,9 +1402,38 @@ if (productColors.length > 0) {
                 product.id = productId;
             }
             showToast('Produto atualizado com sucesso!', 'success');
+            
         } else {
+            // ========== CRIANDO PRODUTO NOVO ==========
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             const docRef = await db.collection("produtos").add(productData);
+            
+            // ✅ Criar variantes automaticamente para produto novo
+            if (productColors.length > 0) {
+                const sizes = ['P', 'M', 'G', 'GG'];
+                const batch = db.batch();
+                
+                productColors.forEach(color => {
+                    sizes.forEach(size => {
+                        const variantRef = db.collection('produtos')
+                            .doc(docRef.id)
+                            .collection('variants')
+                            .doc();
+                        
+                        batch.set(variantRef, {
+                            size: size,
+                            color: color.name,
+                            stock: 0,
+                            available: true,
+                            sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                });
+                
+                await batch.commit();
+                console.log(`✅ ${productColors.length * sizes.length} variantes criadas automaticamente`);
+            }
             
             productsData.push({
                 id: docRef.id,
@@ -3874,12 +3867,9 @@ async function renderAvailableColors(productId) {
         
         // 🆕 Atualizar label com nome da cor
         const colorLabel = document.querySelector('.product-option label');
-        if (colorLabel && !colorLabel.querySelector('#selectedColorName')) {
-            colorLabel.innerHTML = `Cor: <span id="selectedColorName">${firstAvailable.name}</span>`;
-        } else if (colorLabel) {
-            const span = colorLabel.querySelector('#selectedColorName');
-            if (span) span.textContent = firstAvailable.name;
-        }
+if (colorLabel) {
+    colorLabel.textContent = 'Cor:';
+}
     }
 }
 
@@ -3921,7 +3911,9 @@ async function renderAvailableSizes(productId) {
                     ${!hasStock ? 'disabled' : ''}
                     onclick="selectSize('${size}')">
                 ${size}
-                ${hasStock ? `<br><small style="font-size: 0.7rem; opacity: 0.7;">${stock} un.</small>` : '<br><small style="font-size: 0.7rem; color: red;">Esgotado</small>'}
+                ${!hasStock ? '<br><small style="font-size: 0.7rem; color: red;">Esgotado</small>' : 
+  stock <= 5 ? '<br><small style="font-size: 0.7rem; color: #ff9800; font-weight: 600;">Últimas unidades</small>' : 
+  ''}
             </button>
         `;
     }).join('');
@@ -3935,7 +3927,6 @@ async function renderAvailableSizes(productId) {
     }
 }
 
-// Selecionar cor
 // Selecionar cor e TROCAR IMAGENS automaticamente
 function selectColor(color) {
     selectedColor = color;
@@ -3943,13 +3934,7 @@ function selectColor(color) {
     // Atualizar visual do seletor
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === color);
-    });
-    
-    // 🆕 Atualizar label da cor selecionada
-    const colorNameSpan = document.getElementById('selectedColorName');
-    if (colorNameSpan) {
-        colorNameSpan.textContent = color;
-    }
+    });   
     
     // 🆕 TROCAR IMAGENS DA GALERIA
     if (currentProductDetails && currentProductDetails.colors && Array.isArray(currentProductDetails.colors)) {
@@ -4217,6 +4202,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
