@@ -3670,7 +3670,7 @@ async function renderAvailableColors(productId) {
                  data-color="${color.name}"
                  data-color-index="${index}"
                  style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
-                 onclick="${hasStock ? `selectColor('${color.name}')` : 'event.preventDefault()'}"
+                 onclick="${hasStock ? `selectColor('${color.name.replace(/'/g, "\\'")}')` : 'event.preventDefault()'}"
                  title="${color.name}">
                 ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
             </div>
@@ -4030,6 +4030,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
