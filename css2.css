@@ -2447,9 +2447,11 @@ footer {
 .user-panel-content {
     background: white;
     width: 90%;
-    max-width: 450px;
-    max-height: 90vh;
+    max-width: 420px;
+    max-height: 85vh;
     overflow-y: auto;
+    border-radius: 12px; /* ✅ Bordas arredondadas */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); /* ✅ Sombra profissional */
 }
 
 .user-panel-header {
@@ -4108,6 +4110,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
