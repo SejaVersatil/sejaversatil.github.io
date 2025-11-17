@@ -1,5 +1,5 @@
 console.log('✅ produto.js carregado!');
-
+window.productState = window.productState || {};
 // ==================== VARIÁVEIS GLOBAIS ====================
 let currentProduct = null;
 let selectedColor = null;
@@ -883,5 +883,6 @@ let productVariants = {};
   };
 
 })(); // fim do módulo
+
 
 
