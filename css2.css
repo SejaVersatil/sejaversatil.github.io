@@ -2555,20 +2555,23 @@ footer {
 
 .form-btn {
     width: 100%;
-    padding: 1rem;
-    background: var(--primary);
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
+    border-radius: 8px; /* ✅ Bordas arredondadas */
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-    transition: background 0.3s;
+    letter-spacing: 1.5px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .form-btn:hover {
-    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .form-error {
@@ -4124,6 +4127,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
