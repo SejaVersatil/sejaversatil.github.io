@@ -1454,7 +1454,6 @@ const sizes = ['P', 'M', 'G', 'GG'];
                 
                 await batch.commit();
                 console.log(`✅ ${productColors.length * sizes.length} variantes criadas automaticamente`);
-            }
             
             productsData.push({
                 id: docRef.id,
@@ -4223,6 +4222,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
