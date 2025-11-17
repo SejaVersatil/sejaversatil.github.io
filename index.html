@@ -42,20 +42,30 @@
 
 <script>
   const firebaseConfig = {
-  apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-  authDomain: "seja-versatil.firebaseapp.com",
-  projectId: "seja-versatil",
-  storageBucket: "seja-versatil.firebasestorage.app",
-  messagingSenderId: "102339207381",
-  appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-  measurementId: "G-86E5CX4S3T"
-};
+    apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+    authDomain: "seja-versatil.firebaseapp.com",
+    projectId: "seja-versatil",
+    storageBucket: "seja-versatil.firebasestorage.app",
+    messagingSenderId: "102339207381",
+    appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+    measurementId: "G-86E5CX4S3T"
+  };
 
   firebase.initializeApp(firebaseConfig);
+
+  // ✅ ATIVAR APP CHECK
+  const appCheck = firebase.appCheck();
+  appCheck.activate(
+    'COLE_AQUI_A_SITE_KEY_DO_RECAPTCHA', // ← Cole a PRIMEIRA chave (Site Key)
+    true // auto-refresh tokens
+  );
 
   const db = firebase.firestore();
   const auth = firebase.auth();
   const storage = firebase.storage();
+  
+  console.log("🔥 Firebase inicializado");
+  console.log("🛡️ App Check ativado");
 
 // HANDLER GLOBAL
   window.addEventListener('unhandledrejection', function(event) {
