@@ -3386,7 +3386,6 @@ document.addEventListener('click', function(e) {
         closePaymentModal();
     }
 });
-// ==================== PRODUCT DETAILS PAGE ====================
 
 // ==================== PRODUCT DETAILS PAGE ====================
 
@@ -3514,9 +3513,10 @@ function changeMainImage(img, index) {
 
     thumbnails.forEach(t => t.classList.remove('active'));
     thumbnails[index].classList.add('active');
-}
-    
-    // Zoom (apenas para imagens reais)
+
+    const isImg = img.startsWith('data:image') || img.startsWith('http');
+
+    // Zoom
     if (isImg) {
         mainImage.style.cursor = 'zoom-in';
         mainImage.onclick = () => {
@@ -3537,7 +3537,7 @@ function changeMainImage(img, index) {
             `;
             
             zoomModal.innerHTML = `
-                <img src="${imageSrc}" 
+                <img src="${img}" 
                      style="max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" 
                      alt="Zoom">
                 <button style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">✕</button>
@@ -3555,6 +3555,7 @@ function changeMainImage(img, index) {
         mainImage.onclick = null;
     }
 }
+
 
 function changeQuantity(delta) {
     const input = document.getElementById('productQuantity');
@@ -4426,6 +4427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
