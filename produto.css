@@ -155,8 +155,14 @@
 .product-info-section {
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
-    padding-right: 1rem;
+    gap: 2rem;
+    padding: 0 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .product-info-section {
+        padding: 0 2rem 0 0;
+    }
 }
 
 .product-name {
@@ -390,5 +396,6 @@
         font-size: 1.7rem;
     }
 }
+
 
 
