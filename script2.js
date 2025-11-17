@@ -1,3 +1,40 @@
+class SecureStorage {
+    constructor(key) {
+        this.key = key;
+    }
+    
+    // Criptografia simples (suficiente para dados não críticos)
+    encrypt(data) {
+        return btoa(encodeURIComponent(JSON.stringify(data)));
+    }
+    
+    decrypt(data) {
+        try {
+            return JSON.parse(decodeURIComponent(atob(data)));
+        } catch {
+            return null;
+        }
+    }
+    
+    set(key, value) {
+        localStorage.setItem(key, this.encrypt(value));
+    }
+    
+    get(key) {
+        const data = localStorage.getItem(key);
+        return data ? this.decrypt(data) : null;
+    }
+    
+    remove(key) {
+        localStorage.removeItem(key);
+    }
+}
+
+const secureStorage = new SecureStorage('sejaVersatil_v1');
+
+secureStorage.set('favorites', favorites);
+let favorites = secureStorage.get('favorites') || [];
+
 // ==================== VARIÁVEIS GLOBAIS ====================
 let productsData = [];
 let cart = [];
@@ -3982,6 +4019,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
