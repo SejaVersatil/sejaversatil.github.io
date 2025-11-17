@@ -3912,7 +3912,7 @@ async function renderAvailableSizes(productId) {
                     onclick="selectSize('${size}')">
                 ${size}
                 ${!hasStock ? '<br><small style="font-size: 0.7rem; color: red;">Esgotado</small>' : 
-  stock <= 5 ? '<br><small style="font-size: 0.7rem; color: #ff9800; font-weight: 600;">Últimas unidades</small>' : 
+  stock > 0 && stock <= 3 ? '<br><small style="font-size: 0.7rem; color: #ff9800; font-weight: 600;">Últimas unidades</small>' : 
   ''}
             </button>
         `;
@@ -4202,6 +4202,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
