@@ -1795,7 +1795,6 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Hamburger Menu */
 /* Hamburger Menu - APENAS MOBILE */
 .hamburger-btn {
     position: fixed;
@@ -3967,6 +3966,39 @@ css@keyframes slideInRight {
     font-size: 0.8rem;
 }
 
+/* Abas de Descrição */
+.description-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #e5e5e5;
+    margin-bottom: 1.5rem;
+}
+
+.desc-tab {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.desc-tab.active {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+}
+
+.description-tab-content {
+    display: none;
+    animation: fadeIn 0.3s;
+}
+
+.description-tab-content.active {
+    display: block;
+}
+
 /* ==================== OTIMIZAÇÕES MOBILE FINAIS ==================== */
 
 @media (max-width: 768px) {
@@ -4052,4 +4084,5 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
