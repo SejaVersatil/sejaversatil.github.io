@@ -2538,14 +2538,19 @@ footer {
 
 .form-group input {
     width: 100%;
-    padding: 0.9rem;
-    border: 1px solid var(--gray);
-    font-size: 0.9rem;
+    padding: 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px; /* ✅ Bordas arredondadas */
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    background: #fafafa; /* ✅ Fundo sutil */
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-btn {
@@ -4119,6 +4124,7 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
 
