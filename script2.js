@@ -4126,7 +4126,16 @@ function selectColor(color) {
             const images = selectedColorData.images;
 
             // Atualizar imagem principal
-            updateMainImageElement(mainImage, images[0]);
+           const firstImage = images[0];
+const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+
+if (isImg) {
+    mainImage.style.backgroundImage = `url('${firstImage}')`;
+    mainImage.style.backgroundSize = 'cover';
+    mainImage.style.backgroundPosition = 'center';
+} else {
+    mainImage.style.background = firstImage;
+}
 
             // Atualizar thumbnails
             thumbnailList.innerHTML = images.map((img, index) => {
@@ -4432,6 +4441,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
