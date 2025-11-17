@@ -3403,21 +3403,6 @@ function openProductDetails(productId) {
     window.location.href = `produto.html?id=${productId}`;
 }
 
-/**
- * Inicialização da página de produto
- */
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log("🔎 Carregando página do produto...");
-
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get('id');
-
-    if (!productId) {
-        console.error("❌ Nenhum ID de produto encontrado na URL.");
-        return;
-    }
-
-    // Aqui você deve buscar o produto pelo ID:
     // currentProductDetails = await fetchProduct(productId);
 
     // TEMPORÁRIO para não quebrar o código
@@ -3436,175 +3421,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderProductDetails(currentProductDetails);
 });
-
-/**
- * Renderiza detalhes principais do produto
- */
-function renderProductDetails(product) {
-
-    // Nome
-    document.getElementById('detailsProductName').textContent = product.name;
-
-    // Preços
-    const priceOld = document.getElementById('detailsPriceOld');
-    const priceNew = document.getElementById('detailsPriceNew');
-    const installments = document.getElementById('detailsInstallments');
-
-    if (product.oldPrice) {
-        priceOld.textContent = `De R$ ${product.oldPrice.toFixed(2)}`;
-        priceOld.style.display = 'block';
-    } else {
-        priceOld.style.display = 'none';
-    }
-
-    priceNew.textContent = `R$ ${product.price.toFixed(2)}`;
-
-    // Parcelamento
-    const installmentValue = (product.price / 10).toFixed(2);
-    installments.textContent = `ou 10x de R$ ${installmentValue} sem juros`;
-
-    // Descrição padrão
-    document.getElementById('productDescription').textContent =
-        `${product.name} - Peça versátil e confortável para seus treinos. Tecnologia de alta performance com tecido respirável e secagem rápida.`;
-
-    // Galeria
-    renderProductGallery(product.images);
-}
-
-/**
- * Renderiza miniaturas + imagem principal
- */
-function renderProductGallery(images) {
-    const mainImage = document.getElementById('mainProductImage');
-    const thumbnailList = document.getElementById('thumbnailList');
-
-    if (!mainImage || !thumbnailList) {
-        console.error("❌ Elementos da galeria não encontrados no DOM.");
-        return;
-    }
-
-    // Imagem inicial
-    const firstImage = images[0];
-    const isReal = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-    mainImage.style.backgroundImage = isReal ? `url('${firstImage}')` : firstImage;
-
-    // Thumbnails
-    thumbnailList.innerHTML = images
-        .map((img, index) => {
-            const isImg = img.startsWith('data:image') || img.startsWith('http');
-
-            return `
-                <div class="thumbnail ${index === 0 ? 'active' : ''}"
-                    onclick="changeMainImage('${img}', ${index})"
-                    style="background-image: ${isImg ? `url('${img}')` : img}">
-                </div>
-            `;
-        })
-        .join('');
-}
-
-/**
- * Troca imagem principal ao clicar nas miniaturas
- */
-function changeMainImage(img, index) {
-    const mainImage = document.getElementById('mainProductImage');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-
-    mainImage.style.backgroundImage = `url('${img}')`;
-
-    thumbnails.forEach(t => t.classList.remove('active'));
-    thumbnails[index].classList.add('active');
-
-    const isImg = img.startsWith('data:image') || img.startsWith('http');
-
-    // Zoom
-    if (isImg) {
-        mainImage.style.cursor = 'zoom-in';
-        mainImage.onclick = () => {
-            const zoomModal = document.createElement('div');
-            zoomModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.95);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: zoom-out;
-                animation: fadeIn 0.3s;
-            `;
-            
-            zoomModal.innerHTML = `
-                <img src="${img}" 
-                     style="max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" 
-                     alt="Zoom">
-                <button style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">✕</button>
-            `;
-            
-            zoomModal.onclick = () => {
-                zoomModal.style.animation = 'fadeOut 0.3s';
-                setTimeout(() => zoomModal.remove(), 300);
-            };
-            
-            document.body.appendChild(zoomModal);
-        };
-    } else {
-        mainImage.style.cursor = 'default';
-        mainImage.onclick = null;
-    }
-}
-
-
-function changeQuantity(delta) {
-    const input = document.getElementById('productQuantity');
-    let newValue = parseInt(input.value) + delta;
-    
-    if (newValue < 1) newValue = 1;
-    if (newValue > 10) newValue = 10;
-    
-    input.value = newValue;
-    selectedQuantity = newValue;
-}
-
-function calculateShipping() {
-    const zipCode = document.getElementById('zipCodeInput').value.replace(/\D/g, '');
-    const resultsDiv = document.getElementById('shippingResults');
-    
-    if (zipCode.length !== 8) {
-        showToast('Digite um CEP válido', 'error');
-        return;
-    }
-
-    // Simulação de frete
-    resultsDiv.innerHTML = `
-        <div class="shipping-option">
-            <div>
-                <strong>PAC</strong><br>
-                <small>Entrega em 5-10 dias úteis</small>
-            </div>
-            <strong>R$ 15,90</strong>
-        </div>
-        <div class="shipping-option">
-            <div>
-                <strong>SEDEX</strong><br>
-                <small>Entrega em 2-4 dias úteis</small>
-            </div>
-            <strong>R$ 25,90</strong>
-        </div>
-        <div class="shipping-option">
-            <div>
-                <strong>GRÁTIS</strong><br>
-                <small>Entrega em 7-12 dias úteis</small>
-            </div>
-            <strong>R$ 0,00</strong>
-        </div>
-    `;
-    
-    resultsDiv.classList.add('active');
-}
 
 // ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
 function animateProductToCart(sourceElement, product) {
@@ -4428,6 +4244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
