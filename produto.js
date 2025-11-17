@@ -934,22 +934,14 @@ function closeProductDetails() {
 }
 
   // Usar data-actions e event listeners é preferível; mas exponho algumas funções por compatibilidade:
-  window.produtoModule = {
-    changeQuantity,
-    calculateShipping,
-    addToCartFromDetails,
-    buyNow,
-    toggleCart,
-    checkout,
-    sendToWhatsApp,
-    toggleSidebar,
-    closeProductDetails
+window.produtoModule = {
+  changeQuantity,
+  calculateShipping,
+  addToCartFromDetails,
+  buyNow,
+  toggleCart,
+  checkout,
+  sendToWhatsApp,
+  toggleSidebar,
+  closeProductDetails
 };
-
-
-
-
-
-
-
-
