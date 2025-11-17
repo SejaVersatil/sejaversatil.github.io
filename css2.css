@@ -1540,6 +1540,21 @@ nav {
     border-radius: 0;
 }
 
+.btn-buy-look {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-buy-look:hover {
+    background: #333;
+}
+
 /* Touch-Friendly Mobile */
 @media (max-width: 768px) {
     .add-to-cart-btn,
@@ -4084,5 +4099,6 @@ css@keyframes slideInRight {
         font-size: 0.5rem;
     }
 }
+
 
 
