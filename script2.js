@@ -2413,7 +2413,28 @@ function quickBuy(productId) {
         }, 500);
     }, 600);
 }
+
+function addLookToCart() {
+    // Adicionar produto atual + produtos relacionados selecionados
+    const relatedProducts = document.querySelectorAll('.related-products-grid .product-card');
+    let addedCount = 1; // Produto principal
     
+    // Adicionar produto principal
+    addToCartFromDetails();
+    
+    // Adicionar produtos relacionados (se houver seleção)
+    relatedProducts.forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        if (checkbox && checkbox.checked) {
+            const productId = card.dataset.productId;
+            addToCart(productId);
+            addedCount++;
+        }
+    });
+    
+    showToast(`✅ ${addedCount} produtos adicionados ao carrinho!`, 'success');
+}
+
 function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
     const cartItems = document.getElementById('cartItems');
@@ -4241,6 +4262,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 // ==================== FIM DO ARQUIVO ====================
+
 
 
 
