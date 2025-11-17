@@ -752,30 +752,63 @@
                 
                 let html = '<div class="variants-grid">';
                 
-                variantsSnapshot.forEach(doc => {
-                    const variant = doc.data();
-                    currentVariants.push({ id: doc.id, ...variant });
-                    
-                    html += `
-                        <div class="variant-card ${!variant.available ? 'unavailable' : ''}">
-                            <div class="variant-header">
-                                <span class="variant-label">${variant.size} - ${variant.color}</span>
-                            </div>
-                            <input type="number" class="stock-input" 
-                                   value="${variant.stock}" 
-                                   min="0"
-                                   data-variant-id="${doc.id}"
-                                   placeholder="Quantidade">
-                            <label class="toggle-available">
-                                <input type="checkbox" 
-                                       ${variant.available ? 'checked' : ''}
-                                       data-variant-id="${doc.id}">
-                                Disponível para venda
-                            </label>
-                            <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${variant.sku}</small>
-                        </div>
-                    `;
-                });
+                const variantsByColor = {};
+
+variantsSnapshot.forEach(doc => {
+    const variant = doc.data();
+    currentVariants.push({ id: doc.id, ...variant });
+    
+    // Agrupar por cor
+    if (!variantsByColor[variant.color]) {
+        variantsByColor[variant.color] = [];
+    }
+    variantsByColor[variant.color].push({ id: doc.id, ...variant });
+});
+
+// Ordenar tamanhos dentro de cada cor
+const sizeOrder = { 'P': 1, 'M': 2, 'G': 3, 'GG': 4 };
+
+// Ordem das cores padrão
+const colorOrder = ['Preto', 'Azul Marinho', 'Cinza', 'Marrom'];
+
+// Ordenar cores (padrão primeiro, depois alfabético)
+const sortedColors = Object.keys(variantsByColor).sort((a, b) => {
+    const indexA = colorOrder.indexOf(a);
+    const indexB = colorOrder.indexOf(b);
+    
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return a.localeCompare(b);
+});
+
+// Renderizar organizados por cor
+sortedColors.forEach(color => {
+    // Ordenar tamanhos dentro da cor
+    variantsByColor[color].sort((a, b) => sizeOrder[a.size] - sizeOrder[b.size]);
+    
+    variantsByColor[color].forEach(variant => {
+        html += `
+            <div class="variant-card ${!variant.available ? 'unavailable' : ''}">
+                <div class="variant-header">
+                    <span class="variant-label">${variant.size} - ${variant.color}</span>
+                </div>
+                <input type="number" class="stock-input" 
+                       value="${variant.stock}" 
+                       min="0"
+                       data-variant-id="${variant.id}"
+                       placeholder="Quantidade">
+                <label class="toggle-available">
+                    <input type="checkbox" 
+                           ${variant.available ? 'checked' : ''}
+                           data-variant-id="${variant.id}">
+                    Disponível para venda
+                </label>
+                <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${variant.sku}</small>
+            </div>
+        `;
+    });
+});
                 
                 html += '</div>';
                 document.getElementById('variantsContainer').innerHTML = html;
