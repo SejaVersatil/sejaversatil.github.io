@@ -1405,49 +1405,52 @@ async function deleteProduct(productId) {
 
 async function saveProduct(event) {
     event.preventDefault();
-    
-    if (typeof productColors === 'undefined') {
-        productColors = [];
-    }
 
+    // Evita erro se productColors não existir (mas o ideal é garantir ele globalmente)
+    if (!Array.isArray(productColors)) productColors = [];
+
+    // ===== VERIFICAÇÕES DE PERMISSÃO =====
     if (!auth.currentUser) {
         showToast('❌ Você precisa estar autenticado como admin', 'error');
         closeProductModal();
         openUserPanel();
         return;
     }
-    
+
     if (!currentUser || !currentUser.isAdmin) {
         showToast('❌ Você não tem permissões de administrador', 'error');
         return;
     }
-    
-    if (!currentUser.permissions || !currentUser.permissions.includes('manage_products')) {
+
+    if (!currentUser.permissions?.includes('manage_products')) {
         showToast('❌ Você não tem permissão para gerenciar produtos', 'error');
         return;
     }
-    
+
     document.getElementById('loadingOverlay').classList.add('active');
-    
+
+    // ===== CAPTURA DE DADOS =====
     const name = sanitizeInput(document.getElementById('productName').value.trim());
     const category = document.getElementById('productCategory').value;
     const price = parseFloat(document.getElementById('productPrice').value);
-    const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+    const oldPriceValue = document.getElementById('productOldPrice').value;
+    const oldPrice = oldPriceValue ? parseFloat(oldPriceValue) : null;
     const badge = document.getElementById('productBadge').value.trim() || null;
     const productId = document.getElementById('productId').value;
 
     const productData = {
-        name: name,
-        category: category,
-        price: price,
-        oldPrice: oldPrice,
-        badge: badge,
+        name,
+        category,
+        price,
+        oldPrice,
+        badge,
         isBlackFriday: document.getElementById('productBlackFriday').checked,
         images: tempProductImages,
         colors: productColors.length > 0 ? productColors : null,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
+    // ===== VALIDAÇÃO =====
     const errors = validateProductData(productData);
     if (errors.length > 0) {
         showToast(errors[0], 'error');
@@ -1456,34 +1459,39 @@ async function saveProduct(event) {
     }
 
     try {
+        // ============================================================
+        // ===================== EDITAR PRODUTO ========================
+        // ============================================================
         if (productId) {
-            // ========== EDITANDO PRODUTO EXISTENTE ==========
             await db.collection("produtos").doc(productId).update(productData);
-            
-            // ✅ Atualizar variantes ao editar produto
+
+            // --------- ATUALIZAR VARIANTES ---------
             if (productColors.length > 0) {
                 const sizes = ['P', 'M', 'G', 'GG'];
-                const colorsToUse = productColors.length > 0 ? productColors : [
-        { name: 'Preto', hex: '#000000', images: tempProductImages },
-        { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
-        { name: 'Cinza', hex: '#808080', images: tempProductImages },
-        { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
-    ];
-                
+                const defaultColors = [
+                    { name: 'Preto', hex: '#000000', images: tempProductImages },
+                    { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
+                    { name: 'Cinza', hex: '#808080', images: tempProductImages },
+                    { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
+                ];
+
+                const colorsToUse = productColors.length > 0 ? productColors : defaultColors;
+
                 const existingVariants = await db.collection('produtos')
                     .doc(productId)
                     .collection('variants')
                     .get();
-                
-                const existingCombinations = new Set();
-                existingVariants.forEach(doc => {
-                    const v = doc.data();
-                    existingCombinations.add(`${v.size}-${v.color}`);
-                });
-                
+
+                const existingCombinations = new Set(
+                    existingVariants.docs.map(doc => {
+                        const v = doc.data();
+                        return `${v.size}-${v.color}`;
+                    })
+                );
+
                 const batch = db.batch();
                 let newVariantsCount = 0;
-                
+
                 colorsToUse.forEach(color => {
                     sizes.forEach(size => {
                         const combination = `${size}-${color.name}`;
@@ -1493,92 +1501,90 @@ async function saveProduct(event) {
                                 .doc(productId)
                                 .collection('variants')
                                 .doc();
-                            
+
                             batch.set(variantRef, {
-                                size: size,
+                                size,
                                 color: color.name,
                                 stock: 0,
                                 available: true,
                                 sku: `${productId.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
                                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
                             });
-                            
+
                             newVariantsCount++;
                         }
                     });
                 });
-                
+
                 if (newVariantsCount > 0) {
                     await batch.commit();
                     console.log(`✅ ${newVariantsCount} novas variantes criadas`);
                 }
             }
-            
+
+            // Atualiza cache local
             const product = productsData.find(p => p.id === productId);
-            if (product) {
-                Object.assign(product, productData);
-                product.id = productId;
-            }
+            if (product) Object.assign(product, productData);
+
             showToast('Produto atualizado com sucesso!', 'success');
-            
+
         } else {
-            // ========== CRIANDO PRODUTO NOVO ==========
+            // ============================================================
+            // ===================== NOVO PRODUTO =========================
+            // ============================================================
+            
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             const docRef = await db.collection("produtos").add(productData);
-            
-            // ✅ Criar variantes automaticamente para produto novo
-            let colorsToUse;
-if (productColors && productColors.length > 0) {
-    colorsToUse = productColors;
-} else {
-    colorsToUse = [
-        { name: 'Preto', hex: '#000000', images: tempProductImages },
-        { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
-        { name: 'Cinza', hex: '#808080', images: tempProductImages },
-        { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
-    ];
-}
 
-const sizes = ['P', 'M', 'G', 'GG'];
-                const batch = db.batch();
-                
-                colorsToUse.forEach(color => {
-                    sizes.forEach(size => {
-                        const variantRef = db.collection('produtos')
-                            .doc(docRef.id)
-                            .collection('variants')
-                            .doc();
-                        
-                        batch.set(variantRef, {
-                            size: size,
-                            color: color.name,
-                            stock: 0,
-                            available: true,
-                            sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+            // Criar variantes
+            const defaultColors = [
+                { name: 'Preto', hex: '#000000', images: tempProductImages },
+                { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
+                { name: 'Cinza', hex: '#808080', images: tempProductImages },
+                { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
+            ];
+
+            const colorsToUse = productColors.length > 0 ? productColors : defaultColors;
+            const sizes = ['P', 'M', 'G', 'GG'];
+
+            const batch = db.batch();
+
+            colorsToUse.forEach(color => {
+                sizes.forEach(size => {
+                    const variantRef = db.collection('produtos')
+                        .doc(docRef.id)
+                        .collection('variants')
+                        .doc();
+
+                    batch.set(variantRef, {
+                        size,
+                        color: color.name,
+                        stock: 0,
+                        available: true,
+                        sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 });
-                
-                await batch.commit();
-                console.log(`✅ ${productColors.length * sizes.length} variantes criadas automaticamente`);
-            
-            productsData.push({
-                id: docRef.id,
-                ...productData
             });
+
+            await batch.commit();
+
+            console.log(`✅ ${colorsToUse.length * sizes.length} variantes criadas automaticamente`);
+
+            productsData.push({ id: docRef.id, ...productData });
             showToast('Produto adicionado com sucesso!', 'success');
         }
 
+        // ===== ATUALIZAÇÕES GERAIS =====
         productCache.clear();
         saveProducts();
         closeProductModal();
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
-        
+
         await carregarProdutosDoFirestore();
-        
+
     } catch (error) {
         console.error("Erro ao salvar produto:", error);
         showToast('Erro ao salvar produto: ' + error.message, 'error');
@@ -1586,6 +1592,7 @@ const sizes = ['P', 'M', 'G', 'GG'];
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
+
 
 function saveSettings() {
     const bannerTitle = sanitizeInput(document.getElementById('settingBannerTitle').value.trim());
@@ -4405,6 +4412,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
