@@ -281,12 +281,10 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 2px solid #d4d4d4;
+    border: 2px solid #d4d4d4; /* ← borda padrão */
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    background-size: cover;
-    background-position: center;
 }
 
 .color-option:hover {
@@ -295,7 +293,7 @@
 }
 
 .color-option.active {
-    border-color: #000;
+    border-color: #000; /* ← borda ativa preta */
     border-width: 3px;
     transform: scale(1.12);
 }
@@ -548,31 +546,21 @@
     border-radius: 8px;
     font-size: 0.95rem;
     font-weight: 700;
-    text-align: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
 }
 
-.btn-primary,
-.btn-add-to-cart,
-.button-primary {
+.btn-primary {
     background: #000;
     color: #fff;
     border: 2px solid #000;
 }
 
-.btn-primary:hover,
-.btn-add-to-cart:hover,
-.button-primary:hover {
+.btn-primary:hover {
     background: #333;
-    border-color: #333;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
@@ -916,15 +904,49 @@
     }
 }
 
+/* WhatsApp Float Button Override */
+.whatsapp-float {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    background: #25D366 !important;
+    color: white !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4) !important;
+    transition: all 0.3s ease !important;
+    z-index: 1000 !important;
+}
 
+.whatsapp-float:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6) !important;
+}
 
+.whatsapp-float svg {
+    width: 32px !important;
+    height: 32px !important;
+}
 
+.site-header {
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-
-
-
-
-
-
-
-
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 100%;
+    gap: 2rem;
+}
