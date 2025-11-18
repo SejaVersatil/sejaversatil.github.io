@@ -104,10 +104,13 @@
         </div>
       </div>
 
-      <div class="nav-right">
-        <button class="nav-icon" aria-label="Minha conta" onclick="window.location.href='index.html'">
-          <svg width="20" height="20" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        </button>
+      <div class="nav-icons"> <!-- ← TROQUE nav-right por nav-icons -->
+    <div class="nav-icon" onclick="window.location.href='index.html#'"> <!-- ← TROQUE button por div -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    </div>
 
         <button class="nav-icon" aria-label="Favoritos" onclick="window.location.href='index.html'">
           <svg width="20" height="20" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
@@ -395,6 +398,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
