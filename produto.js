@@ -296,6 +296,65 @@ function renderProduct() {
   renderRelatedProducts();
 }
 
+// ========== RENDERIZAR GALERIA (NOVA ESTRUTURA) ==========
+function renderGalleryImages() {
+    const p = state.currentProduct;
+    if (!p || !p.images || p.images.length === 0) return;
+    
+    const img1 = document.getElementById('galleryImage1');
+    const img2 = document.getElementById('galleryImage2');
+    const hiddenGallery = document.getElementById('galleryHidden');
+    const btnShowMore = document.getElementById('btnShowMoreImages');
+    
+    // Imagem 1
+    if (img1 && p.images[0]) {
+        const imgEl1 = img1.querySelector('img');
+        imgEl1.src = p.images[0];
+    }
+    
+    // Imagem 2
+    if (img2 && p.images[1]) {
+        const imgEl2 = img2.querySelector('img');
+        imgEl2.src = p.images[1];
+    } else if (img2) {
+        img2.style.display = 'none';
+    }
+    
+    // Imagens restantes (escondidas)
+    if (hiddenGallery && p.images.length > 2) {
+        hiddenGallery.innerHTML = '';
+        for (let i = 2; i < p.images.length; i++) {
+            const div = document.createElement('div');
+            div.className = 'product-gallery-image';
+            div.innerHTML = `<img src="${p.images[i]}" alt="Produto - Imagem ${i+1}">`;
+            hiddenGallery.appendChild(div);
+        }
+        btnShowMore.style.display = 'flex';
+    } else if (btnShowMore) {
+        btnShowMore.style.display = 'none';
+    }
+}
+
+// ========== TOGGLE MOSTRAR MAIS IMAGENS ==========
+function toggleMoreImages() {
+    const hiddenGallery = document.getElementById('galleryHidden');
+    const btn = document.getElementById('btnShowMoreImages');
+    const btnText = document.getElementById('btnShowMoreText');
+    
+    if (hiddenGallery.style.display === 'none') {
+        hiddenGallery.style.display = 'flex';
+        btnText.textContent = 'MOSTRAR MENOS';
+        btn.classList.add('active');
+    } else {
+        hiddenGallery.style.display = 'none';
+        btnText.textContent = 'MOSTRAR MAIS';
+        btn.classList.remove('active');
+        
+        // Scroll suave para o topo da galeria
+        document.getElementById('galleryImage1').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 /* =========================
    Preços
    ========================= */
@@ -1105,6 +1164,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
