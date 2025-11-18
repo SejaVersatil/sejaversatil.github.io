@@ -1559,6 +1559,7 @@ body.product-page {
 
 /* WHATSAPP FLOAT - ESTILO LIVE!               */
 
+/* WhatsApp Float Button */
 .whatsapp-float {
     position: fixed !important;
     bottom: 24px !important;
@@ -1899,3 +1900,4 @@ select:focus-visible {
 }
 
 /* FIM DO CSS PROFISSIONAL ESTILO LIVE!        */
+
