@@ -606,6 +606,14 @@ body.product-page {
     outline: none;
 }
 
+/* Seção de Frete */
+.product-shipping-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e5e5;
+}
 /* CÁLCULO DE FRETE - LIVE!                    */
 
 .shipping-input-row {
@@ -2231,6 +2239,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
