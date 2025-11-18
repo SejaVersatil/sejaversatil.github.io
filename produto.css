@@ -1101,3 +1101,56 @@
     height: 32px !important;
     fill: white !important;
 }
+
+/* Estilização da barra de pesquisa */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    gap: 0.75rem;
+    max-width: 500px;
+    width: 100%;
+}
+
+.search-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.search-bar input::placeholder {
+    color: #999;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+.search-btn:hover {
+    color: #000;
+}
+
+.search-btn svg {
+    display: block;
+    stroke: currentColor !important;
+    fill: none !important;
+}
