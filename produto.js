@@ -1166,9 +1166,81 @@ window.closeProductDetails = closeProductDetails;
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
 
+// ========== CALCULAR FRETE (DETALHADO) ==========
+function calculateShippingDetails() {
+    const cepInput = document.getElementById('cepInput');
+    const resultsBox = document.getElementById('shippingResultsBox');
+    
+    if (!cepInput || !resultsBox) return;
+    
+    const cep = cepInput.value.replace(/\D/g, '');
+    
+    if (cep.length !== 8) {
+        alert('Digite um CEP válido (8 dígitos)');
+        return;
+    }
+    
+    // Simular resultados
+    resultsBox.innerHTML = `
+        <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px; margin-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #ddd;">
+                <div>
+                    <strong>PAC</strong><br>
+                    <small style="color: #666;">Entrega em 5-10 dias úteis</small>
+                </div>
+                <strong>R$ 15,90</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <strong>SEDEX</strong><br>
+                    <small style="color: #666;">Entrega em 2-4 dias úteis</small>
+                </div>
+                <strong>R$ 25,90</strong>
+            </div>
+        </div>
+    `;
+    resultsBox.style.display = 'block';
+}
 
+// ========== MOSTRAR DESCRIÇÃO COMPLETA ==========
+function showFullDescription() {
+    const modal = document.getElementById('productFullDescription');
+    const content = document.getElementById('fullDescriptionContent');
+    const p = state.currentProduct;
+    
+    if (!modal || !content || !p) return;
+    
+    content.innerHTML = `
+        <p>${p.description || 'Descrição completa não disponível.'}</p>
+    `;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
 
+function closeFullDescription() {
+    const modal = document.getElementById('productFullDescription');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
 
+// ========== COMPRAR VIA WHATSAPP ==========
+function buyViaWhatsApp() {
+    const p = state.currentProduct;
+    if (!p) return;
+    
+    const message = `Olá! Tenho interesse no produto: *${p.name}*\n\n` +
+                   `Cor: ${state.selectedColor || 'Não selecionada'}\n` +
+                   `Tamanho: ${state.selectedSize || 'Não selecionado'}\n` +
+                   `Preço: R$ ${p.price.toFixed(2)}`;
+    
+    const whatsappURL = `https://wa.me/5571991427103?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank');
+}
 
-
-
+// ========== GUIA DE TAMANHOS ==========
+function showSizeGuide() {
+    alert('Guia de Tamanhos:\n\nP: 36-38\nM: 40-42\nG: 44-46\nGG: 48-50');
+}
