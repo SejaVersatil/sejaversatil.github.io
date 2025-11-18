@@ -809,15 +809,16 @@
     }
     
     .gallery-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: 1fr;  /* ← Mobile: tudo vertical */
+        gap: 12px;
     }
     
     .gallery-thumbs {
-        flex-direction: row;
+        flex-direction: row;  /* ← Mobile: horizontal */
         overflow-x: auto;
         overflow-y: visible;
         max-height: none;
+        gap: 8px;
         padding-bottom: 8px;
     }
     
@@ -827,8 +828,8 @@
     }
     
     .thumbnail {
-        min-width: 70px;
-        width: 70px;
+        min-width: 60px;  /* ← Mobile: thumbs menores */
+        height: 80px;
         flex-shrink: 0;
     }
     
@@ -1134,6 +1135,7 @@
     stroke: currentColor !important;
     fill: none !important;
 }
+
 
 
 
