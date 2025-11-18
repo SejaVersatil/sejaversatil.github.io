@@ -197,6 +197,62 @@ body.product-page {
     color: #666;
 }
 
+/* PREÇOS - ESTILO LIVE! COMPLETO */
+.product-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.price-old-text,
+.product-price-old,
+#detailsPriceOld {
+    font-size: 0.85rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+    display: block;
+}
+
+.price-main-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.price-current,
+.product-price,
+#detailsPriceNew {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: -0.02em;
+}
+
+.price-discount-badge,
+#discountBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    background: #ff4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+}
+
+.price-installments,
+#detailsInstallments {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 400;
+    margin-top: 0.25rem;
+}
+
 /* Descrição Resumida */
 .product-description-short {
     font-size: 0.95rem;
@@ -2152,6 +2208,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
