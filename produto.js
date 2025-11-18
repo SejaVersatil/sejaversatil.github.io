@@ -345,28 +345,40 @@ function renderGallery() {
     : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
 
   const mainImage = $('mainProductImage');
-if (mainImage) {
-  const firstImage = images[0];
-  
-  if (isImageUrl(firstImage)) {
-    mainImage.style.background = '';
-    mainImage.style.backgroundImage = `url("${firstImage}")`;
-    mainImage.style.backgroundSize = 'cover';
-    mainImage.style.backgroundPosition = 'center';
-    mainImage.style.backgroundRepeat = 'no-repeat';
-  } else if (isGradient(firstImage)) {
-    mainImage.style.backgroundImage = '';
-    mainImage.style.background = firstImage;
+  if (mainImage) {
+    const firstImage = images[0];
+    
+    if (isImageUrl(firstImage)) {
+      mainImage.style.background = '';
+      mainImage.style.backgroundImage = `url("${firstImage}")`;
+      mainImage.style.backgroundSize = 'cover';
+      mainImage.style.backgroundPosition = 'center';
+      mainImage.style.backgroundRepeat = 'no-repeat';
+    } else if (isGradient(firstImage)) {
+      mainImage.style.backgroundImage = '';
+      mainImage.style.background = firstImage;
+    } else {
+      mainImage.style.backgroundImage = '';
+      mainImage.style.background = '#f5f5f5';
+    }
+    
+    mainImage.classList.remove('image-fade-out');
+    
   } else {
-    mainImage.style.backgroundImage = '';
-    mainImage.style.background = '#f5f5f5';
+    console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
   }
-  
-  // Remover classe de fade se existir
-  mainImage.classList.remove('image-fade-out');
-  
-} else {
-  console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
+
+  // Atualizar thumbnails
+  const thumbnailList = $('thumbnailList');
+  if (thumbnailList) {
+    thumbnailList.innerHTML = '';
+    images.forEach((img, idx) => {
+      const thumb = createThumbnail(img, idx);
+      thumbnailList.appendChild(thumb);
+    });
+  } else {
+    console.error('❌ Elemento #thumbnailList não encontrado no HTML!');
+  }
 }
   
   // Depois atualiza thumbnails
@@ -1070,3 +1082,4 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
