@@ -424,37 +424,6 @@ function renderGallery() {
   });
 }
 
-  // Atualizar thumbnails
-  const thumbnailList = $('thumbnailList');
-  if (thumbnailList) {
-    thumbnailList.innerHTML = '';
-    images.forEach((img, idx) => {
-      const thumb = createThumbnail(img, idx);
-      thumbnailList.appendChild(thumb);
-    });
-  } else {
-    console.error('❌ Elemento #thumbnailList não encontrado no HTML!');
-  }
-}
-  
-  // Depois atualiza thumbnails
-const thumbs = qa('.thumbnail');
-thumbs.forEach((t, i) => {
-  t.classList.toggle('active', i === 0);
-  t.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
-});
-
-const thumbnailList = $('thumbnailList');
-if (thumbnailList) {
-  thumbnailList.innerHTML = '';
-  images.forEach((img, idx) => {
-    const thumb = createThumbnail(img, idx);
-    thumbnailList.appendChild(thumb);
-  });
-} else {
-  console.error('❌ Elemento #thumbnailList não encontrado no HTML!');
-}
-
 /* =========================
    Cores
    ========================= */
@@ -1138,6 +1107,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
