@@ -234,7 +234,9 @@ async function loadProduct(productId) {
     await loadProductVariants(productId);
 
     // render
-    renderProduct();
+    requestAnimationFrame(() => {
+  renderProduct();
+});
 
     console.log('Produto carregado:', state.currentProduct.name || state.currentProduct.id);
   } catch (err) {
@@ -1065,6 +1067,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
