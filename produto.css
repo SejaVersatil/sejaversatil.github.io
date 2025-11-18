@@ -61,15 +61,6 @@ body.product-page {
     text-decoration: underline;
 }
 
-/* GRID PRINCIPAL (Galeria + Info)             */
-
-.product-page-grid {
-    display: grid;
-    grid-template-columns: 60% 40%;
-    min-height: 100vh;
-    gap: 0;
-}
-
 @media (min-width: 1200px) {
     .product-main-grid {
         grid-template-columns: 55% 45%;
@@ -1851,7 +1842,8 @@ body.product-page {
     }
 }
 
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
+    /* Estilos da coluna de produto */
     .product-title-main {
         font-size: 1.5rem;
     }
@@ -1872,113 +1864,112 @@ body.product-page {
     .product-info-column {
         padding: 1.5rem 1rem;
     }
+    
+    /* Estilos gerais da página */
+  .product-page-container {
+    padding: 1rem 1rem 3rem;
 }
 
-@media (max-width: 768px) {
-    .product-page-container {
-        padding: 1rem 1rem 3rem;
-    }
-    
-    .hamburger-btn {
-        display: block;
-    }
-    
-    .nav {
-        padding: 0.75rem 1rem;
-        gap: 1rem;
-    }
-    
-    .nav-left .logo {
-        font-size: 1rem;
-    }
-    
-    .search-bar {
-        padding: 0.45rem 0.85rem;
-    }
-    
-    .search-bar input {
-        font-size: 0.8rem;
-    }
-    
-    .nav-icons {
-        gap: 1rem;
-    }
-    
-    .gallery-container {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .gallery-thumbs {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: visible;
-        max-height: none;
-        gap: 8px;
-        padding-bottom: 8px;
-        padding-right: 0;
-    }
-    
-    .gallery-thumbs::-webkit-scrollbar {
-        height: 4px;
-        width: auto;
-    }
-    
-    .thumbnail,
-    .thumbnail-item {
-        min-width: 65px;
-        width: 65px;
-        height: 87px;
-        flex-shrink: 0;
-    }
-    
-    .product-selector-group {
-        padding: 0.85rem 0;
-    }
-    
-    .btn {
-        height: 52px;
-        font-size: 0.85rem;
-    }
-    
-    .related-products-grid,
-    #relatedProductsGrid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .cart-sidebar {
-        width: 100%;
-        right: -100%;
-    }
-    
-    .payment-modal-content {
-        max-width: calc(100% - 2rem);
-        margin: 1rem;
-    }
-    
-    .breadcrumb {
-        font-size: 0.7rem;
-    }
-    
-    .bf-content {
-        gap: 0.5rem;
-        font-size: 0.75rem;
-    }
-    
-    .bf-time-unit {
-        min-width: 42px;
-        padding: 0.3rem 0.5rem;
-    }
-    
-    .bf-time-unit span:first-child {
-        font-size: 1.1rem;
-    }
-    
-    .bf-time-unit .unit-label {
-        font-size: 0.6rem;
-    }
+.hamburger-btn {
+    display: block;
 }
+
+.nav {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+}
+
+.nav-left .logo {
+    font-size: 1rem;
+}
+
+.search-bar {
+    padding: 0.45rem 0.85rem;
+}
+
+.search-bar input {
+    font-size: 0.8rem;
+}
+
+.nav-icons {
+    gap: 1rem;
+}
+
+.gallery-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.gallery-thumbs {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    max-height: none;
+    gap: 8px;
+    padding-bottom: 8px;
+    padding-right: 0;
+}
+
+.gallery-thumbs::-webkit-scrollbar {
+    height: 4px;
+    width: auto;
+}
+
+.thumbnail,
+.thumbnail-item {
+    min-width: 65px;
+    width: 65px;
+    height: 87px;
+    flex-shrink: 0;
+}
+
+.product-selector-group {
+    padding: 0.85rem 0;
+}
+
+.btn {
+    height: 52px;
+    font-size: 0.85rem;
+}
+
+.related-products-grid,
+#relatedProductsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.cart-sidebar {
+    width: 100%;
+    right: -100%;
+}
+
+.payment-modal-content {
+    max-width: calc(100% - 2rem);
+    margin: 1rem;
+}
+
+.breadcrumb {
+    font-size: 0.7rem;
+}
+
+.bf-content {
+    gap: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.bf-time-unit {
+    min-width: 42px;
+    padding: 0.3rem 0.5rem;
+}
+
+.bf-time-unit span:first-child {
+    font-size: 1.1rem;
+}
+
+.bf-time-unit .unit-label {
+    font-size: 0.6rem;
+}
+
 
 @media (max-width: 480px) {
     .product-page-container {
@@ -2161,6 +2152,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
