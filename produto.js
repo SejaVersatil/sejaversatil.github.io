@@ -346,16 +346,14 @@ function renderGallery() {
 
   const mainImage = $('mainProductImage');
 if (mainImage) {
-  // ✅ CORREÇÃO: Setar background IMEDIATAMENTE (sem delay)
   const firstImage = images[0];
   
   if (isImageUrl(firstImage)) {
-  mainImage.style.background = '';  // ← Limpar ANTES
-  mainImage.style.backgroundImage = `url("${firstImage}")`;
-  mainImage.style.backgroundSize = 'cover';
-  mainImage.style.backgroundPosition = 'center';
-  mainImage.style.backgroundRepeat = 'no-repeat';
-}
+    mainImage.style.background = '';
+    mainImage.style.backgroundImage = `url("${firstImage}")`;
+    mainImage.style.backgroundSize = 'cover';
+    mainImage.style.backgroundPosition = 'center';
+    mainImage.style.backgroundRepeat = 'no-repeat';
   } else if (isGradient(firstImage)) {
     mainImage.style.backgroundImage = '';
     mainImage.style.background = firstImage;
@@ -363,6 +361,13 @@ if (mainImage) {
     mainImage.style.backgroundImage = '';
     mainImage.style.background = '#f5f5f5';
   }
+  
+  // Remover classe de fade se existir
+  mainImage.classList.remove('image-fade-out');
+  
+} else {
+  console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
+}
   
   // Depois atualiza thumbnails
 const thumbs = qa('.thumbnail');
@@ -1065,14 +1070,3 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
-
-
-
-
-
-
-
-
-
-
-
