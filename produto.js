@@ -343,11 +343,32 @@ function renderGallery() {
     : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
 
   const mainImage = $('mainProductImage');
-  if (mainImage) {
-    changeMainImageFromData(images[0], 0);
+if (mainImage) {
+  // ✅ CORREÇÃO: Setar background IMEDIATAMENTE (sem delay)
+  const firstImage = images[0];
+  
+  if (isImageUrl(firstImage)) {
+    mainImage.style.backgroundImage = `url("${firstImage}")`;
+    mainImage.style.backgroundSize = 'cover';
+    mainImage.style.backgroundPosition = 'center';
+    mainImage.style.background = '';
+  } else if (isGradient(firstImage)) {
+    mainImage.style.backgroundImage = '';
+    mainImage.style.background = firstImage;
   } else {
-    console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
+    mainImage.style.backgroundImage = '';
+    mainImage.style.background = '#f5f5f5';
   }
+  
+  // Depois atualiza thumbnails
+  const thumbs = qa('.thumbnail');
+  thumbs.forEach((t, i) => {
+    t.classList.toggle('active', i === 0);
+    t.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+  });
+} else {
+  console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
+}
 
   const thumbnailList = $('thumbnailList');
   if (thumbnailList) {
@@ -1044,6 +1065,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
