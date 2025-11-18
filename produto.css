@@ -796,6 +796,39 @@ body.product-page {
     border: 1px solid #f0f0f0;
 }
 
+/* INFO BADGES (Frete grátis, Troca fácil, etc) */
+.product-info-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.info-badge-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.info-badge-item svg {
+    flex-shrink: 0;
+    color: #27ae60;
+}
+
+.info-badge-item strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #000;
+}
+
+.info-badge-item a {
+    color: #666;
+    text-decoration: underline;
+}
+
 /* DESCRIÇÃO DO PRODUTO - LIVE!                */
 
 .product-description-section {
@@ -2198,6 +2231,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
