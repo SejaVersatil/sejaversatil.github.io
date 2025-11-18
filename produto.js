@@ -227,16 +227,15 @@ async function loadProduct(productId) {
       ? data.sizes
       : ['P', 'M', 'G', 'GG'];
 
-    // freeze shallow
-    state.currentProduct = Object.freeze({ id: doc.id, ...data });
+ // freeze shallow
+state.currentProduct = Object.freeze({ id: doc.id, ...data });
 
-    // load variants collection if exists
-    await loadProductVariants(productId);
+// load variants collection if exists
+await loadProductVariants(productId);
 
-    // render
-    requestAnimationFrame(() => {
-  renderProduct();
-});
+// render - AGUARDAR o próximo frame
+await new Promise(resolve => requestAnimationFrame(resolve));
+renderProduct();
 
     console.log('Produto carregado:', state.currentProduct.name || state.currentProduct.id);
   } catch (err) {
@@ -1067,6 +1066,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
