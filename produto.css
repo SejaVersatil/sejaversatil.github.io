@@ -167,14 +167,17 @@ body.product-page {
 }
 
 /* Título */
-.product-title-main {
+.product-title-main,
+.product-title,
+.product-name,
+#detailsProductName {
     font-family: 'Oswald', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: #000;
-    margin: 0;
+    margin: 0 0 0.75rem 0;
     line-height: 1.2;
 }
 
@@ -407,19 +410,6 @@ body.product-page {
     padding: 0 1rem 0 0;
     position: sticky;
     top: 100px;
-}
-
-/* Título */
-.product-title,
-.product-name,
-#detailsProductName {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #000;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.75rem;
-    font-family: 'Montserrat', sans-serif;
 }
 
 /* SELETORES (COR / TAMANHO) - LIVE!           */
@@ -2208,6 +2198,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
