@@ -82,6 +82,9 @@ function createThumbnail(img, index) {
   thumb.setAttribute('role', 'button');
   thumb.setAttribute('aria-label', `Ver imagem ${index + 1}`);
   thumb.setAttribute('tabindex', '0');
+  thumb.style.width = '70px';
+  thumb.style.height = '93px';
+  thumb.style.flexShrink = '0';
 
   // Style com melhor handling
   if (isImageUrl(img)) {
@@ -1082,4 +1085,5 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
