@@ -62,80 +62,46 @@
 
 .gallery-container {
     display: grid;
-    grid-template-columns: 110px 1fr;  /* ← AUMENTADO PARA 110px */
-    gap: 1rem;
-    width: 100%;
+    grid-template-columns: 70px 1fr;  /* ← LIVE usa 70px */
+    gap: 12px;  /* ← LIVE usa 12px fixo */
 }
 
-/* Thumbnails verticais */
 .gallery-thumbs {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;  /* ← AUMENTADO LIGEIRAMENTE */
-    max-height: 600px;
+    gap: 8px;  /* ← LIVE: gap menor entre thumbs */
+    max-height: 620px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 6px;  /* ← Espaço pro scrollbar */
 }
 
-/* Scrollbar personalizada */
 .gallery-thumbs::-webkit-scrollbar {
-    width: 4px;
-}
-
-.gallery-thumbs::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+    width: 3px;  /* ← LIVE: scrollbar fino */
 }
 
 .gallery-thumbs::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: #d0d0d0;  /* ← LIVE: cinza neutro */
     border-radius: 10px;
-    transition: background 0.3s ease;
 }
 
-.gallery-thumbs::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-}
-
-/* Cada thumbnail */
 .thumbnail {
-    width: 100%;
-    aspect-ratio: 3/4;
-    border-radius: 8px;
-    overflow: hidden;
+    width: 70px;  /* ← Largura fixa igual à coluna */
+    height: 93px;  /* ← aspect-ratio 3/4 = 70 * 1.33 */
+    border-radius: 4px;  /* ← LIVE: bordas menos arredondadas */
+    border: 1.5px solid #e0e0e0;  /* ← LIVE: borda mais fina */
     cursor: pointer;
-    border: 2px solid #e5e5e5;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-.thumbnail::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0);
-    transition: background 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .thumbnail:hover {
-    transform: translateY(-2px);
-    border-color: #d0d0d0;
-}
-
-.thumbnail:hover::after {
-    background: rgba(0, 0, 0, 0.05);
+    border-color: #999;
+    transform: translateY(-1px);  /* ← LIVE: movimento sutil */
 }
 
 .thumbnail.active {
     border-color: #000;
-    border-width: 3px;
-    transform: scale(1.02);
-}
-
-.thumbnail.active::after {
-    background: rgba(0, 0, 0, 0);
+    border-width: 2px;
+    box-shadow: none;  /* ← LIVE não usa sombra dupla */
 }
 
 /* Imagem principal */
@@ -1154,3 +1120,4 @@
     stroke: currentColor !important;
     fill: none !important;
 }
+
