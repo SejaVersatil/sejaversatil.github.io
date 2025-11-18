@@ -525,21 +525,22 @@
 
 .btn {
     width: 100%;
-    padding: 1.1rem 2rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 1.25rem 2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
 .btn-primary {
     background: #000;
     color: #fff;
     border: 2px solid #000;
+    height: 52px;
 }
 
 .btn-primary:hover {
@@ -548,7 +549,11 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.btn-ghost,
+.btn-ghost {
+    background: #fff;
+    border: 2px solid #000;
+    height: 52px;
+}
 .btn-buy-now,
 .button-secondary {
     background: #fff;
@@ -1129,5 +1134,6 @@
     stroke: currentColor !important;
     fill: none !important;
 }
+
 
 
