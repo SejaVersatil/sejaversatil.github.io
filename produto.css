@@ -22,10 +22,15 @@
 /* Breadcrumb */
 .breadcrumb {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.35rem;  /* ← REDUZIDO */
     font-size: 0.85rem;
     color: #555;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+.breadcrumb span {
+    margin: 0 0.15rem;  /* ← NOVO: reduz espaço dos separadores */
 }
 
 .breadcrumb a {
@@ -949,4 +954,29 @@
     padding: 1rem 2rem;
     max-width: 100%;
     gap: 2rem;
+}
+
+.nav-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-icon {
+    position: relative;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #1a1a1a;
+    transition: color 0.2s ease;
+}
+
+.nav-icon:hover {
+    color: #666;
+}
+
+.nav-icon svg {
+    display: block;
 }
