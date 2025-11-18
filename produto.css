@@ -1001,3 +1001,32 @@
     justify-content: center;
     line-height: 1;
 }
+
+/* Esconder hamburger no desktop */
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #000;
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+/* Mostrar apenas no mobile */
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: block;
+    }
+}
