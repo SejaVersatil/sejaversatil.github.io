@@ -981,30 +981,42 @@ window.addEventListener('unhandledrejection', (event) => {
    Close product details modal
    ========================= */
 function closeProductDetails() {
+  // ✅ CORREÇÃO: Na página produto.html, não há modal para fechar
+  // Esta função só deve funcionar se houver um modal overlay
   const modal = $('productDetailsModal');
-  if (!modal) return;
-
+  
+  if (!modal) {
+    // Se não há modal, voltamos para a página anterior
+    console.log('🔙 Voltando para página anterior...');
+    window.history.back();
+    return;
+  }
+  
+  // Se o modal existe (caso seja chamado do index.html)
   modal.classList.add('closing');
-
-  const animationDuration = 300; // ms
+  
+  const animationDuration = 300;
   setTimeout(() => {
     modal.classList.remove('active', 'closing');
-
-    // Clear main image and thumbnails on close to avoid stale content (keeps page consistent)
+    
+    // Limpar conteúdo do modal
     const mainImage = $('mainProductImage');
     if (mainImage) {
-      // keep background but if you'd like to clear: mainImage.style.backgroundImage = '';
+      mainImage.style.backgroundImage = '';
     }
+    
     const thumbnailList = $('thumbnailList');
     if (thumbnailList) thumbnailList.innerHTML = '';
-
-    // Reset selections shown
+    
+    // Reset seleções
     const selectedColorName = $('selectedColorName');
     if (selectedColorName) selectedColorName.textContent = '';
+    
     const selectedSizeName = $('selectedSizeName');
     if (selectedSizeName) selectedSizeName.textContent = '';
   }, animationDuration);
-
+  
+  // Fechar overlay
   const overlay = $('modalOverlay') || $('cartOverlay');
   if (overlay) overlay.classList.remove('active');
 }
@@ -1024,11 +1036,13 @@ window.produtoModule = {
   closeProductDetails
 };
 
+// ✅ ADICIONE ESTA LINHA: Expor closeProductDetails globalmente
+window.closeProductDetails = closeProductDetails;
+
 /* =========================
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
-
 
 
 
