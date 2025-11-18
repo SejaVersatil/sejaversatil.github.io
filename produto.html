@@ -167,14 +167,17 @@
 
   <!-- Left: gallery ESTILO LIVE! -->
   <div class="product-gallery-section">
-    <div class="gallery-container">
-      <!-- Thumbnails verticais à esquerda -->
-      <div id="thumbnailList" class="gallery-thumbs" role="list" aria-label="Miniaturas do produto"></div>
-      
-      <!-- Imagem principal grande à direita -->
-      <div id="mainProductImage" class="gallery-main-image" role="img" aria-label="Imagem principal do produto"></div>
+  <div class="gallery-container">
+    <!-- ✅ ORDEM: Thumbs ANTES da imagem principal -->
+    <div id="thumbnailList" class="gallery-thumbs" role="list"></div>
+    
+    <div id="mainProductImage" 
+         class="gallery-main-image" 
+         role="img"
+         style="background-size: cover; background-position: center;">
     </div>
   </div>
+</div>
 
       <!-- Right: product info -->
       <aside class="product-info-section" aria-labelledby="detailsProductName">
@@ -409,6 +412,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
