@@ -342,52 +342,6 @@
     </div>
   </div>
 
-  <!-- Product details modal (single, used for expanded view) -->
-  <div id="productDetailsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-overlay" id="modalOverlay" onclick="closeProductDetails()" aria-hidden="true"></div>
-    <div class="modal-content" role="document">
-      <button class="modal-close" aria-label="Fechar" onclick="closeProductDetails()">×</button>
-
-      <div class="product-details-grid">
-        <div class="product-details-gallery">
-          <div id="mainProductImage_modal" class="main-image" aria-hidden="true"></div>
-          <!-- NOTE: mainProductImage id used in page; inside modal we use a visually-linked element for accessibility.
-               The JS will clear mainProductImage and thumbnailList; ensure product.js expects modal IDs — if not,
-               we rely on mainProductImage & thumbnailList present on page. -->
-          <div id="thumbnailList_modal" class="thumbnail-list" aria-hidden="true"></div>
-        </div>
-
-        <div class="product-details-info">
-          <h2 id="detailsProductName_modal" class="product-title">Produto</h2>
-          <div class="product-prices">
-            <span id="detailsPriceOld_modal" class="price-old" aria-hidden="true"></span>
-            <span id="detailsPriceNew_modal" class="price-new" aria-hidden="true"></span>
-            <span id="discountBadge_modal" class="discount-badge" aria-hidden="true"></span>
-          </div>
-
-          <div class="product-selector-group">
-            <label>Cores:</label>
-            <div id="colorSelector_modal" class="color-options-grid" aria-hidden="true"></div>
-            <div><span id="selectedColorName_modal" aria-hidden="true"></span></div>
-          </div>
-
-          <div class="product-selector-group">
-            <label>Tamanhos:</label>
-            <div id="sizeSelector_modal" class="size-options-grid" aria-hidden="true"></div>
-            <div><span id="selectedSizeName_modal" aria-hidden="true"></span></div>
-          </div>
-
-          <div class="product-actions">
-            <button type="button" onclick="addToCartFromDetails()">Adicionar ao Carrinho</button>
-            <button type="button" onclick="buyNow()">Comprar Agora</button>
-          </div>
-
-          <div id="productDescription_modal" class="product-description" aria-hidden="true"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Footer -->
   <footer class="site-footer" role="contentinfo">
     <div class="footer-content">
@@ -425,6 +379,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
