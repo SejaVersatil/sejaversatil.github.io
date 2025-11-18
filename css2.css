@@ -60,7 +60,7 @@ h4 { font-size: 1.25rem; }
 /* Skip Link (Acessibilidade) */
 .skip-link {
     position: absolute;
-    top: -40px;
+    top: -100px; /* ← esconde completamente */
     left: 0;
     background: var(--primary);
     color: white;
@@ -4176,4 +4176,5 @@ css@keyframes slideInRight {
         border-radius: 0;
     }
 }
+
 
