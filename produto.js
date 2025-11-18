@@ -995,31 +995,29 @@ function toggleSidebar() {
    Black Friday countdown
    ========================= */
 function initBlackFridayCountdown() {
-  // data: 30 de novembro de 2025 23:59:59
-  const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59);
-  if (state.countdownInterval) clearInterval(state.countdownInterval);
+    const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59);
+    if (state.countdownInterval) clearInterval(state.countdownInterval);
 
-  function updateCountdown() {
-    const now = Date.now();
-    const distance = blackFridayEnd.getTime() - now;
-    if (distance <= 0) {
-      clearInterval(state.countdownInterval);
-      // hide banner optionally
-      return;
+    function updateCountdown() {
+        const now = Date.now();
+        const distance = blackFridayEnd.getTime() - now;
+        if (distance <= 0) {
+            clearInterval(state.countdownInterval);
+            return;
+        }
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (elExists('bfDays')) $('bfDays').textContent = String(days).padStart(2, '0');
+        if (elExists('bfHours')) $('bfHours').textContent = String(hours).padStart(2, '0');
+        if (elExists('bfMinutes')) $('bfMinutes').textContent = String(minutes).padStart(2, '0');
+        if (elExists('bfSeconds')) $('bfSeconds').textContent = String(seconds).padStart(2, '0');
     }
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    if (elExists('bfDays')) $('bfDays').textContent = String(days).padStart(2, '0');
-    if (elExists('bfHours')) $('bfHours').textContent = String(hours).padStart(2, '0');
-    if (elExists('bfMinutes')) $('bfMinutes').textContent = String(minutes).padStart(2, '0');
-    if (elExists('bfSeconds')) $('bfSeconds').textContent = String(seconds).padStart(2, '0');
-  }
-
-  updateCountdown();
-  state.countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+    state.countdownInterval = setInterval(updateCountdown, 1000);
 }
 
 /* =========================
@@ -1107,6 +1105,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
