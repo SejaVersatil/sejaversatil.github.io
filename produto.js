@@ -343,33 +343,86 @@ function renderGallery() {
   const p = state.currentProduct;
   if (!p) return;
 
+  //  DEFINIR LISTA DE IMAGENS
   const images = Array.isArray(p.images) && p.images.length
     ? p.images
     : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
 
   const mainImage = $('mainProductImage');
-  if (mainImage) {
-    const firstImage = images[0];
-    
-    if (isImageUrl(firstImage)) {
-      mainImage.style.background = '';
-      mainImage.style.backgroundImage = `url("${firstImage}")`;
-      mainImage.style.backgroundSize = 'cover';
-      mainImage.style.backgroundPosition = 'center';
-      mainImage.style.backgroundRepeat = 'no-repeat';
-    } else if (isGradient(firstImage)) {
-      mainImage.style.backgroundImage = '';
-      mainImage.style.background = firstImage;
-    } else {
-      mainImage.style.backgroundImage = '';
-      mainImage.style.background = '#f5f5f5';
-    }
-    
-    mainImage.classList.remove('image-fade-out');
-    
-  } else {
-    console.error('❌ Elemento #mainProductImage não encontrado no HTML!');
+  const thumbnailList = $('thumbnailList');
+
+  if (!mainImage || !thumbnailList) {
+    console.error('❌ Elementos da galeria não encontrados!');
+    return;
   }
+
+  //  GARANTIR LAYOUT DO COMPONENTE
+  mainImage.style.width = '100%';
+  mainImage.style.aspectRatio = '3/4';
+  thumbnailList.style.display = 'flex';
+  thumbnailList.style.flexDirection = 'column';
+  thumbnailList.style.gap = '8px';
+
+  //  RENDERIZAR IMAGEM PRINCIPAL
+  const firstImage = images[0];
+
+  if (isImageUrl(firstImage)) {
+    mainImage.style.background = '';
+    mainImage.style.backgroundImage = `url("${firstImage}")`;
+    mainImage.style.backgroundSize = 'cover';
+    mainImage.style.backgroundPosition = 'center';
+    mainImage.style.backgroundRepeat = 'no-repeat';
+  } 
+  else if (isGradient(firstImage)) {
+    mainImage.style.backgroundImage = '';
+    mainImage.style.background = firstImage;
+  } 
+  else {
+    mainImage.style.backgroundImage = '';
+    mainImage.style.background = '#f5f5f5';
+  }
+
+  // Remover fade-out antes de trocar
+  mainImage.classList.remove('image-fade-out');
+
+  //  RENDERIZAR MINIATURAS
+  thumbnailList.innerHTML = '';
+
+  images.forEach((img, index) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'thumbnail-item';
+
+    if (isImageUrl(img)) {
+      thumb.style.backgroundImage = `url("${img}")`;
+      thumb.style.backgroundSize = 'cover';
+      thumb.style.backgroundPosition = 'center';
+    } else if (isGradient(img)) {
+      thumb.style.background = img;
+    } else {
+      thumb.style.background = '#eee';
+    }
+
+    // Evento de clique para trocar imagem principal
+    thumb.addEventListener('click', () => {
+      mainImage.classList.add('image-fade-out');
+
+      setTimeout(() => {
+        if (isImageUrl(img)) {
+          mainImage.style.background = '';
+          mainImage.style.backgroundImage = `url("${img}")`;
+          mainImage.style.backgroundSize = 'cover';
+          mainImage.style.backgroundPosition = 'center';
+        } else if (isGradient(img)) {
+          mainImage.style.backgroundImage = '';
+          mainImage.style.background = img;
+        }
+        mainImage.classList.remove('image-fade-out');
+      }, 150);
+    });
+
+    thumbnailList.appendChild(thumb);
+  });
+}
 
   // Atualizar thumbnails
   const thumbnailList = $('thumbnailList');
@@ -1085,5 +1138,6 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
