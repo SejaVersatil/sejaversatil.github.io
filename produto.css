@@ -25,12 +25,11 @@ body.product-page {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* CONTAINER PRINCIPAL                         */
-
+/* Container Principal */
 .product-page-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.5rem 2rem 4rem;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 /* BREADCRUMB - ESTILO LIVE!                   */
@@ -64,12 +63,11 @@ body.product-page {
 
 /* GRID PRINCIPAL (Galeria + Info)             */
 
-.product-main-grid {
+.product-page-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-    margin-bottom: 4rem;
+    grid-template-columns: 60% 40%;
+    min-height: 100vh;
+    gap: 0;
 }
 
 @media (min-width: 1200px) {
@@ -79,17 +77,396 @@ body.product-page {
     }
 }
 
+/* ========== COLUNA ESQUERDA: GALERIA ========== */
+.product-gallery-column {
+    background: #FAFAFA;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.product-gallery-image {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.product-gallery-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-gallery-hidden {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn-show-more-images {
+    width: 100%;
+    padding: 1rem;
+    background: #fff;
+    border: 2px solid #000;
+    color: #000;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-show-more-images:hover {
+    background: #000;
+    color: #fff;
+}
+
+.btn-show-more-images svg {
+    transition: transform 0.3s;
+}
+
+.btn-show-more-images.active svg {
+    transform: rotate(180deg);
+}
+
+/* ========== COLUNA DIREITA: INFORMAÇÕES ========== */
+.product-info-column {
+    background: #fff;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+/* Breadcrumb */
+.product-breadcrumb {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.product-breadcrumb a {
+    color: #666;
+    text-decoration: none;
+}
+
+.product-breadcrumb a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Título */
+.product-title-main {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #000;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Preços */
+.product-pricing-box {
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.product-price-current {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0.5rem;
+}
+
+.product-price-installments {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Descrição Resumida */
+.product-description-short {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.link-see-more {
+    color: #000;
+    text-decoration: underline;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+/* Seções de Seletor */
+.product-selector-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.product-selector-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000;
+}
+
+/* Seletor de Cores */
+.product-color-selector {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.color-option-square {
+    width: 45px;
+    height: 45px;
+    border-radius: 4px;
+    border: 2px solid #e5e5e5;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.color-option-square:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.color-option-square.active {
+    border-color: #000;
+    border-width: 3px;
+}
+
+.color-option-square.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+
+/* Seletor de Tamanhos */
+.product-size-selector {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.size-option-square {
+    min-width: 50px;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e5e5;
+    background: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.size-option-square:hover {
+    border-color: #000;
+}
+
+.size-option-square.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.size-option-square:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.link-size-guide {
+    font-size: 0.85rem;
+    color: #666;
+    text-decoration: underline;
+}
+
+/* Frete */
+.product-shipping-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.shipping-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.shipping-input-field {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.shipping-input-field:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.shipping-btn-calculate {
+    padding: 0.8rem 1.5rem;
+    background: #fff;
+    border: 2px solid #000;
+    color: #000;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.shipping-btn-calculate:hover {
+    background: #000;
+    color: #fff;
+}
+
+.shipping-results-box {
+    margin-top: 1rem;
+    display: none;
+}
+
+.shipping-results-box.active {
+    display: block;
+}
+
+/* Botões Principais */
+.btn-buy-main {
+    width: 100%;
+    padding: 1.2rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-buy-main:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-whatsapp-main {
+    width: 100%;
+    padding: 1rem;
+    background: #25D366;
+    color: #fff;
+    border: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s;
+}
+
+.btn-whatsapp-main:hover {
+    background: #1fb855;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+/* Info Badges */
+.product-info-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.info-badge-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.info-badge-item svg {
+    flex-shrink: 0;
+    color: #27ae60;
+}
+
+.info-badge-item strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #000;
+}
+
+.info-badge-item a {
+    color: #666;
+    text-decoration: underline;
+}
+
 /* GALERIA - LAYOUT IDÊNTICO LIVE!             */
 
 .product-gallery-section {
     width: 100%;
+    display: none; /* Ocultar galeria antiga */
 }
 
 .gallery-container {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 16px;
-    align-items: start;
+    display: none; /* Ocultar layout antigo */
 }
 
 /* Thumbnails */
@@ -1684,7 +2061,27 @@ body.product-page {
 
 /* RESPONSIVIDADE COMPLETA - LIVE!             */
 
+/* ========== RESPONSIVO ========== */
 @media (max-width: 1024px) {
+    .product-page-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-gallery-column,
+    .product-info-column {
+        position: static;
+        height: auto;
+    }
+    
+    .product-gallery-column {
+        padding: 1.5rem;
+    }
+    
+    .product-info-column {
+        padding: 2rem 1.5rem;
+    }
+    
+    /* Manter estilos antigos para compatibilidade */
     .product-main-grid {
         grid-template-columns: 1fr;
         gap: 2.5rem;
@@ -1900,4 +2297,5 @@ select:focus-visible {
 }
 
 /* FIM DO CSS PROFISSIONAL ESTILO LIVE!        */
+
 
