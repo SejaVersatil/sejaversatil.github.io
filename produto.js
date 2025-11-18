@@ -124,10 +124,12 @@ function changeMainImageFromData(imageSrc, index = 0) {
 
   setTimeout(() => {
     if (isImageUrl(imageSrc)) {
-      mainImage.style.backgroundImage = `url("${imageSrc}")`;
-      mainImage.style.background = '';
-      mainImage.style.backgroundSize = 'cover';
-      mainImage.style.backgroundPosition = 'center';
+  mainImage.style.background = '';  // ← Limpar ANTES
+  mainImage.style.backgroundImage = `url("${imageSrc}")`;
+  mainImage.style.backgroundSize = 'cover';
+  mainImage.style.backgroundPosition = 'center';
+  mainImage.style.backgroundRepeat = 'no-repeat';
+}
     } else if (isGradient(imageSrc)) {
       mainImage.style.backgroundImage = '';
       mainImage.style.background = imageSrc;
@@ -1068,6 +1070,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
