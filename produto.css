@@ -2104,6 +2104,29 @@ body.product-page {
 }
 
 @media (max-width: 768px) {
+    .product-title-main {
+        font-size: 1.5rem;
+    }
+    
+    .product-price-current {
+        font-size: 1.7rem;
+    }
+    
+    .btn-buy-main,
+    .btn-whatsapp-main {
+        font-size: 0.85rem;
+    }
+    
+    .product-gallery-column {
+        padding: 1rem;
+    }
+    
+    .product-info-column {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
     .product-page-container {
         padding: 1rem 1rem 3rem;
     }
@@ -2297,5 +2320,6 @@ select:focus-visible {
 }
 
 /* FIM DO CSS PROFISSIONAL ESTILO LIVE!        */
+
 
 
