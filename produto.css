@@ -1030,3 +1030,74 @@
         display: block;
     }
 }
+
+/* Black Friday Countdown Fix */
+.bf-countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bf-time-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    min-width: 60px;
+}
+
+.bf-time-unit span:first-child {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff; /* ← BRANCO FORÇADO */
+    line-height: 1;
+}
+
+.bf-time-unit .unit-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8); /* ← BRANCO SEMI-TRANSPARENTE */
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+}
+
+.bf-countdown .sep {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0.25rem;
+}
+
+/* WhatsApp Float Button - VERSÃO CORRIGIDA */
+.whatsapp-float {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    background: #25D366 !important;
+    color: white !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important; /* ← AUMENTADO */
+    border: none !important;
+    padding: 0 !important;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6) !important;
+    background: #1fb855 !important;
+}
+
+.whatsapp-float svg {
+    width: 32px !important;
+    height: 32px !important;
+    fill: white !important;
+}
