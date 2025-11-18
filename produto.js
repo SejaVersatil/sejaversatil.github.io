@@ -349,10 +349,12 @@ if (mainImage) {
   const firstImage = images[0];
   
   if (isImageUrl(firstImage)) {
-    mainImage.style.backgroundImage = `url("${firstImage}")`;
-    mainImage.style.backgroundSize = 'cover';
-    mainImage.style.backgroundPosition = 'center';
-    mainImage.style.background = '';
+  mainImage.style.background = '';  // ← Limpar ANTES
+  mainImage.style.backgroundImage = `url("${firstImage}")`;
+  mainImage.style.backgroundSize = 'cover';
+  mainImage.style.backgroundPosition = 'center';
+  mainImage.style.backgroundRepeat = 'no-repeat';
+}
   } else if (isGradient(firstImage)) {
     mainImage.style.backgroundImage = '';
     mainImage.style.background = firstImage;
@@ -1066,6 +1068,7 @@ window.closeProductDetails = closeProductDetails;
    Final log
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
+
 
 
 
