@@ -156,108 +156,161 @@
 
   <!-- Main product area -->
   <main class="product-page-container" role="main">
-    <nav class="breadcrumb" aria-label="Você está aqui">
-      <a href="index.html">Início</a><span>›</span>
-      <a href="index.html#produtos">Produtos</a><span>›</span>
-      <span id="breadcrumbCategory">Categoria</span><span>›</span>
-      <span id="breadcrumbProduct">Produto</span>
-    </nav>
-
-    <section class="product-main-grid" aria-labelledby="detailsProductName">
-
-  <!-- Left: gallery ESTILO LIVE! -->
-  <div class="product-gallery-section">
-  <div class="gallery-container">
-    <!-- ✅ ORDEM: Thumbs ANTES da imagem principal -->
-    <div id="thumbnailList" class="gallery-thumbs" role="list"></div>
     
-    <div id="mainProductImage" 
-         class="gallery-main-image" 
-         role="img"
-         style="background-size: cover; background-position: center;">
+    <!-- GRID PRINCIPAL: 2 COLUNAS -->
+    <div class="product-page-grid">
+        
+        <!-- ========== COLUNA ESQUERDA: GALERIA ========== -->
+        <div class="product-gallery-column">
+            
+            <!-- Imagem 1 -->
+            <div class="product-gallery-image" id="galleryImage1">
+                <img src="" alt="Produto - Imagem 1" loading="eager">
+            </div>
+            
+            <!-- Imagem 2 -->
+            <div class="product-gallery-image" id="galleryImage2">
+                <img src="" alt="Produto - Imagem 2" loading="lazy">
+            </div>
+            
+            <!-- Imagens Ocultas (inicialmente escondidas) -->
+            <div class="product-gallery-hidden" id="galleryHidden" style="display: none;">
+                <!-- Outras imagens serão injetadas aqui via JS -->
+            </div>
+            
+            <!-- Botão "Mostrar Mais" -->
+            <button class="btn-show-more-images" id="btnShowMoreImages" onclick="toggleMoreImages()">
+                <span id="btnShowMoreText">MOSTRAR MAIS</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            
+        </div>
+        
+        <!-- ========== COLUNA DIREITA: INFORMAÇÕES ========== -->
+        <div class="product-info-column">
+            
+            <!-- BREADCRUMB -->
+            <nav class="product-breadcrumb" aria-label="Navegação">
+                <a href="index.html">Início</a>
+                <span>›</span>
+                <span id="breadcrumbProduct">Produto</span>
+            </nav>
+            
+            <!-- TÍTULO -->
+            <h1 class="product-title-main" id="productTitleMain">Nome do Produto</h1>
+            
+            <!-- PREÇOS -->
+            <div class="product-pricing-box">
+                <div class="product-price-current" id="productPriceCurrent">R$ 0,00</div>
+                <div class="product-price-installments" id="productPriceInstallments">
+                    Em até 10x de R$ 0,00 sem juros
+                </div>
+            </div>
+            
+            <!-- DESCRIÇÃO RESUMIDA -->
+            <div class="product-description-short" id="productDescriptionShort">
+                <p>Descrição do produto aparecerá aqui...</p>
+                <a href="#" class="link-see-more" onclick="showFullDescription(); return false;">
+                    Veja descrição completa ›
+                </a>
+            </div>
+            
+            <!-- SELETOR DE COR -->
+            <div class="product-selector-section">
+                <label class="product-selector-label">
+                    Cor: <span id="selectedColorDisplay">Selecione</span>
+                </label>
+                <div class="product-color-selector" id="productColorSelector">
+                    <!-- Cores injetadas via JS -->
+                </div>
+            </div>
+            
+            <!-- SELETOR DE TAMANHO -->
+            <div class="product-selector-section">
+                <label class="product-selector-label">
+                    Tamanho
+                </label>
+                <div class="product-size-selector" id="productSizeSelector">
+                    <!-- Tamanhos injetados via JS -->
+                </div>
+                <a href="#" class="link-size-guide" onclick="showSizeGuide(); return false;">
+                    Saiba mais
+                </a>
+            </div>
+            
+            <!-- CALCULADORA DE FRETE -->
+            <div class="product-shipping-section">
+                <label class="product-selector-label">
+                    Frete e entrega
+                    <a href="#" class="link-cep-help">Não sabe seu CEP?</a>
+                </label>
+                <div class="shipping-input-group">
+                    <input type="text" 
+                           id="cepInput" 
+                           placeholder="Digite seu CEP" 
+                           maxlength="9"
+                           class="shipping-input-field">
+                    <button class="shipping-btn-calculate" onclick="calculateShippingDetails()">
+                        APLICAR
+                    </button>
+                </div>
+                <div class="shipping-results-box" id="shippingResultsBox" style="display: none;">
+                    <!-- Resultados de frete aqui -->
+                </div>
+            </div>
+            
+            <!-- BOTÃO COMPRAR -->
+            <button class="btn-buy-main" onclick="addToCartFromDetails()">
+                COMPRAR
+            </button>
+            
+            <!-- BOTÃO WHATSAPP -->
+            <button class="btn-whatsapp-main" onclick="buyViaWhatsApp()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                COMPRE PELO WHATSAPP
+            </button>
+            
+            <!-- INFORMAÇÕES EXTRAS -->
+            <div class="product-info-badges">
+                <div class="info-badge-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                    <div>
+                        <strong>Cuidar do produto é torná-lo mais durável.</strong>
+                        <a href="#">Confira os cuidados com o produto.</a>
+                    </div>
+                </div>
+                
+                <div class="info-badge-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                    <div>
+                        <strong>A primeira troca é fácil e gratuita.</strong>
+                        <a href="#">Confira as opções de troca aqui.</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
     </div>
-  </div>
-</div>
-
-      <!-- Right: product info -->
-      <aside class="product-info-section" aria-labelledby="detailsProductName">
-        <h1 id="detailsProductName" class="product-title">Produto</h1>
-
-        <!-- Pricing -->
-        <div class="product-pricing" aria-live="polite">
-          <span id="detailsPriceOld" class="price-old-text" aria-hidden="true"></span>
-          <div class="price-main-row">
-            <strong id="detailsPriceNew" class="price-current">R$ 0,00</strong>
-            <span id="discountBadge" class="price-discount-badge" aria-hidden="true"></span>
-          </div>
-          <small id="detailsInstallments" class="price-installments" aria-hidden="true"></small>
-        </div>
-
-        <!-- Color selector -->
-        <div class="product-selector-group">
-          <label class="selector-label">COR: <span id="selectedColorName">Selecione</span></label>
-          <div id="colorSelector" class="color-options-grid" role="listbox" aria-label="Seleção de cores"></div>
-        </div>
-
-        <!-- Size selector -->
-        <div class="product-selector-group">
-          <label class="selector-label">TAMANHO: <span id="selectedSizeName">Selecione</span></label>
-          <div id="sizeSelector" class="size-options-grid" role="listbox" aria-label="Seleção de tamanhos"></div>
-          <a href="#" class="size-guide-link">Guia de Medidas</a>
-        </div>
-
-        <!-- Quantity -->
-        <div class="product-selector-group">
-          <label class="selector-label">QUANTIDADE:</label>
-          <div class="quantity-controls" role="group" aria-label="Controles de quantidade">
-            <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)" aria-label="Diminuir quantidade">−</button>
-            <input type="number" id="productQuantity" value="1" readonly aria-label="Quantidade do produto" />
-            <button class="qty-control-btn" type="button" onclick="changeQuantity(1)" aria-label="Aumentar quantidade">+</button>
-          </div>
-        </div>
-
-        <!-- Shipping -->
-        <div class="product-selector-group">
-          <label class="selector-label">CALCULAR FRETE:</label>
-          <div class="shipping-input-row">
-            <input id="zipCodeInput" class="shipping-input" type="text" placeholder="00000-000" maxlength="9" aria-label="CEP para cálculo de frete">
-            <button class="shipping-calc-btn" type="button" onclick="calculateShipping()">Calcular</button>
-          </div>
-          <div id="shippingResults" class="shipping-results" aria-live="polite"></div>
-        </div>
-
-        <!-- Actions -->
-        <div class="product-action-buttons">
-          <button class="btn btn-primary btn-add-to-cart" type="button" onclick="addToCartFromDetails()">
-            <svg width="18" height="18" aria-hidden="true"><circle cx="9" cy="16" r="1"></circle><circle cx="16" cy="16" r="1"></circle><path d="M2 2h4l2.68 8.39a2 2 0 0 0 2 1.61h6.72a2 2 0 0 0 2-1.61L22 7H6"></path></svg>
-            ADICIONAR AO CARRINHO
-          </button>
-
-          <button class="btn btn-ghost btn-buy-now" type="button" onclick="buyNow()">COMPRAR AGORA</button>
-        </div>
-
-        <!-- Highlights -->
-        <div class="product-features-list">
-          <div class="feature-badge">✔ Alta Compressão</div>
-          <div class="feature-badge">✔ Secagem Rápida</div>
-          <div class="feature-badge">✔ Proteção UV 50+</div>
-        </div>
-      </aside>
-
-    </section>
-
-    <!-- Description -->
-    <section class="product-description-section" aria-labelledby="descTitle">
-      <h3 id="descTitle">DESCRIÇÃO DO PRODUTO</h3>
-      <div id="productDescription" class="product-description" aria-live="polite"></div>
-    </section>
-
-    <!-- Related -->
-    <section class="related-products-section" aria-labelledby="relatedTitle">
-      <h3 id="relatedTitle">VOCÊ TAMBÉM PODE GOSTAR</h3>
-      <div id="relatedProductsGrid" class="related-products-grid" role="list"></div>
-    </section>
-  </main>
+    
+    <!-- DESCRIÇÃO COMPLETA (MODAL OU SEÇÃO) -->
+    <div class="product-full-description" id="productFullDescription" style="display: none;">
+        <button class="btn-close-description" onclick="closeFullDescription()">✕</button>
+        <h2>Descrição Completa</h2>
+        <div id="fullDescriptionContent"></div>
+    </div>
+    
+</main>
 
   <!-- Floating WhatsApp -->
   <a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
@@ -419,6 +472,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
