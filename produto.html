@@ -161,36 +161,25 @@
     <!-- ✅ NOVA ESTRUTURA (COPIAR E COLAR NO LUGAR) -->
 <div class="product-main-grid">
     
-    <!-- ========== COLUNA ESQUERDA: GALERIA ========== -->
-    <div class="product-gallery-column">
-        
-        <!-- Imagem 1 -->
-        <div class="product-gallery-image" id="galleryImage1">
-            <img src="" alt="Produto - Imagem 1">
+    <!-- GALERIA ESQUERDA -->
+    <div class="product-gallery-section">
+        <div class="gallery-container">
+            
+            <!-- Miniaturas Verticais -->
+            <div class="gallery-thumbs" id="thumbnailList">
+                <!-- Thumbnails serão injetadas aqui via JS -->
+            </div>
+            
+            <!-- Imagem Principal -->
+            <div class="gallery-main-image" id="mainProductImage">
+                <!-- Imagem principal aqui -->
+            </div>
+            
         </div>
-        
-        <!-- Imagem 2 -->
-        <div class="product-gallery-image" id="galleryImage2">
-            <img src="" alt="Produto - Imagem 2">
-        </div>
-        
-        <!-- Imagens escondidas (mostrar mais) -->
-        <div class="product-gallery-hidden" id="galleryHidden" style="display: none;">
-            <!-- Imagens 3+ serão inseridas aqui pelo JS -->
-        </div>
-        
-        <!-- Botão Mostrar Mais -->
-        <button class="btn-show-more-images" id="btnShowMoreImages" onclick="toggleMoreImages()" style="display: none;">
-            <span id="btnShowMoreText">MOSTRAR MAIS</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-        </button>
-        
     </div>
     
-    <!-- ========== COLUNA DIREITA: INFORMAÇÕES ========== -->
-    <div class="product-info-column">
+    <!-- INFORMAÇÕES DIREITA -->
+    <div class="product-info-section">
         
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
@@ -390,4 +379,5 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
