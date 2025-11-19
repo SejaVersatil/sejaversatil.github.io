@@ -146,10 +146,9 @@ body.product-page {
 .product-title,
 .product-name,
 #detailsProductName {
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.3rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    font-weight: 700;    
     letter-spacing: 1px;
     color: #000;
     margin: 0 0 0.75rem 0;
@@ -184,8 +183,8 @@ body.product-page {
 .price-current,
 .product-price,
 #detailsPriceNew {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 400;
     color: #000;
     letter-spacing: 0em;
 }
@@ -2085,6 +2084,7 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
 
 
