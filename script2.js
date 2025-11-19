@@ -485,67 +485,61 @@ async function inicializarProdutosPadrao() {
     }
 }
 
-// ==================== INICIALIZAÇÃO ====================
-
+// ==================== INICIALIZAÇÃO OTIMIZADA ====================
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Iniciando carregamento do site...');
+    console.log('🚀 Home Inicializando (Otimizado)...');
     
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.add('active');
-    }
+    // 1. Prioridade Visual: Carrega UI estática e Cache primeiro (LCP)
+    // Carrega configurações salvas se existirem
+    if (typeof loadSettings === 'function') loadSettings();
     
-    try {
-        console.log('📋 Carregando configurações...');
-        loadSettings();
-        
-        console.log('🛒 Carregando carrinho...');
-        loadCart();
-        
-        console.log('📦 Carregando produtos...');
+    // Inicia componentes visuais
+    if (typeof initHeroCarousel === 'function') initHeroCarousel(); 
+    if (typeof initBlackFridayCountdown === 'function') initBlackFridayCountdown();
+    
+    // Carrega carrinho e favoritos (Cache Local)
+    loadCart(); 
+    updateCartUI();
+    if (typeof updateFavoritesCount === 'function') updateFavoritesCount();
+
+    // 2. Remove o loading IMEDIATAMENTE para o usuário ver o site
+    const loader = document.getElementById('loadingOverlay');
+    if(loader) loader.classList.remove('active');
+
+    // 3. Carrega dados pesados em segundo plano (setTimeout 0)
+    // Isso libera a thread principal para o site responder ao toque imediatamente
+    setTimeout(async () => {
+        // Verifica Auth em segundo plano
+        auth.onAuthStateChanged(user => {
+            state.currentUser = user;
+            // Se for admin, atualiza stats
+            if (typeof updateAdminStats === 'function' && user) updateAdminStats(); 
+        });
+
+        // Carrega produtos do Banco de Dados
         await loadProducts();
         
-        console.log('🎨 Renderizando skeleton...');
+        // Scripts secundários (Monitores, Notificações, etc)
+        if (typeof setupConnectionMonitor === 'function') setupConnectionMonitor();
+        if (typeof setupCartAbandonmentTracking === 'function') setupCartAbandonmentTracking();
+        if (typeof setupPushNotifications === 'function') setupPushNotifications();
         
-        
-        setTimeout(() => {
-            console.log('✅ Renderizando produtos...');
-            renderProducts();
-            renderBestSellers();
-            updateCartUI();
-            updateFavoritesCount();
-            initHeroCarousel();
-            initBlackFridayCountdown();
-            setupConnectionMonitor();
-            setupCartAbandonmentTracking();
-            setupPushNotifications();
-            console.log('✅ Site carregado com sucesso!');
-        }, 100);
-        
-    } catch (error) {
-        console.error('❌ ERRO CRÍTICO ao inicializar:', error);
-        console.error('Stack trace:', error.stack);
-        showToast('Erro ao carregar o site. Recarregue a página.', 'error');
-        
-        // Mostrar erro na tela
-        const grid = document.getElementById('productsGrid');
-        if (grid) {
-            grid.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-                    <h2 style="color: #e74c3c; margin-bottom: 1rem;">❌ Erro ao Carregar</h2>
-                    <p style="color: #666; margin-bottom: 2rem;">${error.message}</p>
-                    <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; cursor: pointer; border-radius: 8px;">
-                        🔄 Recarregar Página
-                    </button>
-                </div>
-            `;
+        // Lógica de busca vinda de outra página (Ex: Veio da página do produto)
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search');
+        if (searchTerm) {
+            const headerInput = document.getElementById('headerSearchInput');
+            if(headerInput) {
+                headerInput.value = searchTerm;
+                // Pequeno delay para garantir que a renderização inicial acabou
+                setTimeout(() => {
+                    if (typeof performHeaderSearch === 'function') performHeaderSearch();
+                    const prodSection = document.getElementById('produtos');
+                    if(prodSection) prodSection.scrollIntoView({behavior: 'smooth'});
+                }, 500);
+            }
         }
-        
-    } finally {
-        if (loadingOverlay) {
-            loadingOverlay.classList.remove('active');
-        }
-    }
+    }, 0);
 });
 
 // ==================== LISTENER PARA BUSCA NO HEADER ====================
@@ -4200,4 +4194,5 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
