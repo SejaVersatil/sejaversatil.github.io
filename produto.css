@@ -481,10 +481,12 @@ body, .short-desc-text, .model-info-text {
 
 /* Títulos dos seletores (COR, TAMANHO...) */
 .selector-label {
-    font-weight: 700 !important; /* Bem negrito */
-    font-size: 0.75rem !important;
-    color: #000 !important;      /* Preto absoluto */
-    margin-bottom: 0.4rem !important; /* Cola o título nas opções */
+    font-size: 0.8125rem !important; /* ~13px */
+    font-weight: 700 !important;     /* Negrito */
+    color: #000 !important;
+    margin-bottom: 0.6rem !important;
+    text-transform: none !important; /* Removemos o CAIXA ALTA forçado */
+    letter-spacing: 0 !important;
 }
 
 /* Links pequenos (Tabela de medidas, Ver descrição) */
@@ -814,6 +816,7 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
 
 
