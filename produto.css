@@ -81,9 +81,9 @@ body.product-page {
 
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 65% 35% !important; /* Layout Live! */
-    gap: 4rem !important;
-    max-width: 1600px;
+    grid-template-columns: 68% 32% !important; /* Layout Live! */
+    gap: 2rem !important;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 2rem 3rem;
     align-items: start;
@@ -213,3 +213,4 @@ body.product-page {
     .cart-sidebar { width: 100%; right: -100%; }
     .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
 }
+
