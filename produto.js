@@ -231,21 +231,22 @@ function renderPrices() {
 /* =========================
    Galeria (Estilo Mosaico)
    ========================= */
+/* =========================
+   Galeria Mosaico com "Mostrar Mais"
+   ========================= */
 function renderGallery(specificImages = null) {
   const p = state.currentProduct;
   if (!p) return;
 
-  // Container principal (agora busca o ID correto do HTML novo)
-  const galleryContainer = document.getElementById('galleryContainer') || document.querySelector('.gallery-container');
-  if (!galleryContainer) {
-      console.warn('Galeria não encontrada no HTML');
-      return;
-  }
+  const galleryContainer = document.getElementById('galleryContainer');
+  const btnShowMore = document.getElementById('btnShowMore');
+
+  if (!galleryContainer) return;
 
   // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
-  // Decide quais imagens usar
+  // Define quais imagens usar
   let imagesToRender = specificImages;
   if (!imagesToRender) {
       imagesToRender = Array.isArray(p.images) && p.images.length
@@ -253,10 +254,16 @@ function renderGallery(specificImages = null) {
         : (p.image ? [p.image] : []);
   }
 
-  // Renderiza TODAS as imagens como items grandes
-  imagesToRender.forEach((img) => {
+  // Loop para criar as fotos
+  imagesToRender.forEach((img, index) => {
     const photoDiv = document.createElement('div');
-    photoDiv.className = 'gallery-photo-full'; // Classe do CSS novo
+    photoDiv.className = 'gallery-photo-full';
+
+    // Lógica LIVE!: Mostra apenas as 2 primeiras (index 0 e 1). 
+    // Oculta da 3ª em diante (index >= 2).
+    if (index >= 2) {
+        photoDiv.classList.add('gallery-hidden');
+    }
 
     if (isImageUrl(img)) {
       photoDiv.style.backgroundImage = `url("${img}")`;
@@ -268,6 +275,33 @@ function renderGallery(specificImages = null) {
 
     galleryContainer.appendChild(photoDiv);
   });
+
+  // Lógica do Botão Mostrar Mais
+  if (btnShowMore) {
+      // Se tivermos mais de 2 imagens, mostra o botão
+      if (imagesToRender.length > 2) {
+          btnShowMore.style.display = 'flex';
+          
+          // Evento de clique
+          btnShowMore.onclick = function() {
+              // Remove a classe 'gallery-hidden' de todas as fotos escondidas
+              const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-hidden');
+              hiddenPhotos.forEach(photo => {
+                  photo.classList.remove('gallery-hidden');
+                  // Pequena animação de fade (opcional)
+                  photo.style.opacity = '0';
+                  photo.style.transition = 'opacity 0.5s';
+                  requestAnimationFrame(() => photo.style.opacity = '1');
+              });
+              
+              // Esconde o botão após expandir
+              this.style.display = 'none';
+          };
+      } else {
+          // Se tiver 2 ou menos, não precisa de botão
+          btnShowMore.style.display = 'none';
+      }
+  }
 }
 
 /* =========================
@@ -869,5 +903,6 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
