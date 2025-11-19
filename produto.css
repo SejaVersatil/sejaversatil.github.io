@@ -2070,13 +2070,14 @@ select:focus-visible {
 }
 
 /* Imagem Principal - VERTICAL */
-.product-page-container .gallery-main-image {
+.product-page-container .gallery-main-image,
+#mainProductImage {
     width: 100% !important;
     aspect-ratio: 3/4 !important;
-    max-height: 600px !important; /* ← ADICIONE ESTA LINHA */
+    max-height: 650px !important;
     border-radius: 8px;
-    background-size: cover;
-    background-position: center;
+    background-size: cover !important;
+    background-position: center !important;
     background-repeat: no-repeat;
     background-color: #fafafa;
     border: 1px solid #f5f5f5;
@@ -2113,6 +2114,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
