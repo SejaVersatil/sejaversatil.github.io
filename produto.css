@@ -680,3 +680,27 @@ body, .short-desc-text, .model-info-text {
         display: none !important;
     }
 }
+
+.header-left .btn-favorite {
+    display: none; 
+}
+
+/* Só mostra no Mobile */
+@media (max-width: 768px) {
+    .header-left .btn-favorite {
+        display: flex;
+        margin-top: 5px;
+    }
+}
+
+/* --- CORREÇÃO 2: TAMANHOS CLICÁVEIS --- */
+.size-wrapper {
+    cursor: pointer; /* Mostra mãozinha em tudo */
+    pointer-events: auto; /* Garante eventos */
+}
+
+.size-option {
+    pointer-events: auto; /* O botão deve receber o clique */
+    position: relative;
+    z-index: 2; /* Fica acima de qualquer elemento decorativo */
+}
