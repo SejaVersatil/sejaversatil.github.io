@@ -355,11 +355,68 @@
     <div class="footer-bottom"><p>&copy; 2025 Seja Versátil. Todos os direitos reservados.</p></div>
   </footer>
 
+<div class="user-panel" id="userPanel">
+        <div class="user-panel-content">
+            <div class="user-panel-header">
+                <h3>Minha Conta</h3>
+                <button class="user-panel-close" onclick="closeUserPanel()">✕</button>
+            </div>
+            
+            <div class="user-panel-tabs" id="userPanelTabs">
+                <button class="user-panel-tab active" onclick="switchUserTab('login')">Entrar</button>
+                <button class="user-panel-tab" onclick="switchUserTab('register')">Cadastrar</button>
+            </div>
+
+            <div class="user-panel-body">
+                <div class="user-tab-content active" id="loginTab">
+                    <form onsubmit="userLogin(event)">
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="text" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
+                            <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
+                        </div>
+                        <button type="submit" class="form-btn">Entrar</button>
+                        <div class="form-error" id="loginError"></div>
+                    </form>
+                </div>
+
+                <div class="user-tab-content" id="registerTab">
+                    <form onsubmit="userRegister(event)">
+                        <div class="form-group"><label>Nome</label><input type="text" id="registerName" required></div>
+                        <div class="form-group"><label>E-mail</label><input type="email" id="registerEmail" required></div>
+                        <div class="form-group"><label>Senha</label><input type="password" id="registerPassword" required></div>
+                        <div class="form-group"><label>Confirmar Senha</label><input type="password" id="registerConfirmPassword" required></div>
+                        <button type="submit" class="form-btn">Cadastrar</button>
+                        <div class="form-error" id="registerError"></div>
+                        <div class="form-success" id="registerSuccess"></div>
+                    </form>
+                </div>
+
+                <div class="user-tab-content" id="userLoggedTab">
+                    <div class="user-logged-in">
+                        <h4>Olá, <span id="userName"></span></h4>
+                        <p id="userEmail"></p>
+                        <div class="user-actions">
+                            <button class="user-action-btn logout" onclick="userLogout()">Sair</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
   <div id="loadingOverlay" class="loading-overlay" aria-hidden="true"><div class="loading-spinner">⏳</div><div class="loading-text">Carregando...</div></div>
 
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
