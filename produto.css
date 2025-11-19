@@ -297,6 +297,79 @@ body.product-page {
     .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
 }
 
+/* Links pequenos abaixo do botão comprar */
+.secondary-actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
 
+.action-link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #666;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: underline;
+}
 
+.action-link:hover {
+    color: #000;
+}
 
+.action-link svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.5px;
+}
+
+/* Lista de Ícones de Confiança (Rodapé da Info) */
+.trust-badges-list {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.trust-badge {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.trust-badge svg {
+    width: 24px;
+    height: 24px;
+    color: #333; /* Cor do ícone */
+    flex-shrink: 0;
+}
+
+.badge-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.badge-text strong {
+    font-weight: 600;
+    color: #000;
+}
+
+.badge-text a {
+    color: #666;
+    text-decoration: underline;
+    font-weight: 400;
+    transition: color 0.2s;
+}
+
+.badge-text a:hover {
+    color: #000;
+}
