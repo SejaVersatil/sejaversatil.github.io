@@ -513,7 +513,7 @@ function renderDescription() {
   descEl.innerHTML = content;
 }
 /* =========================
-   Produtos relacionados (Corrigido: Imagens)
+   Produtos relacionados (Corrigido: Tamanho da Imagem)
    ========================= */
 async function renderRelatedProducts() {
   try {
@@ -547,20 +547,31 @@ async function renderRelatedProducts() {
       card.className = 'product-card';
       card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
 
-      // Correção de Imagem
+      // 1. Lógica robusta para encontrar a imagem
       let imgUrl = '';
-      if (Array.isArray(prod.images) && prod.images.length > 0) {
-          imgUrl = prod.images[0];
-      } else if (prod.image) {
-          imgUrl = prod.image;
-      }
+      if (Array.isArray(prod.images) && prod.images.length > 0) imgUrl = prod.images[0];
+      else if (prod.image) imgUrl = prod.image;
+      else if (prod.img) imgUrl = prod.img; // Tenta campo alternativo
+
+      // Debug: Mostra no console se achou a imagem
+      if (!imgUrl) console.warn('Produto sem imagem:', prod.name);
 
       const imgWrap = document.createElement('div');
       imgWrap.className = 'product-image';
+      // Garante proporção no container pai
+      imgWrap.style.aspectRatio = '3/4'; 
+      imgWrap.style.width = '100%';
+      imgWrap.style.position = 'relative';
       
-      // Cria o elemento visual da imagem
       const slide = document.createElement('div');
       slide.className = 'product-image-slide';
+      
+      // 2. CORREÇÃO PRINCIPAL: Força o preenchimento do espaço
+      slide.style.width = '100%';
+      slide.style.height = '100%';
+      slide.style.position = 'absolute';
+      slide.style.top = '0';
+      slide.style.left = '0';
       
       if (isImageUrl(imgUrl)) {
         slide.style.backgroundImage = `url("${imgUrl}")`;
@@ -572,22 +583,26 @@ async function renderRelatedProducts() {
         slide.style.display = 'flex';
         slide.style.alignItems = 'center';
         slide.style.justifyContent = 'center';
-        slide.innerHTML = '<span style="font-size:20px;color:#ccc;">📷</span>';
+        slide.innerHTML = '<span style="font-size:24px;color:#ccc;">📷</span>';
       }
       
       imgWrap.appendChild(slide);
 
       const info = document.createElement('div');
       info.className = 'product-info';
+      info.style.padding = '1rem'; // Garante espaçamento interno
       
       const h4 = document.createElement('h4');
       h4.textContent = prod.name || 'Produto';
+      h4.style.fontSize = '0.9rem';
+      h4.style.fontWeight = '600';
       h4.style.margin = '0 0 5px 0';
       
       const priceDiv = document.createElement('div');
       priceDiv.className = 'product-price';
       const priceSpan = document.createElement('span');
       priceSpan.className = 'price-new';
+      priceSpan.style.fontWeight = '700';
       
       const priceVal = safeNumber(prod.price, 0);
       priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
@@ -604,7 +619,6 @@ async function renderRelatedProducts() {
     console.error('Erro relacionados', err);
   }
 }
-
 /* =========================
    Carrinho & Checkout
    ========================= */
@@ -989,6 +1003,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
