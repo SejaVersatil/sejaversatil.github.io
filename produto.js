@@ -1067,4 +1067,41 @@ function updateFavoritesCount() {
 // Chama ao carregar para garantir que o número no topo esteja certo
 updateFavoritesCount();
 
+// 1. Busca: Redireciona para a Home com o termo pesquisado
+function performHeaderSearch() {
+    const searchInput = document.getElementById('headerSearchInput');
+    if (!searchInput) return;
+    const term = searchInput.value.trim();
+    if (term.length < 2) return;
+    window.location.href = `index.html?search=${encodeURIComponent(term)}`;
+}
 
+// Listener para tecla Enter na busca
+const headerSearchInput = document.getElementById('headerSearchInput');
+if (headerSearchInput) {
+    headerSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performHeaderSearch();
+    });
+}
+
+// 2. Usuário: Redireciona para o painel de login na Home
+function openUserPanel() {
+    window.location.href = 'index.html#login';
+}
+
+// 3. Favoritos: Redireciona para a lista de favoritos na Home
+function showFavorites() {
+    window.location.href = 'index.html#favorites'; // O script2.js deve tratar isso ou apenas abrir a home
+}
+
+// 4. Atualiza contador de favoritos (Visual)
+function updateFavoritesCount() {
+    const favCount = document.getElementById('favoritesCount');
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    if (favCount) {
+        favCount.textContent = favorites.length;
+        favCount.style.display = favorites.length > 0 ? 'flex' : 'none';
+    }
+}
+// Executa ao carregar
+updateFavoritesCount();
