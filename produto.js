@@ -257,9 +257,9 @@ function renderPrices() {
 }
 
 /* =========================
-   Galeria e thumbnails
+   Galeria (Estilo Mosaico)
    ========================= */
-function renderGallery() {
+function renderGallery(specificImages = null) {
   const p = state.currentProduct;
   if (!p) return;
 
@@ -270,15 +270,18 @@ function renderGallery() {
   // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
-  // Lista de imagens
-  const images = Array.isArray(p.images) && p.images.length
-    ? p.images
-    : (p.image ? [p.image] : []);
+  // Decide quais imagens usar (do parametro, ou do produto)
+  let imagesToRender = specificImages;
+  if (!imagesToRender) {
+      imagesToRender = Array.isArray(p.images) && p.images.length
+        ? p.images
+        : (p.image ? [p.image] : []);
+  }
 
-  // Renderiza TODAS as imagens como items grandes (Mosaico)
-  images.forEach((img) => {
+  // Renderiza TODAS as imagens como items grandes
+  imagesToRender.forEach((img) => {
     const photoDiv = document.createElement('div');
-    photoDiv.className = 'gallery-photo-full'; // Nova classe CSS criada acima
+    photoDiv.className = 'gallery-photo-full'; 
 
     if (isImageUrl(img)) {
       photoDiv.style.backgroundImage = `url("${img}")`;
@@ -292,64 +295,90 @@ function renderGallery() {
   });
 }
 
-  // 3️⃣ RENDERIZAR IMAGEM PRINCIPAL
-  const firstImage = images[0];
+/* =========================
+   Cores
+   ========================= */
+function renderColors() {
+  const colorSelector = $('colorSelector');
+  if (!colorSelector) return;
+  const p = state.currentProduct;
+  
+  // (Lógica de variants mantida...)
+  // ...Recuperação das cores disponíveis...
+  // Apenas certifique-se de que selectColor está correta abaixo
+  
+  // ... (Mantenha a lógica de map de availableColors das linhas 369-374 original) ...
+  // Vou reescrever apenas a parte de renderização e clique para garantir
 
-  if (isImageUrl(firstImage)) {
-    mainImage.style.background = '';
-    mainImage.style.backgroundImage = `url("${firstImage}")`;
-    mainImage.style.backgroundSize = 'cover';
-    mainImage.style.backgroundPosition = 'center';
-    mainImage.style.backgroundRepeat = 'no-repeat';
-  } 
-  else if (isGradient(firstImage)) {
-    mainImage.style.backgroundImage = '';
-    mainImage.style.background = firstImage;
-  } 
-  else {
-    mainImage.style.backgroundImage = '';
-    mainImage.style.background = '#f5f5f5';
+  const variants = state.productVariants[p.id] || [];
+  let availableColors = [];
+  if (Array.isArray(p.colors) && p.colors.length > 0) {
+    availableColors = p.colors.map(c => {
+      if (typeof c === 'string') return { name: c, hex: getColorHex(c), images: p.images || [] };
+      else return { name: c.name || 'Cor', hex: c.hex || getColorHex(c.name), images: c.images || p.images || [] };
+    });
+  } else {
+    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+    availableColors = unique.map(name => ({ name, hex: getColorHex(name), images: p.images || [] }));
   }
 
-  mainImage.classList.remove('image-fade-out');
+  if (!availableColors.length) {
+     // ... hide group ...
+     return;
+  }
 
-  // 4️⃣ RENDERIZAR MINIATURAS
-  thumbnailList.innerHTML = '';
+  colorSelector.innerHTML = '';
+  availableColors.forEach((colorObj, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    // Correção: Adiciona classe para ficar quadrado via CSS novo
+    btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`; 
+    btn.title = colorObj.name;
+    btn.dataset.color = colorObj.name;
 
-  images.forEach((img, index) => {
-    const thumb = document.createElement('div');
-    thumb.className = 'thumbnail-item';
+    const hex = colorObj.hex || getColorHex(colorObj.name);
+    btn.style.background = hex;
+    if (hex.toLowerCase() === '#ffffff') btn.style.border = '1px solid #ddd';
 
-    if (isImageUrl(img)) {
-      thumb.style.backgroundImage = `url("${img}")`;
-      thumb.style.backgroundSize = 'cover';
-      thumb.style.backgroundPosition = 'center';
-    } else if (isGradient(img)) {
-      thumb.style.background = img;
-    } else {
-      thumb.style.background = '#eee';
-    }
-
-    // Evento de clique para trocar imagem principal
-    thumb.addEventListener('click', () => {
-      mainImage.classList.add('image-fade-out');
-
-      setTimeout(() => {
-        if (isImageUrl(img)) {
-          mainImage.style.background = '';
-          mainImage.style.backgroundImage = `url("${img}")`;
-          mainImage.style.backgroundSize = 'cover';
-          mainImage.style.backgroundPosition = 'center';
-        } else if (isGradient(img)) {
-          mainImage.style.backgroundImage = '';
-          mainImage.style.background = img;
-        }
-        mainImage.classList.remove('image-fade-out');
-      }, 150);
-    });
-
-    thumbnailList.appendChild(thumb);
+    // Ao clicar, chama selectColor passando as imagens dessa cor
+    btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
+    colorSelector.appendChild(btn);
   });
+
+  // Seleção inicial (sem re-renderizar galeria para evitar loop, apenas define estado)
+  if (!state.selectedColor && availableColors.length) {
+      state.selectedColor = availableColors[0].name;
+      if (elExists('selectedColorName')) $('selectedColorName').textContent = state.selectedColor;
+  }
+}
+
+/* Chamada ao selecionar cor */
+function selectColor(colorName, specificImages = null) {
+  state.selectedColor = colorName;
+  
+  // Atualiza UI dos botões
+  document.querySelectorAll('.color-option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.color === colorName);
+  });
+  
+  if (elExists('selectedColorName')) $('selectedColorName').textContent = colorName;
+
+  // ATUALIZA A GALERIA INTEIRA (Mosaico)
+  // Se vier imagens específicas da cor, usa elas. Se não, tenta achar no objeto do produto.
+  if (specificImages && specificImages.length) {
+      renderGallery(specificImages);
+  } else {
+      // Tenta buscar na lista original se não foi passado
+      const p = state.currentProduct;
+      const found = p.colors && p.colors.find(c => (typeof c === 'string' ? c === colorName : c.name === colorName));
+      if (found && found.images && found.images.length) {
+          renderGallery(found.images);
+      } else {
+          renderGallery(); // Restaura padrão
+      }
+  }
+
+  renderSizes();
 }
 
 /* =========================
@@ -1101,6 +1130,7 @@ function buyViaWhatsApp() {
     const whatsappURL = `https://wa.me/5571991427103?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank');
 }
+
 
 
 
