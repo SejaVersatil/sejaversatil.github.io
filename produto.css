@@ -1635,8 +1635,6 @@ body.product-page {
     color: #000;
 }
 
-/* WHATSAPP FLOAT - ESTILO LIVE!               */
-
 /* WhatsApp Float Button */
 .whatsapp-float {
     position: fixed !important;
@@ -1759,8 +1757,6 @@ body.product-page {
     font-size: 0.8rem;
     color: #999;
 }
-
-/* RESPONSIVIDADE COMPLETA - LIVE!             */
 
 /* ========== RESPONSIVO ========== */
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -2009,7 +2005,7 @@ select:focus-visible {
     max-width: 1600px;
     margin: 0 auto;
     padding: 2rem 3rem;
-    align-items: start; /* Essencial para o sticky da lateral funcionar */
+    align-items: start;
     position: relative;
 }
 
@@ -2020,7 +2016,6 @@ select:focus-visible {
     width: 100%;
 }
 
-/* Container Interno da Galeria (Mosaico de Fotos) - CORRIGIDO */
 .gallery-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr; /* Duas imagens lado a lado */
@@ -2029,8 +2024,6 @@ select:focus-visible {
     height: auto;
 }
 
-/* Nova Classe para as Fotos do Mosaico (Substitui thumbnails e main-image) */
-/* IMPORTANTE: O JavaScript deve gerar divs com esta classe agora */
 .gallery-photo-full {
     width: 100%;
     aspect-ratio: 3/4; /* Proporção Retrato */
@@ -2042,7 +2035,6 @@ select:focus-visible {
     background-color: #f5f5f5; /* Placeholder enquanto carrega */
 }
 
-/* A primeira foto ocupa as duas colunas (Destaque) - Padrão visual Live! */
 .gallery-photo-full:first-child {
     grid-column: span 2;
 }
@@ -2050,45 +2042,25 @@ select:focus-visible {
 /* ================= RESPONSIVIDADE MOBILE ================= */
 @media (max-width: 1024px) {
     .product-page-container .product-main-grid {
-        grid-template-columns: 1fr !important; /* Volta para uma coluna única */
+        grid-template-columns: 1fr !important;
         gap: 2rem !important;
         padding: 1rem;
     }
 
     .product-gallery-section {
-        position: static; /* Remove sticky no mobile */
+        position: static;
+        margin-bottom: 1rem;
     }
 
     .gallery-container {
-        display: flex;
-        flex-direction: column-reverse; /* Miniaturas EMBAIXO da foto principal */
-        gap: 12px;
-    }
-
-    .gallery-thumbs {
-        flex-direction: row !important; /* Volta para horizontal */
-        overflow-x: auto;
-        overflow-y: hidden;
-        width: 100%;
-        max-height: none;
-        padding-bottom: 10px;
-    }
-
-    .thumbnail-item {
-        width: 70px; /* Tamanho fixo menor para mobile */
-        height: 94px;
+        display: flex !important;
+        flex-direction: column; /* Empilha uma foto embaixo da outra */
+        gap: 10px;
     }
     
-    /* Ajuste da rolagem horizontal no mobile */
-    .gallery-thumbs::-webkit-scrollbar {
-        height: 4px;
-        width: auto;
+
+    .gallery-photo-full {
+        aspect-ratio: 3/4;
+        width: 100%;
     }
 }
-
-
-
-
-
-
-
