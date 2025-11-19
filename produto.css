@@ -419,3 +419,87 @@ body.product-page {
 /* Cores dos avisos */
 .stock-msg.warning { color: #e67e22; } /* Laranja para últimas */
 .stock-msg.error { color: #999; text-decoration: none; } /* Cinza para esgotado */
+
+
+/* ======================================================= */
+/* AJUSTES FINAIS: COMPACTAÇÃO E ESPESSURA DE FONTE (LIVE!) */
+/* ======================================================= */
+
+/* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
+.product-info-section {
+    gap: 0.8rem !important; /* Reduz drasticamente o espaço entre blocos */
+}
+
+/* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
+.product-selector-group {
+    padding-bottom: 0.8rem !important; /* Menos espaço interno */
+    margin-bottom: 0 !important;       /* Remove margem extra */
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
+.product-title {
+    margin-bottom: 0.2rem !important; /* Cola o título no preço */
+}
+
+.product-pricing {
+    margin-bottom: 0.5rem !important;
+    gap: 0.1rem !important;
+}
+
+.short-description-container {
+    margin-bottom: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+}
+
+/* 3. ENGROSSAR FONTES (Fim das letras finas) */
+
+/* Textos gerais (Descrição, infos) */
+body, .short-desc-text, .model-info-text {
+    font-weight: 500 !important; /* Muda de Normal(400) para Medium(500) */
+    color: #333 !important;      /* Garante um cinza escuro quase preto */
+}
+
+/* Títulos dos seletores (COR, TAMANHO...) */
+.selector-label {
+    font-weight: 700 !important; /* Bem negrito */
+    font-size: 0.75rem !important;
+    color: #000 !important;      /* Preto absoluto */
+    margin-bottom: 0.4rem !important; /* Cola o título nas opções */
+}
+
+/* Links pequenos (Tabela de medidas, Ver descrição) */
+.view-full-desc, 
+.size-guide-link, 
+.action-link, 
+.badge-text a {
+    font-weight: 600 !important; /* Semibold */
+    text-decoration: underline;
+}
+
+/* Textos de "Últimas unidades" */
+.stock-msg {
+    font-weight: 700 !important; /* Negrito */
+}
+
+/* Botões de Tamanho */
+.size-option {
+    font-weight: 600 !important; /* Letra do tamanho mais grossa */
+}
+
+/* Preço */
+.price-current {
+    font-weight: 500 !important; /* Preço mais sólido */
+}
+
+/* Texto de Parcelamento */
+.price-installments {
+    font-weight: 500 !important;
+    color: #555 !important;
+    font-size: 0.8rem !important;
+}
+
+/* Ícones de confiança (Rodapé) */
+.badge-text strong {
+    font-weight: 700 !important;
+}
