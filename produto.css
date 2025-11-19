@@ -2023,8 +2023,8 @@ select:focus-visible {
 
 .gallery-container {
     display: grid;
-    grid-template-columns: 1fr;  /* Uma coluna só */
-    grid-template-rows: 1fr auto;  /* Imagem grande em cima, miniaturas embaixo */
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
     gap: 16px;
     width: 100%;
 }
@@ -2116,6 +2116,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
