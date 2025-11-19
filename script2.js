@@ -106,57 +106,6 @@ function renderProducts() {
     }).join('');
 }
 
-// ==================== RENDER BEST SELLERS (Faltou esta função) ====================
-function renderBestSellers() {
-    const bestSellersGrid = document.getElementById('bestSellersGrid');
-    if (!bestSellersGrid) return;
-
-    // Filtra produtos que têm "Preço Antigo" (Promoção) para serem os Best Sellers
-    // Pega apenas os 6 primeiros
-    const bestSellers = state.products.filter(p => p.oldPrice).slice(0, 6);
-    
-    if (bestSellers.length === 0) {
-        bestSellersGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:#999;">Nenhum destaque no momento.</div>';
-        return;
-    }
-    
-    bestSellersGrid.innerHTML = bestSellers.map(product => {
-        // LÓGICA DE IMAGEM ROBUSTA (Mesma do renderProducts)
-        let imgUrl = '';
-        if (Array.isArray(product.images) && product.images.length > 0) imgUrl = product.images[0];
-        else if (product.image) imgUrl = product.image;
-        else if (product.img) imgUrl = product.img;
-
-        // Fallback se não tiver imagem
-        if (!imgUrl) imgUrl = 'https://via.placeholder.com/400x500?text=Sem+Foto';
-        
-        const price = parseFloat(product.price) || 0;
-        const oldPrice = parseFloat(product.oldPrice) || 0;
-        
-        return `
-            <div class="product-card" onclick="window.location.href='produto.html?id=${product.id}'">
-                <div class="product-image">
-                    <img src="${imgUrl}" alt="${product.name}" loading="lazy" 
-                         onerror="this.src='https://via.placeholder.com/400x500?text=Erro+Img'">
-                    
-                    ${product.badge ? `<span class="product-badge" style="position:absolute;top:10px;left:10px;background:black;color:white;padding:5px;">${product.badge}</span>` : ''}
-                    
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); quickAddToCart('${product.id}')">
-                        ADICIONAR AO CARRINHO
-                    </button>
-                </div>
-                <div class="product-info">
-                    <h4>${product.name}</h4>
-                    <div class="product-price">
-                        ${oldPrice > price ? `<span class="price-old">R$ ${oldPrice.toFixed(2)}</span>` : ''}
-                        <span class="price-new">R$ ${price.toFixed(2)}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
 // ==================== ADMIN PANEL (RESTAURADO) ====================
 function openUserPanel() {
     document.getElementById('userPanel').classList.add('active');
@@ -326,5 +275,3 @@ function initBlackFridayCountdown() {
     // Mesma lógica do produto.js
     document.getElementById('bfDays').textContent = '11'; 
 }
-
-
