@@ -1020,16 +1020,49 @@ window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
 
+/* =============================================================== */
+/* LIGAÇÃO DE CABEÇALHO (HEADER) - COMPATIBILIDADE COM HOME       */
+/* =============================================================== */
 
+// 1. Fazer a Busca do Cabeçalho funcionar na página de produto
+function performHeaderSearch() {
+    const searchInput = document.getElementById('headerSearchInput');
+    if (!searchInput) return;
+    
+    const term = searchInput.value.trim();
+    if (term.length < 2) return;
 
+    // Redireciona para a Home com o termo de busca na URL
+    // O script2.js da Home vai ler isso e filtrar automaticamente
+    window.location.href = `index.html?search=${encodeURIComponent(term)}`;
+}
 
+// Adicionar listener para a tecla Enter na busca
+document.addEventListener('DOMContentLoaded', () => {
+    const headerInput = document.getElementById('headerSearchInput');
+    if (headerInput) {
+        headerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performHeaderSearch();
+        });
+    }
+});
 
+// 2. Redirecionar Ícone de Usuário para a Home (onde está o Painel)
+// Substitui a chamada de função que não existe nesta página
+function openUserPanel() {
+    window.location.href = 'index.html#login';
+}
 
-
-
-
-
-
-
-
+// 3. Sincronizar Favoritos Visualmente
+function updateFavoritesCount() {
+    const favCount = document.getElementById('favoritesCount');
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    
+    if (favCount) {
+        favCount.textContent = favorites.length;
+        favCount.style.display = favorites.length > 0 ? 'flex' : 'none';
+    }
+}
+// Chama ao carregar para garantir que o número no topo esteja certo
+updateFavoritesCount();
 
