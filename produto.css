@@ -738,142 +738,58 @@ body, .short-desc-text, .model-info-text {
     pointer-events: auto;
 }
 
-/* ======================================================= */
-/* CORREÇÃO: COLUNA DIREITA FIXA (STICKY) AO ROLAR */
-/* ======================================================= */
+/* ========================================== */
+/* CORREÇÃO DEFINITIVA E LIMPA DO STICKY      */
+/* ========================================== */
 
-/* 1. Ajuste no Container Pai (Grid) */
-/* O align-items: start é ESSENCIAL. Sem ele, a coluna estica e o sticky não funciona */
-.product-page-container .product-main-grid {
-    align-items: start !important; 
-    overflow: visible !important; /* Garante que nada bloqueie o scroll */
-}
-
-/* 2. Ajuste na Coluna Direita (Informações) */
-.product-info-section {
-    position: -webkit-sticky !important; /* Para Safari */
-    position: sticky !important;         /* Padrão */
-    
-    /* Define a distância do topo quando ela travar */
-    /* 100px é seguro para não ficar embaixo do seu Header */
-    top: 100px !important; 
-    
-    /* Garante que a coluna tenha apenas a altura do seu conteúdo */
-    height: fit-content !important; 
-    
-    /* Garante que fique acima de elementos decorativos se houver */
-    z-index: 50; 
-}
-
-/* No Mobile, desativa o sticky para não atrapalhar */
-@media (max-width: 768px) {
-    .product-info-section {
-        position: relative !important;
-        top: auto !important;
-        height: auto !important;
-    }
-}
-
-/* ======================================================= */
-/* FIX DEFINITIVO: COLUNA DIREITA STICKY (GRUDENTA) */
-/* ======================================================= */
-
-/* 1. Libera o fluxo dos pais (CRUCIAL) */
+/* 1. Desbloqueia a rolagem nos pais (CRUCIAL) */
 html, body {
-    overflow-x: clip; /* Melhor que hidden para sticky */
-}
-
-.product-page-container {
-    overflow: visible !important; /* Garante que o sticky funcione */
+    overflow-x: clip !important; /* Moderno: evita rolagem lateral sem quebrar sticky */
+    overflow-y: visible !important;
     height: auto !important;
 }
 
-/* 2. Configura o Grid corretamente */
+/* 2. Garante que os containers do grid não cortem o conteúdo */
+.product-page-container,
+.product-main-grid {
+    overflow: visible !important;
+    transform: none !important;
+}
+
+/* 3. Configuração do Grid */
 .product-main-grid {
     display: grid !important;
-    align-items: start !important; /* Garante trilho para deslizar */
+    align-items: start !important; /* Garante que a coluna direita possa deslizar */
     position: relative !important;
-    overflow: visible !important;
 }
 
-/* 3. Configura a Coluna Direita */
-.product-info-section {
-    /* Garante compatibilidade total */
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    
-    /* Ponto de parada (Top) */
-    top: 20px !important; /* Gruda 20px do topo da tela */
-    
-    /* Altura ajustada */
-    height: fit-content !important;
-    max-height: 100vh; /* Opcional: limita altura se conteúdo for muito longo */
-    
-    /* Z-Index para ficar acima */
-    z-index: 100;
-    
-    /* Padding para não colar no conteúdo */
-    padding-top: 1rem; 
-}
-
-/* Desativa sticky no mobile (pois vira uma coluna só) */
-@media (max-width: 1024px) {
-    .product-info-section {
-        position: relative !important;
-        top: auto !important;
-        z-index: 1;
-    }
-}
-
-/* ======================================================= */
-/* CORREÇÃO FINAL E DEFINITIVA DO STICKY (GRUDAR LATERAL)  */
-/* ======================================================= */
-
-/* 1. Forçar visibilidade nos pais (Obrigatório para Sticky funcionar) */
-html, body {
-    overflow: visible !important;
-    overflow-x: hidden !important; /* Evita rolagem lateral, mas permite sticky */
-    height: auto !important;
-}
-
-/* 2. Garantir que nenhum container bloqueie o scroll */
-main, 
-.product-page-container, 
-.product-main-grid {
-    overflow: visible !important;
-    transform: none !important; /* Transform também quebra sticky */
-    height: auto !important;
-}
-
-/* 3. Configuração do Grid para permitir deslizamento */
-.product-main-grid {
-    display: grid !important;
-    align-items: start !important; /* OBRIGATÓRIO: Define que as colunas têm alturas diferentes */
-}
-
-/* 4. A Coluna Direita que deve grudar */
+/* 4. A Coluna Direita (Sticky) */
 .product-info-section {
     display: flex !important;
     flex-direction: column !important;
     
     /* Ativa o Sticky */
-    position: -webkit-sticky !important; /* Safari */
-    position: sticky !important;         /* Chrome/Firefox/Edge */
+    position: -webkit-sticky !important;
+    position: sticky !important;
     
-    /* Distância do topo (ajustado para não ficar embaixo do Header) */
-    top: 110px !important; 
+    /* Ajuste a distância do topo conforme a altura do seu menu */
+    top: 90px !important; 
     
-    /* A coluna deve ter o tamanho do conteúdo, não da tela */
-    height: fit-content !important; 
+    /* Garante que ela ocupe apenas o espaço necessário */
+    height: fit-content !important;
     
     z-index: 90 !important;
-    padding-bottom: 50px !important;
+    padding-bottom: 2rem !important;
 }
 
-/* Desativa no Mobile (pois lá vira uma coluna só) */
+/* 5. Mobile: Desliga o sticky (pois vira uma coluna só) */
 @media (max-width: 1024px) {
     .product-info-section {
         position: static !important;
         top: auto !important;
+    }
+    /* Volta overflow normal no mobile */
+    html, body {
+        overflow-x: hidden !important;
     }
 }
