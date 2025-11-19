@@ -513,7 +513,7 @@ function renderDescription() {
   descEl.innerHTML = content;
 }
 /* =========================
-   Produtos relacionados (Corrigido: Tamanho da Imagem)
+   Produtos relacionados (CORRIGIDO E ROBUSTO)
    ========================= */
 async function renderRelatedProducts() {
   try {
@@ -523,6 +523,7 @@ async function renderRelatedProducts() {
     const relatedGrid = $('relatedProductsGrid');
     if (!relatedGrid) return;
 
+    // Busca produtos da mesma categoria
     const relatedSnapshot = await db.collection('produtos')
         .where('category', '==', p.category)
         .limit(5)
@@ -530,6 +531,7 @@ async function renderRelatedProducts() {
 
     const related = [];
     relatedSnapshot.forEach(doc => {
+      // Exclui o produto atual da lista
       if (doc.id !== p.id) {
           related.push({ id: doc.id, ...(doc.data() || {}) });
       }
@@ -542,57 +544,63 @@ async function renderRelatedProducts() {
 
     relatedGrid.innerHTML = '';
     
+    // Pega até 4 produtos para exibir
     related.slice(0, 4).forEach(prod => {
-      console.log('Carregando Sugestão:', prod.name); // LOG PARA DEBUG
-
       const card = document.createElement('div');
       card.className = 'product-card';
       card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
       card.style.cursor = 'pointer';
 
-      // 1. Busca a URL da imagem (Lógica Prioritária)
+      // --- LÓGICA DE IMAGEM CORRIGIDA ---
       let imgUrl = '';
-      if (Array.isArray(prod.images) && prod.images.length > 0) imgUrl = prod.images[0];
-      else if (prod.image) imgUrl = prod.image;
-      else if (prod.img) imgUrl = prod.img; 
+      // 1. Prioridade: Array de imagens
+      if (Array.isArray(prod.images) && prod.images.length > 0) {
+          imgUrl = prod.images[0];
+      } 
+      // 2. Fallback: String única 'image'
+      else if (prod.image) {
+          imgUrl = prod.image;
+      }
+      // 3. Fallback final: String 'img' (caso exista legado)
+      else if (prod.img) {
+          imgUrl = prod.img;
+      }
 
-      console.log('URL encontrada:', imgUrl); // LOG PARA DEBUG
+      console.log('Sugestão:', prod.name, 'URL:', imgUrl); // Debug no console
 
-      // 2. Cria o container da imagem
+      // Container da Imagem
       const imgWrap = document.createElement('div');
       imgWrap.className = 'product-image';
       imgWrap.style.width = '100%';
-      imgWrap.style.aspectRatio = '3/4'; // Garante o formato retrato
+      imgWrap.style.aspectRatio = '3/4';
       imgWrap.style.position = 'relative';
-      imgWrap.style.overflow = 'hidden';
-      imgWrap.style.backgroundColor = '#f5f5f5'; // Fundo cinza claro enquanto carrega
+      imgWrap.style.backgroundColor = '#f5f5f5'; // Fundo cinza enquanto carrega
 
-      // 3. Cria a TAG IMG (Mais seguro que background-image)
+      // Elemento de Imagem (TAG IMG para maior compatibilidade)
       const imgElem = document.createElement('img');
+      imgElem.style.width = '100%';
+      imgElem.style.height = '100%';
+      imgElem.style.objectFit = 'cover';
+      imgElem.style.display = 'block';
       
       if (imgUrl && imgUrl.trim() !== '') {
           imgElem.src = imgUrl;
-          imgElem.alt = prod.name;
-          imgElem.style.width = '100%';
-          imgElem.style.height = '100%';
-          imgElem.style.objectFit = 'cover'; // Faz a imagem preencher sem esticar
-          imgElem.style.display = 'block';
+          imgElem.alt = prod.name || 'Produto';
           
-          // Se der erro ao carregar a imagem (link quebrado), esconde e mostra placeholder
+          // Se der erro ao carregar a URL (quebrada), mostra ícone
           imgElem.onerror = function() {
-              console.warn('Imagem quebrada para:', prod.name);
               this.style.display = 'none';
-              imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">📷</div>';
+              imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:24px;">📷</div>';
           };
       } else {
-          // Sem URL definida
+          // Se não tiver URL nenhuma
           imgElem.style.display = 'none';
-          imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">Sem Foto</div>';
+          imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:12px;">Sem Foto</div>';
       }
       
       imgWrap.appendChild(imgElem);
 
-      // 4. Informações do Produto
+      // Informações
       const info = document.createElement('div');
       info.className = 'product-info';
       info.style.padding = '1rem';
@@ -1011,6 +1019,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
