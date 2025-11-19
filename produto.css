@@ -737,3 +737,39 @@ body, .short-desc-text, .model-info-text {
 .size-option {
     pointer-events: auto;
 }
+
+/* ======================================================= */
+/* CORREÇÃO: COLUNA DIREITA FIXA (STICKY) AO ROLAR */
+/* ======================================================= */
+
+/* 1. Ajuste no Container Pai (Grid) */
+/* O align-items: start é ESSENCIAL. Sem ele, a coluna estica e o sticky não funciona */
+.product-page-container .product-main-grid {
+    align-items: start !important; 
+    overflow: visible !important; /* Garante que nada bloqueie o scroll */
+}
+
+/* 2. Ajuste na Coluna Direita (Informações) */
+.product-info-section {
+    position: -webkit-sticky !important; /* Para Safari */
+    position: sticky !important;         /* Padrão */
+    
+    /* Define a distância do topo quando ela travar */
+    /* 100px é seguro para não ficar embaixo do seu Header */
+    top: 100px !important; 
+    
+    /* Garante que a coluna tenha apenas a altura do seu conteúdo */
+    height: fit-content !important; 
+    
+    /* Garante que fique acima de elementos decorativos se houver */
+    z-index: 50; 
+}
+
+/* No Mobile, desativa o sticky para não atrapalhar */
+@media (max-width: 768px) {
+    .product-info-section {
+        position: relative !important;
+        top: auto !important;
+        height: auto !important;
+    }
+}
