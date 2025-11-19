@@ -41,7 +41,7 @@ body.product-page {
     color: #666;
     flex-wrap: wrap;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     font-weight: 400;
 }
 
@@ -2087,16 +2087,22 @@ select:focus-visible {
 
 @media (max-width: 768px) {
     .gallery-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr;  /* Mobile: tudo vertical */
         gap: 12px;
     }
     
     .gallery-thumbs {
-        flex-direction: row;
+        flex-direction: row;  /* Mobile: horizontal */
         overflow-x: auto;
         overflow-y: visible;
         max-height: none;
-        gap: 8px;
+        padding-right: 0;
+        padding-bottom: 8px;
+    }
+    
+    .gallery-thumbs::-webkit-scrollbar {
+        height: 4px;
+        width: auto;
     }
     
     .thumbnail-item {
@@ -2105,5 +2111,6 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
