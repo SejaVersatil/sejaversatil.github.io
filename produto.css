@@ -503,3 +503,138 @@ body, .short-desc-text, .model-info-text {
 .badge-text strong {
     font-weight: 700 !important;
 }
+
+/* ======================================================= */
+/* MOBILE LIVE! STYLE (Baseado no Vídeo)                   */
+/* ======================================================= */
+
+@media (max-width: 768px) {
+    
+    /* 1. GALERIA HORIZONTAL (SLIDER) */
+    .product-page-container .product-main-grid {
+        padding: 0 !important; /* Remove padding lateral para foto encostar na borda */
+        gap: 1rem !important;
+    }
+
+    .product-gallery-section {
+        width: 100% !important;
+        overflow: hidden; /* Impede scroll da página inteira */
+        position: relative;
+    }
+
+    .gallery-container {
+        display: flex !important; /* Transforma em linha */
+        flex-direction: row !important;
+        overflow-x: auto; /* Permite rolagem horizontal */
+        scroll-snap-type: x mandatory; /* Efeito de "travar" na foto */
+        gap: 0 !important;
+        -webkit-overflow-scrolling: touch;
+        
+        /* Esconder barra de rolagem */
+        scrollbar-width: none; 
+        -ms-overflow-style: none;
+    }
+    
+    .gallery-container::-webkit-scrollbar { 
+        display: none; 
+    }
+
+    .gallery-photo-full {
+        min-width: 100%; /* Ocupa tela toda */
+        width: 100%;
+        aspect-ratio: 3/4; /* Formato retrato */
+        scroll-snap-align: center;
+        border-radius: 0;
+    }
+
+    /* 2. ÍCONES FLUTUANTES (FPU 50+) */
+    /* Precisamos garantir que apareçam no mobile sobre a foto */
+    .tech-icons-floating {
+        display: flex !important; /* Força exibição */
+        position: absolute;
+        top: 20px;
+        right: 10px; /* Canto direito */
+        left: auto;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 10;
+    }
+    
+    .tech-icon {
+        background: rgba(255,255,255,0.8);
+        border-radius: 50%;
+        padding: 5px;
+        width: 35px;
+        height: 35px;
+    }
+
+    /* 3. CABEÇALHO PRODUTO (LADO A LADO) */
+    .product-info-section {
+        padding: 0 1.5rem 2rem !important; /* Adiciona padding de volta apenas na info */
+    }
+
+    .product-header-mobile-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        gap: 10px;
+    }
+
+    .header-left-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    /* Título à esquerda */
+    .product-title {
+        font-size: 1.1rem !important; /* Tamanho ajustado mobile */
+        line-height: 1.3;
+    }
+
+    /* Botão Favoritos */
+    .btn-favorite-link {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.75rem;
+        color: #666;
+        padding: 0;
+        font-weight: 400;
+    }
+
+    /* Preço à direita */
+    .product-pricing {
+        text-align: right;
+        align-items: flex-end;
+        min-width: 100px; /* Garante espaço */
+        margin-bottom: 0 !important;
+    }
+    
+    .price-main-row {
+        justify-content: flex-end;
+    }
+    
+    .price-current {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+    }
+    
+    .price-installments {
+        font-size: 0.7rem !important;
+    }
+
+    /* 4. AJUSTES GERAIS */
+    .product-selector-group {
+        border-bottom: none !important; /* Live mobile é mais limpo */
+    }
+    
+    .secondary-actions {
+        justify-content: flex-start;
+        gap: 1.5rem;
+    }
+}
