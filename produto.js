@@ -1067,12 +1067,23 @@ function updateFavoritesCount() {
 // Chama ao carregar para garantir que o número no topo esteja certo
 updateFavoritesCount();
 
-// 1. Busca: Redireciona para a Home com o termo pesquisado
+/* =============================================================== */
+/* SISTEMA DE BUSCA E LOGIN (Nativo na Página de Produto)          */
+/* =============================================================== */
+
+// --- 1. BUSCA INTELIGENTE ---
+// Agora só redireciona quando o usuário confirma a busca
 function performHeaderSearch() {
     const searchInput = document.getElementById('headerSearchInput');
     if (!searchInput) return;
+    
     const term = searchInput.value.trim();
-    if (term.length < 2) return;
+    if (term.length < 2) {
+        showToast('Digite pelo menos 2 letras', 'info');
+        return;
+    }
+
+    // Redireciona para a Home filtrada
     window.location.href = `index.html?search=${encodeURIComponent(term)}`;
 }
 
@@ -1084,17 +1095,141 @@ if (headerSearchInput) {
     });
 }
 
-// 2. Usuário: Redireciona para o painel de login na Home
+// --- 2. SISTEMA DE USUÁRIO (LOGIN/CADASTRO) ---
+
 function openUserPanel() {
-    window.location.href = 'index.html#login';
+    // Se já estiver logado, mostra a aba de logado
+    if (auth.currentUser) {
+        showLoggedInView(auth.currentUser);
+    }
+    document.getElementById('userPanel').classList.add('active');
 }
 
-// 3. Favoritos: Redireciona para a lista de favoritos na Home
+function closeUserPanel() {
+    document.getElementById('userPanel').classList.remove('active');
+}
+
+function switchUserTab(tab) {
+    document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.user-tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (tab === 'login') {
+        document.querySelectorAll('.user-panel-tab')[0].classList.add('active');
+        document.getElementById('loginTab').classList.add('active');
+    } else {
+        document.querySelectorAll('.user-panel-tab')[1].classList.add('active');
+        document.getElementById('registerTab').classList.add('active');
+    }
+}
+
+// Login com Firebase
+async function userLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPassword').value;
+    const errorMsg = document.getElementById('loginError');
+    
+    try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        showToast('Login realizado com sucesso!', 'success');
+        // O listener onAuthStateChanged vai atualizar a UI
+    } catch (err) {
+        console.error(err);
+        errorMsg.textContent = 'E-mail ou senha incorretos';
+        errorMsg.classList.add('active');
+    }
+}
+
+// Cadastro com Firebase
+async function userRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const pass = document.getElementById('registerPassword').value;
+    const confirmPass = document.getElementById('registerConfirmPassword').value;
+    const errorMsg = document.getElementById('registerError');
+    
+    if(pass !== confirmPass) {
+        errorMsg.textContent = 'As senhas não coincidem';
+        errorMsg.classList.add('active');
+        return;
+    }
+
+    try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+        const user = userCred.user;
+        await user.updateProfile({ displayName: name });
+        
+        // Salvar no Firestore (opcional, para manter padrão)
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showToast('Conta criada! Bem-vindo(a)', 'success');
+        // O listener onAuthStateChanged vai atualizar a UI
+    } catch (err) {
+        console.error(err);
+        errorMsg.textContent = 'Erro ao criar conta: ' + err.message;
+        errorMsg.classList.add('active');
+    }
+}
+
+function userLogout() {
+    auth.signOut();
+    showToast('Você saiu da conta', 'info');
+    closeUserPanel();
+}
+
+// Listener de Estado de Autenticação (Atualiza UI automaticamente)
+auth.onAuthStateChanged(user => {
+    if (user) {
+        showLoggedInView(user);
+    } else {
+        // Reseta para tela de login
+        document.getElementById('userPanelTabs').style.display = 'flex';
+        document.getElementById('loginTab').classList.add('active');
+        document.getElementById('userLoggedTab').classList.remove('active');
+    }
+});
+
+function showLoggedInView(user) {
+    document.getElementById('userPanelTabs').style.display = 'none';
+    document.querySelectorAll('.user-tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('userLoggedTab').classList.add('active');
+    
+    document.getElementById('userName').textContent = user.displayName || 'Cliente';
+    document.getElementById('userEmail').textContent = user.email;
+}
+
+// --- 3. UTILITÁRIO TOAST (Necessário para feedback) ---
+function showToast(msg, type='success') {
+    // Verifica se já existe toast e remove
+    const existing = document.querySelector('.toast');
+    if(existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast'; // Usa o estilo que já está no css2.css
+    toast.style.bottom = '20px'; // Força posição
+    toast.textContent = msg;
+    
+    if(type === 'error') toast.style.borderLeft = '5px solid red';
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// --- 4. FAVORITOS (Mantém redirecionamento para Home) ---
 function showFavorites() {
-    window.location.href = 'index.html#favorites'; // O script2.js deve tratar isso ou apenas abrir a home
+    window.location.href = 'index.html#favorites';
 }
 
-// 4. Atualiza contador de favoritos (Visual)
+// Atualiza contador ao carregar
 function updateFavoritesCount() {
     const favCount = document.getElementById('favoritesCount');
     const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
@@ -1103,5 +1238,5 @@ function updateFavoritesCount() {
         favCount.style.display = favorites.length > 0 ? 'flex' : 'none';
     }
 }
-// Executa ao carregar
 updateFavoritesCount();
+
