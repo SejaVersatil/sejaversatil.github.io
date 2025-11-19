@@ -2004,85 +2004,47 @@ select:focus-visible {
 /* Grid Principal da Página (Galeria Esquerda | Info Direita) */
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 65% 35% !important;
+    grid-template-columns: 65% 35% !important; /* Coluna da esquerda mais larga para o mosaico */
     gap: 4rem !important;
-    max-width: 1600px; /* Aumentado para caber o mosaico */
+    max-width: 1600px;
     margin: 0 auto;
     padding: 2rem 3rem;
-    align-items: start;
+    align-items: start; /* Essencial para o sticky da lateral funcionar */
     position: relative;
 }
 
+/* A seção da galeria deve fluir normalmente (sem sticky) para permitir rolar as fotos */
 .product-gallery-section {
-    position: sticky;
-    top: 20px;
-    height: fit-content;
+    position: relative;
+    height: auto;
+    width: 100%;
 }
 
-/* Container Interno da Galeria (Thumbnails | Foto Principal) */
+/* Container Interno da Galeria (Mosaico de Fotos) - CORRIGIDO */
 .gallery-container {
-    display: grid;
-    /* 85px para as miniaturas, o resto para a imagem grande */
-    grid-template-columns: 85px 1fr !important;
-    gap: 16px;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* Duas imagens lado a lado */
+    gap: 10px; /* Espaçamento fino e minimalista */
     width: 100%;
     height: auto;
 }
 
-/* Lista de Miniaturas (Vertical na Esquerda) */
-.gallery-thumbs {
-    display: flex;
-    flex-direction: column !important; /* Garante verticalidade */
-    gap: 12px;
-    max-height: 700px; /* Altura máxima para permitir scroll se tiver muitas fotos */
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 4px; /* Espaço para evitar corte do scroll */
-    order: 0; /* Garante que fique na esquerda (primeira coluna) */
-}
-
-/* Estilização das Miniaturas */
-.thumbnail-item {
-    width: 100%; /* Ocupa a largura da coluna de 85px */
-    aspect-ratio: 3/4;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* Nova Classe para as Fotos do Mosaico (Substitui thumbnails e main-image) */
+/* IMPORTANTE: O JavaScript deve gerar divs com esta classe agora */
+.gallery-photo-full {
+    width: 100%;
+    aspect-ratio: 3/4; /* Proporção Retrato */
     background-size: cover;
     background-position: center;
-    flex-shrink: 0;
-}
-
-.thumbnail-item:hover {
-    border-color: #999;
-}
-
-.thumbnail-item.active {
-    border-color: #000;
-    border-width: 2px;
-}
-
-/* Barra de rolagem fina e elegante */
-.gallery-thumbs::-webkit-scrollbar {
-    width: 4px;
-}
-.gallery-thumbs::-webkit-scrollbar-thumb {
-    background: #d0d0d0;
-    border-radius: 4px;
-}
-
-/* Imagem Principal (Direita da Galeria) */
-.product-page-container .gallery-main-image,
-#mainProductImage {
-    width: 100% !important;
-    aspect-ratio: 3/4 !important;
-    border-radius: 8px;
-    background-size: cover !important;
-    background-position: center !important;
     background-repeat: no-repeat;
-    border: none; /* Estilo Live! é mais limpo, sem borda */
-    order: 1; /* Segunda coluna */
+    border-radius: 0; /* Cantos retos conforme referência Live! */
+    cursor: default;
+    background-color: #f5f5f5; /* Placeholder enquanto carrega */
+}
+
+/* A primeira foto ocupa as duas colunas (Destaque) - Padrão visual Live! */
+.gallery-photo-full:first-child {
+    grid-column: span 2;
 }
 
 /* ================= RESPONSIVIDADE MOBILE ================= */
@@ -2123,5 +2085,6 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
 
