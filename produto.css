@@ -824,3 +824,56 @@ html, body {
         z-index: 1;
     }
 }
+
+/* ======================================================= */
+/* CORREÇÃO FINAL E DEFINITIVA DO STICKY (GRUDAR LATERAL)  */
+/* ======================================================= */
+
+/* 1. Forçar visibilidade nos pais (Obrigatório para Sticky funcionar) */
+html, body {
+    overflow: visible !important;
+    overflow-x: hidden !important; /* Evita rolagem lateral, mas permite sticky */
+    height: auto !important;
+}
+
+/* 2. Garantir que nenhum container bloqueie o scroll */
+main, 
+.product-page-container, 
+.product-main-grid {
+    overflow: visible !important;
+    transform: none !important; /* Transform também quebra sticky */
+    height: auto !important;
+}
+
+/* 3. Configuração do Grid para permitir deslizamento */
+.product-main-grid {
+    display: grid !important;
+    align-items: start !important; /* OBRIGATÓRIO: Define que as colunas têm alturas diferentes */
+}
+
+/* 4. A Coluna Direita que deve grudar */
+.product-info-section {
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* Ativa o Sticky */
+    position: -webkit-sticky !important; /* Safari */
+    position: sticky !important;         /* Chrome/Firefox/Edge */
+    
+    /* Distância do topo (ajustado para não ficar embaixo do Header) */
+    top: 110px !important; 
+    
+    /* A coluna deve ter o tamanho do conteúdo, não da tela */
+    height: fit-content !important; 
+    
+    z-index: 90 !important;
+    padding-bottom: 50px !important;
+}
+
+/* Desativa no Mobile (pois lá vira uma coluna só) */
+@media (max-width: 1024px) {
+    .product-info-section {
+        position: static !important;
+        top: auto !important;
+    }
+}
