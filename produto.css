@@ -98,7 +98,7 @@ body.product-page {
 .gallery-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 4px;
     width: 100%;
 }
 .gallery-photo-full {
@@ -108,8 +108,12 @@ body.product-page {
     background-position: center;
     background-color: #f5f5f5;
 }
+/* .gallery-photo-full:first-child {
+    grid-column: span 2; 
+} 
+*/
 .gallery-photo-full:first-child {
-    grid-column: span 2; /* Destaque */
+    grid-column: auto !important;
 }
 
 /* Direita: Informações Sticky */
@@ -213,4 +217,5 @@ body.product-page {
     .cart-sidebar { width: 100%; right: -100%; }
     .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
 }
+
 
