@@ -446,14 +446,14 @@ body.product-page {
 
 /* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
 .product-info-section {
-    gap: 0.8rem !important; /* Reduz drasticamente o espaço entre blocos */
+    gap: 1.2rem !important; /* Aumentei levemente para dar respiro elegante */
 }
 
 /* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
 .product-selector-group {
-    padding-bottom: 0.8rem !important; /* Menos espaço interno */
-    margin-bottom: 0 !important;       /* Remove margem extra */
-    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0 !important;
+    margin-bottom: 0.5rem !important;
+    border-bottom: none !important; /* Live não usa linhas divisórias pesadas */
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
@@ -816,6 +816,7 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
 
 
