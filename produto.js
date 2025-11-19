@@ -229,9 +229,6 @@ function renderPrices() {
 }
 
 /* =========================
-   Galeria (Estilo Mosaico)
-   ========================= */
-/* =========================
    Galeria Mosaico com "Mostrar Mais"
    ========================= */
 function renderGallery(specificImages = null) {
@@ -915,6 +912,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
