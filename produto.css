@@ -159,11 +159,26 @@ body.product-page {
     margin: 0 !important;
 }
 .product-title { font-size: 2rem; font-weight: 500; margin: 0; }
-.product-pricing { display: flex; flex-direction: column; gap: 0.2rem; }
-.price-new { font-size: 1.8rem; font-weight: 400; color: #000; }
+.product-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0 !important; /* Remove espaço entre preço e parcelamento */
+    margin-bottom: 1.5rem !important; /* Espaço até a descrição */
+}
+.price-new {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem !important; /* ~20px (Mais discreto e elegante) */
+    font-weight: 700 !important;   /* Negrito para destaque */
+    color: #000;
+}
 .price-old-text { text-decoration: line-through; color: #999; font-size: 0.9rem; }
 .price-discount-badge { background: #ff4444; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 2px; margin-left: 8px; }
-.price-installments { font-size: 0.85rem; color: #666; }
+.price-installments {
+    font-size: 0.75rem !important; /* ~12px (Pequeno e discreto) */
+    color: #666 !important;
+    font-weight: 400 !important;   /* Fonte normal */
+    margin-top: 4px !important;
+}
 
 /* Seletores - Estilo Live! (Quadrados e Limpos) */
 .product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
@@ -797,5 +812,6 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
 
