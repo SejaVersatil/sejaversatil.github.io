@@ -495,6 +495,24 @@ function selectSize(size) {
 }
 
 /* =========================
+   Descrição do Produto (Estava faltando)
+   ========================= */
+function renderDescription() {
+  const p = state.currentProduct;
+  if (!p) return;
+
+  const descEl = document.getElementById('productDescription');
+  if (!descEl) return;
+
+  // Se não tiver descrição no banco, usa um texto padrão
+  const content = p.description || 
+    `<p><strong>${p.name}</strong></p>
+     <p>Desenvolvido com tecnologia de alta performance, oferecendo conforto e estilo para seus treinos e dia a dia. 
+     Modelagem que valoriza o corpo e tecido de toque suave.</p>`;
+
+  descEl.innerHTML = content;
+}
+/* =========================
    Produtos relacionados (Corrigido: Imagens)
    ========================= */
 async function renderRelatedProducts() {
@@ -971,6 +989,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
