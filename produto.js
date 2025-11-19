@@ -305,25 +305,23 @@ function renderGallery(specificImages = null) {
 }
 
 /* =========================
-   Cores
+   Cores (Renderização)
    ========================= */
 function renderColors() {
   const colorSelector = $('colorSelector');
   if (!colorSelector) return;
   const p = state.currentProduct;
   
-  // Prepara lista de cores disponíveis
+  // Prepara lista de cores
   const variants = state.productVariants[p.id] || [];
   let availableColors = [];
 
   if (Array.isArray(p.colors) && p.colors.length > 0) {
-    // Se o produto tem cores definidas
     availableColors = p.colors.map(c => {
       if (typeof c === 'string') return { name: c, hex: getColorHex(c), images: p.images || [] };
       else return { name: c.name || 'Cor', hex: c.hex || getColorHex(c.name), images: c.images || p.images || [] };
     });
   } else {
-    // Tenta extrair das variantes
     const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
     availableColors = unique.map(name => ({ name, hex: getColorHex(name), images: p.images || [] }));
   }
@@ -338,7 +336,7 @@ function renderColors() {
   availableColors.forEach((colorObj) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    // Adiciona classe 'active' se for a cor selecionada
+    // Só adiciona 'active' se state.selectedColor for igual a esta cor
     btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`; 
     btn.title = colorObj.name;
     btn.dataset.color = colorObj.name;
@@ -346,24 +344,18 @@ function renderColors() {
     const hex = colorObj.hex || getColorHex(colorObj.name);
     btn.style.background = hex;
     
-    // Borda sutil para branco
     if (hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') {
         btn.style.border = '1px solid #ccc';
     }
 
-    // Clique chama a função unificada
     btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
     colorSelector.appendChild(btn);
   });
 
-  // Auto-selecionar primeira cor se nenhuma estiver selecionada
-  if (!state.selectedColor && availableColors.length) {
-      // Apenas define estado, não re-renderiza galeria para evitar loop
-      state.selectedColor = availableColors[0].name;
-      if (elExists('selectedColorName')) $('selectedColorName').textContent = state.selectedColor;
-      // Renderiza visualmente o botão ativo
-      const firstBtn = colorSelector.querySelector('.color-option');
-      if(firstBtn) firstBtn.classList.add('active');
+  // SE NÃO TIVER COR SELECIONADA: Mostra texto "Selecione" e renderiza galeria completa
+  if (!state.selectedColor) {
+      if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
+      renderGallery(p.images);
   }
 }
 
@@ -923,6 +915,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
