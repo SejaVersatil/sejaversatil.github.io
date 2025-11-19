@@ -1768,9 +1768,11 @@ body.product-page {
 
 /* ========== RESPONSIVO ========== */
 @media (max-width: 1024px) {
-    .product-page-grid {
-        grid-template-columns: 1fr;
+    .product-page-container .product-main-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem !important;
     }
+}
     
     /* Manter estilos antigos para compatibilidade */
     .product-main-grid {
@@ -2111,6 +2113,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
