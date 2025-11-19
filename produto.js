@@ -229,20 +229,23 @@ function renderPrices() {
 }
 
 /* =========================
-   GALERIA MOSAICO (LIVE STYLE)
+   Galeria (Estilo Mosaico)
    ========================= */
 function renderGallery(specificImages = null) {
   const p = state.currentProduct;
   if (!p) return;
 
-  // Seleciona o container do Grid (não usamos mais mainImage ou thumbnailList)
-  const galleryContainer = document.querySelector('.gallery-container');
-  if (!galleryContainer) return;
+  // Container principal (agora busca o ID correto do HTML novo)
+  const galleryContainer = document.getElementById('galleryContainer') || document.querySelector('.gallery-container');
+  if (!galleryContainer) {
+      console.warn('Galeria não encontrada no HTML');
+      return;
+  }
 
-  // Limpa tudo para recriar
+  // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
-  // Define imagens: Prioridade para argumento > Imagens do produto > Imagem única
+  // Decide quais imagens usar
   let imagesToRender = specificImages;
   if (!imagesToRender) {
       imagesToRender = Array.isArray(p.images) && p.images.length
@@ -250,7 +253,7 @@ function renderGallery(specificImages = null) {
         : (p.image ? [p.image] : []);
   }
 
-  // Cria divs grandes para cada imagem
+  // Renderiza TODAS as imagens como items grandes
   imagesToRender.forEach((img) => {
     const photoDiv = document.createElement('div');
     photoDiv.className = 'gallery-photo-full'; // Classe do CSS novo
@@ -856,3 +859,4 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
