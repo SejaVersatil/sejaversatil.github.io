@@ -598,14 +598,14 @@ body, .short-desc-text, .model-info-text {
 /* Mostra APENAS no Mobile */
 @media (max-width: 768px) {
     .header-left .btn-favorite {
-        display: flex;
+        display: flex !important;
         align-items: center;
-        margin-top: 5px;
         font-size: 0.75rem;
         color: #666;
-        background: none;
+        margin-top: 8px; 
+        padding: 0;     
         border: none;
-        padding: 0 1.5rem 2rem !important;
+        background: transparent;
     }
     
     .header-left .btn-favorite svg {
@@ -826,5 +826,6 @@ html, body {
         border-radius: 8px !important;
     }
 }
+
 
 
