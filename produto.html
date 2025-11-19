@@ -183,10 +183,12 @@
         
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
-            <a href="index.html">Início</a>
-            <span>›</span>
-            <span id="breadcrumbProduct">Produto</span>
-        </nav>
+    <a href="index.html">Início</a>
+    <span>›</span>
+    <span id="breadcrumbCategory">Categoria</span>
+    <span>›</span>
+    <span id="breadcrumbProduct">Produto</span>
+</nav>
         
         <!-- Título -->
         <h1 class="product-title" id="detailsProductName">Nome do Produto</h1>
@@ -219,6 +221,15 @@
             </div>
             <span id="selectedSizeName" style="display:none;"></span>
         </div>
+      <!-- Seletor de Quantidade -->
+<div class="product-selector-group">
+    <label class="selector-label">Quantidade</label>
+    <div class="quantity-controls">
+        <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)" aria-label="Diminuir quantidade">−</button>
+        <input type="number" id="productQuantity" value="1" min="1" max="10" readonly aria-label="Quantidade">
+        <button class="qty-control-btn" type="button" onclick="changeQuantity(1)" aria-label="Aumentar quantidade">+</button>
+    </div>
+</div>
         
         <!-- Calculadora de Frete -->
         <div class="product-selector-group">
@@ -379,5 +390,6 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
