@@ -605,7 +605,7 @@ body, .short-desc-text, .model-info-text {
         color: #666;
         background: none;
         border: none;
-        padding: 0;
+        padding: 0 1.5rem 2rem !important;
     }
     
     .header-left .btn-favorite svg {
@@ -759,12 +759,11 @@ html, body {
     
     /* Header dividido (Título Esq | Preço Dir) */
     .product-header-wrapper {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: flex-start !important;
-        gap: 0.5rem;
-        margin-bottom: 1rem !important;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        gap: 10px;
     }
     
     .header-left {
@@ -824,3 +823,4 @@ html, body {
         border-radius: 8px !important;
     }
 }
+
