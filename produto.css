@@ -636,3 +636,47 @@ body, .short-desc-text, .model-info-text {
     }
 }
 
+/* ======================================================= */
+/* BOTÃO MOSTRAR MAIS (ESTILO LIVE!) */
+/* ======================================================= */
+
+/* Estilo do botão (Texto simples com seta) */
+.btn-show-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem auto 0; /* Espaçamento acima */
+    background: transparent;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s;
+    width: 100%;
+}
+
+.btn-show-more:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
+.btn-show-more svg {
+    transition: transform 0.3s;
+}
+
+/* Classe utilitária para esconder as fotos extras */
+.gallery-hidden {
+    display: none !important;
+}
+
+/* No Mobile, queremos mostrar o slider horizontal, então o botão some */
+@media (max-width: 768px) {
+    .btn-show-more {
+        display: none !important;
+    }
+}
