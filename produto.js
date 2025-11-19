@@ -698,6 +698,7 @@ function addToCartFromDetails() {
 
   const itemPayload = {
     cartItemId,
+    id: p.id,
     productId: p.id,
     name: p.name,
     price: safeNumber(p.price, 0),
@@ -1065,4 +1066,5 @@ function updateFavoritesCount() {
 }
 // Chama ao carregar para garantir que o número no topo esteja certo
 updateFavoritesCount();
+
 
