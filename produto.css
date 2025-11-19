@@ -25,26 +25,26 @@ body.product-page {
 /* Título do Produto */
 .product-title, #detailsProductName {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.6rem !important; /* Ajustado para ~25px (Igual Live) */
-    font-weight: 600 !important;  /* Semi-Bold (Nem muito fino, nem muito grosso) */
+    font-size: 1.6rem !important; 
+    font-weight: 600 !important; 
     line-height: 1.2;
     color: #000;
-    margin-bottom: 0.25rem !important; /* Bem próximo do preço */
-    text-transform: none !important;   /* Mantém maiúsculas/minúsculas normais */
-    letter-spacing: -0.5px !important; /* Leve aproximação das letras */
+    margin-bottom: 0.25rem !important; 
+    text-transform: none !important;   
+    letter-spacing: -0.5px !important; 
 }
 
 /* Descrição Curta (Nova) */
 .short-description-container {
     margin-bottom: 1.5rem !important;
     padding-bottom: 0 !important;
-    border-bottom: none !important; /* Removemos a linha para ficar clean */
+    border-bottom: none !important; 
 }
 
 .short-desc-text {
-    font-size: 0.875rem !important; /* 14px (Tamanho padrão de leitura) */
-    line-height: 1.6 !important;    /* Bom espaçamento entre linhas */
-    color: #555 !important;         /* Cinza escuro suave */
+    font-size: 0.875rem !important; 
+    line-height: 1.6 !important;    
+    color: #555 !important;         
     font-weight: 400 !important;
 }
 
@@ -164,21 +164,21 @@ body.product-page {
 .product-pricing {
     display: flex;
     flex-direction: column;
-    gap: 0 !important; /* Remove espaço entre preço e parcelamento */
-    margin-bottom: 1.5rem !important; /* Espaço até a descrição */
+    gap: 0 !important;
+    margin-bottom: 1.5rem !important; 
 }
 .price-new {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.25rem !important; /* ~20px (Mais discreto e elegante) */
-    font-weight: 700 !important;   /* Negrito para destaque */
+    font-size: 1.25rem !important; 
+    font-weight: 700 !important;   
     color: #000;
 }
 .price-old-text { text-decoration: line-through; color: #999; font-size: 0.9rem; }
 .price-discount-badge { background: #ff4444; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 2px; margin-left: 8px; }
 .price-installments {
-    font-size: 0.75rem !important; /* ~12px (Pequeno e discreto) */
+    font-size: 0.75rem !important; 
     color: #666 !important;
-    font-weight: 400 !important;   /* Fonte normal */
+    font-weight: 400 !important;   
     margin-top: 4px !important;
 }
 
@@ -191,7 +191,7 @@ body.product-page {
 /* CORES */
 .color-options-grid {
     display: flex;
-    gap: 10px; /* Mais espaço entre as cores */
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -211,7 +211,7 @@ body.product-page {
 
 .color-option.active {
     border: 1px solid #000;
-    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000; /* Borda dupla fina igual Live */
+    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000; 
     transform: scale(1.1);
 }
 
@@ -240,7 +240,7 @@ body.product-page {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 2px; /* Quadrado */
+    border-radius: 2px; 
 }
 
 .size-option:hover {
@@ -313,7 +313,7 @@ body.product-page {
     .hamburger-btn { display: block; }
     .nav { padding: 0.75rem 1rem; }
     .cart-sidebar { width: 100%; right: -100%; }
-    .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
+    .product-action-buttons { padding-bottom: 60px; } 
 }
 
 /* Links pequenos abaixo do botão comprar */
@@ -366,7 +366,7 @@ body.product-page {
 .trust-badge svg {
     width: 24px;
     height: 24px;
-    color: #333; /* Cor do ícone */
+    color: #333; 
     flex-shrink: 0;
 }
 
@@ -395,15 +395,15 @@ body.product-page {
 
 @media (max-width: 1440px) {
     .product-page-container .product-main-grid {
-        grid-template-columns: 65% 35% !important; /* Equilibra melhor em telas menores */
-        padding: 2rem 3rem !important; /* Mais respiro lateral */
+        grid-template-columns: 65% 35% !important; 
+        padding: 2rem 3rem !important; 
     }
 }
 
 /* 3. Ajuste para Tablets e Mobile (Telas pequenas) */
 @media (max-width: 1024px) {
     .product-page-container .product-main-grid {
-        grid-template-columns: 1fr !important; /* Vira uma coluna só */
+        grid-template-columns: 1fr !important; 
         padding: 1rem !important;
         gap: 2rem !important;
     }
@@ -422,7 +422,7 @@ body.product-page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 45px; /* Mesma largura do botão para alinhar */
+    width: 45px;
 }
 
 /* O texto de aviso (Últimas/Esgotado) */
@@ -436,8 +436,8 @@ body.product-page {
 }
 
 /* Cores dos avisos */
-.stock-msg.warning { color: #e67e22; } /* Laranja para últimas */
-.stock-msg.error { color: #999; text-decoration: none; } /* Cinza para esgotado */
+.stock-msg.warning { color: #e67e22; } 
+.stock-msg.error { color: #999; text-decoration: none; } 
 
 
 /* ======================================================= */
@@ -446,19 +446,19 @@ body.product-page {
 
 /* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
 .product-info-section {
-    gap: 1.2rem !important; /* Aumentei levemente para dar respiro elegante */
+    gap: 1.2rem !important;
 }
 
 /* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
 .product-selector-group {
     padding-bottom: 0 !important;
     margin-bottom: 0.5rem !important;
-    border-bottom: none !important; /* Live não usa linhas divisórias pesadas */
+    border-bottom: none !important; 
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
 .product-title {
-    margin-bottom: 0.2rem !important; /* Cola o título no preço */
+    margin-bottom: 0.2rem !important; 
 }
 
 .product-pricing {
@@ -475,17 +475,17 @@ body.product-page {
 
 /* Textos gerais (Descrição, infos) */
 body, .short-desc-text, .model-info-text {
-    font-weight: 500 !important; /* Muda de Normal(400) para Medium(500) */
-    color: #333 !important;      /* Garante um cinza escuro quase preto */
+    font-weight: 500 !important;
+    color: #333 !important;     
 }
 
 /* Títulos dos seletores (COR, TAMANHO...) */
 .selector-label {
-    font-size: 0.8125rem !important; /* ~13px */
-    font-weight: 700 !important;     /* Negrito */
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;     
     color: #000 !important;
     margin-bottom: 0.6rem !important;
-    text-transform: none !important; /* Removemos o CAIXA ALTA forçado */
+    text-transform: none !important; 
     letter-spacing: 0 !important;
 }
 
@@ -494,23 +494,23 @@ body, .short-desc-text, .model-info-text {
 .size-guide-link, 
 .action-link, 
 .badge-text a {
-    font-weight: 600 !important; /* Semibold */
+    font-weight: 600 !important; 
     text-decoration: underline;
 }
 
 /* Textos de "Últimas unidades" */
 .stock-msg {
-    font-weight: 700 !important; /* Negrito */
+    font-weight: 700 !important; 
 }
 
 /* Botões de Tamanho */
 .size-option {
-    font-weight: 600 !important; /* Letra do tamanho mais grossa */
+    font-weight: 600 !important; 
 }
 
 /* Preço */
 .price-current {
-    font-weight: 500 !important; /* Preço mais sólido */
+    font-weight: 500 !important;
 }
 
 /* Texto de Parcelamento */
@@ -531,21 +531,21 @@ body, .short-desc-text, .model-info-text {
     
     /* 1. GALERIA HORIZONTAL (SLIDER) */
     .product-page-container .product-main-grid {
-        padding: 0 !important; /* Remove padding lateral para foto encostar na borda */
+        padding: 0 !important; 
         gap: 1rem !important;
     }
 
     .product-gallery-section {
         width: 100% !important;
-        overflow: hidden; /* Impede scroll da página inteira */
+        overflow: hidden; 
         position: relative;
     }
 
     .gallery-container {
-        display: flex !important; /* Transforma em linha */
+        display: flex !important; 
         flex-direction: row !important;
-        overflow-x: auto; /* Permite rolagem horizontal */
-        scroll-snap-type: x mandatory; /* Efeito de "travar" na foto */
+        overflow-x: auto; 
+        scroll-snap-type: x mandatory;
         gap: 0 !important;
         -webkit-overflow-scrolling: touch;
         
@@ -559,19 +559,19 @@ body, .short-desc-text, .model-info-text {
     }
 
     .gallery-photo-full {
-        min-width: 100%; /* Ocupa tela toda */
+        min-width: 100%; 
         width: 100%;
-        aspect-ratio: 3/4; /* Formato retrato */
+        aspect-ratio: 3/4; 
         scroll-snap-align: center;
         border-radius: 0;
     }
 
     /* 2. ÍCONES FLUTUANTES (FPU 50+) */
     .tech-icons-floating {
-        display: flex !important; /* Força exibição */
+        display: flex !important;
         position: absolute;
         top: 20px;
-        right: 10px; /* Canto direito */
+        right: 10px; 
         left: auto;
         flex-direction: column;
         gap: 0.5rem;
@@ -588,7 +588,7 @@ body, .short-desc-text, .model-info-text {
 
     /* 3. CABEÇALHO PRODUTO (LADO A LADO) */
     .product-info-section {
-        padding: 0 1.5rem 2rem !important; /* Adiciona padding de volta apenas na info */
+        padding: 0 1.5rem 2rem !important; 
     }
 
     .product-header-mobile-wrapper {
@@ -608,7 +608,7 @@ body, .short-desc-text, .model-info-text {
 
     /* Título à esquerda */
     .product-title {
-        font-size: 1.1rem !important; /* Tamanho ajustado mobile */
+        font-size: 1.1rem !important; 
         line-height: 1.3;
     }
 
@@ -629,7 +629,7 @@ body, .short-desc-text, .model-info-text {
     .product-pricing {
         text-align: right;
         align-items: flex-end;
-        min-width: 100px; /* Garante espaço */
+        min-width: 100px; 
         margin-bottom: 0 !important;
     }
     
@@ -648,7 +648,7 @@ body, .short-desc-text, .model-info-text {
 
     /* 4. AJUSTES GERAIS */
     .product-selector-group {
-        border-bottom: none !important; /* Live mobile é mais limpo */
+        border-bottom: none !important;
     }
     
     .secondary-actions {
@@ -667,7 +667,7 @@ body, .short-desc-text, .model-info-text {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin: 2rem auto 0; /* Espaçamento acima */
+    margin: 2rem auto 0; 
     background: transparent;
     border: none;
     font-family: 'Montserrat', sans-serif;
@@ -716,19 +716,19 @@ body, .short-desc-text, .model-info-text {
 
 /* --- CORREÇÃO 2: TAMANHOS CLICÁVEIS --- */
 .size-wrapper {
-    cursor: pointer; /* Mostra mãozinha em tudo */
-    pointer-events: auto; /* Garante eventos */
+    cursor: pointer; 
+    pointer-events: auto; 
 }
 
 .size-option {
-    pointer-events: auto; /* O botão deve receber o clique */
+    pointer-events: auto; 
     position: relative;
-    z-index: 2; /* Fica acima de qualquer elemento decorativo */
+    z-index: 2; 
 }
 
 /* --- CORREÇÃO FINAL: ESCONDER FAVORITOS NO DESKTOP --- */
 .header-left .btn-favorite {
-    display: none; /* Esconde por padrão (Desktop) */
+    display: none; 
 }
 
 /* Mostra APENAS no Mobile */
@@ -781,23 +781,23 @@ html, body {
 /* 3. O Grid Principal (O trilho) */
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 70% 30% !important; /* Ajuste fino para garantir espaço */
+    grid-template-columns: 70% 30% !important; 
     gap: 3rem !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 2rem 3rem !important; /* Padding seguro */
-    align-items: start !important; /* OBRIGATÓRIO: Faz as colunas terem alturas diferentes */
+    padding: 2rem 3rem !important; 
+    align-items: start !important; 
     position: relative !important;
     overflow: visible !important;
 }
 
 /* 4. A Coluna Direita (O vagão que trava) */
 .product-info-section {
-    display: block !important; /* Flex as vezes atrapalha sticky complexo */
+    display: block !important; 
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 100px !important; /* Ponto de trava */
-    height: fit-content !important; /* Garante que não estique */
+    top: 100px !important; 
+    height: fit-content !important; 
     z-index: 20 !important;
 }
 
@@ -816,9 +816,3 @@ html, body {
         padding: 1.5rem !important;
     }
 }
-
-
-
-
-
-
