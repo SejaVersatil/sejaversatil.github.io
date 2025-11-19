@@ -4177,3 +4177,15 @@ css@keyframes slideInRight {
     }
 }
 
+/* PERFORMANCE BOOSTER */
+.footer-content, 
+.bestsellers-section, 
+.info-bar {
+    content-visibility: auto; /* Renderiza apenas quando chega perto da tela */
+    contain-intrinsic-size: 1px 1000px; /* Evita pulos de scroll */
+}
+
+/* Otimização de GPU para elementos fixos */
+.site-header, .cart-sidebar, .sidebar-menu {
+    will-change: transform; /* Prepara a placa de vídeo */
+}
