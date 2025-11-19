@@ -227,9 +227,8 @@ function renderPrices() {
     installments.textContent = `ou 10x de R$ ${installmentValue.toFixed(2)} sem juros`;
   }
 }
-
 /* =========================
-   Galeria Mosaico com "Mostrar Mais"
+   Galeria Mosaico com "Mostrar Mais / Menos"
    ========================= */
 function renderGallery(specificImages = null) {
   const p = state.currentProduct;
@@ -256,8 +255,7 @@ function renderGallery(specificImages = null) {
     const photoDiv = document.createElement('div');
     photoDiv.className = 'gallery-photo-full';
 
-    // Lógica LIVE!: Mostra apenas as 2 primeiras (index 0 e 1). 
-    // Oculta da 3ª em diante (index >= 2).
+    // Oculta da 3ª em diante (index >= 2)
     if (index >= 2) {
         photoDiv.classList.add('gallery-hidden');
     }
@@ -273,30 +271,55 @@ function renderGallery(specificImages = null) {
     galleryContainer.appendChild(photoDiv);
   });
 
-  // Lógica do Botão Mostrar Mais
+  // Lógica do Botão Alternar (Mais / Menos)
   if (btnShowMore) {
-      // Se tivermos mais de 2 imagens, mostra o botão
+      // Remove ouvintes de eventos antigos para evitar duplicação
+      const newBtn = btnShowMore.cloneNode(true);
+      btnShowMore.parentNode.replaceChild(newBtn, btnShowMore);
+      
       if (imagesToRender.length > 2) {
-          btnShowMore.style.display = 'flex';
+          newBtn.style.display = 'flex';
+          // Reseta o texto e ícone para o estado inicial
+          newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
           
-          // Evento de clique
-          btnShowMore.onclick = function() {
-              // Remove a classe 'gallery-hidden' de todas as fotos escondidas
-              const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-hidden');
-              hiddenPhotos.forEach(photo => {
-                  photo.classList.remove('gallery-hidden');
-                  // Pequena animação de fade (opcional)
-                  photo.style.opacity = '0';
-                  photo.style.transition = 'opacity 0.5s';
-                  requestAnimationFrame(() => photo.style.opacity = '1');
-              });
+          let isExpanded = false;
+
+          newBtn.onclick = function() {
+              const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
               
-              // Esconde o botão após expandir
-              this.style.display = 'none';
+              if (!isExpanded) {
+                  // AÇÃO: EXPANDIR
+                  hiddenPhotos.forEach((photo, index) => {
+                      if (index >= 2) {
+                          photo.classList.remove('gallery-hidden');
+                          // Animação suave
+                          photo.style.opacity = '0';
+                          requestAnimationFrame(() => {
+                              photo.style.transition = 'opacity 0.5s';
+                              photo.style.opacity = '1';
+                          });
+                      }
+                  });
+                  // Muda texto para "MOSTRAR MENOS" e inverte a seta
+                  this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                  isExpanded = true;
+              } else {
+                  // AÇÃO: RECOLHER
+                  hiddenPhotos.forEach((photo, index) => {
+                      if (index >= 2) {
+                          photo.classList.add('gallery-hidden');
+                      }
+                  });
+                  // Rola suavemente de volta para o topo da galeria
+                  galleryContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  
+                  // Muda texto para "MOSTRAR MAIS" e volta a seta ao normal
+                  this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                  isExpanded = false;
+              }
           };
       } else {
-          // Se tiver 2 ou menos, não precisa de botão
-          btnShowMore.style.display = 'none';
+          newBtn.style.display = 'none';
       }
   }
 }
@@ -948,6 +971,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
