@@ -396,3 +396,26 @@ body.product-page {
     }
 }
 
+/* ADICIONE NO FINAL DO ARQUIVO */
+
+/* Container que agrupa Botão + Texto */
+.size-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45px; /* Mesma largura do botão para alinhar */
+}
+
+/* O texto de aviso (Últimas/Esgotado) */
+.stock-msg {
+    font-size: 0.6rem;
+    margin-top: 4px;
+    text-align: center;
+    line-height: 1;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Cores dos avisos */
+.stock-msg.warning { color: #e67e22; } /* Laranja para últimas */
+.stock-msg.error { color: #999; text-decoration: none; } /* Cinza para esgotado */
