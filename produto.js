@@ -482,15 +482,13 @@ async function renderRelatedProducts() {
     const relatedGrid = $('relatedProductsGrid');
     if (!relatedGrid) return;
 
-    // Busca produtos da mesma categoria
     const relatedSnapshot = await db.collection('produtos')
         .where('category', '==', p.category)
-        .limit(5) // Traz 5 para garantir que tenhamos 4 diferentes do atual
+        .limit(5)
         .get();
 
     const related = [];
     relatedSnapshot.forEach(doc => {
-      // Não mostra o próprio produto que já está aberto
       if (doc.id !== p.id) {
           related.push({ id: doc.id, ...(doc.data() || {}) });
       }
@@ -503,14 +501,12 @@ async function renderRelatedProducts() {
 
     relatedGrid.innerHTML = '';
     
-    // Pega os 4 primeiros
     related.slice(0, 4).forEach(prod => {
       const card = document.createElement('div');
       card.className = 'product-card';
       card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
 
-      // --- CORREÇÃO DE IMAGEM AQUI ---
-      // Tenta pegar a primeira imagem de 'images' (array), ou 'image' (string), ou usa placeholder
+      // Correção de Imagem
       let imgUrl = '';
       if (Array.isArray(prod.images) && prod.images.length > 0) {
           imgUrl = prod.images[0];
@@ -521,17 +517,16 @@ async function renderRelatedProducts() {
       const imgWrap = document.createElement('div');
       imgWrap.className = 'product-image';
       
+      // Cria o elemento visual da imagem
       const slide = document.createElement('div');
       slide.className = 'product-image-slide';
       
-      // Verifica se é URL válida ou Gradiente/Cor
       if (isImageUrl(imgUrl)) {
         slide.style.backgroundImage = `url("${imgUrl}")`;
         slide.style.backgroundSize = 'cover';
         slide.style.backgroundPosition = 'center';
         slide.style.backgroundRepeat = 'no-repeat';
       } else {
-        // Se não tiver imagem, coloca um fundo cinza para não ficar branco
         slide.style.backgroundColor = '#eee';
         slide.style.display = 'flex';
         slide.style.alignItems = 'center';
@@ -546,7 +541,7 @@ async function renderRelatedProducts() {
       
       const h4 = document.createElement('h4');
       h4.textContent = prod.name || 'Produto';
-      h4.style.margin = '0 0 5px 0'; // Ajuste visual
+      h4.style.margin = '0 0 5px 0';
       
       const priceDiv = document.createElement('div');
       priceDiv.className = 'product-price';
@@ -953,6 +948,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
