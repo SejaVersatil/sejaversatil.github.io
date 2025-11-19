@@ -1621,7 +1621,10 @@ async function limparTodosProdutos() {
     document.getElementById('loadingOverlay').classList.add('active');
     
     try {
-        const snapshot = await db.collection("produtos").get();
+        const snapshot = await db.collection("produtos")
+    .orderBy('createdAt', 'desc')
+    .limit(50) 
+    .get();
         
         if (snapshot.empty) {
             showToast('Não há produtos para deletar', 'info');
@@ -4194,5 +4197,6 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
