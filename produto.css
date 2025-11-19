@@ -704,3 +704,36 @@ body, .short-desc-text, .model-info-text {
     position: relative;
     z-index: 2; /* Fica acima de qualquer elemento decorativo */
 }
+
+/* --- CORREÇÃO FINAL: ESCONDER FAVORITOS NO DESKTOP --- */
+.header-left .btn-favorite {
+    display: none; /* Esconde por padrão (Desktop) */
+}
+
+/* Mostra APENAS no Mobile */
+@media (max-width: 768px) {
+    .header-left .btn-favorite {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        font-size: 0.75rem;
+        color: #666;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    
+    .header-left .btn-favorite svg {
+        margin-right: 5px;
+    }
+}
+
+/* Garantir que tamanhos sejam clicáveis */
+.size-wrapper {
+    cursor: pointer;
+    z-index: 10;
+    position: relative;
+}
+.size-option {
+    pointer-events: auto;
+}
