@@ -24,9 +24,9 @@ body.product-page {
 
 /* Título do Produto */
 .product-title, #detailsProductName {
-    text-transform: none !important; /* Remove o CAIXA ALTA */
-    font-weight: 500 !important;     /* Fonte mais leve (Medium) */
-    font-size: 2rem;                 /* Tamanho grande */
+    text-transform: none !important; 
+    font-weight: 500 !important;    
+    font-size: 2rem;                
     color: #000;
     margin-bottom: 0.5rem;
     line-height: 1.2;
@@ -775,4 +775,5 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
