@@ -376,6 +376,7 @@ body.product-page {
 
 .size-option {
     min-width: 48px;
+    font-family: 'Montserrat', sans-serif;
     padding: 0.65rem 1rem;
     border-radius: 6px;
     border: 2px solid #e0e0e0;
@@ -2084,6 +2085,7 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
 
 
