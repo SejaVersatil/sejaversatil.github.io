@@ -276,15 +276,6 @@ function renderGallery() {
     return;
   }
 
-  // 2️⃣ GARANTIR LAYOUT DO COMPONENTE
-  mainImage.style.width = '100%';
-  mainImage.style.aspectRatio = '3/4';
-  mainImage.style.maxHeight = '650px';
-  mainImage.style.height = 'auto';
-  thumbnailList.style.display = 'flex';
-  thumbnailList.style.flexDirection = 'column';
-  thumbnailList.style.gap = '8px';
-
   // 3️⃣ RENDERIZAR IMAGEM PRINCIPAL
   const firstImage = images[0];
 
@@ -1094,6 +1085,7 @@ function buyViaWhatsApp() {
     const whatsappURL = `https://wa.me/5571991427103?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank');
 }
+
 
 
 
