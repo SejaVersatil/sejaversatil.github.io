@@ -773,3 +773,54 @@ body, .short-desc-text, .model-info-text {
         height: auto !important;
     }
 }
+
+/* ======================================================= */
+/* FIX DEFINITIVO: COLUNA DIREITA STICKY (GRUDENTA) */
+/* ======================================================= */
+
+/* 1. Libera o fluxo dos pais (CRUCIAL) */
+html, body {
+    overflow-x: clip; /* Melhor que hidden para sticky */
+}
+
+.product-page-container {
+    overflow: visible !important; /* Garante que o sticky funcione */
+    height: auto !important;
+}
+
+/* 2. Configura o Grid corretamente */
+.product-main-grid {
+    display: grid !important;
+    align-items: start !important; /* Garante trilho para deslizar */
+    position: relative !important;
+    overflow: visible !important;
+}
+
+/* 3. Configura a Coluna Direita */
+.product-info-section {
+    /* Garante compatibilidade total */
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    
+    /* Ponto de parada (Top) */
+    top: 20px !important; /* Gruda 20px do topo da tela */
+    
+    /* Altura ajustada */
+    height: fit-content !important;
+    max-height: 100vh; /* Opcional: limita altura se conteúdo for muito longo */
+    
+    /* Z-Index para ficar acima */
+    z-index: 100;
+    
+    /* Padding para não colar no conteúdo */
+    padding-top: 1rem; 
+}
+
+/* Desativa sticky no mobile (pois vira uma coluna só) */
+@media (max-width: 1024px) {
+    .product-info-section {
+        position: relative !important;
+        top: auto !important;
+        z-index: 1;
+    }
+}
