@@ -612,12 +612,24 @@ function calculateShipping() {
 function addToCartFromDetails() {
   const p = state.currentProduct;
   if (!p) return;
+  
   if (!state.selectedSize) { alert('Selecione um tamanho.'); return; }
   if (!state.selectedColor) { alert('Selecione uma cor.'); return; }
 
   const cartItemId = `${p.id}__${normalizeIdPart(state.selectedSize)}__${normalizeIdPart(state.selectedColor)}`;
   const existing = state.cart.find(i => i.cartItemId === cartItemId);
   
+  // --- LÓGICA ROBUSTA DE IMAGEM ---
+  let imgUrl = '';
+  // 1. Tenta pegar do array de imagens
+  if (Array.isArray(p.images) && p.images.length > 0) {
+      imgUrl = p.images[0];
+  } 
+  // 2. Se falhar, tenta pegar da string única 'image'
+  else if (p.image) {
+      imgUrl = p.image;
+  }
+
   const itemPayload = {
     cartItemId,
     productId: p.id,
@@ -626,7 +638,7 @@ function addToCartFromDetails() {
     quantity: state.selectedQuantity,
     selectedSize: state.selectedSize,
     selectedColor: state.selectedColor,
-    image: Array.isArray(p.images) && p.images.length ? p.images[0] : (p.image || '')
+    image: imgUrl // Usa a URL tratada
   };
 
   if (existing) {
@@ -930,6 +942,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
