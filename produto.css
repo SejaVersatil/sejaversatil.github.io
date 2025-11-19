@@ -106,18 +106,6 @@ body.product-page {
 .payment-option:hover { background: #fafafa; }
 .payment-confirm-btn { width: calc(100% - 3rem); margin: 0 1.5rem 1.5rem; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
-/* --- AQUI COMEÇA A CORREÇÃO DO LAYOUT DO PRODUTO (LIVE!) --- */
-
-.product-page-container .product-main-grid {
-    display: grid !important;
-    grid-template-columns: 72% 28% !important; /* Layout Live! */
-    gap: 3rem !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 2rem 2rem;
-    align-items: start;
-    position: relative;
-}
 
 /* Esquerda: Galeria Mosaico */
 .product-gallery-section {
@@ -738,58 +726,60 @@ body, .short-desc-text, .model-info-text {
     pointer-events: auto;
 }
 
-/* ========================================== */
-/* CORREÇÃO DEFINITIVA E LIMPA DO STICKY      */
-/* ========================================== */
+/* ============================================================ */
+/* MASTER FIX: STICKY + GRID + OVERFLOW (CORREÇÃO FINAL REAL)   */
+/* ============================================================ */
 
-/* 1. Desbloqueia a rolagem nos pais (CRUCIAL) */
+/* 1. Desbloqueio Global (Essencial para Sticky) */
 html, body {
-    overflow-x: clip !important; /* Moderno: evita rolagem lateral sem quebrar sticky */
+    overflow-x: clip !important;
     overflow-y: visible !important;
     height: auto !important;
 }
 
-/* 2. Garante que os containers do grid não cortem o conteúdo */
-.product-page-container,
-.product-main-grid {
+/* 2. Container do Produto (O pai do grid) */
+.product-page-container {
+    width: 100% !important;
+    max-width: 100% !important;
     overflow: visible !important;
-    transform: none !important;
-}
-
-/* 3. Configuração do Grid */
-.product-main-grid {
-    display: grid !important;
-    align-items: start !important; /* Garante que a coluna direita possa deslizar */
     position: relative !important;
 }
 
-/* 4. A Coluna Direita (Sticky) */
-.product-info-section {
-    display: flex !important;
-    flex-direction: column !important;
-    
-    /* Ativa o Sticky */
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    
-    /* Ajuste a distância do topo conforme a altura do seu menu */
-    top: 90px !important; 
-    
-    /* Garante que ela ocupe apenas o espaço necessário */
-    height: fit-content !important;
-    
-    z-index: 90 !important;
-    padding-bottom: 2rem !important;
+/* 3. O Grid Principal (O trilho) */
+.product-page-container .product-main-grid {
+    display: grid !important;
+    grid-template-columns: 70% 30% !important; /* Ajuste fino para garantir espaço */
+    gap: 3rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 3rem !important; /* Padding seguro */
+    align-items: start !important; /* OBRIGATÓRIO: Faz as colunas terem alturas diferentes */
+    position: relative !important;
+    overflow: visible !important;
 }
 
-/* 5. Mobile: Desliga o sticky (pois vira uma coluna só) */
+/* 4. A Coluna Direita (O vagão que trava) */
+.product-info-section {
+    display: block !important; /* Flex as vezes atrapalha sticky complexo */
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 100px !important; /* Ponto de trava */
+    height: fit-content !important; /* Garante que não estique */
+    z-index: 20 !important;
+}
+
+/* 5. Reset para Mobile (Desliga tudo isso) */
 @media (max-width: 1024px) {
+    .product-page-container .product-main-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+    
     .product-info-section {
         position: static !important;
-        top: auto !important;
-    }
-    /* Volta overflow normal no mobile */
-    html, body {
-        overflow-x: hidden !important;
+        width: 100% !important;
+        padding: 1.5rem !important;
     }
 }
