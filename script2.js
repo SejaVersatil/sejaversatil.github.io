@@ -9,7 +9,24 @@ const state = {
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Home Inicializando...');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get('search');
     
+    if (searchTerm) {
+        // Espera os produtos carregarem e aplica o filtro
+        setTimeout(() => {
+            const headerInput = document.getElementById('headerSearchInput');
+            if(headerInput) {
+                headerInput.value = searchTerm;
+                performHeaderSearch(); // Usa a função já existente no script2
+                
+                // Rola até os produtos
+                const productsSection = document.getElementById('produtos');
+                if(productsSection) productsSection.scrollIntoView({behavior: 'smooth'});
+            }
+        }, 1500); // Delay para garantir que produtos carregaram
+    }
     // Verifica Auth
     auth.onAuthStateChanged(user => {
         state.currentUser = user;
@@ -258,3 +275,4 @@ function initBlackFridayCountdown() {
     // Mesma lógica do produto.js
     document.getElementById('bfDays').textContent = '11'; 
 }
+
