@@ -327,8 +327,8 @@ body.product-page {
 }
 
 .color-option {
-    width: 38px;
-    height: 38px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: 2px solid #ddd;
     cursor: pointer;
@@ -2084,6 +2084,7 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
 
 
