@@ -371,13 +371,15 @@ function selectColor(colorName, specificImages = null) {
 function renderSizes() {
   const sizeSelector = $('sizeSelector');
   if (!sizeSelector) return;
+  
   const p = state.currentProduct;
   const variants = state.productVariants[p.id] || [];
   const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ['P', 'M', 'G', 'GG'];
 
   sizeSelector.innerHTML = '';
+
   sizes.forEach((size) => {
-    // Verifica estoque baseando-se na cor selecionada (se houver)
+    // Lógica de Estoque
     const hasStock = variants.some(v =>
       String(v.size) === String(size) &&
       (state.selectedColor ? String(v.color) === String(state.selectedColor) : true) &&
@@ -390,32 +392,40 @@ function renderSizes() {
     );
     const stock = stockItem ? safeNumber(stockItem.stock, 0) : 0;
 
+    // 1. Cria o Wrapper (Container vertical)
+    const wrapper = document.createElement('div');
+    wrapper.className = 'size-wrapper';
+
+    // 2. Cria o Botão (Apenas a letra do tamanho)
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = `size-option ${state.selectedSize === size ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}`;
-    btn.dataset.size = size;
+    btn.textContent = size; // Apenas P, M, G...
     btn.disabled = !hasStock;
     
-    // Texto do botão
-    let html = size;
+    btn.onclick = () => selectSize(size);
+
+    // 3. Cria a mensagem de baixo (se necessário)
+    wrapper.appendChild(btn);
+
     if (!hasStock) {
-        html += '<br><small style="font-size:0.6rem;color:#999;">Esgotado</small>'; // Estilo mais discreto
+        const msg = document.createElement('span');
+        msg.className = 'stock-msg error';
+        msg.textContent = 'Esgotado';
+        wrapper.appendChild(msg);
     } else if (stock > 0 && stock <= 3) {
-        html += '<br><small style="font-size:0.6rem;color:#e67e22;">Últimas</small>';
+        const msg = document.createElement('span');
+        msg.className = 'stock-msg warning';
+        msg.textContent = 'Últimas';
+        wrapper.appendChild(msg);
     }
-    btn.innerHTML = html;
 
-    btn.addEventListener('click', () => selectSize(size));
-    sizeSelector.appendChild(btn);
+    // Adiciona o wrapper ao grid principal
+    sizeSelector.appendChild(wrapper);
   });
-}
-
-function selectSize(size) {
-  state.selectedSize = size;
-  document.querySelectorAll('.size-option').forEach(opt => {
-    opt.classList.toggle('active', opt.dataset.size === size);
-  });
-  if (elExists('selectedSizeName')) $('selectedSizeName').textContent = size;
+  
+  // Atualiza nome do tamanho selecionado se houver
+  if (elExists('selectedSizeName')) $('selectedSizeName').textContent = state.selectedSize || '-';
 }
 
 /* =========================
@@ -859,4 +869,5 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
