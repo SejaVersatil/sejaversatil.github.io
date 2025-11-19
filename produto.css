@@ -2003,57 +2003,54 @@ select:focus-visible {
 }
 
 /* ========================================
-   GALERIA ESTILO LIVE! - VERTICAL
+   GALERIA ESTILO LIVE! - CORRIGIDO E CONFIRMADO
    ======================================== */
 
+/* Grid Principal da Página (Galeria Esquerda | Info Direita) */
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 55% 45% !important;
+    grid-template-columns: 60% 40% !important; /* Define as duas áreas principais */
     gap: 3rem !important;
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+    align-items: start; /* Essencial para o 'sticky' funcionar */
 }
 
 .product-gallery-section {
     position: sticky;
-    top: 100px;
+    top: 20px;
     height: fit-content;
 }
 
+/* Container Interno da Galeria (Thumbnails | Foto Principal) */
 .gallery-container {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
+    /* 85px para as miniaturas, o resto para a imagem grande */
+    grid-template-columns: 85px 1fr !important;
     gap: 16px;
     width: 100%;
+    height: auto;
 }
 
-/* Thumbnails Verticais */
+/* Lista de Miniaturas (Vertical na Esquerda) */
 .gallery-thumbs {
     display: flex;
-    flex-direction: row;  /* ✅ Horizontal */
+    flex-direction: column !important; /* Garante verticalidade */
     gap: 12px;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    padding-bottom: 8px;
+    max-height: 700px; /* Altura máxima para permitir scroll se tiver muitas fotos */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px; /* Espaço para evitar corte do scroll */
+    order: 0; /* Garante que fique na esquerda (primeira coluna) */
 }
 
-.gallery-thumbs::-webkit-scrollbar {
-    width: 4px;
-}
-
-.gallery-thumbs::-webkit-scrollbar-thumb {
-    background: #d0d0d0;
-    border-radius: 10px;
-}
-
+/* Estilização das Miniaturas */
 .thumbnail-item {
-    width: 75px;
-    height: 100px;  /* aspect-ratio 3:4 */
+    width: 100%; /* Ocupa a largura da coluna de 85px */
+    aspect-ratio: 3/4;
     border-radius: 4px;
-    border: 1.5px solid #e0e0e0;
+    border: 1px solid #e0e0e0;
     cursor: pointer;
     transition: all 0.2s ease;
     background-size: cover;
@@ -2063,7 +2060,6 @@ select:focus-visible {
 
 .thumbnail-item:hover {
     border-color: #999;
-    transform: translateY(-1px);
 }
 
 .thumbnail-item.active {
@@ -2071,68 +2067,63 @@ select:focus-visible {
     border-width: 2px;
 }
 
-/* Imagem Principal - VERTICAL */
+/* Barra de rolagem fina e elegante */
+.gallery-thumbs::-webkit-scrollbar {
+    width: 4px;
+}
+.gallery-thumbs::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 4px;
+}
+
+/* Imagem Principal (Direita da Galeria) */
 .product-page-container .gallery-main-image,
 #mainProductImage {
     width: 100% !important;
     aspect-ratio: 3/4 !important;
-    max-height: 650px !important;
     border-radius: 8px;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat;
-    background-color: #fafafa;
-    border: 1px solid #f5f5f5;
-    transition: opacity 0.25s ease;
+    border: none; /* Estilo Live! é mais limpo, sem borda */
+    order: 1; /* Segunda coluna */
 }
 
-.gallery-main-image.image-fade-out {
-    opacity: 0.6;
-}
+/* ================= RESPONSIVIDADE MOBILE ================= */
+@media (max-width: 1024px) {
+    .product-page-container .product-main-grid {
+        grid-template-columns: 1fr !important; /* Volta para uma coluna única */
+        gap: 2rem !important;
+        padding: 1rem;
+    }
 
-@media (max-width: 768px) {
+    .product-gallery-section {
+        position: static; /* Remove sticky no mobile */
+    }
+
     .gallery-container {
-        grid-template-columns: 1fr;  /* Mobile: tudo vertical */
+        display: flex;
+        flex-direction: column-reverse; /* Miniaturas EMBAIXO da foto principal */
         gap: 12px;
     }
-    
- .product-main-grid {
-        grid-template-columns: 1fr !important;
-        gap: 2.5rem !important;
-    }
-    
-    .product-info-section {
-        position: static; /* ✅ Remove sticky no mobile */
-    }
-}
-    
+
     .gallery-thumbs {
-        flex-direction: row;  /* Mobile: horizontal */
+        flex-direction: row !important; /* Volta para horizontal */
         overflow-x: auto;
-        overflow-y: visible;
+        overflow-y: hidden;
+        width: 100%;
         max-height: none;
-        padding-right: 0;
-        padding-bottom: 8px;
+        padding-bottom: 10px;
+    }
+
+    .thumbnail-item {
+        width: 70px; /* Tamanho fixo menor para mobile */
+        height: 94px;
     }
     
+    /* Ajuste da rolagem horizontal no mobile */
     .gallery-thumbs::-webkit-scrollbar {
         height: 4px;
         width: auto;
     }
-    
-    .thumbnail-item {
-        min-width: 65px;
-        width: 65px;
-        height: 87px;
-    }
 }
-
-
-
-
-
-
-
-
-
-
