@@ -681,3 +681,146 @@ html, body {
     }
 }
 
+/* ============================================================ */
+/* MOBILE PERFECTION - UX & UI (COLAR NO FINAL DO ARQUIVO)      */
+/* ============================================================ */
+
+@media (max-width: 768px) {
+
+    /* --- 1. CORREÇÃO CRÍTICA DA GALERIA --- */
+    /* Remove espaçamentos para a foto bater na borda */
+    .product-page-container .product-main-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+
+    /* Força exibição de todas as fotos no slider */
+    .gallery-hidden {
+        display: block !important; 
+    }
+    
+    /* Configuração do Slider Nativo (Sensação de App) */
+    .gallery-container {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory; /* Trava na foto */
+        scroll-behavior: smooth;
+        gap: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        /* Remove scrollbar */
+        scrollbar-width: none; 
+        -ms-overflow-style: none;
+    }
+    .gallery-container::-webkit-scrollbar { display: none; }
+
+    .gallery-photo-full {
+        min-width: 100vw; /* Largura total da tela */
+        width: 100vw;
+        height: auto;
+        aspect-ratio: 3/4; /* Proporção Retrato */
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        object-fit: cover;
+        border-radius: 0 !important;
+    }
+
+    /* Esconde o botão "Mostrar Mais" no mobile */
+    .btn-show-more {
+        display: none !important;
+    }
+
+    /* --- 2. EFEITO "CARD" NAS INFORMAÇÕES (ESTILO LIVE!) --- */
+    .product-info-section {
+        position: relative !important;
+        top: -24px !important; /* Sobe sobre a foto */
+        background: #ffffff !important;
+        border-radius: 24px 24px 0 0 !important; /* Arredonda o topo */
+        padding: 1.5rem 1.5rem 6rem 1.5rem !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.05) !important;
+        z-index: 50 !important;
+        margin-bottom: -24px !important;
+        width: 100% !important;
+    }
+
+    /* --- 3. TIPOGRAFIA E LAYOUT MOBILE --- */
+    .product-title {
+        font-size: 1.3rem !important;
+        margin-bottom: 0.2rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .price-new {
+        font-size: 1.4rem !important;
+    }
+    
+    /* Header dividido (Título Esq | Preço Dir) */
+    .product-header-wrapper {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+        margin-bottom: 1rem !important;
+    }
+    
+    .header-left {
+        flex: 1;
+    }
+    
+    .product-pricing {
+        text-align: right;
+        min-width: max-content;
+        margin-bottom: 0 !important;
+    }
+
+    /* Botão de Favoritos (Visível só no Mobile) */
+    .header-left .btn-favorite {
+        display: flex !important;
+        align-items: center;
+        font-size: 0.75rem;
+        color: #666;
+        margin-top: 8px;
+        padding: 0;
+        border: none;
+        background: transparent;
+    }
+    .header-left .btn-favorite svg {
+        margin-right: 4px;
+        width: 16px;
+        height: 16px;
+    }
+
+    /* --- 4. MELHORIAS DE UX (TOQUE) --- */
+    /* Botões de tamanho maiores */
+    .size-option {
+        min-width: 48px !important;
+        height: 44px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Ícones flutuantes menores e posicionados */
+    .tech-icons-floating {
+        top: 15px !important;
+        right: 15px !important;
+    }
+    .tech-icon {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 4px !important;
+        background: rgba(255,255,255,0.9) !important;
+    }
+    
+    /* Botão de Compra Fixo na base (Opcional, mas muito usado) */
+    .product-action-buttons {
+        padding-bottom: 0 !important;
+    }
+    .btn-primary {
+        height: 56px !important;
+        font-size: 1rem !important;
+        border-radius: 8px !important;
+    }
+}
