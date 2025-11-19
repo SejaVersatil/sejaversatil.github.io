@@ -61,11 +61,6 @@ body.product-page {
     text-decoration: underline;
 }
 
-@media (min-width: 1200px) {
-    .product-main-grid {
-        grid-template-columns: 55% 45%;
-        gap: 4rem;
-    }
 }
 
 /* ========== COLUNA ESQUERDA: GALERIA ========== */
@@ -2127,3 +2122,4 @@ select:focus-visible {
         width: auto;
     }
 }
+
