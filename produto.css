@@ -22,6 +22,35 @@ body.product-page {
     margin: 0;
 }
 
+/* Título do Produto */
+.product-title, #detailsProductName {
+    text-transform: none !important; /* Remove o CAIXA ALTA */
+    font-weight: 500 !important;     /* Fonte mais leve (Medium) */
+    font-size: 2rem;                 /* Tamanho grande */
+    color: #000;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+/* Descrição Curta (Nova) */
+.short-description-container {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+.short-desc-text {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+.view-full-desc {
+    font-size: 0.8rem;
+    text-decoration: underline;
+    color: #000;
+    font-weight: 600;
+}
+
 /* --- HEADER, NAV & BANNER (MANTIDOS DO ORIGINAL) --- */
 .product-page-container { max-width: 100%; padding: 0; margin: 0; }
 
@@ -217,5 +246,6 @@ body.product-page {
     .cart-sidebar { width: 100%; right: -100%; }
     .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
 }
+
 
 
