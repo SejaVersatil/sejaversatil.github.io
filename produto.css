@@ -399,10 +399,10 @@ body.product-page {
 .size-option.active {
     border-color: #000;
     border-width: 2.5px;
-    background: #fafafa;
-    color: #000;
-    font-weight: 700;
-    transform: scale(1.03);
+    background: #000;
+    color: #fff;
+    font-weight: 600;
+    transform: none;
 }
 
 .size-option.unavailable {
@@ -2085,6 +2085,7 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
 
 
