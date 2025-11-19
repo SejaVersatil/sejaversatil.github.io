@@ -72,86 +72,6 @@ function saveCartToStorage() {
 }
 
 /* =========================
-   Criação de thumbnails
-   ========================= */
-function createThumbnail(img, index) {
-  const thumb = document.createElement('div');
-  thumb.className = 'thumbnail';
-  thumb.dataset.index = String(index);
-  thumb.dataset.src = img;
-  thumb.setAttribute('role', 'button');
-  thumb.setAttribute('aria-label', `Ver imagem ${index + 1}`);
-  thumb.setAttribute('tabindex', '0');
-  thumb.style.width = '70px';
-  thumb.style.height = '93px';
-  thumb.style.flexShrink = '0';
-
-  // Style com melhor handling
-  if (isImageUrl(img)) {
-    thumb.style.backgroundImage = `url("${img}")`;
-    thumb.style.backgroundSize = 'cover';
-    thumb.style.backgroundPosition = 'center';
-  } else if (isGradient(img)) {
-    thumb.style.background = img;
-  } else {
-    thumb.style.background = '#f0f0f0';
-  }
-
-  if (index === 0) thumb.classList.add('active');
-
-  // Click handler
-  thumb.addEventListener('click', () => {
-    changeMainImageFromData(img, index);
-  });
-  
-  // Keyboard accessibility
-  thumb.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      changeMainImageFromData(img, index);
-    }
-  });
-
-  return thumb;
-}
-
-/* =========================
-   Mudar imagem principal
-   ========================= */
-function changeMainImageFromData(imageSrc, index = 0) {
-  const mainImage = $('mainProductImage');
-  if (!mainImage) return;
-
-  // Animação suave LIVE! style
-  mainImage.classList.add('image-fade-out');
-
-  setTimeout(() => {
-    if (isImageUrl(imageSrc)) {
-  mainImage.style.background = '';
-  mainImage.style.backgroundImage = `url("${imageSrc}")`;
-  mainImage.style.backgroundSize = 'cover';
-  mainImage.style.backgroundPosition = 'center';
-  mainImage.style.backgroundRepeat = 'no-repeat';
-} else if (isGradient(imageSrc)) {
-  mainImage.style.backgroundImage = '';
-  mainImage.style.background = imageSrc;
-} else {
-  mainImage.style.backgroundImage = '';
-  mainImage.style.background = '#f5f5f5';
-}
-
-    // Update thumbnails active state
-    const thumbs = qa('.thumbnail');
-    thumbs.forEach((t, i) => {
-      t.classList.toggle('active', i === index);
-      t.setAttribute('aria-pressed', i === index ? 'true' : 'false');
-    });
-
-    mainImage.classList.remove('image-fade-out');
-  }, 150); // Timing similar ao LIVE!
-}
-
-/* =========================
    Inicialização da página
    ========================= */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -239,8 +159,7 @@ await loadProductVariants(productId);
 
 // render - AGUARDAR o próximo frame
 await new Promise(resolve => requestAnimationFrame(resolve));
-renderProduct();
-renderGalleryImages();     
+renderProduct();  
 
     console.log('Produto carregado:', state.currentProduct.name || state.currentProduct.id);
   } catch (err) {
@@ -295,65 +214,6 @@ function renderProduct() {
   renderSizes();
   renderDescription();
   renderRelatedProducts();
-}
-
-// ========== RENDERIZAR GALERIA (NOVA ESTRUTURA) ==========
-function renderGalleryImages() {
-    const p = state.currentProduct;
-    if (!p || !p.images || p.images.length === 0) return;
-    
-    const img1 = document.getElementById('galleryImage1');
-    const img2 = document.getElementById('galleryImage2');
-    const hiddenGallery = document.getElementById('galleryHidden');
-    const btnShowMore = document.getElementById('btnShowMoreImages');
-    
-    // Imagem 1
-    if (img1 && p.images[0]) {
-        const imgEl1 = img1.querySelector('img');
-        imgEl1.src = p.images[0];
-    }
-    
-    // Imagem 2
-    if (img2 && p.images[1]) {
-        const imgEl2 = img2.querySelector('img');
-        imgEl2.src = p.images[1];
-    } else if (img2) {
-        img2.style.display = 'none';
-    }
-    
-    // Imagens restantes (escondidas)
-    if (hiddenGallery && p.images.length > 2) {
-        hiddenGallery.innerHTML = '';
-        for (let i = 2; i < p.images.length; i++) {
-            const div = document.createElement('div');
-            div.className = 'product-gallery-image';
-            div.innerHTML = `<img src="${p.images[i]}" alt="Produto - Imagem ${i+1}">`;
-            hiddenGallery.appendChild(div);
-        }
-        btnShowMore.style.display = 'flex';
-    } else if (btnShowMore) {
-        btnShowMore.style.display = 'none';
-    }
-}
-
-// ========== TOGGLE MOSTRAR MAIS IMAGENS ==========
-function toggleMoreImages() {
-    const hiddenGallery = document.getElementById('galleryHidden');
-    const btn = document.getElementById('btnShowMoreImages');
-    const btnText = document.getElementById('btnShowMoreText');
-    
-    if (hiddenGallery.style.display === 'none') {
-        hiddenGallery.style.display = 'flex';
-        btnText.textContent = 'MOSTRAR MENOS';
-        btn.classList.add('active');
-    } else {
-        hiddenGallery.style.display = 'none';
-        btnText.textContent = 'MOSTRAR MAIS';
-        btn.classList.remove('active');
-        
-        // Scroll suave para o topo da galeria
-        document.getElementById('galleryImage1').scrollIntoView({ behavior: 'smooth' });
-    }
 }
 
 /* =========================
@@ -554,12 +414,64 @@ function selectColor(colorName) {
     if (found) {
       const imgs = (typeof found === 'string') ? (p.images || []) : (Array.isArray(found.images) ? found.images : (p.images || []));
       if (imgs && imgs.length) {
+        const mainImage = $('mainProductImage');
         const thumbnailList = $('thumbnailList');
-        if (thumbnailList) {
+        
+        if (mainImage && thumbnailList) {
+          // Atualizar imagem principal com fade
+          mainImage.classList.add('image-fade-out');
+          
+          setTimeout(() => {
+            const firstImage = imgs[0];
+            if (isImageUrl(firstImage)) {
+              mainImage.style.background = '';
+              mainImage.style.backgroundImage = `url("${firstImage}")`;
+              mainImage.style.backgroundSize = 'cover';
+              mainImage.style.backgroundPosition = 'center';
+              mainImage.style.backgroundRepeat = 'no-repeat';
+            } else if (isGradient(firstImage)) {
+              mainImage.style.backgroundImage = '';
+              mainImage.style.background = firstImage;
+            }
+            mainImage.classList.remove('image-fade-out');
+          }, 150);
+          
+          // Recriar miniaturas
           thumbnailList.innerHTML = '';
-          imgs.forEach((img, idx) => thumbnailList.appendChild(createThumbnail(img, idx)));
+          imgs.forEach((img, index) => {
+            const thumb = document.createElement('div');
+            thumb.className = 'thumbnail-item';
+            
+            if (isImageUrl(img)) {
+              thumb.style.backgroundImage = `url("${img}")`;
+              thumb.style.backgroundSize = 'cover';
+              thumb.style.backgroundPosition = 'center';
+            } else if (isGradient(img)) {
+              thumb.style.background = img;
+            } else {
+              thumb.style.background = '#eee';
+            }
+            
+            // Evento de clique
+            thumb.addEventListener('click', () => {
+              mainImage.classList.add('image-fade-out');
+              setTimeout(() => {
+                if (isImageUrl(img)) {
+                  mainImage.style.background = '';
+                  mainImage.style.backgroundImage = `url("${img}")`;
+                  mainImage.style.backgroundSize = 'cover';
+                  mainImage.style.backgroundPosition = 'center';
+                } else if (isGradient(img)) {
+                  mainImage.style.backgroundImage = '';
+                  mainImage.style.background = img;
+                }
+                mainImage.classList.remove('image-fade-out');
+              }, 150);
+            });
+            
+            thumbnailList.appendChild(thumb);
+          });
         }
-        changeMainImageFromData(imgs[0], 0);
       }
     }
   }
@@ -1168,66 +1080,6 @@ window.changeQuantity = changeQuantity;
    ========================= */
 console.log('✅ produto.js carregado e pronto.');
 
-// ========== CALCULAR FRETE (DETALHADO) ==========
-function calculateShippingDetails() {
-    const cepInput = document.getElementById('cepInput');
-    const resultsBox = document.getElementById('shippingResultsBox');
-    
-    if (!cepInput || !resultsBox) return;
-    
-    const cep = cepInput.value.replace(/\D/g, '');
-    
-    if (cep.length !== 8) {
-        alert('Digite um CEP válido (8 dígitos)');
-        return;
-    }
-    
-    // Simular resultados
-    resultsBox.innerHTML = `
-        <div style="padding: 1rem; background: #f0f0f0; border-radius: 4px; margin-top: 1rem;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #ddd;">
-                <div>
-                    <strong>PAC</strong><br>
-                    <small style="color: #666;">Entrega em 5-10 dias úteis</small>
-                </div>
-                <strong>R$ 15,90</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <strong>SEDEX</strong><br>
-                    <small style="color: #666;">Entrega em 2-4 dias úteis</small>
-                </div>
-                <strong>R$ 25,90</strong>
-            </div>
-        </div>
-    `;
-    resultsBox.style.display = 'block';
-}
-
-// ========== MOSTRAR DESCRIÇÃO COMPLETA ==========
-function showFullDescription() {
-    const modal = document.getElementById('productFullDescription');
-    const content = document.getElementById('fullDescriptionContent');
-    const p = state.currentProduct;
-    
-    if (!modal || !content || !p) return;
-    
-    content.innerHTML = `
-        <p>${p.description || 'Descrição completa não disponível.'}</p>
-    `;
-    
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeFullDescription() {
-    const modal = document.getElementById('productFullDescription');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
 // ========== COMPRAR VIA WHATSAPP ==========
 function buyViaWhatsApp() {
     const p = state.currentProduct;
@@ -1242,9 +1094,5 @@ function buyViaWhatsApp() {
     window.open(whatsappURL, '_blank');
 }
 
-// ========== GUIA DE TAMANHOS ==========
-function showSizeGuide() {
-    alert('Guia de Tamanhos:\n\nP: 36-38\nM: 40-42\nG: 44-46\nGG: 48-50');
-}
 
 
