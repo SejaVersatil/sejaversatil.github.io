@@ -1162,6 +1162,7 @@ window.produtoModule = {
 window.closeProductDetails = closeProductDetails;
 window.buyViaWhatsApp = buyViaWhatsApp;
 window.closePaymentModal = closePaymentModal;
+window.changeQuantity = changeQuantity;
 /* =========================
    Final log
    ========================= */
@@ -1245,4 +1246,5 @@ function buyViaWhatsApp() {
 function showSizeGuide() {
     alert('Guia de Tamanhos:\n\nP: 36-38\nM: 40-42\nG: 44-46\nGG: 48-50');
 }
+
 
