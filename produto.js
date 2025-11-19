@@ -472,32 +472,28 @@ function selectSize(size) {
 }
 
 /* =========================
-   Descrição & Relacionados
+   Produtos relacionados (Corrigido: Imagens)
    ========================= */
-function renderDescription() {
-  const p = state.currentProduct;
-  if (!p) return;
-  const descEl = $('productDescription');
-  if (!descEl) return;
-  // Mantém texto simples se não houver HTML
-  descEl.textContent = p.description || `${p.name} - Peça versátil e confortável. Tecnologia de alta performance.`;
-}
-
 async function renderRelatedProducts() {
   try {
     const p = state.currentProduct;
     if (!p) return;
+    
     const relatedGrid = $('relatedProductsGrid');
     if (!relatedGrid) return;
 
+    // Busca produtos da mesma categoria
     const relatedSnapshot = await db.collection('produtos')
         .where('category', '==', p.category)
-        .limit(5)
+        .limit(5) // Traz 5 para garantir que tenhamos 4 diferentes do atual
         .get();
 
     const related = [];
     relatedSnapshot.forEach(doc => {
-      if (doc.id !== p.id) related.push({ id: doc.id, ...(doc.data() || {}) });
+      // Não mostra o próprio produto que já está aberto
+      if (doc.id !== p.id) {
+          related.push({ id: doc.id, ...(doc.data() || {}) });
+      }
     });
 
     if (!related.length) {
@@ -506,24 +502,43 @@ async function renderRelatedProducts() {
     }
 
     relatedGrid.innerHTML = '';
+    
+    // Pega os 4 primeiros
     related.slice(0, 4).forEach(prod => {
       const card = document.createElement('div');
       card.className = 'product-card';
-      card.addEventListener('click', () => window.location.href = `produto.html?id=${prod.id}`);
+      card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
 
-      const images = Array.isArray(prod.images) && prod.images.length ? prod.images : (prod.image ? [prod.image] : []);
-      const firstImage = images[0];
+      // --- CORREÇÃO DE IMAGEM AQUI ---
+      // Tenta pegar a primeira imagem de 'images' (array), ou 'image' (string), ou usa placeholder
+      let imgUrl = '';
+      if (Array.isArray(prod.images) && prod.images.length > 0) {
+          imgUrl = prod.images[0];
+      } else if (prod.image) {
+          imgUrl = prod.image;
+      }
 
       const imgWrap = document.createElement('div');
       imgWrap.className = 'product-image';
-      const slide = document.createElement('div');
-      slide.className = 'product-image-slide'; // remove active, css handles hover
       
-      if (isImageUrl(firstImage)) {
-        slide.style.backgroundImage = `url("${firstImage}")`;
+      const slide = document.createElement('div');
+      slide.className = 'product-image-slide';
+      
+      // Verifica se é URL válida ou Gradiente/Cor
+      if (isImageUrl(imgUrl)) {
+        slide.style.backgroundImage = `url("${imgUrl}")`;
+        slide.style.backgroundSize = 'cover';
+        slide.style.backgroundPosition = 'center';
+        slide.style.backgroundRepeat = 'no-repeat';
       } else {
-        slide.style.background = '#eee';
+        // Se não tiver imagem, coloca um fundo cinza para não ficar branco
+        slide.style.backgroundColor = '#eee';
+        slide.style.display = 'flex';
+        slide.style.alignItems = 'center';
+        slide.style.justifyContent = 'center';
+        slide.innerHTML = '<span style="font-size:20px;color:#ccc;">📷</span>';
       }
+      
       imgWrap.appendChild(slide);
 
       const info = document.createElement('div');
@@ -531,12 +546,15 @@ async function renderRelatedProducts() {
       
       const h4 = document.createElement('h4');
       h4.textContent = prod.name || 'Produto';
+      h4.style.margin = '0 0 5px 0'; // Ajuste visual
       
       const priceDiv = document.createElement('div');
       priceDiv.className = 'product-price';
       const priceSpan = document.createElement('span');
       priceSpan.className = 'price-new';
-      priceSpan.textContent = `R$ ${safeNumber(prod.price, 0).toFixed(2)}`;
+      
+      const priceVal = safeNumber(prod.price, 0);
+      priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
 
       priceDiv.appendChild(priceSpan);
       info.appendChild(h4);
@@ -912,6 +930,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
