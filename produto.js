@@ -263,7 +263,7 @@ function renderGallery() {
   const p = state.currentProduct;
   if (!p) return;
 
-  //  DEFINIR LISTA DE IMAGENS
+  // 1️⃣ DEFINIR LISTA DE IMAGENS
   const images = Array.isArray(p.images) && p.images.length
     ? p.images
     : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
@@ -276,14 +276,14 @@ function renderGallery() {
     return;
   }
 
-  //  GARANTIR LAYOUT DO COMPONENTE
+  // 2️⃣ GARANTIR LAYOUT DO COMPONENTE
   mainImage.style.width = '100%';
   mainImage.style.aspectRatio = '3/4';
   thumbnailList.style.display = 'flex';
   thumbnailList.style.flexDirection = 'column';
   thumbnailList.style.gap = '8px';
 
-  //  RENDERIZAR IMAGEM PRINCIPAL
+  // 3️⃣ RENDERIZAR IMAGEM PRINCIPAL
   const firstImage = images[0];
 
   if (isImageUrl(firstImage)) {
@@ -302,10 +302,9 @@ function renderGallery() {
     mainImage.style.background = '#f5f5f5';
   }
 
-  // Remover fade-out antes de trocar
   mainImage.classList.remove('image-fade-out');
 
-  //  RENDERIZAR MINIATURAS
+  // 4️⃣ RENDERIZAR MINIATURAS
   thumbnailList.innerHTML = '';
 
   images.forEach((img, index) => {
@@ -1093,6 +1092,7 @@ function buyViaWhatsApp() {
     const whatsappURL = `https://wa.me/5571991427103?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank');
 }
+
 
 
 
