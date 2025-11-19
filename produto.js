@@ -400,6 +400,89 @@ function selectColor(colorName, specificImages = null) {
 }
 
 /* =========================
+   Tamanhos (Corrigido: Clique + Sem Pré-seleção)
+   ========================= */
+function renderSizes() {
+  const sizeSelector = $('sizeSelector');
+  if (!sizeSelector) return;
+  
+  const p = state.currentProduct;
+  const variants = state.productVariants[p.id] || [];
+  const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ['P', 'M', 'G', 'GG'];
+
+  sizeSelector.innerHTML = '';
+
+  sizes.forEach((size) => {
+    let hasStock = false;
+    let stock = 0;
+
+    // Se TEM cor selecionada, verifica estoque real da variante
+    if (state.selectedColor) {
+        const variant = variants.find(v => 
+            String(v.size) === String(size) && 
+            String(v.color) === String(state.selectedColor)
+        );
+        if (variant) {
+            stock = safeNumber(variant.stock, 0);
+            hasStock = stock > 0;
+        }
+    } else {
+        // Se NÃO TEM cor selecionada, mostra como disponível (ou neutro)
+        hasStock = true; 
+    }
+
+    // Cria Wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'size-wrapper';
+
+    // Cria Botão
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `size-option ${state.selectedSize === size ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}`;
+    btn.textContent = size;
+    
+    // Desabilita apenas se já escolheu cor e não tem estoque
+    btn.disabled = state.selectedColor && !hasStock;
+    
+    // CLICK HANDLER (Importante!)
+    btn.onclick = (e) => {
+        e.stopPropagation(); 
+        selectSize(size);
+    };
+
+    wrapper.appendChild(btn);
+
+    // Mensagens de Estoque (Só mostra se já tiver cor selecionada)
+    if (state.selectedColor) {
+        if (!hasStock) {
+            const msg = document.createElement('span');
+            msg.className = 'stock-msg error';
+            msg.textContent = 'Esgotado';
+            wrapper.appendChild(msg);
+        } else if (stock > 0 && stock <= 3) {
+            const msg = document.createElement('span');
+            msg.className = 'stock-msg warning';
+            msg.textContent = 'Últimas';
+            wrapper.appendChild(msg);
+        }
+    }
+
+    sizeSelector.appendChild(wrapper);
+  });
+  
+  if (elExists('selectedSizeName')) $('selectedSizeName').textContent = state.selectedSize || '-';
+}
+
+function selectSize(size) {
+  state.selectedSize = size;
+  // Atualiza visual dos botões
+  document.querySelectorAll('.size-option').forEach(opt => {
+    opt.classList.toggle('active', opt.textContent === size);
+  });
+  if (elExists('selectedSizeName')) $('selectedSizeName').textContent = size;
+}
+
+/* =========================
    Tamanhos
    ========================= */
 function renderColors() {
@@ -898,4 +981,5 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
