@@ -110,11 +110,11 @@ body.product-page {
 
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 68% 32% !important; /* Layout Live! */
-    gap: 2rem !important;
-    max-width: 1800px;
-    margin: 0 auto;
-    padding: 2rem 3rem;
+    grid-template-columns: 72% 28% !important; /* Layout Live! */
+    gap: 3rem !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 2rem;
     align-items: start;
     position: relative;
 }
@@ -372,4 +372,26 @@ body.product-page {
 
 .badge-text a:hover {
     color: #000;
+}
+
+@media (max-width: 1440px) {
+    .product-page-container .product-main-grid {
+        grid-template-columns: 65% 35% !important; /* Equilibra melhor em telas menores */
+        padding: 2rem 3rem !important; /* Mais respiro lateral */
+    }
+}
+
+/* 3. Ajuste para Tablets e Mobile (Telas pequenas) */
+@media (max-width: 1024px) {
+    .product-page-container .product-main-grid {
+        grid-template-columns: 1fr !important; /* Vira uma coluna só */
+        padding: 1rem !important;
+        gap: 2rem !important;
+    }
+    
+    /* Garante que no celular a galeria não fique "torta" */
+    .product-gallery-section, 
+    .gallery-container {
+        width: 100% !important;
+    }
 }
