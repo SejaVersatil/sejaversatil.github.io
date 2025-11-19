@@ -24,9 +24,9 @@ body.product-page {
 
 /* Título do Produto */
 .product-title, #detailsProductName {
-    text-transform: none !important; 
-    font-weight: 500 !important;    
-    font-size: 2rem;                
+    text-transform: none !important; /* Remove o CAIXA ALTA */
+    font-weight: 500 !important;     /* Fonte mais leve (Medium) */
+    font-size: 2rem;                 /* Tamanho grande */
     color: #000;
     margin-bottom: 0.5rem;
     line-height: 1.2;
@@ -133,6 +133,14 @@ body.product-page {
     grid-column: auto !important;
 }
 
+/* Direita: Informações Sticky */
+.product-info-section {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
 /* Detalhes */
 .breadcrumb { font-size: 0.75rem; color: #999; margin-bottom: 0.5rem; }
@@ -718,3 +726,60 @@ body, .short-desc-text, .model-info-text {
     pointer-events: auto;
 }
 
+/* ============================================================ */
+/* MASTER FIX: STICKY + GRID + OVERFLOW (CORREÇÃO FINAL REAL)   */
+/* ============================================================ */
+
+/* 1. Desbloqueio Global (Essencial para Sticky) */
+html, body {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    height: auto !important;
+}
+
+/* 2. Container do Produto (O pai do grid) */
+.product-page-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* 3. O Grid Principal (O trilho) */
+.product-page-container .product-main-grid {
+    display: grid !important;
+    grid-template-columns: 70% 30% !important; /* Ajuste fino para garantir espaço */
+    gap: 3rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 3rem !important; /* Padding seguro */
+    align-items: start !important; /* OBRIGATÓRIO: Faz as colunas terem alturas diferentes */
+    position: relative !important;
+    overflow: visible !important;
+}
+
+/* 4. A Coluna Direita (O vagão que trava) */
+.product-info-section {
+    display: block !important; /* Flex as vezes atrapalha sticky complexo */
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 100px !important; /* Ponto de trava */
+    height: fit-content !important; /* Garante que não estique */
+    z-index: 20 !important;
+}
+
+/* 5. Reset para Mobile (Desliga tudo isso) */
+@media (max-width: 1024px) {
+    .product-page-container .product-main-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+    
+    .product-info-section {
+        position: static !important;
+        width: 100% !important;
+        padding: 1.5rem !important;
+    }
+}
