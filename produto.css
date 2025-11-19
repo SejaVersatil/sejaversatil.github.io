@@ -167,31 +167,81 @@ body.product-page {
 .product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
 .selector-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.8rem; }
 
-.color-options-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+/* --- NOVO ESTILO LIVE! (Quadrados Minimalistas) --- */
+
+/* CORES */
+.color-options-grid {
+    display: flex;
+    gap: 10px; /* Mais espaço entre as cores */
+    flex-wrap: wrap;
+}
+
 .color-option {
-    width: 32px; height: 32px;
-    border-radius: 2px; /* Quadrado */
+    width: 32px;
+    height: 32px;
+    border-radius: 2px !important; /* QUADRADO (Live!) */
     border: 1px solid #e0e0e0;
     cursor: pointer;
     position: relative;
+    transition: all 0.2s ease;
 }
+
+.color-option:hover {
+    border-color: #999;
+}
+
 .color-option.active {
     border: 1px solid #000;
-    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000;
+    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000; /* Borda dupla fina igual Live */
+    transform: scale(1.1);
 }
-/* Remove check antigo */
-.color-option.active::after { display: none; }
 
-.size-options-grid { display: flex; gap: 8px; flex-wrap: wrap; }
-.size-option {
-    min-width: 45px; height: 35px;
-    border: 1px solid #ddd;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; font-weight: 600;
-    cursor: pointer; background: #fff;
+/* Remove o ícone de "Check" antigo se houver */
+.color-option.active::after {
+    display: none !important;
 }
-.size-option.active { background: #000; color: #fff; border-color: #000; }
-.size-option.unavailable { opacity: 0.5; text-decoration: line-through; background: #f9f9f9; cursor: not-allowed; }
+
+/* TAMANHOS */
+.size-options-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.size-option {
+    min-width: 42px;
+    height: 32px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    color: #333;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px; /* Quadrado */
+}
+
+.size-option:hover {
+    border-color: #000;
+}
+
+.size-option.active {
+    background: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+    font-weight: 600;
+}
+
+.size-option.unavailable {
+    opacity: 0.5;
+    text-decoration: line-through;
+    background: #f5f5f5;
+    cursor: not-allowed;
+    border-color: #eee;
+}
 
 /* Quantidade e Frete */
 .quantity-controls { display: flex; border: 1px solid #ddd; width: fit-content; }
@@ -246,6 +296,7 @@ body.product-page {
     .cart-sidebar { width: 100%; right: -100%; }
     .product-action-buttons { padding-bottom: 60px; } /* Espaço para botão flutuante */
 }
+
 
 
 
