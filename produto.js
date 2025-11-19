@@ -402,64 +402,59 @@ function selectColor(colorName, specificImages = null) {
 /* =========================
    Tamanhos
    ========================= */
-function renderSizes() {
-  const sizeSelector = $('sizeSelector');
-  if (!sizeSelector) return;
-  
+function renderColors() {
+  const colorSelector = $('colorSelector');
+  if (!colorSelector) return;
   const p = state.currentProduct;
+  
+  // Prepara lista de cores disponíveis
   const variants = state.productVariants[p.id] || [];
-  const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ['P', 'M', 'G', 'GG'];
+  let availableColors = [];
 
-  sizeSelector.innerHTML = '';
+  if (Array.isArray(p.colors) && p.colors.length > 0) {
+    availableColors = p.colors.map(c => {
+      if (typeof c === 'string') return { name: c, hex: getColorHex(c), images: p.images || [] };
+      else return { name: c.name || 'Cor', hex: c.hex || getColorHex(c.name), images: c.images || p.images || [] };
+    });
+  } else {
+    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+    availableColors = unique.map(name => ({ name, hex: getColorHex(name), images: p.images || [] }));
+  }
 
-  sizes.forEach((size) => {
-    // Lógica de Estoque
-    const hasStock = variants.some(v =>
-      String(v.size) === String(size) &&
-      (state.selectedColor ? String(v.color) === String(state.selectedColor) : true) &&
-      v.stock > 0
-    );
-    
-    const stockItem = variants.find(v =>
-      String(v.size) === String(size) &&
-      (state.selectedColor ? String(v.color) === String(state.selectedColor) : true)
-    );
-    const stock = stockItem ? safeNumber(stockItem.stock, 0) : 0;
+  if (!availableColors.length) {
+     const group = colorSelector.closest('.product-selector-group');
+     if(group) group.style.display = 'none';
+     return;
+  }
 
-    // 1. Cria o Wrapper (Container vertical)
-    const wrapper = document.createElement('div');
-    wrapper.className = 'size-wrapper';
-
-    // 2. Cria o Botão (Apenas a letra do tamanho)
+  colorSelector.innerHTML = '';
+  availableColors.forEach((colorObj) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = `size-option ${state.selectedSize === size ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}`;
-    btn.textContent = size; // Apenas P, M, G...
-    btn.disabled = !hasStock;
+    // Adiciona classe 'active' APENAS se o usuário já tiver clicado na cor
+    btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`; 
+    btn.title = colorObj.name;
+    btn.dataset.color = colorObj.name;
+
+    const hex = colorObj.hex || getColorHex(colorObj.name);
+    btn.style.background = hex;
     
-    btn.onclick = () => selectSize(size);
-
-    // 3. Cria a mensagem de baixo (se necessário)
-    wrapper.appendChild(btn);
-
-    if (!hasStock) {
-        const msg = document.createElement('span');
-        msg.className = 'stock-msg error';
-        msg.textContent = 'Esgotado';
-        wrapper.appendChild(msg);
-    } else if (stock > 0 && stock <= 3) {
-        const msg = document.createElement('span');
-        msg.className = 'stock-msg warning';
-        msg.textContent = 'Últimas';
-        wrapper.appendChild(msg);
+    if (hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') {
+        btn.style.border = '1px solid #ccc';
     }
 
-    // Adiciona o wrapper ao grid principal
-    sizeSelector.appendChild(wrapper);
+    btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
+    colorSelector.appendChild(btn);
   });
-  
-  // Atualiza nome do tamanho selecionado se houver
-  if (elExists('selectedSizeName')) $('selectedSizeName').textContent = state.selectedSize || '-';
+
+  // --- AQUI ESTÁ A MUDANÇA ---
+  // Removi o bloco que selecionava a primeira cor automaticamente.
+  // Se não tiver cor selecionada, garantimos que o texto diga "Selecione" e mostramos todas as fotos.
+  if (!state.selectedColor) {
+      if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
+      // Renderiza a galeria completa (todas as fotos) se ninguém clicou ainda
+      renderGallery(p.images); 
+  }
 }
 
 /* =========================
@@ -903,3 +898,4 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
