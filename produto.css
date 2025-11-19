@@ -36,21 +36,23 @@ body.product-page {
 
 /* Descrição Curta (Nova) */
 .short-description-container {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important; /* Removemos a linha para ficar clean */
 }
+
 .short-desc-text {
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
+    font-size: 0.875rem !important; /* 14px (Tamanho padrão de leitura) */
+    line-height: 1.6 !important;    /* Bom espaçamento entre linhas */
+    color: #555 !important;         /* Cinza escuro suave */
+    font-weight: 400 !important;
 }
+
 .view-full-desc {
-    font-size: 0.8rem;
-    text-decoration: underline;
-    color: #000;
-    font-weight: 600;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-top: 0.5rem;
+    display: inline-block;
 }
 
 /* --- HEADER, NAV & BANNER (MANTIDOS DO ORIGINAL) --- */
@@ -812,6 +814,7 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
 
 
