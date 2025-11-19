@@ -34,53 +34,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-    authDomain: "seja-versatil.firebaseapp.com",
-    projectId: "seja-versatil",
-    storageBucket: "seja-versatil.firebasestorage.app",
-    messagingSenderId: "102339207381",
-    appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-    measurementId: "G-86E5CX4S3T"
-  };
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+            authDomain: "seja-versatil.firebaseapp.com",
+            projectId: "seja-versatil",
+            storageBucket: "seja-versatil.firebasestorage.app",
+            messagingSenderId: "102339207381",
+            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+            measurementId: "G-86E5CX4S3T"
+        };
 
-  firebase.initializeApp(firebaseConfig);
-
-  // ✅ ATIVAR APP CHECK
-// const appCheck = firebase.appCheck();
-// appCheck.activate(
-//   '6Lfe8A4sAAAAALW4uydVsqioOIzYDlaLyCuGFdbk',
-//   true
-// );
-
-  const db = firebase.firestore();
-  const auth = firebase.auth();
-  const storage = firebase.storage();
-  
-  console.log("🔥 Firebase inicializado");
-  console.log("🛡️ App Check ativado");
-
-// HANDLER GLOBAL
-  window.addEventListener('unhandledrejection', function(event) {
-    if (event.reason && event.reason.message) {
-      // Ignorar erros de extensões crypto
-      if (event.reason.message.includes('signTransaction') ||
-          event.reason.message.includes('ethereum') ||
-          event.reason.message.includes('phantom')) {
-        event.preventDefault();
-        return;
-      }
-    }
-  });
-  
-  console.log("🔥 Firebase inicializado");
-</script>
+        // Inicializa o Firebase imediatamente
+        try {
+            firebase.initializeApp(firebaseConfig);
+            
+            // Define as variáveis globais para o site todo usar
+            window.db = firebase.firestore();
+            window.auth = firebase.auth();
+            window.storage = firebase.storage();
+            
+            console.log("🔥 Firebase (Home) Conectado com Sucesso");
+        } catch (e) {
+            console.error("Erro crítico ao iniciar Firebase:", e);
+        }
+    </script>
 
     
     <!-- Link para o CSS -->
