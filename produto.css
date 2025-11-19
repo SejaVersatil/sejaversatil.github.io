@@ -146,26 +146,6 @@ body.product-page {
     height: 100vh;
 }
 
-/* Breadcrumb */
-.product-breadcrumb {
-    font-size: 0.8rem;
-    color: #666;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.product-breadcrumb a {
-    color: #666;
-    text-decoration: none;
-}
-
-.product-breadcrumb a:hover {
-    color: #000;
-    text-decoration: underline;
-}
-
 /* Título */
 .product-title-main,
 .product-title,
@@ -179,25 +159,6 @@ body.product-page {
     color: #000;
     margin: 0 0 0.75rem 0;
     line-height: 1.2;
-}
-
-/* Preços */
-.product-pricing-box {
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.product-price-current {
-    font-family: 'Oswald', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 0.5rem;
-}
-
-.product-price-installments {
-    font-size: 0.9rem;
-    color: #666;
 }
 
 /* PREÇOS - ESTILO LIVE! COMPLETO */
@@ -269,88 +230,6 @@ body.product-page {
     font-weight: 600;
     display: inline-block;
     margin-top: 0.5rem;
-}
-
-/* Seletor de Cores */
-.product-color-selector {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
-
-.color-option-square {
-    width: 45px;
-    height: 45px;
-    border-radius: 4px;
-    border: 2px solid #e5e5e5;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.color-option-square:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.color-option-square.active {
-    border-color: #000;
-    border-width: 3px;
-}
-
-.color-option-square.active::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: 900;
-    text-shadow: 0 0 3px rgba(0,0,0,0.5);
-}
-
-/* Seletor de Tamanhos */
-.product-size-selector {
-    display: flex;
-    gap: 0.6rem;
-}
-
-.size-option-square {
-    min-width: 50px;
-    padding: 0.8rem 1rem;
-    border: 2px solid #e5e5e5;
-    background: #fff;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 1px;
-    color: #000;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-    border-radius: 4px;
-}
-
-.size-option-square:hover {
-    border-color: #000;
-}
-
-.size-option-square.active {
-    background: #000;
-    color: #fff;
-    border-color: #000;
-}
-
-.size-option-square:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.link-size-guide {
-    font-size: 0.85rem;
-    color: #666;
-    text-decoration: underline;
 }
 
 /* Botões Principais */
@@ -1893,20 +1772,6 @@ body.product-page {
         grid-template-columns: 1fr;
     }
     
-    .product-gallery-column,
-    .product-info-column {
-        position: static;
-        height: auto;
-    }
-    
-    .product-gallery-column {
-        padding: 1.5rem;
-    }
-    
-    .product-info-column {
-        padding: 2rem 1.5rem;
-    }
-    
     /* Manter estilos antigos para compatibilidade */
     .product-main-grid {
         grid-template-columns: 1fr;
@@ -2239,3 +2104,4 @@ select:focus-visible {
         height: 87px;
     }
 }
+
