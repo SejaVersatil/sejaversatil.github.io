@@ -483,64 +483,6 @@ function selectSize(size) {
 }
 
 /* =========================
-   Tamanhos
-   ========================= */
-function renderColors() {
-  const colorSelector = $('colorSelector');
-  if (!colorSelector) return;
-  const p = state.currentProduct;
-  
-  // Prepara lista de cores disponíveis
-  const variants = state.productVariants[p.id] || [];
-  let availableColors = [];
-
-  if (Array.isArray(p.colors) && p.colors.length > 0) {
-    availableColors = p.colors.map(c => {
-      if (typeof c === 'string') return { name: c, hex: getColorHex(c), images: p.images || [] };
-      else return { name: c.name || 'Cor', hex: c.hex || getColorHex(c.name), images: c.images || p.images || [] };
-    });
-  } else {
-    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
-    availableColors = unique.map(name => ({ name, hex: getColorHex(name), images: p.images || [] }));
-  }
-
-  if (!availableColors.length) {
-     const group = colorSelector.closest('.product-selector-group');
-     if(group) group.style.display = 'none';
-     return;
-  }
-
-  colorSelector.innerHTML = '';
-  availableColors.forEach((colorObj) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    // Adiciona classe 'active' APENAS se o usuário já tiver clicado na cor
-    btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`; 
-    btn.title = colorObj.name;
-    btn.dataset.color = colorObj.name;
-
-    const hex = colorObj.hex || getColorHex(colorObj.name);
-    btn.style.background = hex;
-    
-    if (hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') {
-        btn.style.border = '1px solid #ccc';
-    }
-
-    btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
-    colorSelector.appendChild(btn);
-  });
-
-  // --- AQUI ESTÁ A MUDANÇA ---
-  // Removi o bloco que selecionava a primeira cor automaticamente.
-  // Se não tiver cor selecionada, garantimos que o texto diga "Selecione" e mostramos todas as fotos.
-  if (!state.selectedColor) {
-      if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
-      // Renderiza a galeria completa (todas as fotos) se ninguém clicou ainda
-      renderGallery(p.images); 
-  }
-}
-
-/* =========================
    Descrição & Relacionados
    ========================= */
 function renderDescription() {
@@ -981,5 +923,6 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
