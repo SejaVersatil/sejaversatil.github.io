@@ -2004,12 +2004,13 @@ select:focus-visible {
 /* Grid Principal da Página (Galeria Esquerda | Info Direita) */
 .product-page-container .product-main-grid {
     display: grid !important;
-    grid-template-columns: 60% 40% !important; /* Define as duas áreas principais */
-    gap: 3rem !important;
-    max-width: 1400px;
+    grid-template-columns: 65% 35% !important;
+    gap: 4rem !important;
+    max-width: 1600px; /* Aumentado para caber o mosaico */
     margin: 0 auto;
-    padding: 2rem;
-    align-items: start; /* Essencial para o 'sticky' funcionar */
+    padding: 2rem 3rem;
+    align-items: start;
+    position: relative;
 }
 
 .product-gallery-section {
@@ -2122,4 +2123,5 @@ select:focus-visible {
         width: auto;
     }
 }
+
 
