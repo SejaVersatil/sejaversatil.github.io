@@ -263,18 +263,34 @@ function renderGallery() {
   const p = state.currentProduct;
   if (!p) return;
 
-  // 1️⃣ DEFINIR LISTA DE IMAGENS
+  // Container principal
+  const galleryContainer = document.querySelector('.gallery-container');
+  if (!galleryContainer) return;
+
+  // Limpa conteúdo anterior
+  galleryContainer.innerHTML = '';
+
+  // Lista de imagens
   const images = Array.isArray(p.images) && p.images.length
     ? p.images
-    : (p.image ? [p.image] : ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)']);
+    : (p.image ? [p.image] : []);
 
-  const mainImage = $('mainProductImage');
-  const thumbnailList = $('thumbnailList');
+  // Renderiza TODAS as imagens como items grandes (Mosaico)
+  images.forEach((img) => {
+    const photoDiv = document.createElement('div');
+    photoDiv.className = 'gallery-photo-full'; // Nova classe CSS criada acima
 
-  if (!mainImage || !thumbnailList) {
-    console.error('❌ Elementos da galeria não encontrados!');
-    return;
-  }
+    if (isImageUrl(img)) {
+      photoDiv.style.backgroundImage = `url("${img}")`;
+    } else if (isGradient(img)) {
+      photoDiv.style.background = img;
+    } else {
+      photoDiv.style.background = '#eee';
+    }
+
+    galleryContainer.appendChild(photoDiv);
+  });
+}
 
   // 3️⃣ RENDERIZAR IMAGEM PRINCIPAL
   const firstImage = images[0];
@@ -1085,6 +1101,7 @@ function buyViaWhatsApp() {
     const whatsappURL = `https://wa.me/5571991427103?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank');
 }
+
 
 
 
