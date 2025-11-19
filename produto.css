@@ -24,12 +24,14 @@ body.product-page {
 
 /* Título do Produto */
 .product-title, #detailsProductName {
-    text-transform: none !important; /* Remove o CAIXA ALTA */
-    font-weight: 500 !important;     /* Fonte mais leve (Medium) */
-    font-size: 2rem;                 /* Tamanho grande */
-    color: #000;
-    margin-bottom: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem !important; /* Ajustado para ~25px (Igual Live) */
+    font-weight: 600 !important;  /* Semi-Bold (Nem muito fino, nem muito grosso) */
     line-height: 1.2;
+    color: #000;
+    margin-bottom: 0.25rem !important; /* Bem próximo do preço */
+    text-transform: none !important;   /* Mantém maiúsculas/minúsculas normais */
+    letter-spacing: -0.5px !important; /* Leve aproximação das letras */
 }
 
 /* Descrição Curta (Nova) */
@@ -795,4 +797,5 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
 
