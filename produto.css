@@ -718,62 +718,47 @@ body, .short-desc-text, .model-info-text {
     pointer-events: auto;
 }
 
-/* ============================================================ */
-/* MASTER FIX: STICKY + GRID + OVERFLOW (CORREÇÃO FINAL REAL)   */
-/* ============================================================ */
+/* ================================================= */
+/* CORREÇÃO FINAL - FORÇAR STICKY (COLAR NO FINAL)   */
+/* ================================================= */
 
-/* 1. Desbloqueio Global (Essencial para Sticky) */
+/* 1. Libera a rolagem (Obrigatório para funcionar) */
 html, body {
-    overflow-x: clip !important;
+    overflow-x: clip !important; /* O segredo: evita barra lateral sem travar o sticky */
     overflow-y: visible !important;
+}
+
+/* 2. Garante altura do grid */
+.product-page-container .product-main-grid {
+    display: grid !important;
+    align-items: start !important; /* O trilho precisa disso */
+    overflow: visible !important;
     height: auto !important;
 }
 
-/* 2. Container do Produto (O pai do grid) */
-.product-page-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    position: relative !important;
-}
-
-/* 3. O Grid Principal (O trilho) */
-.product-page-container .product-main-grid {
-    display: grid !important;
-    grid-template-columns: 70% 30% !important; /* Ajuste fino para garantir espaço */
-    gap: 3rem !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 2rem 3rem !important; /* Padding seguro */
-    align-items: start !important; /* OBRIGATÓRIO: Faz as colunas terem alturas diferentes */
-    position: relative !important;
-    overflow: visible !important;
-}
-
-/* 4. A Coluna Direita (O vagão que trava) */
+/* 3. A Coluna Direita (Travada) */
 .product-info-section {
-    display: block !important; /* Flex as vezes atrapalha sticky complexo */
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    top: 100px !important; /* Ponto de trava */
-    height: fit-content !important; /* Garante que não estique */
-    z-index: 20 !important;
+    display: block !important;
+    position: -webkit-sticky !important; /* Safari */
+    position: sticky !important;         /* Chrome/Firefox */
+    
+    /* Distância do teto (Aumentei para não bater no menu) */
+    top: 120px !important; 
+    
+    /* Altura automática */
+    height: fit-content !important;
+    
+    /* Z-Index altíssimo para garantir que nada passe por cima */
+    z-index: 999 !important;
+    
+    /* Margem inferior para não bater no rodapé */
+    margin-bottom: 2rem !important;
 }
 
-/* 5. Reset para Mobile (Desliga tudo isso) */
+/* 4. Desliga no celular */
 @media (max-width: 1024px) {
-    .product-page-container .product-main-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 0 !important;
-        gap: 0 !important;
-    }
-    
     .product-info-section {
         position: static !important;
-        width: 100% !important;
-        padding: 1.5rem !important;
+        z-index: 1 !important;
     }
 }
-
-
