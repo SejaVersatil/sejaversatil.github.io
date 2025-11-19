@@ -2003,10 +2003,10 @@ select:focus-visible {
    GALERIA ESTILO LIVE! - VERTICAL
    ======================================== */
 
-.product-main-grid {
-    display: grid;
-    grid-template-columns: 55% 45%;
-    gap: 3rem;
+.product-page-container .product-main-grid {
+    display: grid !important;
+    grid-template-columns: 55% 45% !important;
+    gap: 3rem !important;
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
@@ -2111,6 +2111,7 @@ select:focus-visible {
         height: 87px;
     }
 }
+
 
 
 
