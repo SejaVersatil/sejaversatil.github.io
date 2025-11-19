@@ -133,14 +133,6 @@ body.product-page {
     grid-column: auto !important;
 }
 
-/* Direita: Informações Sticky */
-.product-info-section {
-    position: sticky;
-    top: 100px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
 
 /* Detalhes */
 .breadcrumb { font-size: 0.75rem; color: #999; margin-bottom: 0.5rem; }
@@ -783,3 +775,4 @@ html, body {
         padding: 1.5rem !important;
     }
 }
+
