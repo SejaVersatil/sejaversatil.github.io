@@ -680,16 +680,27 @@ function updateCartUI() {
   }
 
   cartItems.innerHTML = '';
+  
   state.cart.forEach(item => {
     const row = document.createElement('div');
     row.className = 'cart-item';
 
+    // --- IMAGEM DO ITEM ---
     const imgDiv = document.createElement('div');
     imgDiv.className = 'cart-item-img';
+    
+    // Força o estilo via JS para garantir
+    imgDiv.style.width = '70px';
+    imgDiv.style.height = '90px';
+    imgDiv.style.backgroundSize = 'cover';
+    imgDiv.style.backgroundPosition = 'center';
+    imgDiv.style.borderRadius = '4px';
+    imgDiv.style.flexShrink = '0';
+
     if (isImageUrl(item.image)) {
       imgDiv.style.backgroundImage = `url("${item.image}")`;
     } else {
-      imgDiv.style.background = '#eee';
+      imgDiv.style.backgroundColor = '#eee'; // Cinza se não tiver foto
     }
 
     const info = document.createElement('div');
@@ -942,6 +953,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
