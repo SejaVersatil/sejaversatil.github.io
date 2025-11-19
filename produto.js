@@ -543,66 +543,74 @@ async function renderRelatedProducts() {
     relatedGrid.innerHTML = '';
     
     related.slice(0, 4).forEach(prod => {
+      console.log('Carregando Sugestão:', prod.name); // LOG PARA DEBUG
+
       const card = document.createElement('div');
       card.className = 'product-card';
       card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
+      card.style.cursor = 'pointer';
 
-      // 1. Lógica robusta para encontrar a imagem
+      // 1. Busca a URL da imagem (Lógica Prioritária)
       let imgUrl = '';
       if (Array.isArray(prod.images) && prod.images.length > 0) imgUrl = prod.images[0];
       else if (prod.image) imgUrl = prod.image;
-      else if (prod.img) imgUrl = prod.img; // Tenta campo alternativo
+      else if (prod.img) imgUrl = prod.img; 
 
-      // Debug: Mostra no console se achou a imagem
-      if (!imgUrl) console.warn('Produto sem imagem:', prod.name);
+      console.log('URL encontrada:', imgUrl); // LOG PARA DEBUG
 
+      // 2. Cria o container da imagem
       const imgWrap = document.createElement('div');
       imgWrap.className = 'product-image';
-      // Garante proporção no container pai
-      imgWrap.style.aspectRatio = '3/4'; 
       imgWrap.style.width = '100%';
+      imgWrap.style.aspectRatio = '3/4'; // Garante o formato retrato
       imgWrap.style.position = 'relative';
+      imgWrap.style.overflow = 'hidden';
+      imgWrap.style.backgroundColor = '#f5f5f5'; // Fundo cinza claro enquanto carrega
+
+      // 3. Cria a TAG IMG (Mais seguro que background-image)
+      const imgElem = document.createElement('img');
       
-      const slide = document.createElement('div');
-      slide.className = 'product-image-slide';
-      
-      // 2. CORREÇÃO PRINCIPAL: Força o preenchimento do espaço
-      slide.style.width = '100%';
-      slide.style.height = '100%';
-      slide.style.position = 'absolute';
-      slide.style.top = '0';
-      slide.style.left = '0';
-      
-      if (isImageUrl(imgUrl)) {
-        slide.style.backgroundImage = `url("${imgUrl}")`;
-        slide.style.backgroundSize = 'cover';
-        slide.style.backgroundPosition = 'center';
-        slide.style.backgroundRepeat = 'no-repeat';
+      if (imgUrl && imgUrl.trim() !== '') {
+          imgElem.src = imgUrl;
+          imgElem.alt = prod.name;
+          imgElem.style.width = '100%';
+          imgElem.style.height = '100%';
+          imgElem.style.objectFit = 'cover'; // Faz a imagem preencher sem esticar
+          imgElem.style.display = 'block';
+          
+          // Se der erro ao carregar a imagem (link quebrado), esconde e mostra placeholder
+          imgElem.onerror = function() {
+              console.warn('Imagem quebrada para:', prod.name);
+              this.style.display = 'none';
+              imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">📷</div>';
+          };
       } else {
-        slide.style.backgroundColor = '#eee';
-        slide.style.display = 'flex';
-        slide.style.alignItems = 'center';
-        slide.style.justifyContent = 'center';
-        slide.innerHTML = '<span style="font-size:24px;color:#ccc;">📷</span>';
+          // Sem URL definida
+          imgElem.style.display = 'none';
+          imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">Sem Foto</div>';
       }
       
-      imgWrap.appendChild(slide);
+      imgWrap.appendChild(imgElem);
 
+      // 4. Informações do Produto
       const info = document.createElement('div');
       info.className = 'product-info';
-      info.style.padding = '1rem'; // Garante espaçamento interno
+      info.style.padding = '1rem';
       
       const h4 = document.createElement('h4');
       h4.textContent = prod.name || 'Produto';
       h4.style.fontSize = '0.9rem';
       h4.style.fontWeight = '600';
       h4.style.margin = '0 0 5px 0';
+      h4.style.color = '#000';
       
       const priceDiv = document.createElement('div');
       priceDiv.className = 'product-price';
+      
       const priceSpan = document.createElement('span');
       priceSpan.className = 'price-new';
       priceSpan.style.fontWeight = '700';
+      priceSpan.style.color = '#000';
       
       const priceVal = safeNumber(prod.price, 0);
       priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
@@ -1003,6 +1011,7 @@ window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
+
 
 
 
