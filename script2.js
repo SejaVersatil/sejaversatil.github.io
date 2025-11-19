@@ -3028,20 +3028,37 @@ function updateFavoritesCount() {
 }
 
 function showFavorites() {
+    // Carregar favoritos atualizados
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+
     if (favorites.length === 0) {
-        showToast('Você ainda não tem favoritos', 'info');
+        showToast('Você ainda não tem favoritos ❤️', 'info');
         return;
     }
     
-    // Filtrar apenas produtos favoritados
+    // 1. Define o filtro
     currentFilter = 'favorites';
     currentPage = 1;
     
-    // Modificar a função getFilteredProducts para incluir filtro de favoritos
+    // 2. Renderiza os produtos
     renderProducts();
     
-    // Scroll para produtos
-    scrollToProducts();
+    // 3. CORREÇÃO: Mostra o Badge de "Limpar Filtro"
+    const badge = document.getElementById('activeCategoryBadge');
+    const text = document.getElementById('categoryNameDisplay');
+    
+    if (badge && text) {
+        text.textContent = '❤️ Meus Favoritos';
+        badge.style.display = 'flex'; // Isso faz o botão de limpar aparecer
+    }
+    
+    // 4. Rola até a seção
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        setTimeout(() => {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
     
     showToast(`Mostrando ${favorites.length} favoritos`, 'info');
 }
@@ -4183,3 +4200,4 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
