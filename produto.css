@@ -504,9 +504,7 @@ body, .short-desc-text, .model-info-text {
     font-weight: 700 !important;
 }
 
-/* ======================================================= */
 /* MOBILE LIVE! STYLE (Baseado no Vídeo)                   */
-/* ======================================================= */
 
 @media (max-width: 768px) {
     
@@ -548,7 +546,6 @@ body, .short-desc-text, .model-info-text {
     }
 
     /* 2. ÍCONES FLUTUANTES (FPU 50+) */
-    /* Precisamos garantir que apareçam no mobile sobre a foto */
     .tech-icons-floating {
         display: flex !important; /* Força exibição */
         position: absolute;
@@ -638,3 +635,4 @@ body, .short-desc-text, .model-info-text {
         gap: 1.5rem;
     }
 }
+
