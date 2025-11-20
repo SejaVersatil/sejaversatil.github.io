@@ -2143,12 +2143,15 @@ renderPagination(totalPages);
 
 // Controle de eventos já registrados
 function clearCarouselIntervals() {
+    // ✅ Verificar se há intervalos antes de iterar
+    if (Object.keys(carouselIntervals).length === 0) {
+        return;
+    }
+    
     console.log('🧹 Limpando carousels ativos:', Object.keys(carouselIntervals).length);
     
     // Limpar todos os intervalos
-    Object.keys(carouselIntervals).forEach(key => {
-        clearInterval(carouselIntervals[key]);
-    });
+    Object.values(carouselIntervals).forEach(clearInterval);
     
     // Resetar objetos
     carouselIntervals = {};
@@ -4172,6 +4175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
