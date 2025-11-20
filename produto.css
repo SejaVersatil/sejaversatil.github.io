@@ -970,7 +970,17 @@ body.product-page .hamburger-btn {
         margin: 0 !important;
     }
     
-    .price-discount-badge, .price-old-text { display: none !important; }
+    .price-old-text {
+        display: block !important; /* Força aparecer */
+        font-size: 0.75rem !important;
+        color: #999 !important;
+        text-decoration: line-through;
+        margin-bottom: 0 !important;
+        line-height: 1;
+    }
+    
+    /* Esconde apenas o badge de porcentagem para limpar */
+    .price-discount-badge { display: none !important; }
 
     /* --- 5. BOTÃO FIXO --- */
     .product-action-buttons {
@@ -1012,4 +1022,5 @@ body.product-page .hamburger-btn {
     line-height: 1.1 !important;
     font-style: normal !important;
 }
+
 
