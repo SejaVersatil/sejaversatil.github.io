@@ -2158,6 +2158,9 @@ function clearCarouselIntervals() {
 }
 
 function setupAutoCarousel() {
+    if (carouselsPaused) {
+        return;
+    }
     const productCards = document.querySelectorAll('.product-card');
     
     productCards.forEach(card => {
@@ -4169,5 +4172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
