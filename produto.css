@@ -722,45 +722,83 @@ body.product-page .hamburger-btn {
     display: none; 
 }
 
-/* Mostra apenas em telas menores (Mobile/Tablet) */
-@media (max-width: 1024px) {
-    body.product-page .hamburger-btn {
-        display: flex !important;
-        top: 1.5rem !important; /* Ajuste fino da posição */
-        left: 1.5rem !important;
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-    
-    /* Ajuste para a logo não sobrepor o menu no mobile */
-    .nav-left {
-        padding-left: 40px; 
-    }
-}
-
 /* ========================================================================== */
-/* 📱 MOBILE PREMIUM MASTER BLOCK (ESTILO LIVE!)                              */
-/* ========================================================================== */
-/* Este bloco controla TODO o visual em celulares.                            */
-/* Cole-o no FINAL do arquivo para garantir prioridade sobre qualquer regra.  */
+/* 📱 MOBILE PREMIUM MASTER BLOCK (ESTILO LIVE! + HEADER FIX)                 */
 /* ========================================================================== */
 
 @media (max-width: 768px) {
 
+    /* --- 0. HEADER CORRIGIDO (ALINHAMENTO PERFEITO) --- */
+    .site-header .nav {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        padding: 0 15px !important;
+        height: 60px !important;
+        gap: 0 !important;
+    }
+
+    .nav-left {
+        display: flex !important;
+        align-items: center !important;
+        flex: 1 !important;
+        width: auto !important;
+        padding-left: 0 !important; /* Remove o padding antigo que empurrava a logo */
+    }
+
+    /* Botão na linha (sem flutuar) */
+    body.product-page .hamburger-btn {
+        display: flex !important;
+        position: relative !important; /* Tira do modo flutuante */
+        top: auto !important;
+        left: auto !important;
+        margin: 0 12px 0 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        width: 24px !important;
+        height: 24px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 1002;
+    }
+    
+    /* Linhas do menu */
+    .hamburger-line {
+        background-color: #000 !important;
+        width: 22px !important;
+        height: 2px !important;
+        margin: 2px 0 !important;
+    }
+
+    /* Nome da Loja (Ajuste de tamanho para não quebrar) */
+    .nav-left .logo {
+        font-size: clamp(1.1rem, 4vw, 1.4rem) !important;
+        white-space: nowrap !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: relative;
+        top: 1px;
+    }
+    
+    .nav-center { display: none !important; }
+
+
     /* --- 1. ESTRUTURA DE TELA CHEIA --- */
-    /* Removemos margens para a foto bater na borda da tela */
     .product-page-container,
     .product-page-container .product-main-grid {
-        display: block !important; /* Remove comportamento de grid do desktop */
+        display: block !important;
         width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
         gap: 0 !important;
     }
 
-    /* --- 2. GALERIA EM SLIDER (Igual Instagram/LIVE!) --- */
+    /* --- 2. GALERIA EM SLIDER --- */
     .product-gallery-section {
-        width: 100vw !important; /* Largura total da viewport */
+        width: 100vw !important;
         height: auto !important;
         background: #f5f5f5;
         overflow: hidden;
@@ -769,13 +807,12 @@ body.product-page .hamburger-btn {
     .gallery-container {
         display: flex !important;
         flex-direction: row !important;
-        overflow-x: auto !important;       /* Permite deslizar p/ lado */
-        scroll-snap-type: x mandatory;     /* Trava na foto ao soltar */
-        -webkit-overflow-scrolling: touch; /* Deslize suave no iOS */
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
         width: 100% !important;
         gap: 0 !important;
         margin: 0 !important;
-        /* Esconde barra de rolagem */
         scrollbar-width: none; 
         -ms-overflow-style: none;
     }
@@ -783,32 +820,31 @@ body.product-page .hamburger-btn {
     .gallery-container::-webkit-scrollbar { display: none; }
 
     .gallery-photo-full {
-        min-width: 100vw !important; /* Força a foto a ter a largura da tela */
-        width: 100vw !important;
-        aspect-ratio: 3/4 !important; /* Formato retrato padrão de moda */
+        min-width: 100vw !important;
+        width: 100vw;
+        aspect-ratio: 3/4 !important;
         scroll-snap-align: start;
         object-fit: cover;
         border-radius: 0 !important;
         margin: 0 !important;
     }
     
-    /* Esconde botão "Mostrar Mais" no mobile pois agora é slider */
     .btn-show-more { display: none !important; }
 
-    /* --- 3. ÁREA DE INFORMAÇÕES (Efeito "Card" subindo na foto) --- */
+    /* --- 3. ÁREA DE INFORMAÇÕES --- */
     .product-info-section {
         position: relative !important;
-        top: 0 !important; /* Reseta o sticky do desktop */
+        top: 0 !important;
         width: 100% !important;
         background: #ffffff !important;
-        padding: 1.5rem 1.2rem 6rem !important; /* Padding extra embaixo p/ botão fixo */
-        border-radius: 24px 24px 0 0 !important; /* Arredondado no topo */
-        margin-top: -25px !important; /* Sobe por cima da foto */
+        padding: 1.5rem 1.2rem 6rem !important;
+        border-radius: 24px 24px 0 0 !important;
+        margin-top: -25px !important;
         z-index: 10 !important;
         box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
     }
 
-    /* --- 4. CABEÇALHO DO PRODUTO (Título Esq | Preço Dir) --- */
+    /* --- 4. CABEÇALHO DO PRODUTO --- */
     .product-header-wrapper {
         display: flex !important;
         flex-direction: row !important;
@@ -816,7 +852,7 @@ body.product-page .hamburger-btn {
         align-items: flex-start;
         margin-bottom: 1.5rem;
         width: 100%;
-        flex-wrap: nowrap !important; /* Garante que fiquem na mesma linha */
+        flex-wrap: nowrap !important;
     }
 
     .header-left {
@@ -828,12 +864,11 @@ body.product-page .hamburger-btn {
     }
 
     .product-title, #detailsProductName {
-        font-size: 1.4rem !important; /* Tamanho bom p/ mobile */
+        font-size: 1.4rem !important;
         line-height: 1.2;
         margin-bottom: 0.5rem !important;
     }
 
-    /* Link de Favoritos (Texto Cinza Discreto) */
     .btn-favorite {
         display: flex !important;
         align-items: center;
@@ -847,17 +882,14 @@ body.product-page .hamburger-btn {
         padding: 0;
         margin-top: 2px;
     }
-    
-    /* Esconde o botão que adicionamos no header desktop, usa esse daqui */
     .header-left .btn-favorite { display: flex !important; }
 
-    /* Coluna de Preço (Direita) */
     .product-pricing {
         display: flex !important;
         flex-direction: column !important;
         align-items: flex-end !important;
         text-align: right;
-        min-width: max-content; /* Ocupa o espaço necessário */
+        min-width: max-content;
         margin: 0 !important;
         padding: 0 !important;
     }
@@ -875,20 +907,9 @@ body.product-page .hamburger-btn {
         margin: 0 !important;
     }
     
-    /* No mobile, escondemos badges de desconto ao lado do preço para limpar */
     .price-discount-badge, .price-old-text { display: none !important; }
 
-    /* --- 5. SELETORES E BOTÃO FIXO --- */
-    
-    /* Ajuste nos seletores para não ficarem colados */
-    .product-selector-group {
-        margin-bottom: 1.5rem !important;
-        border-bottom: 1px solid #f5f5f5;
-        padding-bottom: 1rem;
-    }
-    .product-selector-group:last-of-type { border-bottom: none; }
-
-    /* Botão de Compra FIXO no Rodapé */
+    /* --- 5. BOTÃO FIXO --- */
     .product-action-buttons {
         position: fixed !important;
         bottom: 0 !important;
@@ -899,7 +920,6 @@ body.product-page .hamburger-btn {
         box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important;
         z-index: 9999 !important;
         margin: 0 !important;
-        /* Área segura para iPhones (o tracinho preto embaixo) */
         padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
     }
 
@@ -911,18 +931,6 @@ body.product-page .hamburger-btn {
         margin: 0 !important;
     }
     
-    /* Esconde botão Zap duplicado na barra fixa para não poluir */
     .btn-whatsapp-main { display: none !important; }
-
-    /* Espaço no rodapé para o conteúdo não ficar escondido atrás do botão */
-    .site-footer {
-        margin-bottom: 90px !important;
-    }
-    
-    /* Ajuste do Menu Hambúrguer para ficar visível sobre o slider */
-    #hamburgerBtn {
-        background: rgba(255, 255, 255, 0.8) !important;
-        border-radius: 50%;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+    .site-footer { margin-bottom: 90px !important; }
 }
