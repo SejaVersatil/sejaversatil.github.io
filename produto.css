@@ -995,16 +995,17 @@ body.product-page .hamburger-btn {
     .site-footer { margin-bottom: 90px !important; }
 }
 
+/* ================================================= */
+/* FORÇAR FONTE DO PREÇO (CENTURY GOTHIC - LIGHT)    */
+/* ================================================= */
 
-
-
-
-
-
-
-
-
-
-
-
-
+.price-current, 
+#detailsPriceNew {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-weight: 400 !important; /* 400 = Normal/Sem Negrito */
+    font-size: 46px !important;    /* Mantendo o tamanho grande */
+    color: #000000 !important;
+    letter-spacing: -1px !important;
+    line-height: 1.1 !important;
+    font-style: normal !important;
+}
