@@ -243,8 +243,8 @@ body.product-page {
 }
 
 .color-option {
-    width: 18px;
-    height: 18px;
+    width: 9px;
+    height: 9px;
     border-radius: 50% !important;
     border: 1px solid #e0e0e0;
     cursor: pointer;
@@ -955,6 +955,7 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
 
