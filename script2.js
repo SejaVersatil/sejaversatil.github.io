@@ -29,10 +29,6 @@ class SecureStorage {
     get(key) { const data = localStorage.getItem(key); return data ? this.decrypt(data) : null; }
 }
 const productCache = new Map(); // Cache simples em memória para sessão
-
-
-        // 3. Carregamento de Dados (Assíncrono)
-        await loadProducts();
         
         // 4. Lógica de Busca via URL (Redirecionamento)
         const urlParams = new URLSearchParams(window.location.search);
@@ -829,3 +825,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+// 3. Carregamento de Dados (Assíncrono)
+        await loadProducts();
+        
+        // 4. Lógica de Busca via URL (Redirecionamento)
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search');
+        if (searchTerm) {
+            const headerInput = document.getElementById('headerSearchInput');
+            if (headerInput) {
+                headerInput.value = searchTerm;
+                setTimeout(() => {
+                    performHeaderSearch();
+                    document.getElementById('produtos')?.scrollIntoView({behavior: 'smooth'});
+                }, 800);
+            }
+        }
+
+        // 5. Lógica de Hash (Ações de botões)
+        const hash = window.location.hash;
+        if (hash === '#login') setTimeout(openUserPanel, 500);
+        else if (hash === '#favorites') setTimeout(showFavorites, 800);
+        else if (hash === '#cart') setTimeout(toggleCart, 500);
+
+        // 6. Scripts Auxiliares
+        setupConnectionMonitor();
+        setupCartAbandonmentTracking();
+        setupPushNotifications();
+
+    } catch (error) {
+        console.error('❌ Erro crítico na inicialização:', error);
+        showToast('Erro ao carregar componentes.', 'error');
+    } finally {
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+    }
+});
