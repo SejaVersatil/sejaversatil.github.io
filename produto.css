@@ -25,13 +25,13 @@ body.product-page {
 /* Título do Produto */
 .product-title, #detailsProductName {
     font-family: 'Montserrat', sans-serif !important;
-    font-weight: 500 !important; /* Peso médio (não muito grosso) */
-    font-size: 28px !important;    /* Tamanho grande */
-    line-height: 1.2 !important;
-    color: #1a1a1a !important;     /* Preto suave */
-    margin-bottom: 5px !important;
-    text-transform: none !important; /* Remove caixa alta forçada */
-    letter-spacing: -0.5px !important; /* Letras levemente juntas */
+    font-weight: 300 !important; /* Light */
+    font-size: 46px !important;    /* Gigante */
+    line-height: 1.1 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 10px !important;
+    text-transform: none !important;
+    letter-spacing: -1.5px !important;
 }
 
 /* Descrição Curta (Nova) */
@@ -188,45 +188,35 @@ body.product-page {
     margin-top: 0 !important;
 }
 
-/* Preço Antigo (De...) - Maior visibilidade para gerar contraste */
-.price-old-text { 
-    text-decoration: line-through; 
-    color: #777 !important; /* Um cinza um pouco mais escuro */
-    font-size: 16px !important; /* Aumentado (era 13px) */
-    font-weight: 500 !important;
-    margin-bottom: 0 !important;
-    display: block;
-}
-
 /* Preço Atual (Por...) - SUPER IMPACTO */
 .price-current {
     font-family: 'Montserrat', sans-serif !important;
-    font-size: 36px !important; /* Aumentado de 24px para 36px */
-    font-weight: 800 !important; /* Extra Bold */
-    color: #000000 !important;
-    letter-spacing: -1px !important; /* Letras juntas dão robustez */
-    line-height: 1.1 !important;
+    font-size: 40px !important;   /* Grande */
+    font-weight: 300 !important;  /* Light */
+    color: #1a1a1a !important;
+    letter-spacing: -1px !important;
+    line-height: 1 !important;
 }
 
 /* Parcelamento - Ajustado para acompanhar o tamanho */
 .price-installments {
     font-family: 'Montserrat', sans-serif !important;
-    font-size: 15px !important;
-    color: #333 !important; /* Mais escuro para leitura fácil */
-    font-weight: 600 !important;
-    margin-top: 6px !important;
+    font-size: 14px !important;
+    color: #555 !important;
+    font-weight: 300 !important; /* Fino */
+    margin-top: 5px !important;
 }
 
 .price-old-text { 
     text-decoration: line-through; 
     color: #999; 
-    font-size: 13px !important; 
-    margin-bottom: 2px !important;
-    display: block; /* Garante que fique em cima do preço novo */
+    font-size: 14px !important; 
+    font-weight: 300 !important;
+    margin-bottom: 0 !important;
+    display: block;
 }
 
-.price-discount-badge {
-    display: none !important; /* O print da T&F não mostra badge de desconto ao lado do preço, opcional */
+.price-discount-badge { display: none !important; 
 }
 
 /* Seletores - Estilo Live! (Quadrados e Limpos) */
@@ -278,37 +268,39 @@ body.product-page {
     flex-wrap: wrap;
 }
 
+/* Tamanhos (Estilo Versiani - Clean) */
 .size-option {
-    min-width: 42px;
-    height: 32px;
+    min-width: 48px !important;
+    height: 48px !important;
     border: 1px solid #e0e0e0;
     background: #fff;
-    color: #333;
+    color: #555;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 400;
+    font-size: 14px !important;
+    font-weight: 400 !important; /* Regular */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 2px; 
+    border-radius: 8px !important; /* Borda suave */
+    transition: all 0.2s ease;
 }
 
 .size-option:hover {
-    border-color: #000;
+    border-color: #999;
 }
 
 .size-option.active {
-    background: #000 !important;
-    color: #fff !important;
-    border-color: #000 !important;
-    font-weight: 600;
+    background: transparent !important; /* Fundo transparente */
+    color: #000 !important;
+    border: 2px solid #000 !important; /* Borda grossa preta */
+    font-weight: 600 !important;
 }
 
 .size-option.unavailable {
-    opacity: 0.5;
+    opacity: 0.4;
     text-decoration: line-through;
-    background: #f5f5f5;
+    background: #f9f9f9;
     cursor: not-allowed;
     border-color: #eee;
 }
@@ -959,6 +951,7 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
 
