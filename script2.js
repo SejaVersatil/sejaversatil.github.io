@@ -475,7 +475,7 @@ async function inicializarProdutosPadrao() {
                     ...produto,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log(`✅ Produto "${produto.name}" adicionado com ID: ${docRef.id}`);
+                //console.log(`✅ Produto "${produto.name}" adicionado com ID: ${docRef.id}`);
             } catch (error) {
                 console.error(`❌ Erro ao adicionar "${produto.name}":`, error);
             }
@@ -488,7 +488,7 @@ async function inicializarProdutosPadrao() {
 // ==================== INICIALIZAÇÃO ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Iniciando carregamento do site...');
+    // console.log('🚀 Iniciando carregamento do site...');
     
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
@@ -496,19 +496,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     try {
-        console.log('📋 Carregando configurações...');
+        // console.log('📋 Carregando configurações...');
         loadSettings();
         
-        console.log('🛒 Carregando carrinho...');
+        // console.log('🛒 Carregando carrinho...');
         loadCart();
         
-        console.log('📦 Carregando produtos...');
+        // console.log('📦 Carregando produtos...');
         await loadProducts();
         
-        console.log('🎨 Renderizando skeleton...');
+        // console.log('🎨 Renderizando skeleton...');
         
         
-        console.log('✅ Renderizando produtos...');
+        // console.log('✅ Renderizando produtos...');
 renderProducts();
 renderBestSellers();
 updateCartUI();
@@ -518,7 +518,7 @@ initBlackFridayCountdown();
 setupConnectionMonitor();
 setupCartAbandonmentTracking();
 setupPushNotifications();
-console.log('✅ Site carregado com sucesso!');
+// console.log('✅ Site carregado com sucesso!');
         
     } catch (error) {
         console.error('❌ ERRO CRÍTICO ao inicializar:', error);
@@ -557,7 +557,7 @@ setTimeout(() => {
                 performHeaderSearch();
             }
         });
-        console.log('✅ Listener de busca no header ativado');
+        // console.log('✅ Listener de busca no header ativado');
     } else {
         console.warn('⚠️ Input de busca não encontrado no header');
     }
@@ -627,8 +627,8 @@ async function checkUserSession() {
                     showLoggedInView();
                     isAdminLoggedIn = true;
                     
-                    console.log('✅ Sessão de admin restaurada:', currentUser.email);
-                    console.log('📋 Permissões carregadas:', currentUser.permissions);
+                   // console.log('✅ Sessão de admin restaurada:', currentUser.email);
+                    // console.log('📋 Permissões carregadas:', currentUser.permissions);
                     
                 } else {
                     console.log('⚠️ Usuário não é admin, fazendo logout');
@@ -648,7 +648,7 @@ async function checkUserSession() {
     // ✅ LISTENER DE MUDANÇA DE AUTENTICAÇÃO
     auth.onAuthStateChanged(async (user) => {
         if (user) {
-            console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
+            // console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
             
             // Verificar se é admin
             const adminDoc = await db.collection('admins').doc(user.uid).get();
@@ -667,10 +667,10 @@ async function checkUserSession() {
                 isAdminLoggedIn = true;
                 localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
                 
-                console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
+                // console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
             }
         } else {
-            console.log('🔄 Estado de auth mudou: usuário deslogado');
+            // console.log('🔄 Estado de auth mudou: usuário deslogado');
             
             if (currentUser) {
                 userLogout();
@@ -771,7 +771,7 @@ async function userLogin(event) {
             errorMsg.classList.remove('active');
             showToast('Login realizado com sucesso!', 'success');
             
-            console.log('✅ Admin logado com UID:', user.uid);
+            // console.log('✅ Admin logado com UID:', user.uid);
             console.log('📋 Permissões carregadas:', currentUser.permissions);
             return;
             
@@ -892,7 +892,7 @@ async function userRegister(event) {
             successMsg.classList.remove('active');
         }, 3000);
         
-        console.log('✅ Usuário cadastrado:', user.uid);
+        //console.log('✅ Usuário cadastrado:', user.uid);
         
     } catch (error) {
         console.error('❌ Erro ao criar conta:', error);
@@ -924,7 +924,7 @@ async function userLogout() {
             localStorage.removeItem('sejaVersatilCurrentUser');
             hideLoggedInView();
             showToast('Logout realizado com sucesso', 'info');
-            console.log('✅ Logout completo');
+           // console.log('✅ Logout completo');
         } catch (error) {
             console.error('❌ Erro ao fazer logout:', error);
             showToast('Erro ao fazer logout', 'error');
@@ -964,12 +964,12 @@ async function resetPassword() {
 
 async function carregarProdutosDoFirestore() {
     try {
-        console.log('📄 Carregando produtos do Firestore...');
+        //console.log('📄 Carregando produtos do Firestore...');
         
         // Verificar cache primeiro
         const cached = productCache.get('products');
         if (cached) {
-            console.log('✅ Produtos carregados do cache');
+            //console.log('✅ Produtos carregados do cache');
             productsData = cached;
             return productsData;
         }
@@ -993,7 +993,7 @@ async function carregarProdutosDoFirestore() {
         });
 
         productCache.set('products', productsData);
-        console.log(`✅ ${productsData.length} produtos carregados do Firestore`);
+        //console.log(`✅ ${productsData.length} produtos carregados do Firestore`);
         return productsData;
         
     } catch (error) {
@@ -1056,7 +1056,7 @@ async function openAdminPanel() {
         document.getElementById('adminPanel').classList.add('active');
         renderAdminProducts();
         updateAdminStats();
-        console.log('✅ Painel admin aberto com sucesso');
+        //console.log('✅ Painel admin aberto com sucesso');
         
     } catch (error) {
         console.error('❌ Erro ao verificar permissões:', error);
@@ -1516,7 +1516,7 @@ async function saveProduct(event) {
 
                 if (newVariantsCount > 0) {
                     await batch.commit();
-                    console.log(`✅ ${newVariantsCount} novas variantes criadas`);
+                    //console.log(`✅ ${newVariantsCount} novas variantes criadas`);
                 }
             }
 
@@ -1567,7 +1567,7 @@ async function saveProduct(event) {
 
             await batch.commit();
 
-            console.log(`✅ ${colorsToUse.length * sizes.length} variantes criadas automaticamente`);
+            //console.log(`✅ ${colorsToUse.length * sizes.length} variantes criadas automaticamente`);
 
             productsData.push({ id: docRef.id, ...productData });
             showToast('Produto adicionado com sucesso!', 'success');
@@ -1946,8 +1946,8 @@ function sortProducts(sortType) {
 function getFilteredProducts() {
     let filtered = productsData;
     
-    console.log('🔍 Filtro atual:', currentFilter);
-    console.log('📦 Total de produtos:', productsData.length);
+   // console.log('🔍 Filtro atual:', currentFilter);
+    // console.log('📦 Total de produtos:', productsData.length);
     
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
@@ -1965,7 +1965,7 @@ function getFilteredProducts() {
         }
     }
     
-    console.log('✅ Produtos filtrados:', filtered.length);
+    // console.log('✅ Produtos filtrados:', filtered.length);
     
     // Se não encontrar produtos, mostrar aviso
     if (filtered.length === 0 && currentFilter !== 'all') {
@@ -2148,7 +2148,7 @@ function clearCarouselIntervals() {
         return;
     }
     
-    console.log('🧹 Limpando carousels ativos:', Object.keys(carouselIntervals).length);
+    //console.log('🧹 Limpando carousels ativos:', Object.keys(carouselIntervals).length);
     
     // Limpar todos os intervalos
     Object.values(carouselIntervals).forEach(clearInterval);
@@ -2157,7 +2157,7 @@ function clearCarouselIntervals() {
     carouselIntervals = {};
     carouselEventsRegistered.clear();
     
-    console.log('✅ Carousels limpos');
+    //console.log('✅ Carousels limpos');
 }
 
 function setupAutoCarousel() {
@@ -3671,12 +3671,12 @@ document.addEventListener('visibilitychange', function() {
         carouselsPaused = true;
         stopHeroCarousel();
         clearCarouselIntervals();
-        console.log('🛑 Carousels pausados (aba inativa)');
+        //console.log('🛑 Carousels pausados (aba inativa)');
     } else {
         carouselsPaused = false;
         startHeroCarousel();
         setupAutoCarousel();
-        console.log('▶️ Carousels reativados (aba ativa)');
+        //console.log('▶️ Carousels reativados (aba ativa)');
     }
 });
 
@@ -3754,7 +3754,7 @@ async function renderAvailableColors(productId) {
     
     if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
         availableColors = product.colors;
-        console.log(`✅ Produto "${product.name}" tem ${product.colors.length} cores cadastradas`);
+        //console.log(`✅ Produto "${product.name}" tem ${product.colors.length} cores cadastradas`);
     } else if (variants.length > 0) {
         const uniqueColors = [...new Set(variants.map(v => v.color))];
         availableColors = uniqueColors.map(colorName => ({
@@ -3762,11 +3762,11 @@ async function renderAvailableColors(productId) {
             hex: getColorHex(colorName),
             images: product.images || []
         }));
-        console.log(`⚠️ Produto "${product.name}" usando cores das variantes de estoque`);
+        //console.log(`⚠️ Produto "${product.name}" usando cores das variantes de estoque`);
     } else {
         const colorOption = colorSelector.closest('.product-option');
         if (colorOption) colorOption.style.display = 'none';
-        console.log(`❌ Produto "${product.name}" não tem cores cadastradas`);
+        //console.log(`❌ Produto "${product.name}" não tem cores cadastradas`);
         return;
     }
     
@@ -3906,7 +3906,7 @@ function selectColor(color) {
             });
 
             showToast(`🎨 Cor alterada: ${color}`, 'info');
-            console.log(`✅ Imagens trocadas para cor: ${color} (${images.length} fotos)`);
+            //console.log(`✅ Imagens trocadas para cor: ${color} (${images.length} fotos)`);
         } else {
             console.warn(`⚠️ Cor "${color}" selecionada mas não possui imagens`);
         }
@@ -4175,6 +4175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
 
 
