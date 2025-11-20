@@ -1342,7 +1342,10 @@ function updateFavoritesCount() {
     }
 }
 
-// 5. Redirecionar para Home com Filtro de Favoritos
+// 5. Redirecionar Fav
 function goToFavoritesPage() {
-    window.location.href = 'index.html?filtro=favoritos';
+    // Redireciona para a Home com o parâmetro especial
+    window.location.href = 'index.html?ver_favoritos=true';
 }
+
+
