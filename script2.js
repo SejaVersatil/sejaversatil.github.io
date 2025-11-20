@@ -2000,6 +2000,31 @@ function renderProductsSkeleton() {
 
 function renderProducts() {
     clearCarouselIntervals();
+    const badge = document.getElementById('activeCategoryBadge');
+    const categoryName = document.getElementById('categoryNameDisplay');
+
+    if (currentFilter !== 'all') {
+        let label = currentFilter;
+        
+        // Nomes amigáveis para filtros especiais
+        if (currentFilter === 'favorites') {
+            label = '❤️ Meus Favoritos';
+        } else if (currentFilter === 'sale') {
+            label = '🔥 Promoções';
+        } else {
+            // Tenta pegar o nome bonito da categoria, ou usa o próprio ID formatado
+            label = typeof getCategoryName === 'function' ? getCategoryName(currentFilter) : currentFilter;
+        }
+
+        if (categoryName) categoryName.textContent = label;
+        if (badge) badge.style.display = 'flex'; // Mostra a barra com botão X
+    } else {
+        // Se não tiver filtro (e não for uma busca ativa do header), esconde
+        // Verificamos se o texto não contém "resultados" para não esconder a barra da busca
+        if (badge && (!categoryName.textContent.includes('resultados'))) {
+            badge.style.display = 'none';
+        }
+    }
     const filtered = getFilteredProducts();
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const start = (currentPage - 1) * itemsPerPage;
@@ -4271,3 +4296,4 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
