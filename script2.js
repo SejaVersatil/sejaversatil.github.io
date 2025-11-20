@@ -59,6 +59,26 @@ setupCartAbandonmentTracking();
 setupPushNotifications();
 
 
+// Funções auxiliares de segurança
+function safeNumber(value) {
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+}
+
+function sanitizeInput(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+let isAdminLoggedIn = false;
+let tempProductImages = [];
+let productColors = [];
+
 // =============================================================================
 // MÓDULO DE PRODUTOS (FIRESTORE & RENDERIZAÇÃO)
 // =============================================================================
@@ -856,4 +876,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 });
+
 
