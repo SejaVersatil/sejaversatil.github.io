@@ -954,12 +954,15 @@ body.product-page .hamburger-btn {
 
     /* PREÇO ATUAL (Aumentado para 1.45rem para igualar o título) */
     .price-current {
-        font-size: 1.45rem !important; /* Tamanho calibrado para bater com o nome */
-        font-weight: 700 !important;   /* Negrito */
+        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important; /* ✅ Garante a fonte nova no celular */
+        font-size: 1.5rem !important; /* Tamanho proporcional ao nome */
+        font-weight: 400 !important;   /* Sem negrito */
         color: #000 !important;
-        line-height: 1;
+        line-height: 1.1 !important;
         margin-bottom: 0 !important;
-        order: 1; /* Fica em cima */
+        margin-top: 0 !important;
+        white-space: nowrap !important;
+        order: 1;
     }
     
     /* Preço antigo (Embaixo e menor) */
@@ -1025,6 +1028,7 @@ body.product-page .hamburger-btn {
         line-height: 1.1 !important;
     }
 }
+
 
 
 
