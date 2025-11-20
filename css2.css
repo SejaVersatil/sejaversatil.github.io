@@ -4189,3 +4189,70 @@ css@keyframes slideInRight {
 .site-header, .cart-sidebar, .sidebar-menu {
     will-change: transform; /* Prepara a placa de vídeo */
 }
+
+/* --- Busca Inteligente (Dropdown) --- */
+.search-dropdown {
+    position: absolute;
+    top: 110%; /* Fica logo abaixo da barra */
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 9999; /* Garante que fique em cima do banner */
+    display: none; /* Oculto por padrão */
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e5e5e5;
+}
+
+.search-dropdown.active {
+    display: block;
+}
+
+.search-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none; /* Caso use tag A */
+}
+
+.search-dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.search-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.search-dropdown-thumb {
+    width: 50px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #eee;
+}
+
+.search-dropdown-info {
+    flex: 1;
+}
+
+.search-dropdown-title {
+    font-family: 'Montserrat', sans-serif; /* Fonte do corpo */
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+
+.search-dropdown-price {
+    font-family: 'Oswald', sans-serif; /* Fonte de destaque */
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #000;
+}
