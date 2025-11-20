@@ -30,32 +30,6 @@ class SecureStorage {
 }
 const productCache = new Map(); // Cache simples em memória para sessão
 
-// =============================================================================
-// INICIALIZAÇÃO (DOMContentLoaded)
-// =============================================================================
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Inicializando Aplicação...');
-    
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) loadingOverlay.classList.add('active');
-    
-    try {
-        // 1. Carregamentos Visuais Imediatos
-        loadSettings();
-        loadCart();
-        updateCartUI();
-        updateFavoritesCount();
-        initHeroCarousel(); 
-        initBlackFridayCountdown();
-
-        // 2. Monitoramento de Autenticação
-        auth.onAuthStateChanged(user => {
-            state.currentUser = user;
-            console.log('Auth Status:', user ? 'Logado' : 'Guest');
-            if (document.getElementById('userPanel')?.classList.contains('active')) {
-                checkUserSession(); // Atualiza painel se estiver aberto
-            }
-        });
 
         // 3. Carregamento de Dados (Assíncrono)
         await loadProducts();
@@ -804,3 +778,30 @@ function addGradientImage() {
         toggleGradientInput();
     }
 }
+
+// =============================================================================
+// INICIALIZAÇÃO (DOMContentLoaded)
+// =============================================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Inicializando Aplicação...');
+    
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+    
+    try {
+        // 1. Carregamentos Visuais Imediatos
+        loadSettings();
+        loadCart();
+        updateCartUI();
+        updateFavoritesCount();
+        initHeroCarousel(); 
+        initBlackFridayCountdown();
+
+        // 2. Monitoramento de Autenticação
+        auth.onAuthStateChanged(user => {
+            state.currentUser = user;
+            console.log('Auth Status:', user ? 'Logado' : 'Guest');
+            if (document.getElementById('userPanel')?.classList.contains('active')) {
+                checkUserSession(); // Atualiza painel se estiver aberto
+            }
+        });
