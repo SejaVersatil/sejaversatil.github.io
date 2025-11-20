@@ -1822,30 +1822,45 @@ footer {
     transition: all 0.3s;
 }
 
-/* ⬇️ APARECE APENAS EM MOBILE */
+/* ======================================================= */
+/* BOTÃO HAMBÚRGUER (NOVO ESTILO CLEAN)                    */
+/* ======================================================= */
+
+.hamburger-btn {
+    display: none; /* Oculto no Desktop */
+    background: transparent; /* Fundo Transparente */
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    z-index: 1002;
+}
+
+/* As 3 linhas (Agora pretas e finas) */
+.hamburger-line {
+    width: 24px;
+    height: 2px;
+    background-color: #000; /* ✅ Linhas Pretas */
+    transition: all 0.3s ease;
+    display: block;
+}
+
+/* Regra para aparecer no Mobile */
 @media (max-width: 768px) {
     .hamburger-btn {
-        display: flex; /* ⬅️ VISÍVEL NO MOBILE */
+        display: flex; /* Visível no Mobile */
     }
-    
     .nav-menu {
-        display: none !important; /* ⬅️ ESCONDE MENU DESKTOP */
+        display: none !important; /* Esconde menu de texto */
     }
 }
 
-.hamburger-btn:hover {
-    background: var(--primary);
-}
-
-.hamburger-line {
-    width: 25px;
-    height: 2px;
-    background: white;
-    transition: all 0.3s;
-}
-
+/* Animação de virar "X" quando ativo */
 .hamburger-btn.active .hamburger-line:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
+    transform: rotate(45deg) translate(5px, 5px);
 }
 
 .hamburger-btn.active .hamburger-line:nth-child(2) {
@@ -1853,9 +1868,8 @@ footer {
 }
 
 .hamburger-btn.active .hamburger-line:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: rotate(-45deg) translate(5px, -5px);
 }
-
 .sidebar-menu {
     position: fixed;
     top: 0;
@@ -4256,3 +4270,4 @@ css@keyframes slideInRight {
     font-weight: 700;
     color: #000;
 }
+
