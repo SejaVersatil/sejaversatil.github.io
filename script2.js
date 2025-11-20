@@ -4176,6 +4176,98 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ==================== BUSCA INTELIGENTE (LIVE SEARCH) ====================
 
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('headerSearchInput');
+    const dropdown = document.getElementById('headerDropdown');
 
+    if (!searchInput || !dropdown) return;
 
+    // Função de delay para não buscar a cada milissegundo (Debounce)
+    let timeout = null;
+
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        
+        clearTimeout(timeout);
+
+        // Se limpar o input ou tiver menos de 2 letras, esconde a lista
+        if (query.length < 2) {
+            dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
+            return;
+        }
+
+        // Espera 300ms após parar de digitar para buscar
+        timeout = setTimeout(() => {
+            const filteredProducts = productsData.filter(product => 
+                product.name.toLowerCase().includes(query) || 
+                product.category.toLowerCase().includes(query)
+            );
+
+            renderDropdownResults(filteredProducts);
+        }, 300);
+    });
+
+    // Clicar fora fecha a lista
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+});
+
+function renderDropdownResults(products) {
+    const dropdown = document.getElementById('headerDropdown');
+    
+    if (products.length === 0) {
+        dropdown.innerHTML = `
+            <div style="padding: 1rem; text-align: center; color: #999; font-size: 0.9rem;">
+                Nenhum produto encontrado 😕
+            </div>`;
+        dropdown.classList.add('active');
+        return;
+    }
+
+    // Limita a 6 resultados para não ficar uma lista gigante
+    const topProducts = products.slice(0, 6);
+
+    dropdown.innerHTML = topProducts.map(product => {
+        // Lógica para pegar a imagem (reutilizando sua lógica atual)
+        let imageUrl = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; // Fallback
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            imageUrl = product.images[0];
+        } else if (product.image) {
+            imageUrl = product.image;
+        }
+
+        // Verifica se é imagem real ou gradiente para o estilo CSS correto
+        const isRealImg = imageUrl.startsWith('http') || imageUrl.startsWith('data:image');
+        const imgStyle = isRealImg 
+            ? `background-image: url('${imageUrl}'); background-size: cover; background-position: center;` 
+            : `background: ${imageUrl};`;
+
+        return `
+            <div class="search-dropdown-item" onclick="openProductDetails('${product.id}'); document.getElementById('headerDropdown').classList.remove('active');">
+                <div class="search-dropdown-thumb" style="${imgStyle}"></div>
+                <div class="search-dropdown-info">
+                    <div class="search-dropdown-title">${product.name}</div>
+                    <div class="search-dropdown-price">R$ ${product.price.toFixed(2)}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Botão "Ver todos os resultados" se houver mais produtos
+    if (products.length > 6) {
+        dropdown.innerHTML += `
+            <div class="search-dropdown-item" style="justify-content: center; color: #667eea; font-weight: bold;" onclick="performHeaderSearch()">
+                Ver todos os ${products.length} resultados
+            </div>
+        `;
+    }
+
+    dropdown.classList.add('active');
+}
