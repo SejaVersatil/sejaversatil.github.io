@@ -162,12 +162,14 @@ body.product-page {
 /* Detalhes */
 .breadcrumb {
     display: flex !important;
+    justify-content: flex-start !important; /* Garante que fiquem juntos na esquerda */
     flex-wrap: wrap !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 6px !important; /* Espaço pequeno entre os itens */
     margin-bottom: 1rem !important;
     font-size: 0.75rem !important;
     color: #999 !important;
+    width: 100% !important;
 }
 
 .breadcrumb span {
@@ -934,3 +936,4 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
