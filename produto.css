@@ -730,6 +730,11 @@ body.product-page .hamburger-btn {
 
 @media (max-width: 768px) {
 
+    /* Ocultar Breadcrumb no Mobile */
+    .breadcrumb {
+        display: none !important;
+    }
+
     /* --- 0. HEADER CORRIGIDO (ALINHAMENTO PERFEITO) --- */
     .site-header .nav {
         display: flex !important;
@@ -936,5 +941,6 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
