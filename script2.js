@@ -505,8 +505,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         // console.log('📦 Carregando produtos...');
         await loadProducts();
         
+    
         // console.log('🎨 Renderizando skeleton...');
-        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('ver_favoritos') === 'true') {
+            // Espera um pouco para garantir que tudo carregou e aplica o filtro
+            setTimeout(() => {
+                showFavorites(); // Chama a função que já existe
+                // Limpa a URL para não ficar travado nos favoritos se der F5
+                window.history.replaceState({}, document.title, "index.html");
+            }, 500);
+        }
         
         // console.log('✅ Renderizando produtos...');
 renderProducts();
@@ -4296,4 +4305,5 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
