@@ -24,14 +24,14 @@ body.product-page {
 
 /* Título do Produto */
 .product-title, #detailsProductName {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.6rem !important; 
-    font-weight: 600 !important; 
-    line-height: 1.2;
-    color: #000;
-    margin-bottom: 0.25rem !important; 
-    text-transform: none !important;   
-    letter-spacing: -0.5px !important; 
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500 !important; /* Peso médio (não muito grosso) */
+    font-size: 28px !important;    /* Tamanho grande */
+    line-height: 1.2 !important;
+    color: #1a1a1a !important;     /* Preto suave */
+    margin-bottom: 5px !important;
+    text-transform: none !important; /* Remove caixa alta forçada */
+    letter-spacing: -0.5px !important; /* Letras levemente juntas */
 }
 
 /* Descrição Curta (Nova) */
@@ -837,4 +837,5 @@ body.product-page .hamburger-btn {
         padding-left: 40px; 
     }
 }
+
 
