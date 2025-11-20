@@ -804,4 +804,37 @@ html, body {
     }
 }
 
+/* CORREÇÕES FINAIS (CABEÇALHO E ÍCONES FLUTUANTES)      */
+
+/* 2. Fonte do Relógio Black Friday */
+.bf-time-value {
+    font-family: 'Oswald', sans-serif !important;
+}
+
+/* 3. Ícones Easy Care (Fixar na foto corretamente) */
+.product-gallery-section {
+    position: relative !important; /* Garante que o ícone respeite a área da foto */
+}
+
+/* 4. Ajuste do Botão Menu (Hambúrguer) */
+/* Esconde o botão padrão da página de produto para usar o do Header novo */
+body.product-page .hamburger-btn {
+    display: none; 
+}
+
+/* Mostra apenas em telas menores (Mobile/Tablet) */
+@media (max-width: 1024px) {
+    body.product-page .hamburger-btn {
+        display: flex !important;
+        top: 1.5rem !important; /* Ajuste fino da posição */
+        left: 1.5rem !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    
+    /* Ajuste para a logo não sobrepor o menu no mobile */
+    .nav-left {
+        padding-left: 40px; 
+    }
+}
 
