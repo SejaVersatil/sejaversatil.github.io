@@ -233,36 +233,40 @@ body.product-page {
 .product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
 .selector-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.8rem; }
 
-/* --- NOVO ESTILO LIVE! (Quadrados Minimalistas) --- */
-
-/* CORES */
+/* CORES (Configuração Blindada) */
 .color-options-grid {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
+/* Bolinhas de Cor (Reduzidas e Travadas em 26px) */
 .color-option {
-    width: 9px;
-    height: 9px;
+    width: 23px !important;
+    height: 23px !important;
+    min-width: 23px !important;  /* Impede achatar */
+    min-height: 23px !important; /* Impede achatar */
     border-radius: 50% !important;
     border: 1px solid #e0e0e0;
     cursor: pointer;
     position: relative;
     transition: all 0.2s ease;
+    padding: 0 !important;
+    box-sizing: border-box !important;
 }
 
 .color-option:hover {
     border-color: #999;
+    transform: scale(1.1);
 }
 
 .color-option.active {
     border: 1px solid #000;
-    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000; 
+    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000;
     transform: scale(1.1);
 }
 
-/* Remove o ícone de "Check" antigo se houver */
+/* Remove qualquer ícone antigo */
 .color-option.active::after {
     display: none !important;
 }
@@ -955,6 +959,7 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
 
