@@ -36,23 +36,29 @@ body.product-page {
 
 /* Descrição Curta (Nova) */
 .short-description-container {
-    margin-bottom: 1.5rem !important;
-    padding-bottom: 0 !important;
-    border-bottom: none !important; 
+    border-top: 1px solid #f0f0f0 !important; /* Linha fina acima */
+    border-bottom: 1px solid #f0f0f0 !important; /* Linha fina abaixo */
+    padding: 25px 0 !important;
+    margin: 20px 0 !important;
 }
 
 .short-desc-text {
-    font-size: 0.875rem !important; 
-    line-height: 1.6 !important;    
-    color: #555 !important;         
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important; /* Espaçamento bom para leitura */
+    color: #333333 !important;
     font-weight: 400 !important;
 }
 
 .view-full-desc {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    margin-top: 0.5rem;
-    display: inline-block;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important; /* Negrito */
+    text-decoration: underline !important;
+    color: #000000 !important;
+    margin-top: 10px !important;
+    display: block !important;
+    cursor: pointer;
 }
 
 /* --- HEADER, NAV & BANNER (MANTIDOS DO ORIGINAL) --- */
@@ -837,5 +843,6 @@ body.product-page .hamburger-btn {
         padding-left: 40px; 
     }
 }
+
 
 
