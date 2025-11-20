@@ -190,7 +190,6 @@ function scrollToProducts() {
 // ==================== NAVEGAÇÃO POR CATEGORIA ====================
 
 function navigateToCategory(category) {
-    toggleSidebar();
     // Limpar carrosséis ativos
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
@@ -4305,5 +4304,6 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
