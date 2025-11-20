@@ -218,40 +218,37 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 /* ======================================================= */
 
 .product-pricing {
-    display: flex;
-    flex-direction: column;
-    gap: 2px !important;
-    margin-bottom: 20px !important;
-    margin-top: 0 !important;
-}
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important; /* Alinha à direita */
+        text-align: right;
+        flex: 1; /* Ocupa o resto do espaço */
+        margin-top: 0 !important; /* Garante que comece no topo */
+    }
 
-/* Preço Atual (Por...) - SUPER IMPACTO */
-.price-current {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 40px !important;   
-    font-weight: 400 !important; 
-    color: #1a1a1a !important;
-    letter-spacing: -1px !important;
-    line-height: 1 !important;
-}
-
-/* Parcelamento - Ajustado para acompanhar o tamanho */
-.price-installments {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 14px !important;
-    color: #555 !important;
-    font-weight: 300 !important; /* Fino */
-    margin-top: 5px !important;
-}
-
-.price-old-text { 
-    text-decoration: line-through; 
-    color: #999; 
-    font-size: 14px !important; 
-    font-weight: 300 !important;
-    margin-bottom: 0 !important;
-    display: block;
-}
+    .price-current {
+        font-size: 1.2rem !important; /* IGUAL AO TÍTULO */
+        line-height: 1.2;
+        font-weight: 700 !important;
+        color: #000 !important;
+        margin-bottom: 2px !important;
+        order: 1; /* Força ser o primeiro */
+    }
+    
+    .price-old-text {
+        font-size: 0.8rem !important;
+        color: #999 !important;
+        text-decoration: line-through;
+        margin-bottom: 0 !important;
+        order: 2; /* Força ser o segundo (EMBAIXO) */
+    }
+    
+    .price-installments {
+        font-size: 0.7rem !important;
+        color: #666 !important;
+        margin-top: 2px !important;
+        order: 3; /* Terceiro */
+    }
 
 .price-discount-badge { display: none !important; 
 }
@@ -1020,4 +1017,5 @@ body.product-page .hamburger-btn {
         line-height: 1.1 !important;
     }
 }
+
 
