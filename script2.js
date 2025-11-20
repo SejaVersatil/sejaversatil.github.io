@@ -28,40 +28,36 @@ class SecureStorage {
     set(key, value) { localStorage.setItem(key, this.encrypt(value)); }
     get(key) { const data = localStorage.getItem(key); return data ? this.decrypt(data) : null; }
 }
+
 const productCache = new Map(); // Cache simples em memória para sessão
-        
-        // 4. Lógica de Busca via URL (Redirecionamento)
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchTerm = urlParams.get('search');
-        if (searchTerm) {
-            const headerInput = document.getElementById('headerSearchInput');
-            if (headerInput) {
-                headerInput.value = searchTerm;
-                setTimeout(() => {
-                    performHeaderSearch();
-                    document.getElementById('produtos')?.scrollIntoView({behavior: 'smooth'});
-                }, 800);
-            }
-        }
 
-        // 5. Lógica de Hash (Ações de botões)
-        const hash = window.location.hash;
-        if (hash === '#login') setTimeout(openUserPanel, 500);
-        else if (hash === '#favorites') setTimeout(showFavorites, 800);
-        else if (hash === '#cart') setTimeout(toggleCart, 500);
+// --- 4. LÓGICA DE BUSCA VIA URL (REDIRECIONAMENTO) ---
+const urlParams = new URLSearchParams(window.location.search);
+const searchTerm = urlParams.get('search');
 
-        // 6. Scripts Auxiliares
-        setupConnectionMonitor();
-        setupCartAbandonmentTracking();
-        setupPushNotifications();
-
-    } catch (error) {
-        console.error('❌ Erro crítico na inicialização:', error);
-        showToast('Erro ao carregar componentes.', 'error');
-    } finally {
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
+if (searchTerm) {
+    const headerInput = document.getElementById('headerSearchInput');
+    if (headerInput) {
+        headerInput.value = searchTerm;
+        setTimeout(() => {
+            performHeaderSearch();
+            document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' });
+        }, 800);
     }
-});
+}
+
+// --- 5. LÓGICA DE HASH (AÇÕES DE BOTÕES) ---
+const hash = window.location.hash;
+
+if (hash === '#login') setTimeout(openUserPanel, 500);
+else if (hash === '#favorites') setTimeout(showFavorites, 800);
+else if (hash === '#cart') setTimeout(toggleCart, 500);
+
+// --- 6. SCRIPTS AUXILIARES ---
+setupConnectionMonitor();
+setupCartAbandonmentTracking();
+setupPushNotifications();
+
 
 // =============================================================================
 // MÓDULO DE PRODUTOS (FIRESTORE & RENDERIZAÇÃO)
@@ -860,3 +856,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 });
+
