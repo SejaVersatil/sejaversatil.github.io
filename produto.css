@@ -943,34 +943,36 @@ body.product-page .hamburger-btn {
         text-align: right;
         min-width: max-content;
         margin: 0 !important;
-        padding: 0 !important;
+        padding-left: 10px; /* Respiro entre nome e preço */
     }
 
+    /* PREÇO ATUAL (Aumentado para 1.45rem para igualar o título) */
     .price-current {
-        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-        font-weight: 400 !important;      /* Sem negrito */
-        font-size: 1rem !important;       /* 16px (Igual ao Título) */
-        color: #000000 !important;
-        line-height: 1.2 !important;
+        font-size: 1.45rem !important; /* Tamanho calibrado para bater com o nome */
+        font-weight: 700 !important;   /* Negrito */
+        color: #000 !important;
+        line-height: 1;
         margin-bottom: 0 !important;
-        margin-top: 0 !important;
-        white-space: nowrap !important;
+        order: 1; /* Fica em cima */
     }
     
-    .price-installments {
-        font-size: 0.7rem !important;
-        color: #666 !important;
-        white-space: nowrap;
-        margin: 0 !important;
-    }
-    
+    /* Preço antigo (Embaixo e menor) */
     .price-old-text {
-        display: block !important; /* Força aparecer */
         font-size: 0.75rem !important;
         color: #999 !important;
         text-decoration: line-through;
         margin-bottom: 0 !important;
-        line-height: 1;
+        line-height: 1.2;
+        order: 2; /* Fica embaixo do preço atual */
+    }
+    
+    /* Parcelamento */
+    .price-installments {
+        font-size: 0.7rem !important;
+        color: #666 !important;
+        margin-top: 2px !important;
+        white-space: nowrap;
+        order: 3;
     }
     
     /* Esconde apenas o badge de porcentagem para limpar */
@@ -1017,5 +1019,6 @@ body.product-page .hamburger-btn {
         line-height: 1.1 !important;
     }
 }
+
 
 
