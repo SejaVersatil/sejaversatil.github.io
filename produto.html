@@ -27,7 +27,8 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-  </script>
+    const auth = firebase.auth(); // ✅ ADICIONADO
+</script>
 
   <link rel="stylesheet" href="produto.css">
   <link rel="stylesheet" href="css2.css">
@@ -355,6 +356,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
