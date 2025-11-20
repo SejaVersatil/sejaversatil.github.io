@@ -920,12 +920,13 @@ body.product-page .hamburger-btn {
     }
 
     .product-title, #detailsProductName {
-        font-size: 1.15rem !important; /* Reduzido para alinhar com o preço */
-        line-height: 1.2 !important;
-        margin-bottom: 0 !important;   /* Cola no preço */
+        font-size: 1.1rem !important; /* Tamanho controlado */
+        line-height: 1.3 !important;
+        margin-bottom: 0 !important;
         color: #000 !important;
-        font-weight: 600 !important;   /* Semi-bold */
-        letter-spacing: 0 !important;
+        font-weight: 600 !important;
+        white-space: normal !important; /* Permite quebrar linha se o nome for longo */
+        max-width: 60%; /* Garante que não empurre o preço para fora */
     }
 
     .btn-favorite {
@@ -954,13 +955,12 @@ body.product-page .hamburger-btn {
     }
 
     .price-current {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important; /* Fonte Nova */
-    font-size: 1.15rem !important; /* IGUAL ao título */
-    font-weight: 700 !important;   /* Bold para destaque sutil */
-    color: #000 !important;
-    line-height: 1.2 !important;
-    margin-bottom: 0 !important;
-    margin-top: 2px !important;    /* Pequeno respiro do título */
+        font-size: 1.1rem !important; /* IGUAL ao título = Proporção Perfeita */
+        font-weight: 700 !important;
+        color: #000 !important;
+        line-height: 1.2 !important;
+        margin-bottom: 2px !important;
+        margin-top: 2px !important;
     }
     
     .price-installments {
@@ -1022,5 +1022,6 @@ body.product-page .hamburger-btn {
     line-height: 1.1 !important;
     font-style: normal !important;
 }
+
 
 
