@@ -1020,55 +1020,116 @@ window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
 
-/* =========================
-   CORREÇÃO: BUSCA INTELIGENTE NA PÁGINA DE PRODUTO
-   ========================= */
+/* =================================================================== */
+/* BUSCA INTELIGENTE COMPLETA (LIVE SEARCH) - PÁGINA DE PRODUTO        */
+/* =================================================================== */
+
+let globalSearchCache = []; // Armazena os produtos para a busca
+
+// Função para carregar dados básicos de todos os produtos (Executa em background)
+async function loadGlobalSearchData() {
+    if (globalSearchCache.length > 0) return; // Já carregado
+
+    try {
+        // Pega apenas os campos necessários para economizar dados
+        const snapshot = await db.collection('produtos').get();
+        globalSearchCache = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        console.log('🔍 Dados da busca carregados:', globalSearchCache.length);
+    } catch (error) {
+        console.warn('Erro ao carregar dados da busca:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar Busca
-    setTimeout(() => {
-        const searchInput = document.getElementById('headerSearchInput');
-        const dropdown = document.getElementById('headerDropdown');
+    // Carrega os dados da busca 1.5 segundos após abrir a página (para não travar o carregamento principal)
+    setTimeout(loadGlobalSearchData, 1500);
+
+    const searchInput = document.getElementById('headerSearchInput');
+    const dropdown = document.getElementById('headerDropdown');
+
+    if (!searchInput || !dropdown) return;
+
+    let timeout = null;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
         
-        if (searchInput && dropdown) {
-            let timeout = null;
+        // Se o usuário começar a digitar e os dados ainda não chegaram, tenta carregar agora
+        if (globalSearchCache.length === 0) loadGlobalSearchData();
 
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                clearTimeout(timeout);
+        clearTimeout(timeout);
 
-                if (query.length < 2) {
-                    dropdown.classList.remove('active');
-                    dropdown.innerHTML = '';
-                    return;
-                }
-
-                timeout = setTimeout(async () => {
-                    // Usa o Firestore para buscar (já que na pag produto talvez não tenhamos o array productsData completo carregado)
-                    // Mas como você tem productsData global no script2, vamos tentar usar a função se ela existir, senão fallback
-                    
-                    // Se productsData estiver vazio (comum ao abrir direto o link do produto), busca simples no DOM ou alerta
-                    // Idealmente, carregue todos os produtos para busca ou faça query
-                     const filtered = []; // Simulação segura
-                     // Como a busca global depende do array da home, aqui faremos um redirecionamento simples se não tiver dados
-                     
-                     dropdown.innerHTML = `
-                        <div class="search-dropdown-item" onclick="window.location.href='index.html?busca=${query}'">
-                            <div class="search-dropdown-info">
-                                <div class="search-dropdown-title">Buscar por "<strong>${query}</strong>"</div>
-                                <div class="search-dropdown-price">Ver resultados na loja</div>
-                            </div>
-                        </div>
-                     `;
-                     dropdown.classList.add('active');
-                }, 300);
-            });
-            
-            // Fechar ao clicar fora
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                }
-            });
+        if (query.length < 2) {
+            dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
+            return;
         }
-    }, 1000);
+
+        timeout = setTimeout(() => {
+            // Filtra no cache local
+            const filtered = globalSearchCache.filter(p => 
+                (p.name && p.name.toLowerCase().includes(query)) || 
+                (p.category && p.category.toLowerCase().includes(query))
+            );
+
+            renderSearchDropdown(filtered, query);
+        }, 300);
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
 });
+
+// Renderiza as miniaturas (Igual à Home)
+function renderSearchDropdown(products, query) {
+    const dropdown = document.getElementById('headerDropdown');
+    
+    if (products.length === 0) {
+        dropdown.innerHTML = `
+            <div style="padding: 1rem; text-align: center; color: #999; font-size: 0.85rem;">
+                Nenhum produto encontrado para "<strong>${query}</strong>"
+            </div>`;
+        dropdown.classList.add('active');
+        return;
+    }
+
+    // Limita a 5 resultados
+    const topProducts = products.slice(0, 5);
+
+    dropdown.innerHTML = topProducts.map(product => {
+        // Lógica de Imagem (Mesma do script2.js)
+        let img = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            img = product.images[0];
+        } else if (product.image) {
+            img = product.image;
+        }
+
+        const isRealImg = img.startsWith('http') || img.startsWith('data:image');
+        const style = isRealImg 
+            ? `background-image: url('${img}'); background-size: cover; background-position: center;` 
+            : `background: ${img};`;
+            
+        const price = product.price ? Number(product.price).toFixed(2) : '0.00';
+
+        return `
+            <div class="search-dropdown-item" onclick="window.location.href='produto.html?id=${product.id}'">
+                <div class="search-dropdown-thumb" style="${style}"></div>
+                <div class="search-dropdown-info">
+                    <div class="search-dropdown-title">${product.name || 'Produto'}</div>
+                    <div class="search-dropdown-price">R$ ${price}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    dropdown.classList.add('active');
+}
