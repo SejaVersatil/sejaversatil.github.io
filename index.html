@@ -1,228 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
-    <meta name="description" content="Loja de moda fitness feminina premium. Leggings, tops e conjuntos versáteis. Frete grátis acima de R$ 299.">
-    <meta name="keywords" content="moda fitness feminina, legging, top fitness, conjunto fitness">
-    <!-- Open Graph -->
-    <meta property="og:title" content="Seja Versátil - Moda Fitness Feminina">
-    <meta property="og:description" content="Moda fitness premium com estilo e conforto">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://sejaversatil.github.io/images/og-image.jpg">
-    <meta property="og:url" content="https://sejaversatil.github.io/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Seja Versátil">
     <title>Seja Versátil - Moda Fitness Feminina</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="preconnect" href="https://www.gstatic.com">
-    <link rel="preconnect" href="https://firebasestorage.googleapis.com">
-    <link rel="preload" as="image" href="https://i.imgur.com/kvruQ8k.jpeg" fetchpriority="high">
-    <!-- Service Worker -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#667eea">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Seja Versátil">
-    <link rel="apple-touch-icon" href="/images/icon-192.png">
     
-    <!-- Google Fonts - Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <link rel="stylesheet" href="css2.css?v=2.0">
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-            authDomain: "seja-versatil.firebaseapp.com",
-            projectId: "seja-versatil",
-            storageBucket: "seja-versatil.firebasestorage.app",
-            messagingSenderId: "102339207381",
-            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-            measurementId: "G-86E5CX4S3T"
-        };
-
-        // Inicializa o Firebase imediatamente
-        try {
-            firebase.initializeApp(firebaseConfig);
-            
-            // Define as variáveis globais para o site todo usar
-            window.db = firebase.firestore();
-            window.auth = firebase.auth();
-            window.storage = firebase.storage();
-            
-            console.log("🔥 Firebase (Home) Conectado com Sucesso");
-        } catch (e) {
-            console.error("Erro crítico ao iniciar Firebase:", e);
-        }
-    </script>
-
-    
-    <!-- Link para o CSS -->
-    <link rel="stylesheet" href="css2.css?v=1.0.1">
 </head>
 <body>
-    <a href="#produtos" class="skip-link">Pular para conteúdo principal</a>
     
-    <!-- Hamburger Menu Button -->
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
     </button>
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar-menu" id="sidebarMenu">
         <div class="sidebar-section">
-            <h3>Explore</h3>
+            <h3>Navegação</h3>
             <ul>
-                <li><a href="#" onclick="filterProducts('all'); toggleSidebar()">Novidades</a></li>
-                <li><a href="#produtos" onclick="toggleSidebar()">Lançamentos</a></li>
-                <li><a href="#produtos" onclick="toggleSidebar()">Mais Vendidos</a></li>
-            </ul>
-        </div>
-        <div class="sidebar-section">
-    <h3>Categorias</h3>
-    <ul>
-        <li><a href="#" onclick="navigateToCategory('blusas'); toggleSidebar()">Blusas</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto calca'); toggleSidebar()">Conjunto Calça</a></li>
-        <li><a href="#" onclick="navigateToCategory('peca unica'); toggleSidebar()">Peça Única</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto short saia'); toggleSidebar()">Conjunto Short Saia</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto short'); toggleSidebar()">Conjunto Short</a></li>
-        <li><a href="#" onclick="navigateToCategory('all'); toggleSidebar()">Todos os Produtos</a></li>
-    </ul>
-</div>
-        <div class="sidebar-section">
-            <h3>Acessórios</h3>
-            <ul>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-            </ul>
-        </div>
-        <div class="sidebar-section">
-            <h3>Coleções</h3>
-            <ul>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
+                <li><a href="#" onclick="toggleSidebar()">Home</a></li>
+                <li><a href="#produtos" onclick="toggleSidebar()">Produtos</a></li>
             </ul>
         </div>
     </div>
 
-   <!-- Top Banner com Countdown Black Friday -->
-<div class="top-banner black-friday-banner">
-    <div class="bf-content">
-        <span class="bf-label"> BLACK FRIDAY | ATÉ 30% OFF</span>
-        <span class="bf-separator">|</span>
-        <span class="bf-countdown-label">termina em</span>
-        <div class="bf-countdown">
-            <div class="bf-time-unit">
-                <span class="bf-time-value" id="bfDays">00</span>
-                <span class="bf-time-label">Dias</span>
+    <header>
+        <nav>
+            <div class="logo" onclick="location.reload()">SEJA VERSÁTIL</div>
+            
+            <div class="nav-icons">
+                <div class="nav-icon" onclick="toggleCart()" title="Carrinho">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
             </div>
-            <span class="bf-colon">:</span>
-            <div class="bf-time-unit">
-                <span class="bf-time-value" id="bfHours">00</span>
-                <span class="bf-time-label">Horas</span>
-            </div>
-            <span class="bf-colon">:</span>
-            <div class="bf-time-unit">
-                <span class="bf-time-value" id="bfMinutes">00</span>
-                <span class="bf-time-label">Minutos</span>
-            </div>
-            <span class="bf-colon">:</span>
-            <div class="bf-time-unit">
-                <span class="bf-time-value" id="bfSeconds">00</span>
-                <span class="bf-time-label">Segundos</span>
-            </div>
-        </div>
-    </div>
-</div>
+        </nav>
+    </header>
 
-    <!-- Header -->
-<header>
-    <nav>
-    <div class="logo" onclick="location.reload()">SEJA VERSÁTIL</div>
-    
-    <!-- Barra de pesquisa central -->
-    <div class="search-bar">
-        <img src="favicon.ico" alt="Logo" class="search-logo" width="24" height="24">
-        <input type="text" 
-               id="headerSearchInput" 
-               placeholder="Encontre aqui seu próximo look"
-               oninput="performHeaderSearch()">
-        <button class="search-btn" onclick="performHeaderSearch()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-            </svg>
-        </button>
-    </div>
-    
-    <!-- ✅ ADICIONE ESTA DIV AQUI -->
-        
-    <div class="nav-icons">
-        <!-- Login -->
-        <div class="nav-icon" onclick="openUserPanel()" title="Minha conta">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
-
-        <!-- Favoritos -->
-        <div class="nav-icon" onclick="showFavorites()" title="Meus favoritos">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-            <span class="cart-count" id="favoritesCount" style="display: none;">0</span>
-        </div>
-        
-        <!-- Carrinho -->
-        <div class="nav-icon" onclick="toggleCart()" title="Carrinho de compras">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span class="cart-count" id="cartCount">0</span>
-        </div>
-    </div>
-</nav>
-</header>
-
-    <!-- Search Modal -->
-    <div class="search-modal" id="searchModal">
-        <div class="search-content">
-            <input type="text" class="search-input" id="searchInput" placeholder="Buscar produtos..." oninput="performSearch()">
-            <div class="search-results" id="searchResults"></div>
-        </div>
-    </div>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-overlay" id="cartOverlay"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3>Meu Carrinho</h3>
-            <span class="close-cart" onclick="toggleCart()">✕</span>
+            <span style="cursor:pointer" onclick="toggleCart()">✕</span>
         </div>
-        <div class="cart-items" id="cartItems">
-            <div class="empty-cart">Seu carrinho está vazio</div>
-        </div>
-        <div class="cart-footer" id="cartFooter" style="display: none;">
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer" id="cartFooter">
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cartTotal">R$ 0,00</span>
@@ -231,638 +68,44 @@
         </div>
     </div>
 
-    <!-- Hero Carousel Section -->
     <section class="hero-section" id="hero">
-        <div class="hero-carousel" id="heroCarousel">
-            <!-- Slides serão injetados via JavaScript -->
-        </div>
-        <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
-        <button class="hero-nav-arrow hero-nav-next" onclick="nextHeroSlide()">›</button>
-        <div class="hero-carousel-dots" id="heroCarouselDots">
-            <!-- Dots serão injetados via JavaScript -->
-        </div>
+        <div class="hero-carousel" id="heroCarousel"></div>
     </section>
 
-    <!-- Promotional Cards Section (Honeybe Style) -->
-    <section class="promo-cards-section">
-    <div class="promo-cards-grid">
-        <!-- Card 1 - BLUSAS -->
-        <div class="promo-card" onclick="navigateToCategory('blusas')">
-            <div class="promo-card-image" style="background-image: url('https://i.imgur.com/eUr2qOF.png');">
-                <div class="promo-card-overlay"></div>
-                <div class="promo-card-content">
-                    <span class="promo-category">BLUSAS</span>
-                    <span class="promo-text">a partir de</span>
-                    <div class="promo-price">
-                        <span class="promo-currency">R$</span>
-                        <span class="promo-value">45</span>
-                        <span class="promo-cents">,90</span>
-                    </div>
-                    <span class="promo-disclaimer">*PROMOÇÃO VÁLIDA ENQUANTO OS ESTOQUES DURAREM EM PRODUTOS SELECIONADOS*</span>
-                </div>
+    <section id="produtos" class="products-section">
+        <h2 class="section-title">Encontre seu Próximo Look</h2>
+        <div class="products-grid" id="productsGrid">
             </div>
-        </div>
-        
-        <!-- Card 2 - CONJUNTO CALÇA -->
-        <div class="promo-card" onclick="navigateToCategory('conjunto calca')">
-            <div class="promo-card-image" style="background-image: url('https://i.imgur.com/ffymV91.png');">
-                <div class="promo-card-overlay"></div>
-                <div class="promo-card-content">
-                    <span class="promo-category">CONJUNTO CALÇA</span>
-                    <span class="promo-text">a partir de</span>
-                    <div class="promo-price">
-                        <span class="promo-currency">R$</span>
-                        <span class="promo-value">165</span>
-                        <span class="promo-cents">,90</span>
-                    </div>
-                    <span class="promo-disclaimer">*PROMOÇÃO VÁLIDA ENQUANTO OS ESTOQUES DURAREM EM PRODUTOS SELECIONADOS*</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card 3 - PEÇA ÚNICA -->
-        <div class="promo-card" onclick="navigateToCategory('peca unica')">
-            <div class="promo-card-image" style="background-image: url('https://i.imgur.com/TwJxlyB.png');">
-                <div class="promo-card-overlay"></div>
-                <div class="promo-card-content">
-                    <span class="promo-category">PEÇA ÚNICA</span>
-                    <span class="promo-text">a partir de</span>
-                    <div class="promo-price">
-                        <span class="promo-currency">R$</span>
-                        <span class="promo-value">145</span>
-                        <span class="promo-cents">,90</span>
-                    </div>
-                    <span class="promo-disclaimer">*PROMOÇÃO VÁLIDA ENQUANTO OS ESTOQUES DURAREM EM PRODUTOS SELECIONADOS*</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card 4 - CONJUNTO SHORT SAIA -->
-        <div class="promo-card" onclick="navigateToCategory('conjunto short saia')">
-            <div class="promo-card-image" style="background-image: url('https://i.imgur.com/ZiQ0h6k.png');">
-                <div class="promo-card-overlay"></div>
-                <div class="promo-card-content">
-                    <span class="promo-category">CONJUNTO SHORT SAIA</span>
-                    <span class="promo-text">a partir de</span>
-                    <div class="promo-price">
-                        <span class="promo-currency">R$</span>
-                        <span class="promo-value">145</span>
-                        <span class="promo-cents">,90</span>
-                    </div>
-                    <span class="promo-disclaimer">*PROMOÇÃO VÁLIDA ENQUANTO OS ESTOQUES DURAREM EM PRODUTOS SELECIONADOS*</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card 5 - CONJUNTO SHORT -->
-        <div class="promo-card" onclick="navigateToCategory('conjunto short')">
-            <div class="promo-card-image" style="background-image: url('https://i.imgur.com/on0sGgE.png');">
-                <div class="promo-card-overlay"></div>
-                <div class="promo-card-content">
-                    <span class="promo-category">CONJUNTO SHORT</span>
-                    <span class="promo-text">a partir de</span>
-                    <div class="promo-price">
-                        <span class="promo-currency">R$</span>
-                        <span class="promo-value">139</span>
-                        <span class="promo-cents">,90</span>
-                    </div>
-                    <span class="promo-disclaimer">*PROMOÇÃO VÁLIDA ENQUANTO OS ESTOQUES DURAREM EM PRODUTOS SELECIONADOS*</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-    
-    <!-- Products Section -->
-<section id="produtos" class="products-section">
-    <h2 class="section-title">Encontre seu Próximo Look Aqui</h2>
-
-    <div class="active-category-badge" id="activeCategoryBadge" style="display: none;">
-        Filtrando: <strong id="categoryNameDisplay"></strong>
-        <button class="clear-filter-btn" onclick="clearCategoryFilter()">✕ Limpar Filtro</button>
-    </div>
-
-    <div class="products-grid" id="productsGrid"></div>
-
-    <div class="pagination" id="pagination"></div>
-</section>
-
-    <!-- Feature Banner 1 -->
-    <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80')">
-        <div class="feature-banner-overlay"></div>
-        <div class="feature-banner-content">
-            <h2>NOVA COLEÇÃO</h2>
-            <p>Tecnologia para máximo conforto nos treinos</p>
-            <button class="feature-banner-btn" onclick="filterProducts('all'); scrollToProducts()">EXPLORAR COLEÇÃO</button>
-        </div>
     </section>
 
-    <!-- Best Sellers Section -->
-    <section class="products-section bestsellers-section">
-        <h2 class="section-title">Mais Vendidos</h2>
-        <div class="products-grid" id="bestSellersGrid">
-            <!-- Será preenchido dinamicamente -->
-        </div>
-    </section>
-
-    <!-- Feature Banner 2 -->
-    <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&q=80')">
-        <div class="feature-banner-overlay"></div>
-        <div class="feature-banner-content">
-            <h2>PERFORMANCE & ESTILO</h2>
-            <p>Do treino ao dia a dia com versatilidade</p>
-            <button class="feature-banner-btn" onclick="filterProducts('all'); scrollToProducts()">VER PRODUTOS</button>
-        </div>
-    </section>
-
-    <!-- Info Bar -->
-    <section class="info-bar">
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-icon">🚚</div>
-                <h4>Frete Grátis</h4>
-                <p>Acima de R$ 399</p>
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-modal-content">
+            <div class="payment-modal-header">
+                <h3>Pagamento</h3>
+                <button class="payment-modal-close" onclick="document.getElementById('paymentModal').classList.remove('active')">✕</button>
             </div>
-            <div class="info-item">
-                <div class="info-icon">💳</div>
-                <h4>Parcele em 3x</h4>
-                <p>Sem juros no cartão</p>
+            <div class="payment-summary">
+                <div id="paymentCartItems"></div>
+                <div class="payment-total">Total: <span id="paymentTotal"></span></div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">🔒</div>
-                <h4>Compra Segura</h4>
-                <p>Ambiente protegido</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="sobre">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Seja Versátil</h4>
-                <p style="color: #666; font-size: 0.8rem; line-height: 1.7;">
-                    Moda fitness feminina com estilo e qualidade. Criamos roupas versáteis, funcionais e confortáveis para mulheres que querem se tornar a sua melhor versão.
-                </p>
-                <div class="social-icons">
-                    <a href="https://instagram.com/_sejaversatil" aria-label="Instagram" target="_blank" rel="noopener">📷</a>
-                    <a href="https://wa.me/5571991427103" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
+            <div class="payment-options">
+                <h4>Método</h4>
+                <label class="payment-option"><input type="radio" name="paymentMethod" value="pix" checked> PIX</label>
+                <label class="payment-option"><input type="radio" name="paymentMethod" value="boleto"> Boleto</label>
+                <label class="payment-option"><input type="radio" name="paymentMethod" value="credito-avista"> Crédito à vista</label>
+                <label class="payment-option"><input type="radio" name="paymentMethod" value="credito-parcelado"> Parcelado</label>
+                <div id="installmentsBox" style="display:none; margin-top:10px;">
+                    <select id="installments"><option value="2">2x</option><option value="3">3x</option></select>
                 </div>
             </div>
-            <div class="footer-section">
-                <h4>Institucional</h4>
-                <ul>
-                    <li><a href="#">Sobre Nós</a></li>
-                    <li><a href="#">Trabalhe Conosco</a></li>
-                    <li><a href="#">Nossas Lojas</a></li>
-                    <li><a href="#">Política de Privacidade</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Atendimento</h4>
-                <ul>
-                    <li><a href="#">Central de Ajuda</a></li>
-                    <li><a href="#">Trocas e Devoluções</a></li>
-                    <li><a href="#">Formas de Pagamento</a></li>
-                    <li><a href="#">Rastreamento</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Contato</h4>
-                <ul>
-                    <li><a href="mailto:contato@sejaversatil.com.br">contato@sejaversatil.com.br</a></li>
-                    <li><a href="tel:+5571991427103">(71) 99142-7103</a></li>
-                    <li style="color: #666; font-size: 0.8rem;">Seg - Sex: 9h às 18h</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Seja Versátil - Moda Fitness Feminina. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-<!-- WhatsApp Float Button -->
-<a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
-   class="whatsapp-float" 
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="Falar no WhatsApp">
-    <svg viewBox="0 0 48 48" fill="white">
-        <path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524-.001 0 .001 0 0 0h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/>
-        <path d="M32.992 27.157c-.488-.244-2.888-1.424-3.336-1.587-.448-.162-.774-.244-1.1.245-.326.488-1.263 1.588-1.548 1.913-.285.326-.57.366-1.059.122-.488-.244-2.06-.759-3.922-2.419-1.45-1.292-2.428-2.889-2.713-3.377-.285-.489-.03-.753.214-.996.22-.22.488-.57.732-.855.244-.285.326-.489.489-.814.162-.326.081-.611-.041-.855-.122-.244-1.1-2.651-1.507-3.628-.396-.952-.798-.823-1.1-.838-.285-.014-.611-.017-.937-.017-.326 0-.855.122-1.303.611-.448.488-1.711 1.672-1.711 4.078s1.752 4.729 1.996 5.055c.244.326 3.445 5.262 8.346 7.379 1.166.504 2.077.805 2.787.031.709.259 2.069.635 3.328.348 1.259-.287 2.888-1.18 3.295-2.318.407-1.139.407-2.114.285-2.318-.122-.203-.448-.326-.937-.57z"/>
-    </svg>
-</a>
-
-    <!-- User Panel (Login/Cadastro) -->
-    <div class="user-panel" id="userPanel">
-        <div class="user-panel-content">
-            <div class="user-panel-header">
-                <h3>Minha Conta</h3>
-                <button class="user-panel-close" onclick="closeUserPanel()">✕</button>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="user-panel-tabs" id="userPanelTabs">
-                <button class="user-panel-tab active" onclick="switchUserTab('login')">Entrar</button>
-                <button class="user-panel-tab" onclick="switchUserTab('register')">Cadastrar</button>
-            </div>
-
-            <div class="user-panel-body">
-                <!-- Login Tab -->
-<div class="user-tab-content active" id="loginTab">
-    <form onsubmit="userLogin(event)">
-        <div class="form-group">
-            <label>E-mail ou Usuário</label>
-            <input type="text" id="loginEmail" required>
-        </div>
-
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="loginPassword" required>
-        </div>
-
-        <!-- ✔ Lugar CORRETO para "Esqueceu sua senha?" -->
-        <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
-            <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
-        </div>
-
-        <button type="submit" class="form-btn">Entrar</button>
-
-        <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
-    </form>
-
-    <div class="form-link">
-        Não tem conta?
-        <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
-    </div>
-</div>
-
-
-                <!-- Register Tab -->
-<div class="user-tab-content" id="registerTab">
-    <form onsubmit="userRegister(event)">
-        <div class="form-group">
-            <label>Nome Completo</label>
-            <input type="text" id="registerName" required>
-        </div>
-
-        <div class="form-group">
-            <label>E-mail</label>
-            <input type="email" id="registerEmail" required>
-        </div>
-
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="registerPassword" required>
-
-            <!-- Barra de força da senha -->
-            <div class="password-strength" id="passwordStrength" style="display: none; margin-top: 0.5rem;">
-                <div style="height: 4px; background: #e5e5e5; border-radius: 2px; overflow: hidden;">
-                    <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s; background: #e74c3c;"></div>
-                </div>
-                <small id="strengthText" style="font-size: 0.75rem; color: #666; margin-top: 0.3rem; display: block;"></small>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Confirmar Senha</label>
-            <input type="password" id="registerConfirmPassword" minlength="6" required>
-        </div>
-
-        <button type="submit" class="form-btn">Criar Conta</button>
-
-        <div class="form-error" id="registerError">Erro ao criar conta</div>
-        <div class="form-success" id="registerSuccess">Conta criada com sucesso! Faça login.</div>
-    </form>
-
-    <div class="form-link">
-        Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-    </div>
-</div>
-
-
-                <!-- User Logged In -->
-                <div class="user-tab-content" id="userLoggedTab">
-                    <div class="user-logged-in">
-                        <h4>Bem-vindo(a)! <span id="userName"></span></h4>
-                        <div class="user-info">
-                            <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
-                            <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
-                        </div>
-                        <div class="user-actions">
-                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Pedidos</button>
-                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
-                            <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Endereços</button>
-                            <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">
-                                🔧 Painel Administrativo
-                            </button>
-                            <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button class="payment-confirm-btn" onclick="sendToWhatsApp()">Enviar Pedido</button>
         </div>
     </div>
 
-    <!-- Admin Panel -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="admin-header">
-            <h2>🔧 Painel Administrativo - Seja Versátil</h2>
-            <button class="admin-close" onclick="closeAdminPanel()">Sair do Painel</button>
-        </div>
-        <div class="admin-content">
-            <!-- Statistics -->
-            <div class="admin-stats">
-                <div class="stat-card">
-                    <h4 id="totalProducts">0</h4>
-                    <p>Total de Produtos</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="totalRevenue">R$ 0</h4>
-                    <p>Valor em Estoque</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="totalOrders">0</h4>
-                    <p>Pedidos (simulado)</p>
-                </div>
-                <div class="stat-card">
-                    <h4 id="activeProducts">0</h4>
-                    <p>Produtos Ativos</p>
-                </div>
-            </div>
-
-            <!-- Tabs -->
-            <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
-                <button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
-            </div>
-
-            <!-- Products Tab -->
-            <div class="admin-tab-content active" id="productsTab">
-                <button class="admin-btn admin-btn-add" onclick="openProductModal()">+ Adicionar Novo Produto</button>
-                <div class="admin-products-grid" id="adminProductsGrid"></div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div class="admin-tab-content" id="settingsTab">
-                <h3 style="margin-bottom: 1.5rem;">Configurações do Site</h3>
-                <div class="admin-form-group">
-                    <label>Banner Principal - Texto 1</label>
-                    <input type="text" id="settingBannerTitle" value="Seja Versátil">
-                </div>
-                <div class="admin-form-group">
-                    <label>Banner Principal - Subtítulo</label>
-                    <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
-                </div>
-                <div class="admin-form-group">
-                    <label>Mensagem do Banner de Promoção</label>
-                    <input type="text" id="settingTopBanner" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros">
-                </div>
-                <div class="admin-form-group">
-                    <label style="color: #e74c3c;">⚠️ Área de Perigo</label>
-                    <button class="admin-btn admin-btn-delete" onclick="limparTodosProdutos()" style="width: 100%;">
-                        🗑️ Limpar TODOS os Produtos do Firestore
-                    </button>
-                    <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
-                        Esta ação não pode ser desfeita! Use apenas para testes.
-                    </p>
-                </div>
-                <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Product Edit Modal -->
-    <div class="admin-modal" id="productModal">
-        <div class="admin-modal-content">
-            <div class="admin-modal-header">
-                <h3 id="modalTitle">Adicionar Produto</h3>
-                <button class="admin-close" onclick="closeProductModal()">✕</button>
-            </div>
-            <form id="productForm" onsubmit="saveProduct(event)">
-                <div class="admin-form-group">
-                    <label>Nome do Produto *</label>
-                    <input type="text" id="productName" required>
-                </div>
-                <div class="admin-form-group">
-                    <label>Categoria *</label>
-                    <select id="productCategory" required>
-    <option value="blusas">Blusas</option>
-    <option value="conjunto calca">Conjunto Calça</option>
-    <option value="peca unica">Peça Única</option>
-    <option value="conjunto short saia">Conjunto Short Saia</option>
-    <option value="conjunto short">Conjunto Short</option>
-</select>
-                </div>
-                <div class="admin-form-group">
-                    <label>Preço Atual (R$) *</label>
-                    <input type="number" id="productPrice" step="0.01" required>
-                </div>
-                <div class="admin-form-group">
-                    <label>Preço Antigo (R$) - Opcional</label>
-                    <input type="number" id="productOldPrice" step="0.01">
-                </div>
-                <div class="admin-form-group">
-                    <label>Badge - Opcional</label>
-                    <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
-                </div>
-                <div class="admin-form-group">
-    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" id="productBlackFriday" style="width: auto; cursor: pointer;">
-        <span>Black Friday</span>
-    </label>
-    <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">
-        Produtos marcados exibirão o adesivo "BLACK FRIDAY" em destaque
-    </small>
-</div>
-
-                <div class="admin-form-group">
-    <label style="display: block; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">
-        🎨 Cores do Produto
-    </label>
-    
-    <div id="productColorsManager" style="margin-bottom: 1rem; min-height: 50px; padding: 1rem; background: #f8f8f8; border-radius: 8px;">
-        <p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma cor adicionada ainda</p>
-    </div>
-    
-    <button type="button" onclick="addColorToProduct()" 
-            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 0.8rem 1.5rem; cursor: pointer; border-radius: 8px; font-weight: 600; width: 100%; transition: all 0.3s;">
-        ➕ Adicionar Nova Cor
-    </button>
-    
-    <small style="display: block; margin-top: 0.8rem; color: #666; font-size: 0.75rem; line-height: 1.6;">
-        💡 <strong>Fluxo correto:</strong><br>
-        1️⃣ Adicione as imagens da primeira cor<br>
-        2️⃣ Clique em "Adicionar Nova Cor" e preencha nome e código hex<br>
-        3️⃣ Limpe as imagens antigas e adicione as da próxima cor<br>
-        4️⃣ Repita para cada cor do produto
-    </small>
-</div>
-                
-                <!-- Image Manager -->
-                <div class="image-manager">
-                    <div class="image-manager-title">Imagens do Produto</div>
-                    <div class="image-list" id="productImagesList"></div>
-                    
-                    <div class="image-upload-options">
-                        <button type="button" class="image-add-btn">
-                            📁 Upload Local
-                            <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
-                        </button>
-                        <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">
-                            🔗 URL de Imagem
-                        </button>
-                        <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">
-                            🎨 Gradiente CSS
-                        </button>
-                    </div>
-                    
-                    <!-- URL Input -->
-                    <div class="image-url-input" id="imageUrlInputBox">
-                        <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
-                        <div class="image-url-actions">
-                            <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
-                            <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Gradient Input -->
-                    <div class="image-url-input" id="imageGradientInputBox">
-                        <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-                        <div class="image-url-actions">
-                            <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
-                            <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
-                        </div>
-                    </div>
-                    
-                    <div class="image-helper">
-                        💡 <strong>Como adicionar imagens:</strong><br>
-                        • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
-                        • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente) - <a href="https://imgur.com/upload" target="_blank" style="color: var(--secondary); text-decoration: underline;">Ir para Imgur</a><br>
-                        • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
-                    </div>
-                </div>
-                
-                <input type="hidden" id="productId">
-                <div class="admin-form-actions">
-                    <button type="submit" class="admin-btn-save">Salvar Produto</button>
-                    <button type="button" class="admin-btn-cancel" onclick="closeProductModal()">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-<!-- Payment Modal -->
-<div class="payment-modal" id="paymentModal">
-    <div class="payment-modal-content">
-        <div class="payment-modal-header">
-            <h3>Escolha a Forma de Pagamento</h3>
-            <button class="payment-modal-close" onclick="closePaymentModal()">✕</button>
-        </div>
-        
-        <div class="payment-summary">
-            <h4>Resumo do Pedido</h4>
-            <div id="paymentCartItems"></div>
-            <div class="payment-total">
-                <span>Total:</span>
-                <span id="paymentTotal">R$ 0,00</span>
-            </div>
-        </div>
-        
-        <div class="payment-options">
-            <h4>Forma de Pagamento</h4>
-            
-            <label class="payment-option">
-                <input type="radio" name="paymentMethod" value="pix" checked>
-                <div class="payment-option-content">
-                    <span class="payment-icon">💳</span>
-                    <div class="payment-info">
-                        <strong>PIX</strong>
-                        <small>Aprovação imediata</small>
-                    </div>
-                </div>
-            </label>
-            
-            <label class="payment-option">
-                <input type="radio" name="paymentMethod" value="boleto">
-                <div class="payment-option-content">
-                    <span class="payment-icon">📄</span>
-                    <div class="payment-info">
-                        <strong>Boleto Bancário</strong>
-                        <small>Vencimento em 3 dias úteis</small>
-                    </div>
-                </div>
-            </label>
-            
-            <label class="payment-option">
-                <input type="radio" name="paymentMethod" value="credito-avista">
-                <div class="payment-option-content">
-                    <span class="payment-icon">💳</span>
-                    <div class="payment-info">
-                        <strong>Cartão de Crédito à Vista</strong>
-                        <small>Pagamento único</small>
-                    </div>
-                </div>
-            </label>
-            
-            <label class="payment-option">
-                <input type="radio" name="paymentMethod" value="credito-parcelado">
-                <div class="payment-option-content">
-                    <span class="payment-icon">💳</span>
-                    <div class="payment-info">
-                        <strong>Cartão de Crédito Parcelado</strong>
-                        <small>Até 3x sem juros</small>
-                    </div>
-                </div>
-            </label>
-            
-            <div id="installmentsBox" class="installments-box" style="display: none;">
-                <label for="installments">Número de Parcelas:</label>
-                <select id="installments">
-                    <option value="2">2x sem juros</option>
-                    <option value="3">3x sem juros</option>
-                </select>
-            </div>
-        </div>
-        
-        <button class="payment-confirm-btn" onclick="sendToWhatsApp()">
-            📱 Finalizar Pedido via WhatsApp
-        </button>
-    </div>
-</div>
-    
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">⏳</div>
-        <div class="loading-text">Carregando...</div>
     </div>
 
-    <!-- Link para o JavaScript -->
-    <script src="script2.js?v=1.0.1">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Store",
-      "name": "Seja Versátil",
-      "description": "Moda fitness feminina premium",
-      "url": "https://sejaversatil.github.io/",
-      "telephone": "+55-71-99142-7103",
-      "email": "contato@sejaversatil.com.br"
-    }
-    </script>
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('✅ Service Worker registrado:', registration.scope);
-            })
-            .catch((error) => {
-                console.error('❌ Erro ao registrar Service Worker:', error);
-            });
-    });
-}
-</script>
-    
+    <script src="script2.js?v=2.0"></script>
 </body>
 </html>
