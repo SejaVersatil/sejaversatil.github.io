@@ -31,34 +31,6 @@ class SecureStorage {
 
 const productCache = new Map(); // Cache simples em memória para sessão
 
-// --- 4. LÓGICA DE BUSCA VIA URL (REDIRECIONAMENTO) ---
-const urlParams = new URLSearchParams(window.location.search);
-const searchTerm = urlParams.get('search');
-
-if (searchTerm) {
-    const headerInput = document.getElementById('headerSearchInput');
-    if (headerInput) {
-        headerInput.value = searchTerm;
-        setTimeout(() => {
-            performHeaderSearch();
-            document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' });
-        }, 800);
-    }
-}
-
-// --- 5. LÓGICA DE HASH (AÇÕES DE BOTÕES) ---
-const hash = window.location.hash;
-
-if (hash === '#login') setTimeout(openUserPanel, 500);
-else if (hash === '#favorites') setTimeout(showFavorites, 800);
-else if (hash === '#cart') setTimeout(toggleCart, 500);
-
-// --- 6. SCRIPTS AUXILIARES ---
-setupConnectionMonitor();
-setupCartAbandonmentTracking();
-setupPushNotifications();
-
-
 // Funções auxiliares de segurança
 function safeNumber(value) {
     const num = parseFloat(value);
@@ -837,11 +809,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             state.currentUser = user;
             console.log('Auth Status:', user ? 'Logado' : 'Guest');
             if (document.getElementById('userPanel')?.classList.contains('active')) {
-                checkUserSession(); // Atualiza painel se estiver aberto
+                checkUserSession();
             }
         });
 
-// 3. Carregamento de Dados (Assíncrono)
+        // 3. Carregamento de Dados (Assíncrono)
         await loadProducts();
         
         // 4. Lógica de Busca via URL (Redirecionamento)
@@ -876,5 +848,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 });
+
 
 
