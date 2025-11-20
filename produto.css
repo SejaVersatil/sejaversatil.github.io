@@ -178,7 +178,7 @@ body.product-page {
     display: flex;
     flex-direction: column;
     gap: 0 !important;
-    margin-bottom: 1.5rem !important; 
+    margin-bottom: 0 !important; /* Remove margem extra */
 }
 .price-new {
     font-family: 'Montserrat', sans-serif;
@@ -363,42 +363,48 @@ body.product-page {
 }
 
 /* Lista de Ícones de Confiança (Rodapé da Info) */
+/* Ícones de Confiança (Rodapé) */
 .trust-badges-list {
-    margin-top: 2rem;
+    margin-top: 30px !important;
+    padding-top: 25px !important;
+    border-top: 1px solid #f0f0f0 !important; /* Linha extra de separação */
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 20px !important;
 }
 
 .trust-badge {
     display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+    gap: 15px !important;
+    align-items: center !important; /* Centraliza ícone com texto */
 }
 
 .trust-badge svg {
-    width: 24px;
-    height: 24px;
-    color: #333; 
+    width: 32px !important;  /* Ícone maior */
+    height: 32px !important;
+    color: #000 !important; 
+    stroke-width: 1.2px !important; /* Traço fino elegante */
     flex-shrink: 0;
 }
 
 .badge-text {
     display: flex;
     flex-direction: column;
-    font-size: 0.8rem;
-    line-height: 1.5;
+    font-size: 13px !important;
+    line-height: 1.4;
 }
 
 .badge-text strong {
-    font-weight: 600;
-    color: #000;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 700 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 2px;
 }
 
 .badge-text a {
-    color: #666;
+    color: #555 !important;
     text-decoration: underline;
-    font-weight: 400;
+    font-weight: 500 !important;
     transition: color 0.2s;
 }
 
@@ -843,6 +849,7 @@ body.product-page .hamburger-btn {
         padding-left: 40px; 
     }
 }
+
 
 
 
