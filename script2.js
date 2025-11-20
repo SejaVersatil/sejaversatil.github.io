@@ -779,6 +779,29 @@ function addGradientImage() {
     }
 }
 
+function initHeroCarousel() {
+    const container = document.getElementById('heroCarousel');
+    if(!container) return;
+    
+    // Dados do slide
+    const slides = [
+        { img: 'https://i.imgur.com/kvruQ8k.jpeg', title: 'NOVA COLEÇÃO', sub: 'Performance e Estilo' },
+        { img: 'https://i.imgur.com/iapKUtF.jpeg', title: 'BLACK FRIDAY', sub: 'Até 30% OFF' }
+    ];
+
+    container.innerHTML = slides.map((s, i) => `
+        <div class="hero-slide ${i === 0 ? 'active' : ''}" style="background-image: url('${s.img}')">
+            <div class="hero-content">
+                <h1 class="hero-title">${s.title}</h1>
+                <p class="hero-subtitle">${s.sub}</p>
+                <button class="hero-cta" onclick="navigateToCategory('all')">VER PRODUTOS</button>
+            </div>
+        </div>
+    `).join('');
+
+    // Inicia rotação
+    if (typeof startHeroInterval === 'function') startHeroInterval();
+}
 // =============================================================================
 // INICIALIZAÇÃO (DOMContentLoaded)
 // =============================================================================
@@ -805,3 +828,4 @@ document.addEventListener('DOMContentLoaded', async () => {
                 checkUserSession(); // Atualiza painel se estiver aberto
             }
         });
+
