@@ -89,17 +89,54 @@ body.product-page {
 .bf-countdown { display: flex; gap: 0.4rem; }
 .bf-time-unit { background: rgba(255,255,255,0.15); padding: 0.4rem 0.6rem; border-radius: 4px; min-width: 50px; font-weight: bold; }
 
-/* Sidebar & Menu */
-.hamburger-btn { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; cursor: pointer; padding: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+/* Sidebar & Menu (Atualizado: Estilo Glassmorphism Dark) */
+.hamburger-btn { display: none; position: fixed;
+top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; cursor: pointer; padding: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 .hamburger-line { display: block; width: 24px; height: 2px; background: #000; margin: 4px 0; }
-.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+.sidebar-overlay { position: fixed; inset: 0;
+background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
 .sidebar-overlay.active { opacity: 1; visibility: visible; }
-.sidebar-menu { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: white; z-index: 999; padding: 4rem 1.5rem; transition: 0.3s; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+
+/* Menu Lateral com Fundo Transparente e Blur */
+.sidebar-menu { 
+    position: fixed;
+    top: 0; 
+    left: -280px; 
+    width: 280px; 
+    height: 100vh; 
+    /* Fundo Preto 85% + Blur */
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 999; 
+    padding: 4rem 1.5rem; 
+    transition: 0.3s;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
+}
+
 .sidebar-menu.active { left: 0; }
+
 .sidebar-section { margin-bottom: 2rem; }
-.sidebar-section h4 { font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+
+/* Títulos em Cinza Claro */
+.sidebar-section h4 { 
+    font-size: 0.8rem; 
+    text-transform: uppercase;
+    color: #999; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    padding-bottom: 0.5rem; 
+}
+
 .sidebar-section ul { list-style: none; padding: 0; }
-.sidebar-section a { text-decoration: none; color: #666; display: block; padding: 0.5rem 0; }
+
+/* Links em Branco Suave */
+.sidebar-section a { 
+    text-decoration: none; 
+    color: #e0e0e0;
+    display: block; 
+    padding: 0.5rem 0; 
+}
 
 /* Cart Sidebar */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; opacity: 0; visibility: hidden; transition: 0.3s; }
@@ -951,6 +988,7 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
 
