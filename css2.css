@@ -1097,18 +1097,18 @@ nav {
 }
 
 .active-category-badge {
-    display: flex !important;
+    /* display: flex !important;  <-- REMOVIDO */
     align-items: center;
     justify-content: center;
     gap: 20px;
     
-    margin: 0 auto 40px auto !important; /* Espaço em cima e embaixo */
+    margin: 0 auto 40px auto !important;
     padding: 15px 30px;
     
     background: #ffffff !important;
     border: 1px solid #f0f0f0 !important;
-    border-radius: 50px !important; /* Formato de pílula moderno */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important; /* Sombra suave e elegante */
+    border-radius: 50px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
     
     font-family: 'Montserrat', sans-serif !important;
     font-size: 0.9rem;
@@ -1116,10 +1116,12 @@ nav {
     text-transform: uppercase;
     letter-spacing: 1px;
     
-    max-width: fit-content; /* Ocupa só o espaço necessário */
+    max-width: fit-content;
     width: 90%;
+    
+    /* Garante que o JS controle a visibilidade */
+    display: none; 
 }
-
 .active-category-badge strong {
     color: #000000;
     font-weight: 700;
@@ -4348,6 +4350,7 @@ css@keyframes slideInRight {
     .search-bar { display: none !important; }
     .nav-menu { display: none !important; }
 }
+
 
 
 
