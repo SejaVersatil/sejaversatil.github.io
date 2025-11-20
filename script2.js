@@ -3992,18 +3992,6 @@ styleSheet.textContent = `
 `;
 document.head.appendChild(styleSheet);
 
-// Carregar variantes ao carregar produtos
-const originalLoadProducts = loadProducts;
-loadProducts = async function() {
-    await originalLoadProducts();
-    
-    // Pré-carregar variantes dos primeiros produtos
-    const firstProducts = productsData.slice(0, 12);
-    for (const product of firstProducts) {
-        await loadProductVariants(product.id);
-    }
-};
-
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== BLACK FRIDAY COUNTDOWN ====================
@@ -4183,3 +4171,4 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
