@@ -905,28 +905,23 @@ body.product-page .hamburger-btn {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: flex-start; /* Alinha pelo topo */
         margin-bottom: 1.5rem;
         width: 100%;
-        flex-wrap: nowrap !important;
+        gap: 10px; /* Espaço entre título e preço */
     }
 
     .header-left {
-        flex: 1;
-        padding-right: 15px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        flex: 1; /* Ocupa o espaço disponível */
+        max-width: 55%; /* Limita a largura para não empurrar o preço */
     }
 
     .product-title, #detailsProductName {
-        font-size: 1.1rem !important; /* Tamanho controlado */
-        line-height: 1.3 !important;
-        margin-bottom: 0 !important;
-        color: #000 !important;
+        font-size: 1.2rem !important; /* Tamanho calibrado */
+        line-height: 1.2;
+        margin-bottom: 0.3rem !important;
         font-weight: 600 !important;
-        white-space: normal !important; /* Permite quebrar linha se o nome for longo */
-        max-width: 60%; /* Garante que não empurre o preço para fora */
+        color: #000 !important;
     }
 
     .btn-favorite {
@@ -1025,3 +1020,4 @@ body.product-page .hamburger-btn {
         line-height: 1.1 !important;
     }
 }
+
