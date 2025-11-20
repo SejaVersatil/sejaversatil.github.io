@@ -508,19 +508,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🎨 Renderizando skeleton...');
         
         
-        setTimeout(() => {
-            console.log('✅ Renderizando produtos...');
-            renderProducts();
-            renderBestSellers();
-            updateCartUI();
-            updateFavoritesCount();
-            initHeroCarousel();
-            initBlackFridayCountdown();
-            setupConnectionMonitor();
-            setupCartAbandonmentTracking();
-            setupPushNotifications();
-            console.log('✅ Site carregado com sucesso!');
-        }, 100);
+        console.log('✅ Renderizando produtos...');
+renderProducts();
+renderBestSellers();
+updateCartUI();
+updateFavoritesCount();
+initHeroCarousel();
+initBlackFridayCountdown();
+setupConnectionMonitor();
+setupCartAbandonmentTracking();
+setupPushNotifications();
+console.log('✅ Site carregado com sucesso!');
         
     } catch (error) {
         console.error('❌ ERRO CRÍTICO ao inicializar:', error);
@@ -4171,4 +4169,5 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText.style.color = level.color;
     });
 });
+
 
