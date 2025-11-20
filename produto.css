@@ -920,9 +920,12 @@ body.product-page .hamburger-btn {
     }
 
     .product-title, #detailsProductName {
-        font-size: 1.4rem !important;
-        line-height: 1.2;
-        margin-bottom: 0.5rem !important;
+        font-size: 1.15rem !important; /* Reduzido para alinhar com o preço */
+        line-height: 1.2 !important;
+        margin-bottom: 0 !important;   /* Cola no preço */
+        color: #000 !important;
+        font-weight: 600 !important;   /* Semi-bold */
+        letter-spacing: 0 !important;
     }
 
     .btn-favorite {
@@ -952,13 +955,13 @@ body.product-page .hamburger-btn {
 
     .price-current {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important; /* Fonte Nova */
-    font-weight: 400 !important; /* Sem negrito (Normal) */
-    font-size: 1.5rem !important; /* Tamanho grande (mas que cabe no celular) */
-    color: #000000 !important;
-    letter-spacing: -1px !important;
-    line-height: 1;
-    margin-bottom: 2px;
-}
+    font-size: 1.15rem !important; /* IGUAL ao título */
+    font-weight: 700 !important;   /* Bold para destaque sutil */
+    color: #000 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0 !important;
+    margin-top: 2px !important;    /* Pequeno respiro do título */
+    }
     
     .price-installments {
         font-size: 0.7rem !important;
@@ -1009,3 +1012,4 @@ body.product-page .hamburger-btn {
     line-height: 1.1 !important;
     font-style: normal !important;
 }
+
