@@ -1098,37 +1098,41 @@ nav {
 
 .active-category-badge {
     text-align: center;
-    margin: -1rem auto 2rem;
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    display: flex;
+    margin: -1rem auto 3rem !important; /* Espaço maior embaixo */
+    padding: 12px 25px !important;
+    
+    /* Visual Limpo */
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    border: 1px solid #e5e5e5 !important; /* Borda cinza fina */
+    border-radius: 4px !important;        /* Cantos levemente quadrados */
+    
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
-    border-radius: 50px;
-    max-width: fit-content;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    gap: 15px;
+    
+    max-width: 90%;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
+    /* Sombra ultra suave para dar profundidade */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04) !important;
     animation: fadeInDown 0.5s;
 }
 
 .active-category-badge strong {
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 700 !important;
+    color: #000000 !important;
 }
 
-.clear-filter-btn {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s;
+.clear-filter-btn:hover {
+    background: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
 }
 
 .clear-filter-btn:hover {
@@ -4333,4 +4337,5 @@ css@keyframes slideInRight {
     .search-bar { display: none !important; }
     .nav-menu { display: none !important; }
 }
+
 
