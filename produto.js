@@ -222,9 +222,11 @@ function renderPrices() {
     if (discountBadge) discountBadge.style.display = 'none';
   }
 
+  // Lógica de Parcelamento (Atualizado para 3x)
   if (installments && price) {
-    const installmentValue = price / 10;
-    installments.textContent = `ou 10x de R$ ${installmentValue.toFixed(2)} sem juros`;
+    const maxParcelas = 3; // Máximo de parcelas
+    const parcelaValue = price / maxParcelas;
+    installments.textContent = `ou ${maxParcelas}x de R$ ${parcelaValue.toFixed(2)} sem juros`;
   }
 }
 /* =========================
@@ -1347,5 +1349,6 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
