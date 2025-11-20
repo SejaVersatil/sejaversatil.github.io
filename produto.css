@@ -261,9 +261,9 @@ body.product-page {
 }
 
 .color-option.active {
-    border: 1px solid #d0d0d0 !important; /* Borda interna cinza (para não somar com a preta) */
-    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000; /* Gap de 2px + Linha preta de 1px */
-    transform: scale(1.1); /* Leve zoom para destaque */
+    border: 1px solid #e0e0e0 !important; 
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000 !important;
+    transform: none !important; 
 }
 
 /* Remove qualquer ícone antigo */
@@ -959,6 +959,7 @@ body.product-page .hamburger-btn {
     .btn-whatsapp-main { display: none !important; }
     .site-footer { margin-bottom: 90px !important; }
 }
+
 
 
 
