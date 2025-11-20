@@ -955,12 +955,13 @@ body.product-page .hamburger-btn {
     }
 
     .price-current {
-        font-size: 1.1rem !important; /* IGUAL ao título = Proporção Perfeita */
-        font-weight: 700 !important;
+        font-size: 1rem !important;       /* Reduzido para 1rem (aprox 16px) */
+        font-weight: 700 !important;      /* Mantém o destaque do negrito */
         color: #000 !important;
         line-height: 1.2 !important;
-        margin-bottom: 2px !important;
-        margin-top: 2px !important;
+        margin-bottom: 0 !important;      /* Remove margem para alinhar com o topo do título */
+        margin-top: 0 !important;
+        white-space: nowrap !important;   /* Garante que o preço fique numa linha só */
     }
     
     .price-installments {
@@ -1022,6 +1023,7 @@ body.product-page .hamburger-btn {
     line-height: 1.1 !important;
     font-style: normal !important;
 }
+
 
 
 
