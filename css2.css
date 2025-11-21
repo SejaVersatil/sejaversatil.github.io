@@ -116,16 +116,16 @@ h4 { font-size: 1.25rem; }
 
 .bf-label {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 2.4rem; /* Aumentado (era 1.3rem) */
+    font-size: 1.7rem !important; /* Reduzido de 2.4rem */
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 3px; /* Aumentado */
+    letter-spacing: 2px !important;
     background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: glow 2s ease-in-out infinite;
-    margin-right: 15px; /* Espaço extra */
+    margin-right: 10px;
 }
 
 @keyframes glow {
@@ -139,10 +139,10 @@ h4 { font-size: 1.25rem; }
 }
 
 .bf-countdown-label {
-    font-size: 1.1rem; /* Aumentado (era 0.75rem) */
+    font-size: 0.8rem !important; /* Reduzido de 1.1rem */
     color: rgba(255,255,255,0.7);
     text-transform: lowercase;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 .bf-countdown {
@@ -156,34 +156,34 @@ h4 { font-size: 1.25rem; }
     flex-direction: column;
     align-items: center;
     background: rgba(255,255,255,0.1);
-    padding: 0.5rem 0.8rem; /* Aumentado */
-    border-radius: 8px;
-    min-width: 80px; /* Aumentado (era 45px) */
-    border: 2px solid rgba(255,255,255,0.2); /* Borda mais grossa */
+    padding: 0.35rem 0.5rem !important; /* Reduzido */
+    border-radius: 6px;
+    min-width: 55px !important; /* Reduzido de 80px */
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .bf-time-value {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 3rem; /* Aumentado (era 1.8rem) */
+    font-size: 2.1rem !important; /* Reduzido de 3rem */
     font-weight: 700;
     color: #FFD700;
     line-height: 1;
 }
 
 .bf-time-label {
-    font-size: 0.8rem; /* Aumentado */
+    font-size: 0.55rem !important; /* Reduzido de 0.8rem */
     color: rgba(255,255,255,0.6);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: 0.4rem;
+    margin-top: 0.2rem;
 }
 
 .bf-colon {
     color: #FFD700;
-    font-size: 2.5rem; /* Aumentado */
+    font-size: 1.8rem !important; /* Reduzido de 2.5rem */
     font-weight: 700;
     animation: blink 1s infinite;
-    margin: 0 5px;
+    margin: 0 3px;
 }
 
 @keyframes blink {
@@ -3980,4 +3980,5 @@ footer {
     .products-section {
         padding-top: 10px !important;
     }
+
 
