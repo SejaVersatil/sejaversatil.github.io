@@ -403,13 +403,6 @@ nav {
     color: var(--primary);
 }
 
-/* Responsivo - Esconder barra no mobile */
-@media (max-width: 768px) {
-    .search-bar {
-        display: none;
-    }
-}
-
 .cart-count {
     position: absolute;
     top: -5px;
@@ -4387,6 +4380,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
