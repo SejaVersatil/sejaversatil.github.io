@@ -4273,13 +4273,129 @@ css@keyframes slideInRight {
     gap: 5px;
 }
 
+/* ================================================================= */
+/* 📱 MOBILE OVERRIDES (Correções Estilo Live! - Apenas Celular)     */
+/* ================================================================= */
 
+@media (max-width: 768px) {
 
+    /* 1. CORREÇÃO DO BANNER HERO (Problema do Print) */
+    .hero-section {
+        height: auto !important;
+        min-height: auto !important;
+        aspect-ratio: 3/4 !important; /* Formato retrato para ocupar bem a tela */
+    }
 
+    .hero-slide {
+        background-position: center top !important; /* Foca no rosto/topo da imagem */
+    }
 
+    .hero-content {
+        position: absolute !important;
+        bottom: 40px !important; /* Fixa no rodapé do banner */
+        top: auto !important;
+        left: 0 !important;
+        width: 100% !important;
+        transform: none !important;
+        padding: 20px !important;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent) !important; /* Degradê para leitura */
+    }
 
+    .hero-title {
+        font-size: 2.2rem !important; /* Reduzido de 5rem para caber */
+        line-height: 1.1 !important;
+        margin-bottom: 10px !important;
+    }
 
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+        margin-bottom: 15px !important;
+        display: block !important;
+    }
 
+    .hero-cta {
+        width: 100% !important; /* Botão largura total */
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+    }
 
+    /* Esconder setas laterais no mobile (uso de swipe ou dots é melhor) */
+    .hero-nav-arrow { display: none !important; }
+    
+    .hero-carousel-dots {
+        bottom: 15px !important;
+    }
 
+    /* 2. HEADER LIMPO (Inspiração App) */
+    nav {
+        padding: 10px 15px !important;
+        height: 60px !important;
+        justify-content: space-between !important;
+    }
+    
+    .logo {
+        font-size: 1.4rem !important;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%); /* Centraliza logo perfeitamente */
+    }
+    
+    .hamburger-btn {
+        margin: 0 !important;
+        order: 1; /* Garante que fique na esquerda */
+    }
+    
+    .nav-icons {
+        order: 3; /* Garante que fique na direita */
+        gap: 15px !important;
+    }
 
+    /* 3. VITRINE DE PRODUTOS (Grid Apertado estilo Instagram) */
+    .products-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 4px !important; /* Gap mínimo estilo Live! */
+        padding: 0 4px !important;
+    }
+
+    .product-card {
+        min-height: unset !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin-bottom: 15px !important;
+    }
+
+    .product-image {
+        aspect-ratio: 3/4 !important; /* Garante fotos verticais */
+        border-radius: 4px !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Ajuste de textos dos cards para mobile */
+    .product-info {
+        padding: 0 4px !important;
+        text-align: left !important;
+    }
+
+    .product-info h4 {
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px !important;
+    }
+
+    .product-price {
+        flex-direction: row !important;
+        align-items: baseline !important;
+        gap: 6px !important;
+    }
+
+    .price-new { font-size: 1rem !important; }
+    .price-old { font-size: 0.8rem !important; }
+
+    /* Remove botões que poluem a vitrine no mobile */
+    .add-to-cart-btn, .product-carousel-arrows {
+        display: none !important; 
+    }
+}
