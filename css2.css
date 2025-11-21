@@ -191,35 +191,6 @@ h4 { font-size: 1.25rem; }
     50%, 100% { opacity: 0.3; }
 }
 
-/* Responsive Black Friday Banner */
-@media (max-width: 768px) {
-    .top-banner {
-        padding: 0.6rem 0.5rem;
-    }
-    
-    .bf-content {
-        gap: 0.5rem;
-        font-size: 0.75rem;
-    }
-    
-    .bf-label {
-        font-size: 0.8rem;
-    }
-    
-    .bf-time-unit {
-        min-width: 38px;
-        padding: 0.25rem 0.4rem;
-    }
-    
-    .bf-time-value {
-        font-size: 1.1rem;
-    }
-    
-    .bf-time-label {
-        font-size: 0.55rem;
-    }
-}
-
 /* Header */
 header {
     background: white;
@@ -1709,34 +1680,6 @@ footer {
     border-top: 1px solid var(--gray);
     color: #999;
     font-size: 0.75rem;
-}
-
-/* Footer Responsivo */
-@media (max-width: 768px) {
-    footer {
-        padding: 2rem 4% 1rem;
-    }
-    
-    .footer-content {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-    
-    .footer-section h4 {
-        font-size: 0.8rem;
-    }
-    
-    .footer-section a,
-    .footer-section p {
-        font-size: 0.75rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
 }
 
 .social-icons {
@@ -4329,6 +4272,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
