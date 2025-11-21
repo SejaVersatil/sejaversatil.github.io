@@ -160,25 +160,6 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 .payment-option:hover { background: #fafafa; }
 .payment-confirm-btn { width: calc(100% - 3rem); margin: 0 1.5rem 1.5rem; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
-
-/* Esquerda: Galeria Mosaico */
-.product-gallery-section {
-    position: relative;
-    width: 100%;
-}
-.gallery-container {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    width: 100%;
-}
-.gallery-photo-full {
-    width: 100%;
-    aspect-ratio: 3/4;
-    background-size: cover;
-    background-position: center;
-    background-color: #f5f5f5;
-}
 /* .gallery-photo-full:first-child {
     grid-column: span 2; 
 } 
@@ -833,3 +814,4 @@ body, .short-desc-text, .model-info-text {
         margin-top: 10px !important;
     }
 }
+
