@@ -760,3 +760,76 @@ body, .short-desc-text, .model-info-text {
     .btn-whatsapp-main { display: none !important; }
 
 } 
+
+/* ============================================================ */
+/* 🖥️ RESTAURAÇÃO DO LAYOUT DESKTOP (TRAVADO)                   */
+/* Garante que o PC tenha 2 colunas e a info travada na direita */
+/* ============================================================ */
+
+@media (min-width: 769px) {
+    
+    /* 1. Dividir a tela em 2 colunas (Esq: Galeria | Dir: Info) */
+    .product-page-container .product-main-grid {
+        display: grid !important;
+        grid-template-columns: 60% 35% !important; /* Proporção Mosaico Live! */
+        gap: 5% !important; /* Espaço entre as colunas */
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        padding: 40px !important;
+        align-items: start !important; /* Importante para o Sticky funcionar */
+    }
+
+    /* 2. Arruma a Galeria em Mosaico (2 fotos por linha no PC) */
+    .product-gallery-section {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important; /* Remove scroll lateral do mobile */
+        position: static !important;
+    }
+
+    .gallery-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Mosaico 2x2 */
+        gap: 10px !important;
+        width: 100% !important;
+        overflow: visible !important; /* Remove comportamento swipe */
+    }
+
+    .gallery-photo-full {
+        width: 100% !important;
+        min-width: auto !important;
+        aspect-ratio: 3/4 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* 3. Painel de Informações (Fixo na Direita) */
+    .product-info-section {
+        position: sticky !important;
+        top: 120px !important; /* Cola no topo ao rolar */
+        height: fit-content !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        z-index: 1 !important;
+    }
+
+    /* 4. Resetar botão de compra para o padrão Desktop */
+    .product-action-buttons {
+        position: static !important; /* Remove fixação do rodapé */
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .btn-primary {
+        height: 55px !important;
+        border-radius: 0 !important; /* Botão quadrado original do PC */
+        margin-top: 10px !important;
+    }
+}
