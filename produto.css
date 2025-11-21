@@ -660,7 +660,9 @@ body, .short-desc-text, .model-info-text {
         margin: 0 !important;
     }
 
-    #btnShowMore, .product-thumbnails { display: none !important; }
+    #btnShowMore { display: none !important; }
+    .product-thumbnails { display: none !important; }
+}
 
 
     /* --- 3. CARD DE INFORMAÇÕES --- */
@@ -880,6 +882,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
