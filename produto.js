@@ -117,7 +117,7 @@ async function loadProduct(productId) {
     if (!doc.exists) throw new Error('Produto não encontrado');
     
     const data = doc.data() || {};
-    
+    console.log('Dados brutos do produto carregados:', data); 
     // Normalização de dados
     data.price = safeNumber(data.price, 0);
     data.oldPrice = data.oldPrice !== undefined ? safeNumber(data.oldPrice, 0) : null;
@@ -1371,6 +1371,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
