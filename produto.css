@@ -873,12 +873,6 @@ body, .short-desc-text, .model-info-text {
     display: none !important;
 } /* <--- CHAVE FECHADA CORRETAMENTE */
 
-/* 2. SHOW: Força as 2 primeiras imagens a aparecerem */
-.gallery-photo-full:nth-child(1),
-.gallery-photo-full:nth-child(2) {
-    display: block !important;
-}
-
     /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
     .btn-show-more {
         display: flex !important; 
@@ -904,6 +898,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
