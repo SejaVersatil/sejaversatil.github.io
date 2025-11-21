@@ -786,6 +786,10 @@ body, .short-desc-text, .model-info-text {
     background-position: center !important;
     background-repeat: no-repeat !important;
 }
+
+    .gallery-photo-full:not(.gallery-hidden) {
+    display: block !important;
+}
     
    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
@@ -896,6 +900,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
