@@ -845,4 +845,36 @@ body, .short-desc-text, .model-info-text {
     
     /* Esconder elementos mobile */
     .btn-whatsapp-main { display: flex !important; }
+    /* --- RESTAURAÇÃO DA GALERIA SHOW MORE (Desktop) --- */
+
+    /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
+    .gallery-photo-full.gallery-hidden {
+        display: none !important;
+    }
+
+    /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
+    .btn-show-more {
+        display: flex !important; 
+        justify-content: center;
+        width: 100%;
+        
+        /* Estilo elegante para o botão */
+        margin-top: 15px !important;
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        color: #000 !important;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* 3. FIX: Garante que a galeria não fique com margem excessiva */
+    .product-gallery-section {
+        /* Garante que o conteúdo cole na esquerda */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 }
+
