@@ -3334,43 +3334,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// ==================== PRODUCT DETAILS PAGE ====================
-
-// Variáveis globais
-let currentProductDetails = null;
-let selectedColor = 'Rosa';
-let selectedSize = 'M';
-let selectedQuantity = 1;
-
-document.addEventListener("DOMContentLoaded", async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get("id");
-
-    if (!productId) {
-        console.error("❌ Nenhum ID de produto na URL");
-        return;
-    }
-
-    console.log("📦 Carregando produto ID:", productId);
-
-    // TEMPORÁRIO para não quebrar o código
-    currentProductDetails = {
-        id: productId,
-        name: "Produto Exemplo",
-        price: 89.90,
-        oldPrice: 129.90,
-        category: "fitness",
-        images: [
-            "https://via.placeholder.com/600",
-            "https://via.placeholder.com/600/ff99cc",
-            "https://via.placeholder.com/600/66ccff",
-        ]
-    };
-
-    renderProductDetails(currentProductDetails);
-});
-
-
 // ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
 function animateProductToCart(sourceElement, product) {
     // Pegar posição do botão de origem
@@ -4214,6 +4177,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
