@@ -766,11 +766,14 @@ body, .short-desc-text, .model-info-text {
     }
 
     .gallery-photo-full {
-        width: 100% !important;
-        aspect-ratio: 3/4 !important; /* Formato Retrato */
-        object-fit: cover !important;
-        display: block !important;
-    }
+    width: 100% !important;
+    aspect-ratio: 3/4 !important;
+    object-fit: cover !important;
+    display: block !important;
+    background-size: cover !important; /* ✅ ADICIONAR */
+    background-position: center !important; /* ✅ ADICIONAR */
+    background-repeat: no-repeat !important; /* ✅ ADICIONAR */
+}
     
    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
@@ -884,5 +887,6 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
