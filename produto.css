@@ -858,9 +858,9 @@ body, .short-desc-text, .model-info-text {
     /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
     .gallery-photo-full.gallery-hidden {
     display: none !important;
-} /* ✅ FECHAR AQUI */
+} /* <--- CHAVE FECHADA CORRETAMENTE */
 
-/* Força as 2 primeiras a aparecerem */
+/* 2. SHOW: Força as 2 primeiras imagens a aparecerem */
 .gallery-photo-full:nth-child(1),
 .gallery-photo-full:nth-child(2) {
     display: block !important;
