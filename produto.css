@@ -1,4 +1,4 @@
-/* PRODUTO.CSS - REPLICAÇÃO LIVE! */
+/* PRODUTO.CSS - INTEGRAL COM CORREÇÕES VISUAIS */
 
 :root {
     --primary: #000000;
@@ -15,48 +15,65 @@
 * { box-sizing: border-box; }
 
 body.product-page {
-    font-family: 'Montserrat', sans-serif; /* Fonte mais próxima da Live! */
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     color: var(--text-primary);
     background: #ffffff;
     line-height: 1.5;
     margin: 0;
 }
 
-/* --- HEADER, NAV & BANNER (Ajustes finos) --- */
-.product-page-container { 
-    max-width: 100%; 
-    padding: 0; 
-    margin: 0; 
+/* Título do Produto */
+.product-title, #detailsProductName {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 46px !important;    
+    line-height: 1.1 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 10px !important;
+    text-transform: none !important;
+    letter-spacing: -1px !important; 
 }
 
-.site-header { 
-    background: white; 
-    position: sticky; 
-    top: 0; 
-    z-index: 1000; 
-    border-bottom: 1px solid #f0f0f0; 
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); 
+/* Descrição Curta (Nova) */
+.short-description-container {
+    border-top: 1px solid #f0f0f0 !important; /* Linha fina acima */
+    border-bottom: 1px solid #f0f0f0 !important; /* Linha fina abaixo */
+    padding: 25px 0 !important;
+    margin: 20px 0 !important;
 }
 
-.nav { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 0.9rem 2rem; 
-    gap: 2rem; 
-    max-width: 1400px; /* Limite de largura para o conteúdo */
-    margin: 0 auto;
+.short-desc-text {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important; /* Espaçamento bom para leitura */
+    color: #333333 !important;
+    font-weight: 400 !important;
 }
 
+.view-full-desc {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important; /* Negrito */
+    text-decoration: underline !important;
+    color: #000000 !important;
+    margin-top: 10px !important;
+    display: block !important;
+    cursor: pointer;
+}
+
+/* --- HEADER, NAV & BANNER (MANTIDOS DO ORIGINAL) --- */
+.product-page-container { max-width: 100%; padding: 0; margin: 0; }
+
+.site-header { background: white; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f0f0f0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 2rem; gap: 2rem; }
 .nav-left .logo {
-    font-family: 'Oswald', sans-serif; /* Manter Oswald para o logo */
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 1.5rem; 
-    letter-spacing: 2px;
-    color: var(--primary);
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 2rem !important; /* Aumenta tamanho */
+    letter-spacing: 3px !important;
+    color: var(--primary) !important;
 }
-
 .nav-center { flex: 1; max-width: 500px; }
 .search-bar { display: flex; align-items: center; background: #f5f5f5; border-radius: 25px; padding: 0.5rem 1rem; gap: 0.75rem; }
 .search-bar input { flex: 1; border: none; background: transparent; outline: none; }
@@ -65,497 +82,812 @@ body.product-page {
 .nav-icon { background: none; border: none; cursor: pointer; position: relative; }
 .cart-count { position: absolute; top: -8px; right: -8px; background: #ff4444; color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 10px; }
 
-/* Black Friday (Mantido) */
+/* Black Friday */
 .top-banner { background: #000; color: white; padding: 0.75rem 1rem; text-align: center; }
 .black-friday-banner { background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%); }
 .bf-content { display: flex; justify-content: center; gap: 1rem; font-size: 0.85rem; align-items: center; }
 .bf-countdown { display: flex; gap: 0.4rem; }
 .bf-time-unit { background: rgba(255,255,255,0.15); padding: 0.4rem 0.6rem; border-radius: 4px; min-width: 50px; font-weight: bold; }
 
-/* --- LAYOUT PRINCIPAL DESKTOP (Live! Style) --- */
-@media (min-width: 1024px) {
-    .product-page-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 40px 20px;
-    }
+/* Sidebar & Menu (Atualizado: Estilo Glassmorphism Dark) */
+.hamburger-btn { display: none; position: fixed;
+top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; cursor: pointer; padding: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.hamburger-line { display: block; width: 24px; height: 2px; background: #000; margin: 4px 0; }
+.sidebar-overlay { position: fixed; inset: 0;
+background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
 
-    .product-main-grid {
-        display: grid;
-        /* 100px para miniaturas, 1fr para imagem principal, 400px para info */
-        grid-template-columns: 100px 1fr 400px; 
-        gap: 30px;
-        align-items: start;
-    }
+/* Menu Lateral com Fundo Transparente e Blur */
+.sidebar-menu { 
+    position: fixed;
+    top: 0; 
+    left: -280px; 
+    width: 280px; 
+    height: 100vh; 
+    /* Fundo Preto 85% + Blur */
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 999; 
+    padding: 4rem 1.5rem; 
+    transition: 0.3s;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
+}
 
-    /* 1. GALERIA DE IMAGENS */
-    .product-gallery-section {
-        grid-column: 1 / span 2; /* Ocupa a coluna de miniaturas e a coluna principal */
-        display: grid;
-        grid-template-columns: 100px 1fr; /* Re-define o grid interno */
-        gap: 15px;
-        position: relative;
-    }
+.sidebar-menu.active { left: 0; }
 
-    /* Miniaturas Verticais */
-    .product-thumbnails {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        overflow-y: auto;
-        max-height: 80vh; /* Limita a altura para scroll */
-    }
+.sidebar-section { margin-bottom: 2rem; }
 
-    .thumbnail-item {
-        width: 100px;
-        height: 133px; /* Proporção 3:4 */
-        background-size: cover;
-        background-position: center;
-        cursor: pointer;
-        border: 1px solid transparent;
-        transition: border-color 0.2s;
-    }
+/* Títulos em Cinza Claro */
+.sidebar-section h4 { 
+    font-size: 0.8rem; 
+    text-transform: uppercase;
+    color: #999; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    padding-bottom: 0.5rem; 
+}
 
-    .thumbnail-item.active, .thumbnail-item:hover {
-        border-color: var(--primary);
-    }
+.sidebar-section ul { list-style: none; padding: 0; }
 
-    /* Imagem Principal (Gallery Container) */
-    .gallery-container {
-        grid-column: 2 / 3;
-        display: block; /* Volta para o fluxo normal */
-        width: 100%;
-        height: auto;
-        overflow: hidden;
-    }
+/* Links em Branco Suave */
+.sidebar-section a { 
+    text-decoration: none; 
+    color: #e0e0e0;
+    display: block; 
+    padding: 0.5rem 0; 
+}
 
-    .gallery-photo-full {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 3/4;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        display: block;
-        margin-bottom: 0; /* Remove margem do mosaico */
-    }
+/* Cart Sidebar */
+.cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; opacity: 0; visibility: hidden; transition: 0.3s; }
+.cart-overlay.active { opacity: 1; visibility: visible; }
+.cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: white; z-index: 9999; display: flex; flex-direction: column; transition: 0.3s; box-shadow: -4px 0 15px rgba(0,0,0,0.1); }
+.cart-sidebar.active { right: 0; }
+.cart-header { padding: 1.25rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+.cart-items { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.cart-item { display: flex; gap: 1rem; border-bottom: 1px solid #f5f5f5; padding-bottom: 1rem; margin-bottom: 1rem; }
+.cart-item-img { width: 80px; height: 107px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid #eee; }
+.cart-footer { padding: 1.5rem; background: #fafafa; border-top: 1px solid #eee; }
+.checkout-btn { width: 100%; padding: 1rem; background: #000; color: #fff; border: none; font-weight: 600; cursor: pointer; }
 
-    /* Oculta o botão "Mostrar Mais" no desktop */
-    #btnShowMore { display: none !important; }
+/* Modal Pagamento */
+.payment-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
+.payment-modal.active { opacity: 1; visibility: visible; }
+.payment-modal-content { background: white; padding: 0; border-radius: 8px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+.payment-modal-header { padding: 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+.payment-summary, .payment-options { padding: 1.5rem; }
+.payment-option { display: flex; padding: 1rem; border: 2px solid #f0f0f0; border-radius: 6px; margin-bottom: 0.5rem; cursor: pointer; }
+.payment-option:hover { background: #fafafa; }
+.payment-confirm-btn { width: calc(100% - 3rem); margin: 0 1.5rem 1.5rem; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
-    /* 2. INFORMAÇÕES DO PRODUTO (Sticky) */
-    .product-info-section {
-        grid-column: 3 / 4;
-        position: sticky;
-        top: 100px; /* Abaixo do header */
-        height: fit-content;
-        padding: 0;
-    }
+/* .gallery-photo-full:first-child {
+    grid-column: span 2; 
+} 
+*/
+.gallery-photo-full:first-child {
+    grid-column: auto !important;
+}
 
-    /* Título e Preço */
-    .product-title {
-        font-size: 1.8rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
+/* Detalhes */
+.breadcrumb {
+    display: flex !important;
+    justify-content: flex-start !important; /* Garante que fiquem juntos na esquerda */
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px !important; /* Espaço pequeno entre os itens */
+    margin-bottom: 1rem !important;
+    font-size: 0.75rem !important;
+    color: #999 !important;
+    width: 100% !important;
+}
 
-    .product-pricing {
-        margin-bottom: 20px;
-    }
+.breadcrumb span {
+    margin: 0 !important;
+}
+.product-title { font-size: 2rem; font-weight: 500; margin: 0; }
+
+/* Container de Preço - PADRÃO DESKTOP (Esquerda) */
+.product-pricing {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important; /* ✅ Corrige para esquerda no PC */
+    text-align: left !important;        /* ✅ Texto à esquerda */
+    gap: 2px !important;
+    margin-bottom: 20px !important;
+    margin-top: 0 !important;
+    flex: 0 !important; /* Não estica no desktop */
+}
 
     .price-current {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: 1.2rem !important; /* IGUAL AO TÍTULO */
+        line-height: 1.2;
+        font-weight: 700 !important;
+        color: #000 !important;
+        margin-bottom: 2px !important;
+        order: 1; /* Força ser o primeiro */
     }
-
+    
     .price-old-text {
-        font-size: 0.9rem;
+        font-size: 0.8rem !important;
+        color: #999 !important;
+        text-decoration: line-through;
+        margin-bottom: 0 !important;
+        order: 2; /* Força ser o segundo (EMBAIXO) */
     }
-
+    
     .price-installments {
-        font-size: 0.8rem;
+        font-size: 0.7rem !important;
+        color: #666 !important;
+        margin-top: 2px !important;
+        order: 3; /* Terceiro */
     }
 
-    /* Seletores */
-    .product-selector-group {
-        padding: 15px 0;
-        border-bottom: 1px solid var(--border-color);
-    }
+.price-discount-badge { display: none !important; 
+}
 
-    .selector-label {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-    }
+/* Seletores - Estilo Live! (Quadrados e Limpos) */
+.product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
+.selector-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.8rem; }
 
-    /* Cores */
-    .color-options-grid {
-        gap: 8px;
-    }
+/* CORES (Configuração Blindada) */
+.color-options-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-    .color-option {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        border: 1px solid var(--border-color);
-    }
+/* Bolinhas de Cor (Reduzidas e Travadas em 26px) */
+.color-option {
+    width: 23px !important;
+    height: 23px !important;
+    min-width: 23px !important;  /* Impede achatar */
+    min-height: 23px !important; /* Impede achatar */
+    border-radius: 50% !important;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
 
-    .color-option.active {
-        box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary);
-    }
+.color-option:hover {
+    border-color: #999;
+    transform: scale(1.1);
+}
 
-    /* Tamanhos */
-    .size-options-grid {
-        gap: 8px;
-    }
+.color-option.active {
+    border: 1px solid #e0e0e0 !important; 
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000 !important;
+    transform: none !important; 
+}
 
-    .size-option {
-        width: 40px;
-        height: 40px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-    }
+/* Remove qualquer ícone antigo */
+.color-option.active::after {
+    display: none !important;
+}
 
-    .size-option.active {
-        background: var(--primary);
-        color: #fff;
-        border-color: var(--primary);
-    }
+/* TAMANHOS */
+.size-options-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
 
-    .size-guide-link {
-        font-size: 0.8rem;
-        display: block;
-        margin-top: 10px;
-        text-decoration: underline;
-    }
+/* Tamanhos (Estilo Versiani - Clean) */
+.size-option {
+    min-width: 48px !important;
+    height: 48px !important;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    color: #555;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    font-size: 14px !important;
+    font-weight: 400 !important; /* Regular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px !important; /* Borda suave */
+    transition: all 0.2s ease;
+}
 
-    /* Botões de Ação */
-    .product-action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-    }
+.size-option:hover {
+    border-color: #999;
+}
 
-    .btn-primary {
-        padding: 15px 20px;
-        font-size: 1rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        background: var(--primary);
-        color: #fff;
-        border: none;
-        cursor: pointer;
-    }
+.size-option.active {
+    background: transparent !important; /* Fundo transparente */
+    color: #000 !important;
+    border: 2px solid #000 !important; /* Borda grossa preta */
+    font-weight: 600 !important;
+}
 
-    .btn-whatsapp-main {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 15px 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        background: #25D366;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-    }
+.size-option.unavailable {
+    opacity: 0.4;
+    text-decoration: line-through;
+    background: #f9f9f9;
+    cursor: not-allowed;
+    border-color: #eee;
+}
 
-    /* Descrição Curta */
-    .short-description-container {
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-        padding: 15px 0;
-        margin: 15px 0;
-    }
+/* Quantidade e Frete */
+.quantity-controls { display: flex; border: 1px solid #ddd; width: fit-content; }
+.qty-control-btn { width: 40px; height: 40px; background: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
+#productQuantity { width: 50px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: 600; }
 
-    .short-desc-text {
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: var(--text-secondary);
-    }
+.shipping-input-row { display: flex; gap: 0.5rem; }
+.shipping-input { flex: 1; padding: 0.7rem; border: 1px solid #ccc; }
+.shipping-calc-btn { padding: 0 1.5rem; background: #000; color: white; border: none; font-weight: bold; cursor: pointer; }
+.shipping-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.shipping-option { display: flex; justify-content: space-between; padding: 0.8rem; background: #f9f9f9; font-size: 0.85rem; }
 
-    .view-full-desc {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-decoration: underline;
-        color: var(--primary);
-        margin-top: 5px;
-        display: inline-block;
-        cursor: pointer;
-    }
+/* WhatsApp Link Texto */
+.btn-whatsapp-main {
+    background: transparent; color: #333; font-size: 0.85rem; padding: 0; justify-content: flex-start; width: auto; margin-top: 0.5rem;
+}
+.btn-whatsapp-main:hover { text-decoration: underline; background: transparent; box-shadow: none; transform: none; }
+.btn-whatsapp-main svg { color: #25D366; }
 
-    /* Seções de Conteúdo (Descrição Completa, Compre o Look) */
-    .full-description-section, .buy-the-look-section {
-        grid-column: 1 / span 3; /* Ocupa as 3 colunas */
-        max-width: 1000px; /* Limita a largura do conteúdo */
-        margin: 40px auto 0 auto;
-        padding: 0 20px;
-    }
+/* Footer & Floating Button */
+.site-footer { background: #1a1a1a; color: white; padding: 3rem 2rem 1.5rem; margin-top: 5rem; }
+.whatsapp-float { position: fixed; bottom: 24px; right: 24px; background: #25D366; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.whatsapp-float svg { width: 30px; height: 30px; }
 
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 10px;
-    }
+/* Loading */
+.loading-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: 0.3s; opacity: 0; visibility: hidden; }
+.loading-overlay.active { opacity: 1; visibility: visible; }
+.loading-spinner { font-size: 3rem; animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    .description-content p {
-        font-size: 1rem;
-        line-height: 1.7;
-        color: var(--text-secondary);
-        margin-bottom: 15px;
-    }
+/* RELACIONADOS */
+.related-products-section { margin-top: 4rem; border-top: 1px solid #f5f5f5; padding-top: 3rem; }
+.related-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+.product-card { cursor: pointer; border: 1px solid #f5f5f5; }
+.product-card .product-image { aspect-ratio: 3/4; background-size: cover; background-position: center; }
+.product-card .product-info { padding: 1rem; }
 
-    .related-products-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+/* Links pequenos abaixo do botão comprar */
+.secondary-actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.action-link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #666;
+    cursor: pointer;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    text-decoration: underline;
+}
+
+.action-link:hover {
+    color: #000;
+}
+
+.action-link svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.5px;
+}
+
+/* Lista de Ícones de Confiança (Rodapé da Info) */
+/* Ícones de Confiança (Rodapé) */
+.trust-badges-list {
+    margin-top: 30px !important;
+    padding-top: 25px !important;
+    border-top: 1px solid #f0f0f0 !important; /* Linha extra de separação */
+    display: flex;
+    flex-direction: column;
+    gap: 20px !important;
+}
+
+.trust-badge {
+    display: flex;
+    gap: 15px !important;
+    align-items: center !important; /* Centraliza ícone com texto */
+}
+
+.trust-badge svg {
+    width: 32px !important;  /* Ícone maior */
+    height: 32px !important;
+    color: #000 !important; 
+    stroke-width: 1.2px !important; /* Traço fino elegante */
+    flex-shrink: 0;
+}
+
+.badge-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px !important;
+    line-height: 1.4;
+}
+
+.badge-text strong {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-weight: 700 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 2px;
+}
+
+.badge-text a {
+    color: #555 !important;
+    text-decoration: underline;
+    font-weight: 500 !important;
+    transition: color 0.2s;
+}
+
+.badge-text a:hover {
+    color: #000;
+}
+
+    /* Garante que no celular a galeria não fique "torta" */
+    .product-gallery-section, 
+    .gallery-container {
+        width: 100% !important;
     }
 }
 
-/* --- LAYOUT MOBILE (Mantido o estilo anterior, mas com ajustes) --- */
-@media (max-width: 1023px) {
+/* ADICIONE NO FINAL DO ARQUIVO */
+
+/* Container que agrupa Botão + Texto */
+.size-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45px;
+}
+
+/* O texto de aviso (Últimas/Esgotado) */
+.stock-msg {
+    font-size: 0.6rem;
+    margin-top: 4px;
+    text-align: center;
+    line-height: 1;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Cores dos avisos */
+.stock-msg.warning { color: #e67e22; } 
+.stock-msg.error { color: #999; text-decoration: none; } 
+
+
+/* ======================================================= */
+/* AJUSTES FINAIS: COMPACTAÇÃO E ESPESSURA DE FONTE (LIVE!) */
+/* ======================================================= */
+
+/* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
+.product-info-section {
+    gap: 1.2rem !important;
+}
+
+/* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
+.product-selector-group {
+    padding-bottom: 10px !important; /* Mais compacto */
+    margin-bottom: 10px !important;
+    border-bottom: none !important; /* <--- REMOVE BORDAS VISÍVEIS NO DESKTOP */
+}
+
+/* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
+.product-title {
+    margin-bottom: 0.2rem !important; 
+}
+
+.product-pricing {
+    margin-bottom: 0.5rem !important;
+    gap: 0.1rem !important;
+}
+
+.short-description-container {
+    margin-bottom: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+}
+
+/* 3. ENGROSSAR FONTES (Fim das letras finas) */
+
+/* Textos gerais (Descrição, infos) */
+body, .short-desc-text, .model-info-text {
+    font-weight: 500 !important;
+    color: #333 !important;     
+}
+
+/* Títulos dos seletores (COR, TAMANHO...) */
+.selector-label {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important; /* Sem negrito */
+    color: #000 !important;
+    margin-bottom: 0.6rem !important;
+    text-transform: none !important; 
+}
+
+/* Links pequenos (Tabela de medidas, Ver descrição) */
+.view-full-desc, 
+.size-guide-link, 
+.action-link, 
+.badge-text a {
+    font-weight: 600 !important; 
+    text-decoration: underline;
+}
+
+/* Textos de "Últimas unidades" */
+.stock-msg {
+    font-weight: 700 !important; 
+}
+
+/* Botões de Tamanho */
+.size-option {
+    font-weight: 600 !important; 
+}
+
+/* Preço Base (Celular e Padrão) */
+.price-current {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 1.5rem !important; /* ✅ ADICIONAR PONTO E VÍRGULA */
+    color: #000000 !important;
+    letter-spacing: -1px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* Texto de Parcelamento */
+.price-installments {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 15px !important;
+    color: #555 !important;
+    font-weight: 400 !important; /* Sem negrito */
+    margin-top: 5px !important;
+}
+
+/* Ícones de confiança (Rodapé) */
+.badge-text strong {
+    font-weight: 700 !important;
+}
+
+/* ================================================= */
+/* PREÇO NO DESKTOP (Telas Grandes Apenas)           */
+/* ================================================= */
+
+@media (min-width: 769px) {
+    .price-current, 
+    #detailsPriceNew {
+        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+        font-weight: 400 !important;
+        font-size: 46px !important; /* GIGANTE só no PC */
+        color: #000000 !important;
+        letter-spacing: -1px !important;
+        line-height: 1.1 !important;
+    }
+}
+
+/* ============================================================ */
+/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
+/* Inclui: Header Grid, Swipe Gallery, Sticky Footer            */
+/* ============================================================ */
+
+@media (max-width: 768px) {
     
-    /* Header Mobile (Ajustes) */
+    /* --- 1. HEADER ALINHADO (Grid 3 Colunas) --- */
     .site-header .nav {
-        padding: 0 10px;
+        display: grid !important;
+        grid-template-columns: 50px 1fr 50px !important; /* Espaço igual nas laterais */
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 10px !important;
+        height: 60px !important;
+        gap: 0 !important;
     }
 
+    .nav-left { display: contents !important; } /* Remove container do fluxo */
+
+    /* Logo Centralizada */
     .nav-left .logo {
-        font-size: 1.2rem;
+        grid-column: 2 !important; /* Meio */
+        justify-self: center !important;
+        font-size: 1.4rem !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        width: auto !important;
     }
 
-    .nav-center { display: none; } /* Esconde busca no mobile */
+    /* Hambúrguer Esquerda */
+    .hamburger-btn {
+        grid-column: 1 !important;
+        display: flex !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+    }
 
-    /* Galeria Mobile (Swipe) */
+    /* Ícones Direita */
+    .nav-icons {
+        grid-column: 3 !important;
+        justify-self: end !important;
+        gap: 10px !important;
+    }
+
+    .nav-center, .search-bar { display: none !important; } /* Esconde busca */
+
+
+    /* --- 2. LAYOUT GERAL & GALERIA SWIPE --- */
+    .product-page-container .product-main-grid {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
     .product-gallery-section {
-        width: 100vw;
+        width: 100vw !important;
         margin-left: calc(-50vw + 50%);
         margin-right: calc(-50vw + 50%);
-        padding: 0;
+        padding: 0 !important;
         overflow: hidden;
         position: relative;
     }
 
-    .product-thumbnails { display: none; } /* Oculta miniaturas no mobile */
-
     .gallery-container {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: scroll;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
-        height: 75vh; 
-        min-height: 400px; 
-        gap: 0;
-    }
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    height: 75vh !important; /* ✅ ADICIONAR */
+    min-height: 400px !important; /* ✅ ADICIONAR */
+    gap: 0 !important;
+}
 
     .gallery-container::-webkit-scrollbar { display: none; }
 
-    .gallery-photo-full {
-        min-width: 100vw;
-        width: 100vw;
-        height: 75vh; 
-        min-height: 400px; 
-        aspect-ratio: 3/4;
-        scroll-snap-align: start;
-        background-size: cover; 
-        background-position: center; 
-        background-repeat: no-repeat; 
-        margin: 0;
-    }
+   .gallery-photo-full {
+    min-width: 100vw !important;
+    width: 100vw !important;
+    height: 75vh !important; /* Altura explícita */
+    min-height: 400px !important; /* Altura mínima */
+    aspect-ratio: 3/4 !important;
+    scroll-snap-align: start;
+    background-size: cover !important; /* ✅ CRÍTICO */
+    background-position: center !important; /* ✅ CRÍTICO */
+    background-repeat: no-repeat !important; /* ✅ CRÍTICO */
+    margin: 0 !important;
+}
 
-    /* Info Section Mobile (Card sobreposto) */
+    #btnShowMore { display: none !important; }
+    .product-thumbnails { display: none !important; }
+}
+
+
+    /* --- 3. CARD DE INFORMAÇÕES --- */
     .product-info-section {
-        position: relative;
-        top: -15px;
-        background: #fff;
-        border-radius: 20px 20px 0 0;
-        padding: 25px 20px 100px 20px; 
-        z-index: 10;
+        position: relative !important;
+        top: -15px !important;
+        background: #fff !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 25px 20px 100px 20px !important; /* Padding bottom grande pro botão */
+        z-index: 10 !important;
         box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
     }
 
-    .product-title {
-        font-size: 1.5rem;
-        font-weight: 600;
+    .product-title, #detailsProductName {
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 5px !important;
     }
 
-    .product-pricing {
-        margin-bottom: 15px;
-    }
+    .price-current { font-size: 1.6rem !important; font-weight: 700 !important; }
 
-    .price-current {
-        font-size: 1.3rem;
-        font-weight: 700;
-    }
 
-    /* Sticky Footer Mobile (Botão Comprar) */
+    /* --- 4. STICKY FOOTER (BOTÃO COMPRAR) --- */
     .product-action-buttons {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #fff;
-        padding: 10px 15px;
-        padding-bottom: calc(10px + env(safe-area-inset-bottom));
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-top: 1px solid #f5f5f5;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+        padding: 10px 15px !important;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        border-top: 1px solid #f5f5f5 !important;
     }
 
     .btn-primary {
-        flex: 1;
-        height: 50px;
-        font-size: 1rem;
-        border-radius: 4px;
+        width: 100% !important;
+        height: 50px !important;
+        font-family: 'Century Gothic', sans-serif !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px !important;
+        border-radius: 4px !important;
+        background: #000 !important;
+        color: #fff !important;
+        border: none !important;
+        margin: 0 !important;
+        box-shadow: none !important;
     }
 
-    .btn-whatsapp-main {
-        width: 50px;
-        height: 50px;
-        border-radius: 4px;
-        padding: 0;
-        background: #25D366;
-        color: #fff;
-        display: flex;
-        align-items: center;
+    .btn-whatsapp-main { display: none !important; }
+
+} 
+
+/* ============================================================ */
+/* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
+/* ============================================================ */
+
+@media (min-width: 769px) {
+    
+    /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
+    .product-page-container .product-main-grid {
+        display: grid !important;
+        /* 68% para fotos (bem largo), 28% para info, 4% gap */
+        grid-template-columns: 68% 28% !important; 
+        gap: 4% !important;
+        
+        /* Ocupar largura total e colar na esquerda */
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 0px 40px 0 !important; /* Zero padding na esquerda */
+        margin: 0 auto !important;
+        
+        /* ESSENCIAL PARA O STICKY FUNCIONAR: */
+        align-items: start !important; 
+        position: relative !important;
+    }
+
+    /* 2. Galeria Mosaico (2 Fotos por linha) */
+    .product-gallery-section {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .gallery-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* 2 Colunas */
+        gap: 5px !important; /* Espaço fino entre fotos */
+        width: 100% !important;
+    }
+
+    .gallery-photo-full {
+    width: 100% !important;
+    aspect-ratio: 3/4 !important;
+    min-height: 400px !important; /* ✅ ADICIONAR */
+    object-fit: cover !important;
+    display: block !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+    
+   /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
+    .product-info-section {
+        position: sticky !important;
+        top: 85px !important;
+        height: fit-content !important;
+        
+        /* CRÍTICO: Remova limites de altura */
+        max-height: none !important; 
+        overflow-y: visible !important;
+        
+        padding: 0 20px 0 0 !important;
+        background: transparent !important;
+        z-index: 10 !important;
+    }
+    
+    /* Esconde scrollbar da coluna de info se aparecer */
+    .product-info-section::-webkit-scrollbar { display: none; }
+
+    /* 4. Ajuste do Botão Favoritos (Discreto e Alinhado) */
+    .btn-favorite {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 4px !important;
+        padding: 6px 12px !important;
+        
+        font-size: 0.75rem !important;
+        color: #666 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        width: fit-content !important;
+        margin-bottom: 15px !important;
+        box-shadow: none !important;
+    }
+    
+    .btn-favorite:hover {
+        border-color: #000 !important;
+        color: #000 !important;
+        transform: none !important;
+    }
+    
+    .btn-favorite svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    /* Títulos Grandes no Desktop */
+    .product-title, #detailsProductName {
+        font-size: 2.2rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    /* Resetar botão de compra para estilo desktop */
+    .product-action-buttons {
+        position: static !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        border: none !important;
+        margin-top: 20px !important;
+    }
+
+    .btn-primary {
+        height: 55px !important;
+        border-radius: 0 !important;
+        background: #000 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Esconder elementos mobile */
+    .btn-whatsapp-main { display: flex !important; }
+    /* --- RESTAURAÇÃO DA GALERIA SHOW MORE (Desktop) --- */
+
+    /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
+    .gallery-photo-full.gallery-hidden {
+    display: none !important;
+} /* <--- CHAVE FECHADA CORRETAMENTE */
+
+/* 2. SHOW: Força as 2 primeiras imagens a aparecerem */
+.gallery-photo-full:nth-child(1),
+.gallery-photo-full:nth-child(2) {
+    display: block !important;
+}
+
+    /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
+    .btn-show-more {
+        display: flex !important; 
         justify-content: center;
+        width: 100%;
+        
+        /* Estilo elegante para o botão */
+        margin-top: 15px !important;
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        color: #000 !important;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-
-    .btn-whatsapp-main svg {
-        width: 24px;
-        height: 24px;
+    
+    /* 3. FIX: Garante que a galeria não fique com margem excessiva */
+    .product-gallery-section {
+        /* Garante que o conteúdo cole na esquerda */
+        margin: 0 !important;
+        padding: 0 !important;
     }
-
-    .btn-whatsapp-main span { display: none; } /* Oculta texto no mobile */
-
-    /* Seções de Conteúdo (Descrição Completa, Compre o Look) */
-    .full-description-section, .buy-the-look-section {
-        padding: 20px;
-        margin-top: 20px;
-    }
-
-    .related-products-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-}
-
-/* --- ELEMENTOS GERAIS --- */
-.breadcrumb {
-    font-size: 0.8rem;
-    color: var(--text-tertiary);
-    margin-bottom: 15px;
-}
-
-.btn-favorite {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 5px;
-}
-
-.btn-favorite svg {
-    width: 16px;
-    height: 16px;
-}
-
-/* Footer (Ajustes) */
-.site-footer {
-    background: #f8f8f8;
-    padding: 40px 20px 20px 20px;
-    border-top: 1px solid var(--border-color);
-}
-
-.footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-}
-
-.footer-section h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.footer-bottom {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 1px solid var(--border-color);
-    font-size: 0.8rem;
-    color: var(--text-tertiary);
-}
-
-@media (max-width: 768px) {
-    .footer-content {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Estilos para o produto relacionado (Compre o Look) */
-.related-product-card {
-    text-decoration: none;
-    color: var(--text-primary);
-    display: block;
-}
-
-.related-product-card:hover .product-image {
-    opacity: 0.8;
-}
-
-.product-image {
-    width: 100%;
-    aspect-ratio: 3/4;
-    background-size: cover;
-    background-position: center;
-    margin-bottom: 10px;
-    transition: opacity 0.3s;
-}
-
-.product-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.product-price {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--primary);
 }
