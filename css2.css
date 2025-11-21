@@ -234,12 +234,13 @@ nav {
 .search-bar {
     display: flex;
     align-items: center;
-    flex: 1; /* Tenta ocupar o espaço central */
-    max-width: 700px; /* Bem larga */
-    background: #f5f5f5; /* Fundo cinza claro para destaque */
-    border-radius: 50px; /* Bem arredondada */
-    padding: 0.8rem 1.5rem; /* Mais gordinha */
-    margin: 0 auto; /* Garante centralização */
+    flex: 1;
+    max-width: 700px;
+    background: #f5f5f5;
+    border-radius: 50px;
+    padding: 0 1.2rem !important; /* Removemos o padding vertical excessivo */
+    height: 45px !important;      /* Altura fixa e elegante (era muito alta) */
+    margin: 0 auto;
     border: 1px solid transparent;
     transition: all 0.3s;
 }
@@ -275,33 +276,55 @@ nav {
     stroke-width: 2px;
 }
 
-/* 3. ÍCONES (Direita e Maiores) */
+/* 3. ÍCONES E CONTADORES CORRIGIDOS */
 .nav-icons {
     display: flex;
-    gap: 1.8rem !important; /* Mais espaço entre eles */
+    gap: 1.5rem !important;
     align-items: center;
     flex-shrink: 0;
 }
 
-.nav-icon svg {
-    width: 28px !important; /* De 20px para 28px (+35%) */
-    height: 28px !important;
-    stroke-width: 1.8px; /* Traço mais grosso para acompanhar o tamanho */
-    color: #000;
+.nav-icon {
+    position: relative !important; /* ESSENCIAL: Segura a bolinha no lugar certo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
     transition: transform 0.2s;
 }
 
-.nav-icon:hover {
-    transform: scale(1.15);
+.nav-icon svg {
+    width: 26px !important; /* Levemente ajustado para ficar elegante */
+    height: 26px !important;
+    stroke-width: 1.8px;
+    color: #000;
 }
 
-/* Contador do carrinho ajustado */
+.nav-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Contador (Bolinha Laranja) */
 .cart-count {
-    top: -5px !important;
-    right: -8px !important;
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 0.75rem !important;
+    position: absolute !important;
+    top: -6px !important;    /* Ajuste fino de posição */
+    right: -8px !important;  /* Joga um pouco pra fora */
+    width: 18px !important;  /* Tamanho fixo perfeito */
+    height: 18px !important;
+    background: #FF6B35 !important; /* Laranja da marca */
+    color: white !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 10px !important; /* Fonte nítida */
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+    padding: 0 !important;
 }
 
 .search-btn {
@@ -3980,5 +4003,6 @@ footer {
     .products-section {
         padding-top: 10px !important;
     }
+
 
 
