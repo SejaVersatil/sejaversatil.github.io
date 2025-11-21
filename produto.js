@@ -273,9 +273,10 @@ function renderGallery(specificImages = null) {
     photoDiv.className = 'gallery-photo-full';
 
     // Oculta da 3ª em diante (index >= 2)
-    if (index >= 2) {
-        photoDiv.classList.add('gallery-hidden');
-    }
+    const isDesktop = window.innerWidth > 768;
+if (!isDesktop && index >= 2) {
+    photoDiv.classList.add('gallery-hidden');
+}
 
     if (isImageUrl(img)) {
       photoDiv.style.backgroundImage = `url("${img}")`;
@@ -1389,6 +1390,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
