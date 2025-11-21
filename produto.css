@@ -760,11 +760,17 @@ body, .short-desc-text, .model-info-text {
     }
 
     .gallery-container {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important; /* 2 Colunas */
-        gap: 5px !important; /* Espaço fino entre fotos */
-        width: 100% !important;
-    }
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 5px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    flex-wrap: wrap !important;
+    scroll-snap-type: none !important;
+    -webkit-overflow-scrolling: auto !important;
+}
 
     .gallery-photo-full {
     width: 100% !important;
@@ -896,6 +902,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
