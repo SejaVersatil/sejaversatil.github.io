@@ -184,8 +184,8 @@ function renderProduct() {
   if (elExists('detailsProductName')) $('detailsProductName').textContent = p.name || '';
 
   renderPrices();
-  renderGallery(); // Chama a nova galeria mosaico
   renderColors();
+  renderGallery(); // Chama a nova galeria mosaico
   renderSizes();
   renderDescription();
   renderRelatedProducts();
@@ -1371,6 +1371,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
