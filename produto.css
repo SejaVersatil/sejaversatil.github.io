@@ -473,9 +473,9 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 
 /* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
 .product-selector-group {
-    padding-bottom: 0 !important;
-    margin-bottom: 0.5rem !important;
-    border-bottom: none !important; 
+    padding-bottom: 10px !important; /* Mais compacto */
+    margin-bottom: 10px !important;
+    border-bottom: none !important; /* <--- REMOVE BORDAS VISÍVEIS NO DESKTOP */
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
@@ -736,8 +736,8 @@ body, .short-desc-text, .model-info-text {
         /* Ocupar largura total e colar na esquerda */
         width: 100% !important;
         max-width: 100% !important;
-        padding: 20px 20px 40px 0 !important; /* Zero padding na esquerda */
-        margin: 0 !important;
+        padding: 20px 0px 40px 0 !important; /* Zero padding na esquerda */
+        margin: 0 auto !important;
         
         /* ESSENCIAL PARA O STICKY FUNCIONAR: */
         align-items: start !important; 
@@ -770,10 +770,10 @@ body, .short-desc-text, .model-info-text {
         position: sticky !important; /* A Mágica */
         top: 85px !important;        /* Distância do topo (abaixo do header) */
         height: fit-content !important;
-        max-height: calc(100vh - 100px);
-        overflow-y: auto; /* Scroll interno se a tela for pequena */
+        max-height: calc(100vh - 120px);
+        overflow-y: hidden; /* Scroll interno se a tela for pequena */
         
-        padding: 0 20px 0 0 !important;
+        padding: 0 !important;
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
@@ -877,4 +877,5 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
