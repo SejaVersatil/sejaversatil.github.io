@@ -3990,136 +3990,95 @@ css@keyframes slideInRight {
     gap: 5px;
 }
 
-/* ================================================================= */
-/* 📱 MOBILE OVERRIDES (Correções Estilo Live! - Apenas Celular)     */
-/* ================================================================= */
-
+/* ============================================================ */
+/* 🚨 CORREÇÃO VISUAL HOME (Padrão Live! - Mobile)              */
+/* ============================================================ */
 @media (max-width: 768px) {
-
-    /* 1. CORREÇÃO DO BANNER HERO (Problema do Print) */
+    
+    /* 1. BANNER HERO (Vertical e Focado) */
     .hero-section {
-        height: auto !important;
-        min-height: auto !important;
-        aspect-ratio: 3/4 !important; /* Formato retrato para ocupar bem a tela */
+        height: auto !important; /* Remove altura fixa */
+        aspect-ratio: 3/4 !important; /* Formato Retrato (Story) */
+        width: 100% !important;
+        min-height: unset !important;
     }
-
+    
     .hero-slide {
-        background-position: center top !important; /* Foca no rosto/topo da imagem */
+        background-position: top center !important; /* Foca no rosto da modelo */
+        background-size: cover !important;
     }
 
+    /* Texto sobre a imagem (Legível) */
     .hero-content {
         position: absolute !important;
-        bottom: 40px !important; /* Fixa no rodapé do banner */
+        bottom: 30px !important; /* Fixa no rodapé da imagem */
         top: auto !important;
         left: 0 !important;
         width: 100% !important;
-        transform: none !important;
-        padding: 20px !important;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent) !important; /* Degradê para leitura */
+        transform: none !important; /* Remove centralização antiga */
+        padding: 20px 15px !important;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%) !important;
+        text-align: left !important; /* Alinha texto à esquerda igual Live! */
     }
 
+    /* Título Gigante -> Título Elegante */
     .hero-title {
-        font-size: 2.2rem !important; /* Reduzido de 5rem para caber */
+        font-size: 2rem !important; /* Reduzido de 5rem para 2rem */
         line-height: 1.1 !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 8px !important;
+        text-align: left !important;
     }
 
     .hero-subtitle {
         font-size: 0.9rem !important;
-        margin-bottom: 15px !important;
         display: block !important;
+        margin-bottom: 15px !important;
+        text-align: left !important;
     }
 
     .hero-cta {
-        width: 100% !important; /* Botão largura total */
-        padding: 1rem !important;
-        font-size: 0.9rem !important;
+        width: auto !important;
+        display: inline-block !important;
+        padding: 10px 25px !important;
+        font-size: 0.85rem !important;
     }
 
-    /* Esconder setas laterais no mobile (uso de swipe ou dots é melhor) */
-    .hero-nav-arrow { display: none !important; }
-    
-    .hero-carousel-dots {
-        bottom: 15px !important;
-    }
-
-    /* 2. HEADER LIMPO (Inspiração App) */
+    /* 2. HEADER (Limpo e Alinhado) */
     nav {
-        padding: 10px 15px !important;
         height: 60px !important;
+        padding: 0 15px !important;
         justify-content: space-between !important;
     }
     
     .logo {
-        font-size: 1.4rem !important;
+        font-size: 1.3rem !important; /* Tamanho controlado */
         position: absolute;
         left: 50%;
         transform: translateX(-50%); /* Centraliza logo perfeitamente */
     }
     
-    .hamburger-btn {
-        margin: 0 !important;
-        order: 1; /* Garante que fique na esquerda */
-    }
-    
-    .nav-icons {
-        order: 3; /* Garante que fique na direita */
-        gap: 15px !important;
-    }
-
-    /* 3. VITRINE DE PRODUTOS (Grid Apertado estilo Instagram) */
+    /* 3. GRID DE PRODUTOS (2 Colunas com Gap Mínimo) */
     .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 Colunas (Estilo App) */
-        gap: 4px !important; /* Gap reduzido para fotos maiores */
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* 2 Colunas Exatas */
+        gap: 4px !important; /* Espaço fino estilo Live! */
         padding: 0 4px !important;
     }
 
     .product-card {
-        min-height: unset !important;
-        border: none !important;
+        min-height: auto !important;
         box-shadow: none !important;
         margin-bottom: 15px !important;
+        border: none !important;
     }
 
     .product-image {
-        aspect-ratio: 3/4 !important; /* Garante fotos verticais */
+        aspect-ratio: 3/4 !important; /* Foto Vertical */
         border-radius: 4px !important;
-        margin-bottom: 8px !important;
     }
 
-    /* Ajuste de textos dos cards para mobile */
-    .product-info {
-        padding: 0 4px !important;
-        text-align: left !important;
-    }
-
-    .product-info h4 {
-        font-size: 0.85rem !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-bottom: 4px !important;
-    }
-
-    .product-price {
-        flex-direction: row !important;
-        align-items: baseline !important;
-        gap: 6px !important;
-    }
-
-    .price-new { font-size: 1rem !important; }
-    .price-old { font-size: 0.8rem !important; }
-
-    /* Remove botões que poluem a vitrine no mobile */
-    .add-to-cart-btn, .product-carousel-arrows {
-        display: none !important; 
-    }
+    /* Preço e Nome alinhados */
+    .product-info { padding: 5px 2px !important; text-align: left !important; }
+    .product-info h4 { font-size: 0.85rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .price-new { font-size: 1rem !important; font-weight: 700 !important; }
 }
-
-
-
-
-
-
-
-
