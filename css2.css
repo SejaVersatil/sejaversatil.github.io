@@ -1132,27 +1132,6 @@ nav {
     }
 }
 
-/* Celulares Pequenos (iPhone SE, Galaxy antigos) - O DETALHE FINAL */
-@media (max-width: 480px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important; /* MANTÉM 2 colunas */
-        gap: 3px !important;
-    }
-
-    /* Reduz um pouco a fonte para caber lado a lado */
-    .product-info {
-        padding: 0.8rem 0.5rem !important;
-    }
-
-    .product-info h4 {
-        font-size: 0.8rem !important; /* Fonte menor */
-    }
-
-    .price-new {
-        font-size: 1rem !important; /* Preço ajustado */
-    }
-}
-
 .product-card {
     background: white;
     border: none;
@@ -3872,213 +3851,118 @@ css@keyframes slideInRight {
     color: #000;
 }
 
-/* ======================================================= */
-/* CABEÇALHO MOBILE REFINADO (SUBSTITUIR BLOCO ANTERIOR)   */
-/* ======================================================= */
+/* ============================================================ */
+/* ✨ NOVO LAYOUT MOBILE (ESTILO APP LIVE!) - VERSÃO LIMPA      */
+/* ============================================================ */
 
 @media (max-width: 768px) {
-    /* 1. Configuração do Container (A linha branca do topo) */
-    nav {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important; /* Alinha itens no início */
-        padding: 10px 15px !important; /* Espaçamento interno */
-        gap: 0 !important; /* Removemos gap padrão para controlar na mão */
-        height: 60px; /* Altura fixa para evitar pulos */
-    }
-
-    /* 2. Botão Hambúrguer (Agora faz parte da linha) */
-    .hamburger-btn {
-        display: flex !important; /* Garante que apareça */
-        position: relative !important; /* Fixa ele DENTRO da barra, não na tela */
-        top: auto !important;
-        left: auto !important;
-        background: transparent !important; /* Fundo transparente */
-        border: none !important;
-        padding: 5px !important;
-        margin-right: 15px !important; /* O Espaço que você pediu entre menu e logo */
-        z-index: 1002;
-        width: auto !important;
-        height: auto !important;
-        box-shadow: none !important; /* Remove qualquer sombra antiga */
-    }
     
-    /* As linhas do menu (Pretas e finas) */
-    .hamburger-line {
-        background-color: #000 !important; 
-        width: 24px !important;
-        height: 2px !important;
-        margin: 2px 0 !important;
+    /* --- 1. HEADER ORGANIZADO (Hambúrguer Esq | Logo Meio | Ícones Dir) --- */
+    nav {
+        display: grid !important;
+        grid-template-columns: 50px 1fr 80px !important; /* Colunas fixas para alinhar */
+        align-items: center !important;
+        height: 60px !important;
+        padding: 0 10px !important;
+        background: #fff !important;
+        border-bottom: 1px solid #f0f0f0;
     }
 
-    /* 3. Logo (Alinhada e ajustada) */
-    .logo {
-        flex: 0 1 auto !important; /* Ocupa apenas o espaço necessário */
-        font-size: 1.3rem !important; /* Tamanho ideal para mobile */
-        white-space: nowrap !important; /* Impede quebra de linha */
+    /* Hambúrguer (Fixo na esquerda) */
+    .hamburger-btn {
+        display: flex !important;
+        justify-content: flex-start;
+        width: auto !important;
         margin: 0 !important;
         padding: 0 !important;
-        line-height: 1 !important;
-        /* Se quiser que a logo empurre os ícones pro final, o flex cuida disso */
     }
 
-    /* 4. Ícones da Direita (Carrinho/Login) */
-    .nav-icons {
-        display: flex !important;
-        gap: 12px !important;
-        margin-left: auto !important; /* Empurra os ícones totalmente para a direita */
-        align-items: center !important;
-    }
-    
-    /* Esconde busca no mobile para limpar visual */
-    .search-bar { display: none !important; }
-    .nav-menu { display: none !important; }
-}
-
-/* Botão de Definir Capa (Admin) */
-.image-item-actions {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 5px;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0; /* Escondido até passar o mouse */
-    transition: opacity 0.2s;
-}
-
-.image-item:hover .image-item-actions,
-.image-item.is-cover .image-item-actions {
-    opacity: 1; /* Aparece ao passar mouse ou se for capa */
-}
-
-.btn-set-cover {
-    background: transparent;
-    border: 1px solid white;
-    color: white;
-    padding: 2px 8px;
-    font-size: 0.7rem;
-    border-radius: 4px;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-.btn-set-cover:hover {
-    background: white;
-    color: black;
-}
-
-/* Estilo da Capa Atual */
-.image-item.is-cover {
-    border: 3px solid #27ae60; /* Borda Verde indicando capa */
-}
-
-.image-item.is-cover .image-item-actions {
-    background: #27ae60; /* Fundo verde */
-}
-
-.cover-badge {
-    color: white;
-    font-weight: bold;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* ============================================================ */
-/* 🚨 CORREÇÃO VISUAL HOME (Padrão Live! - Mobile)              */
-/* ============================================================ */
-@media (max-width: 768px) {
-    
-    /* 1. BANNER HERO (Vertical e Focado) */
-    .hero-section {
-        height: auto !important; /* Remove altura fixa */
-        aspect-ratio: 3/4 !important; /* Formato Retrato (Story) */
-        width: 100% !important;
-        min-height: unset !important;
-    }
-    
-    .hero-slide {
-        background-position: top center !important; /* Foca no rosto da modelo */
-        background-size: cover !important;
-    }
-
-    /* Texto sobre a imagem (Legível) */
-    .hero-content {
-        position: absolute !important;
-        bottom: 30px !important; /* Fixa no rodapé da imagem */
-        top: auto !important;
-        left: 0 !important;
-        width: 100% !important;
-        transform: none !important; /* Remove centralização antiga */
-        padding: 20px 15px !important;
-        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%) !important;
-        text-align: left !important; /* Alinha texto à esquerda igual Live! */
-    }
-
-    /* Título Gigante -> Título Elegante */
-    .hero-title {
-        font-size: 2rem !important; /* Reduzido de 5rem para 2rem */
-        line-height: 1.1 !important;
-        margin-bottom: 8px !important;
-        text-align: left !important;
-    }
-
-    .hero-subtitle {
-        font-size: 0.9rem !important;
-        display: block !important;
-        margin-bottom: 15px !important;
-        text-align: left !important;
-    }
-
-    .hero-cta {
-        width: auto !important;
-        display: inline-block !important;
-        padding: 10px 25px !important;
-        font-size: 0.85rem !important;
-    }
-
-    /* 2. HEADER (Limpo e Alinhado) */
-    nav {
-        height: 60px !important;
-        padding: 0 15px !important;
-        justify-content: space-between !important;
-    }
-    
+    /* Logo (Centralizada Absolutamente para não sair do eixo) */
     .logo {
-        font-size: 1.3rem !important; /* Tamanho controlado */
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%); /* Centraliza logo perfeitamente */
+        grid-column: 2; /* Fica na coluna do meio */
+        display: flex;
+        justify-content: center;
+        font-size: 1.3rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 2px !important;
+        white-space: nowrap;
     }
-    
-    /* 3. GRID DE PRODUTOS (2 Colunas com Gap Mínimo) */
-    .products-grid {
+
+    /* Ícones (Alinhados à direita) */
+    .nav-icons {
+        grid-column: 3;
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 12px !important;
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    /* Ícones menores e mais finos (Elegância) */
+    .nav-icon svg, .hamburger-btn svg {
+        width: 22px !important;
+        height: 22px !important;
+        stroke-width: 1.2px !important;
+    }
+
+    /* Esconder busca expandida (poluição visual) */
+    .search-bar, .search-bar input { display: none !important; }
+
+
+    /* --- 2. GRID DE PRODUTOS (2 COLUNAS PERFEITAS) --- */
+    .products-grid, 
+    .related-products-grid,
+    #adminProductsGrid {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important; /* 2 Colunas Exatas */
-        gap: 4px !important; /* Espaço fino estilo Live! */
-        padding: 0 4px !important;
+        grid-template-columns: 1fr 1fr !important; /* Força 50% 50% */
+        gap: 1px !important; /* Gap mínimo estilo Instagram/Live */
+        padding: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box;
     }
 
     .product-card {
         min-height: auto !important;
-        box-shadow: none !important;
-        margin-bottom: 15px !important;
         border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding-bottom: 15px !important; /* Espaço para o texto */
     }
 
+    /* Foto Vertical (Portrait 3:4) */
     .product-image {
-        aspect-ratio: 3/4 !important; /* Foto Vertical */
-        border-radius: 4px !important;
+        width: 100% !important;
+        aspect-ratio: 3/4 !important;
+        border-radius: 0 !important; /* Live usa cantos retos ou minimamente arredondados */
+        margin-bottom: 8px !important;
     }
 
-    /* Preço e Nome alinhados */
-    .product-info { padding: 5px 2px !important; text-align: left !important; }
-    .product-info h4 { font-size: 0.85rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .price-new { font-size: 1rem !important; font-weight: 700 !important; }
+    /* Texto e Preço */
+    .product-info {
+        padding: 0 8px !important;
+        text-align: left !important;
+    }
+
+    .product-info h4 {
+        font-family: 'Century Gothic', sans-serif !important;
+        font-size: 0.75rem !important; /* Fonte pequena e chique */
+        font-weight: 400 !important;
+        color: #333 !important;
+        margin-bottom: 2px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .product-price {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .price-old { font-size: 0.65rem !important; color: #999 !important; margin-bottom: 0 !important; }
+    .price-new { font-size: 0.9rem !important; font-weight: 700 !important; color: #000 !important; }
+
+    /* Remove botão "Adicionar ao carrinho" no hover (poluição no mobile) */
+    .add-to-cart-btn, .product-quick-actions { display: none !important; }
 }
