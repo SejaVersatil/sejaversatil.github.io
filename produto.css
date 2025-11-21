@@ -381,18 +381,6 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 .product-card .product-image { aspect-ratio: 3/4; background-size: cover; background-position: center; }
 .product-card .product-info { padding: 1rem; }
 
-/* RESPONSIVIDADE (MOBILE) */
-@media (max-width: 1024px) {
-    .product-page-container .product-main-grid { grid-template-columns: 1fr !important; padding: 1rem; gap: 2rem !important; }
-    .product-info-section { position: static; }
-    .gallery-container { display: flex !important; flex-direction: column; gap: 10px; }
-    .gallery-photo-full { width: 100%; aspect-ratio: 3/4; }
-    .hamburger-btn { display: block; }
-    .nav { padding: 0.75rem 1rem; }
-    .cart-sidebar { width: 100%; right: -100%; }
-    .product-action-buttons { padding-bottom: 60px; } 
-}
-
 /* Links pequenos abaixo do botão comprar */
 .secondary-actions {
     display: flex;
@@ -483,14 +471,6 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
     }
 }
 
-/* 3. Ajuste para Tablets e Mobile (Telas pequenas) */
-@media (max-width: 1024px) {
-    .product-page-container .product-main-grid {
-        grid-template-columns: 1fr !important; 
-        padding: 1rem !important;
-        gap: 2rem !important;
-    }
-    
     /* Garante que no celular a galeria não fique "torta" */
     .product-gallery-section, 
     .gallery-container {
@@ -1141,3 +1121,4 @@ body.product-page .hamburger-btn {
         height: 35px !important;
     }
 }
+
