@@ -1192,21 +1192,49 @@ function switchDescTab(tab) {
     }
 }
 
+// Renderiza as imagens no Modal de Admin
 function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
-    
+
     container.innerHTML = tempProductImages.map((img, index) => {
         const isImage = img.startsWith('data:image') || img.startsWith('http');
+        const isCover = index === 0; // A primeira imagem é sempre a capa
+        
         return `
-            <div class="image-item">
+            <div class="image-item ${isCover ? 'is-cover' : ''}">
                 <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}">
                     ${isImage ? `<img src="${img}" alt="Produto">` : ''}
                 </div>
-                <button type="button" class="image-item-remove" onclick="removeProductImage(${index})">×</button>
+                
+                <button type="button" class="image-item-remove" onclick="removeProductImage(${index})" title="Remover imagem">×</button>
+                
+                <div class="image-item-actions">
+                    ${isCover 
+                        ? `<span class="cover-badge">★ CAPA</span>` 
+                        : `<button type="button" class="btn-set-cover" onclick="setProductCover(${index})">Virar Capa</button>`
+                    }
+                </div>
             </div>
         `;
     }).join('');
+}
+
+// NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
+function setProductCover(index) {
+    if (index <= 0 || index >= tempProductImages.length) return;
+    
+    // Remove a imagem da posição atual
+    const imageToMove = tempProductImages.splice(index, 1)[0];
+    
+    // Adiciona ela no início do array (Index 0)
+    tempProductImages.unshift(imageToMove);
+    
+    // Re-renderiza a lista
+    renderProductImages();
+    
+    // Feedback visual
+    showToast('Capa atualizada com sucesso!', 'success');
 }
 
 async function handleImageUpload(event) {
@@ -4304,6 +4332,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
