@@ -355,19 +355,41 @@ function renderColors() {
   }
 
   colorSelector.innerHTML = '';
+  // BLOCO NOVO (COM DIVISÃO DIAGONAL)
   availableColors.forEach((colorObj) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    // Só adiciona 'active' se state.selectedColor for igual a esta cor
+    // Mantém a classe active se for a cor selecionada
     btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`; 
     btn.title = colorObj.name;
     btn.dataset.color = colorObj.name;
 
-    const hex = colorObj.hex || getColorHex(colorObj.name);
-    btn.style.background = hex;
+    // Pega o código hex (ex: "#000, #fff")
+    const rawHex = colorObj.hex || getColorHex(colorObj.name);
     
-    if (hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') {
-        btn.style.border = '1px solid #ccc';
+    // 1. Separa as cores pela vírgula
+    const colors = rawHex.split(',').map(c => c.trim());
+
+    // 2. Aplica a lógica visual (Diagonal 135deg)
+    if (colors.length === 1) {
+        // --- UMA COR (SÓLIDA) ---
+        btn.style.background = colors[0];
+        
+        // Borda extra se for branco
+        if (colors[0].toLowerCase() === '#ffffff' || colors[0].toLowerCase() === '#fff') {
+            btn.style.border = '1px solid #ccc';
+        }
+    } 
+    else if (colors.length === 2) {
+        // --- DUAS CORES (DIAGONAL 50/50) ---
+        btn.style.background = `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`;
+    } 
+    else if (colors.length >= 3) {
+        // --- TRÊS CORES (3 FAIXAS DIAGONAIS) ---
+        btn.style.background = `linear-gradient(135deg, 
+            ${colors[0]} 33.33%, 
+            ${colors[1]} 33.33% 66.66%, 
+            ${colors[2]} 66.66%)`;
     }
 
     btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
@@ -1349,6 +1371,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
