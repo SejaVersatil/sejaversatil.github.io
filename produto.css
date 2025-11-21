@@ -768,11 +768,12 @@ body, .short-desc-text, .model-info-text {
     .gallery-photo-full {
     width: 100% !important;
     aspect-ratio: 3/4 !important;
+    min-height: 400px !important; /* ✅ ADICIONAR */
     object-fit: cover !important;
     display: block !important;
-    background-size: cover !important; /* ✅ ADICIONAR */
-    background-position: center !important; /* ✅ ADICIONAR */
-    background-repeat: no-repeat !important; /* ✅ ADICIONAR */
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
     
    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
@@ -890,6 +891,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
