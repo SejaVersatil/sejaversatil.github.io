@@ -3926,15 +3926,16 @@ footer {
         border: none !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding-bottom: 15px !important; /* Espaço para o texto */
+        padding-bottom: 10px !important; /* Reduzi de 15px para 10px */
+        background: transparent !important;
     }
 
     /* Foto Vertical (Portrait 3:4) */
     .product-image {
         width: 100% !important;
         aspect-ratio: 3/4 !important;
-        border-radius: 0 !important; /* Live usa cantos retos ou minimamente arredondados */
-        margin-bottom: 8px !important;
+        border-radius: 0 !important;
+        margin-bottom: 6px !important; /* Reduzi de 8px para 6px para ficar mais harmônico */
     }
 
     /* Texto e Preço */
@@ -3979,3 +3980,4 @@ footer {
     .products-section {
         padding-top: 10px !important;
     }
+
