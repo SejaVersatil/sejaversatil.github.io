@@ -97,8 +97,8 @@ let heroCarouselInterval;
 const heroSlides = [
     {
         image: 'https://i.imgur.com/0LVlc66.jpeg',
-        title: 'COLEÇÃO 2025',
-        subtitle: 'Conforto e estilo para seus treinos',
+        title: '', // titulo da coleção//
+        subtitle: '', //descrição do titulo//
         cta: 'EXPLORAR AGORA'
     },
     {
@@ -4217,6 +4217,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
