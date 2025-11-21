@@ -238,7 +238,7 @@ nav {
 }
 
 .logo {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-size: 2rem; 
     font-weight: 700;
     color: var(--primary);
@@ -4403,6 +4403,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
