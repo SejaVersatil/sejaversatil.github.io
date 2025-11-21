@@ -240,19 +240,32 @@ function renderGallery(specificImages = null) {
   const btnShowMore = document.getElementById('btnShowMore');
 
   if (!galleryContainer) return;
-  // DEBUG: Verificar URLs das imagens
-console.log('🖼️ Total de imagens:', imagesToRender ? imagesToRender.length : 0);
-console.log('🖼️ URLs:', imagesToRender);
+
   // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
-  // Define quais imagens usar
+  // Define quais imagens usar (COM VALIDAÇÃO)
   let imagesToRender = specificImages;
   if (!imagesToRender) {
-      imagesToRender = Array.isArray(p.images) && p.images.length
-        ? p.images
-        : (p.image ? [p.image] : []);
+      if (Array.isArray(p.images) && p.images.length > 0) {
+          imagesToRender = p.images;
+      } else if (p.image) {
+          imagesToRender = [p.image];
+      } else {
+          imagesToRender = [];
+      }
   }
+
+  // PROTEÇÃO: Se não há imagens, sai da função
+  if (!imagesToRender || imagesToRender.length === 0) {
+      console.warn('⚠️ Nenhuma imagem disponível para renderizar');
+      galleryContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:#999;">Sem imagens disponíveis</div>';
+      return;
+  }
+
+  // DEBUG: Verificar URLs das imagens
+  console.log('🖼️ Total de imagens:', imagesToRender.length);
+  console.log('🖼️ URLs:', imagesToRender);
 
   // Loop para criar as fotos
   imagesToRender.forEach((img, index) => {
@@ -1376,5 +1389,6 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
