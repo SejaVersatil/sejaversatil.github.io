@@ -768,11 +768,14 @@ body, .short-desc-text, .model-info-text {
 
     .gallery-photo-full {
     width: 100% !important;
+    min-width: auto !important;
+    height: auto !important;
     aspect-ratio: 3/4 !important;
     min-height: 500px !important;
     max-height: 800px !important;
-    height: 100% !important;           /* ← ADICIONE ESTA LINHA */
     display: block !important;
+    scroll-snap-align: none !important;
+    margin: 0 !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -893,6 +896,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
