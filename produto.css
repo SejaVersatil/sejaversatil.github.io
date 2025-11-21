@@ -867,8 +867,7 @@ body, .short-desc-text, .model-info-text {
     }
 
     /* Esconder botão whatsapp secundário no footer para limpar a área */
-  .btn-whatsapp-main { 
+.btn-whatsapp-main { 
         display: none !important;
     }
 }
-
