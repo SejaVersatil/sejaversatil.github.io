@@ -769,8 +769,8 @@ body, .short-desc-text, .model-info-text {
     .gallery-photo-full {
     width: 100% !important;
     aspect-ratio: 3/4 !important;
-    min-height: 400px !important; /* ✅ ADICIONAR */
-    object-fit: cover !important;
+    min-height: 500px !important;
+    max-height: 800px !important;
     display: block !important;
     background-size: cover !important;
     background-position: center !important;
@@ -892,5 +892,6 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
