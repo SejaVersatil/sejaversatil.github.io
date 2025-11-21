@@ -15,7 +15,7 @@
 * { box-sizing: border-box; }
 
 body.product-page {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     color: var(--text-primary);
     background: #ffffff;
     line-height: 1.5;
@@ -43,7 +43,7 @@ body.product-page {
 }
 
 .short-desc-text {
-    font-family: 'Montserrat', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 15px !important;
     line-height: 1.6 !important; /* Espaçamento bom para leitura */
     color: #333333 !important;
@@ -51,7 +51,7 @@ body.product-page {
 }
 
 .view-full-desc {
-    font-family: 'Montserrat', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 14px !important;
     font-weight: 700 !important; /* Negrito */
     text-decoration: underline !important;
@@ -67,7 +67,7 @@ body.product-page {
 .site-header { background: white; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f0f0f0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
 .nav { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 2rem; gap: 2rem; }
 .nav-left .logo {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     font-size: 2rem !important; /* Aumenta tamanho */
@@ -309,7 +309,7 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
     border: 1px solid #e0e0e0;
     background: #fff;
     color: #555;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     font-size: 14px !important;
     font-weight: 400 !important; /* Regular */
     display: flex;
@@ -412,7 +412,7 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
     font-size: 0.75rem;
     color: #666;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     text-decoration: underline;
 }
 
@@ -459,7 +459,7 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 }
 
 .badge-text strong {
-    font-family: 'Montserrat', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700 !important;
     color: #1a1a1a !important;
     margin-bottom: 2px;
@@ -630,7 +630,7 @@ body, .short-desc-text, .model-info-text {
     margin: 2rem auto 0; 
     background: transparent;
     border: none;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     font-size: 0.75rem;
     font-weight: 700;
     color: #333;
@@ -762,7 +762,7 @@ html, body {
 
 /* 2. Fonte do Relógio Black Friday */
 .bf-time-value {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
 }
 
 /* 3. Ícones Easy Care (Fixar na foto corretamente) */
@@ -1028,6 +1028,7 @@ body.product-page .hamburger-btn {
         line-height: 1.1 !important;
     }
 }
+
 
 
 
