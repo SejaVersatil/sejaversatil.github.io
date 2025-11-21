@@ -3568,7 +3568,7 @@ footer {
     }
 }
 
-css@keyframes slideInRight {
+@keyframes slideInRight {
     from {
         transform: translateX(400px);
         opacity: 0;
@@ -3966,3 +3966,4 @@ css@keyframes slideInRight {
     /* Remove botão "Adicionar ao carrinho" no hover (poluição no mobile) */
     .add-to-cart-btn, .product-quick-actions { display: none !important; }
 }
+
