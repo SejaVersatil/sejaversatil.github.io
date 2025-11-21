@@ -227,72 +227,96 @@ header {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
+/* --- HEADER (ESTILO LIVE! - BALANCEADO) --- */
+
 nav {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem; /* ← Reduzir um pouco o padding vertical */
+    justify-content: space-between; /* Separa logo (esq) e grupo da direita */
+    padding: 0.8rem 2rem; /* Altura mais compacta */
     max-width: 100%;
     margin: 0;
-    gap: 2rem; /* ← Adicionar espaçamento entre elementos */
+    height: 70px; /* Altura fixa */
+    gap: 0;
 }
 
+/* Logo (Esquerda) - Reduzida para proporção */
 .logo {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 2rem; 
+    font-size: 1.6rem; /* Reduzido de 2rem para 1.6rem */
     font-weight: 700;
     color: var(--primary);
-    letter-spacing: 3px;
+    letter-spacing: 2px;
+    flex-shrink: 0;
     cursor: pointer;
     margin: 0;
     padding: 0;
 }
 
-.logo:hover {
-    opacity: 0.8;
+.logo:hover { opacity: 0.8; }
+
+/* Container da Direita (Agrupa Busca + Ícones) */
+/* Lembre-se de criar essa div no HTML! */
+.nav-right-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; 
 }
 
-.nav-menu {
-    display: none;
-    list-style: none;
-    gap: 2.5rem;
+/* Barra de Pesquisa (Direita, Compacta e Transparente) */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: transparent; /* Fundo transparente */
+    border-bottom: 1px solid #ddd; /* Apenas linha embaixo */
+    border-radius: 0;
+    padding: 0.4rem 0;
+    width: 200px; /* Largura fixa discreta */
+    transition: all 0.3s;
+    margin: 0; /* Remove margens antigas */
 }
 
-.nav-menu a {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    text-decoration: none;
-    color: var(--text);
+.search-bar:focus-within {
+    border-bottom-color: #000;
+    width: 250px; /* Efeito de crescer ao clicar */
+}
+
+.search-bar input {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
     font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: color 0.3s;
+    text-align: right; /* Digita da direita para esquerda (Estilo Live) */
+    padding-right: 10px;
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
 }
 
-.nav-menu a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--secondary);
-    transition: width 0.3s;
+/* Ícone de Lupa */
+.search-btn {
+    order: 2; /* Joga a lupa para a direita do input */
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.nav-menu a:hover {
-    color: var(--secondary);
-}
-
-.nav-menu a:hover::after {
-    width: 100%;
-}
-
+/* Ícones (Login, Fav, Cart) */
 .nav-icons {
     display: flex;
     gap: 1.2rem;
-    align-items: center; /* ← ADICIONE ESTA REGRA (estava faltando) */
+    align-items: center;
 }
+
+.nav-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.5px;
+    color: var(--primary);
+}
+
+/* Esconde menu de texto antigo se houver */
+.nav-menu { display: none; }
 
 .nav-icon {
     cursor: pointer;
@@ -4380,6 +4404,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
