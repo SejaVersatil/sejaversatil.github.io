@@ -597,9 +597,7 @@ body, .short-desc-text, .model-info-text {
 }
 
 
-/* ======================================================= */
-/* BOTÃO MOSTRAR MAIS (ESTILO LIVE!) */
-/* ======================================================= */
+/* ✨ CORREÇÃO FINAL MOBILE (HEADER + BOTÃO) */
 
 @media (max-width: 768px) {
     
@@ -871,3 +869,4 @@ body, .short-desc-text, .model-info-text {
         display: none !important;
     }
 }
+
