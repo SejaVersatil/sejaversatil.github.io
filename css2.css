@@ -1739,7 +1739,7 @@ footer {
     width: 350px;
     height: 100%;
     background: rgba(0,0,0,0.95);
-    z-index: 2999;
+    z-index: 10001;
     transition: left 0.3s;
     overflow-y: auto;
     padding: 100px 0 2rem;
@@ -1757,7 +1757,7 @@ footer {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
-    z-index: 2998;
+    z-index: 10000;
 }
 
 .sidebar-overlay.active {
@@ -3966,4 +3966,5 @@ footer {
     /* Remove botão "Adicionar ao carrinho" no hover (poluição no mobile) */
     .add-to-cart-btn, .product-quick-actions { display: none !important; }
 }
+
 
