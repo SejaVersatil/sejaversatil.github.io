@@ -96,7 +96,7 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/kvruQ8k.jpeg',
+        image: 'https://i.imgur.com/0LVlc66.jpeg',
         title: 'COLEÇÃO 2025',
         subtitle: 'Conforto e estilo para seus treinos',
         cta: 'EXPLORAR AGORA'
@@ -108,7 +108,7 @@ const heroSlides = [
         cta: 'VER COLEÇÃO'
     },
     {
-        image: 'https://i.imgur.com/ZVqxl8B.jpeg',
+        image: 'https://i.imgur.com/kvruQ8k.jpeg',
         title: 'FITNESS & LIFESTYLE',
         subtitle: 'Do treino ao dia a dia com versatilidade',
         cta: 'DESCOBRIR'
@@ -4217,6 +4217,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
