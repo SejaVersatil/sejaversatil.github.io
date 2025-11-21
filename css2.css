@@ -1085,15 +1085,17 @@ nav {
     padding: 4rem 0;
 }
 
+/* Título da Seção (Century Gothic Clean) */
 .section-title {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     text-align: center;
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: 2.5rem; /* Mantém tamanho grande */
+    font-weight: 400 !important; /* Sem negrito */
     margin-bottom: 2rem;
     text-transform: uppercase;
-    letter-spacing: 4px;
+    letter-spacing: 2px; /* Espaçamento elegante */
     padding: 0 2rem;
+    color: #000 !important;
 }
 
 .active-category-badge {
@@ -1633,17 +1635,18 @@ nav {
 }
 
 .price-new {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--primary);
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 1.4rem !important; /* Tamanho ajustado */
+    font-weight: 400 !important;   /* Sem negrito */
+    color: #000000 !important;     /* Preto puro */
+    letter-spacing: -0.5px !important;
 }
 
 .price-old {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-light);
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+    color: #999999 !important;
     text-decoration: line-through;
 }
 
@@ -4403,6 +4406,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
