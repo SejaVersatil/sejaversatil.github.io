@@ -657,7 +657,7 @@ body, .short-desc-text, .model-info-text {
     width: 100vw !important;
     height: 75vh !important;
     min-height: 500px !important;        /* ← MUDOU de 400px para 500px */
-    max-height: 600px !important;        /* ← LINHA NOVA */
+    max-height: 800px !important;        /* ← LINHA NOVA */
     aspect-ratio: 3/4 !important;
     scroll-snap-align: start;
     background-size: cover !important;
@@ -892,4 +892,5 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
