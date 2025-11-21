@@ -3510,25 +3510,6 @@ footer {
     }
 }
 
-@media (max-width: 480px) {
-    nav {
-        padding-left: 70px;
-    }
-    
-    .logo {
-        font-size: 1.2rem;
-        letter-spacing: 1.5px;
-    }
-    
-    .nav-icons {
-        gap: 0.3rem;
-    }
-    
-    .nav-icon-label {
-        display: none; /* ⬅️ Oculta labels em telas muito pequenas */
-    }
-}
-
 /* Responsive Payment Modal */
 @media (max-width: 768px) {
     .payment-modal {
@@ -3564,49 +3545,6 @@ footer {
         font-size: 2.5rem;
     }
 }
-
-@media (max-width: 768px) {
-    .top-banner {
-        font-size: 0.65rem;
-        padding: 0.5rem;
-    }
-    
-    nav {
-        padding: 1rem 4%;
-    }
-    
-    .logo {
-        font-size: 1.4rem;
-    }
-    
-    
-    .hero-title {
-        font-size: 2rem;   
-    }
-    
-    .hero-subtitle {
-        font-size: 0.85rem;   
-        letter-spacing: 1.5px; 
-    }
-    
-    .hero-cta {
-        padding: 0.9rem 2rem;  
-        font-size: 0.75rem;   
-    }
-    
-    .hero-nav-arrow {
-        width: 40px;        
-        height: 40px;       
-        font-size: 1.8rem;     
-    }
-    
-    .hero-nav-prev {
-        left: 0.5rem;         
-    }
-    
-    .hero-nav-next {
-        right: 0.5rem;        
-    }
 
     @media (max-width: 480px) {
     
@@ -4376,5 +4314,6 @@ css@keyframes slideInRight {
         display: none !important; 
     }
 }
+
 
 
