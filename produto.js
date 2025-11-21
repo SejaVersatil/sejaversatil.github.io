@@ -240,7 +240,9 @@ function renderGallery(specificImages = null) {
   const btnShowMore = document.getElementById('btnShowMore');
 
   if (!galleryContainer) return;
-
+  // DEBUG: Verificar URLs das imagens
+console.log('🖼️ Total de imagens:', imagesToRender ? imagesToRender.length : 0);
+console.log('🖼️ URLs:', imagesToRender);
   // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
@@ -1374,4 +1376,5 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
