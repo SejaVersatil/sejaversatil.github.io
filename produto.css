@@ -769,23 +769,17 @@ body, .short-desc-text, .model-info-text {
     
    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
-        position: sticky !important; /* A Mágica */
-        top: 85px !important; /* Distância do topo (abaixo do header) */
+        position: sticky !important;
+        top: 85px !important;
         height: fit-content !important;
         
-        /* CORREÇÃO CRÍTICA: Removendo limites de altura e scroll interno */
+        /* CRÍTICO: Remova limites de altura */
         max-height: none !important; 
-        overflow-y: visible !important; 
+        overflow-y: visible !important;
         
-        /* Adiciona padding na direita para afastar da borda da tela */
-        padding: 0 20px 0 0 !important; 
+        padding: 0 20px 0 0 !important;
         background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
         z-index: 10 !important;
-        
-        display: flex !important;
-        flex-direction: column !important;
     }
     
     /* Esconde scrollbar da coluna de info se aparecer */
@@ -882,7 +876,3 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
-
-
-
-
