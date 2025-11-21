@@ -5,8 +5,8 @@
 }
 
 :root {
-    --font-main: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-display: 'Oswald', sans-serif;
+    --font-main: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     --primary: #000000;
     --secondary: #8b7ab8;
     --accent: #8b7ab8;
@@ -46,7 +46,7 @@ body {
 
 /* Tipografia */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -115,7 +115,7 @@ h4 { font-size: 1.25rem; }
 }
 
 .bf-label {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -161,7 +161,7 @@ h4 { font-size: 1.25rem; }
 }
 
 .bf-time-value {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.8rem;
     font-weight: 700;
     color: #FFD700;
@@ -238,7 +238,7 @@ nav {
 }
 
 .logo {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 2rem; 
     font-weight: 700;
     color: var(--primary);
@@ -259,7 +259,7 @@ nav {
 }
 
 .nav-menu a {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     text-decoration: none;
     color: var(--text);
     font-size: 0.85rem;
@@ -317,7 +317,7 @@ nav {
 }
 
 .nav-icon-label {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 0.7rem;
     text-transform: uppercase;
     font-weight: 600;
@@ -482,7 +482,7 @@ nav {
 }
 
 .hero-title {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
@@ -492,7 +492,7 @@ nav {
 }
 
 .hero-subtitle {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.5rem;
     font-weight: 400;
     margin-bottom: 3rem;
@@ -502,7 +502,7 @@ nav {
 }
 
 .hero-cta {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     display: inline-block;
     background: white;
     color: var(--primary);
@@ -953,7 +953,7 @@ nav {
 }
 
 .promo-category {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     display: inline-block;
     background: #FF6B35; /* Laranja */
     color: #FFFFFF;
@@ -1086,7 +1086,7 @@ nav {
 }
 
 .section-title {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     text-align: center;
     font-size: 3rem;
     font-weight: 700;
@@ -1110,7 +1110,7 @@ nav {
     border-radius: 50px !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
     
-    font-family: 'Montserrat', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 0.9rem;
     color: #666;
     text-transform: uppercase;
@@ -1616,7 +1616,7 @@ nav {
 }
 
 .product-info h4 {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -1633,14 +1633,14 @@ nav {
 }
 
 .price-new {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--primary);
 }
 
 .price-old {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700;
     font-size: 1rem;
     color: var(--text-light);
@@ -3210,7 +3210,7 @@ footer {
 }
 
 .product-title {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 2rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -3242,7 +3242,7 @@ footer {
 }
 
 .price-current {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--primary);
@@ -3269,7 +3269,7 @@ footer {
 }
 
 .selector-label {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     display: block;
     font-size: 0.85rem;
     font-weight: 700;
@@ -3334,7 +3334,7 @@ footer {
     padding: 1rem;
     border: 2px solid #e5e5e5;
     background: white;
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700;
     font-size: 1rem;
     letter-spacing: 1px;
@@ -3417,7 +3417,7 @@ footer {
     background: var(--primary);
     color: white;
     border: none;
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -3465,7 +3465,7 @@ footer {
     flex: 1;
     padding: 1.3rem;
     border: none;
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -3529,7 +3529,7 @@ footer {
 }
 
 .product-description-section h3 {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -3549,7 +3549,7 @@ footer {
 }
 
 .related-products-section h3 {
-    font-family: 'Oswald', sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 1.8rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -4271,7 +4271,7 @@ css@keyframes slideInRight {
 }
 
 .search-dropdown-title {
-    font-family: 'Montserrat', sans-serif; /* Fonte do corpo */
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif; /* Fonte do corpo */
     font-size: 0.85rem;
     font-weight: 600;
     color: #333;
@@ -4280,7 +4280,7 @@ css@keyframes slideInRight {
 }
 
 .search-dropdown-price {
-    font-family: 'Oswald', sans-serif; /* Fonte de destaque */
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif; /* Fonte de destaque */
     font-size: 0.9rem;
     font-weight: 700;
     color: #000;
@@ -4403,4 +4403,5 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
