@@ -143,7 +143,7 @@ function initHeroCarousel() {
 function startHeroCarousel() {
     heroCarouselInterval = setInterval(() => {
         nextHeroSlide();
-    }, 5000);
+    }, 8000);
 }
 
 function stopHeroCarousel() {
@@ -4217,6 +4217,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
