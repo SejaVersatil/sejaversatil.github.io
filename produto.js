@@ -287,31 +287,31 @@ function renderGallery(specificImages = null) {
           let isExpanded = false;
 
           newBtn.onclick = function() {
-              const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
+              const allPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
               
               if (!isExpanded) {
                   // AÇÃO: EXPANDIR
-                  hiddenPhotos.forEach((photo, index) => {
-                      if (index >= 2) {
-                          photo.classList.remove('gallery-hidden');
-                          // Animação suave
-                          photo.style.opacity = '0';
-                          requestAnimationFrame(() => {
-                              photo.style.transition = 'opacity 0.5s';
-                              photo.style.opacity = '1';
-                          });
-                      }
+                  allPhotos.forEach((photo) => {
+                      photo.classList.remove('gallery-hidden');
+                      // Animação suave
+                      photo.style.opacity = '0';
+                      requestAnimationFrame(() => {
+                          photo.style.transition = 'opacity 0.5s';
+                          photo.style.opacity = '1';
+                      });
                   });
+                  
                   // Muda texto para "MOSTRAR MENOS" e inverte a seta
                   this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                   isExpanded = true;
               } else {
                   // AÇÃO: RECOLHER
-                  hiddenPhotos.forEach((photo, index) => {
+                  allPhotos.forEach((photo, index) => {
                       if (index >= 2) {
                           photo.classList.add('gallery-hidden');
                       }
                   });
+                  
                   // Rola suavemente de volta para o topo da galeria
                   galleryContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   
@@ -1371,6 +1371,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
