@@ -872,5 +872,7 @@ body.product-page .hamburger-btn {
     }
 
     /* Esconder botão whatsapp secundário no footer para limpar a área */
-    .btn-whatsapp-main { display: none !important; }
+  .btn-whatsapp-main { 
+        display: none !important;
+    }
 }
