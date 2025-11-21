@@ -772,80 +772,82 @@ body.product-page .hamburger-btn {
     }
 }
 
-/* ================================================================= */
-/* 📱 PDP MOBILE REFINADA (Estilo Live! - Scroll Snap & Sticky Btn)  */
-/* ================================================================= */
-
+/* ============================================================ */
+/* 🚨 CORREÇÃO VISUAL PRODUTO (Estilo App Live! - Mobile)       */
+/* ============================================================ */
 @media (max-width: 768px) {
     
-    /* Reset do Grid Desktop */
-    .product-page-container .product-main-grid {
+    /* 1. ESTRUTURA GERAL (Remove bugs de largura) */
+    .product-page-container, 
+    .product-main-grid {
         display: block !important;
         padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
     }
 
-    /* 1. GALERIA "SWIPE" (Sem setas, arrasto natural) */
+    /* 2. GALERIA SWIPE (Deslizar fotos para o lado) */
     .product-gallery-section {
-        width: 100% !important;
-        height: auto !important;
+        width: 100vw !important;
+        padding: 0 !important;
         background: #f4f4f4;
+        height: auto !important;
     }
 
     .gallery-container {
-        display: flex !important;
+        display: flex !important; /* Força linha horizontal */
+        flex-direction: row !important;
         overflow-x: auto !important;
-        scroll-snap-type: x mandatory; /* O Pulo do gato: trava a rolagem na foto */
+        scroll-snap-type: x mandatory; /* Efeito de travar na foto */
         -webkit-overflow-scrolling: touch;
         gap: 0 !important;
-        scrollbar-width: none; /* Firefox */
+        width: 100% !important;
     }
-    .gallery-container::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    /* Esconde barra de rolagem feia */
+    .gallery-container::-webkit-scrollbar { display: none; }
 
     .gallery-photo-full {
-        min-width: 100vw !important;
+        min-width: 100vw !important; /* Foto ocupa largura total */
         width: 100vw !important;
-        height: auto !important;
-        aspect-ratio: 3/4 !important;
+        aspect-ratio: 3/4 !important; /* Formato vertical */
         scroll-snap-align: start;
         object-fit: cover;
         margin: 0 !important;
-        border-radius: 0 !important;
     }
     
-    /* Esconder miniaturas no mobile se existirem */
+    /* Esconde miniaturas no mobile (não cabe) */
     .product-thumbnails, .thumbnail-list { display: none !important; }
 
-    /* 2. INFO CARD (Efeito de folha sobrepondo a foto) */
+    /* 3. CARD DE INFORMAÇÃO (Branco sobrepondo a foto) */
     .product-info-section {
         position: relative !important;
-        top: -20px !important; /* Sobe por cima da foto */
+        top: -20px !important; /* Sobe levemente sobre a foto */
         margin-bottom: -20px !important;
         background: #fff !important;
-        border-radius: 24px 24px 0 0 !important;
-        padding: 25px 20px 100px 20px !important; /* Padding bottom alto para o botão fixo */
+        border-radius: 24px 24px 0 0 !important; /* Cantos arredondados no topo */
+        padding: 25px 20px 120px 20px !important; /* Padding extra no fim p/ botão fixo */
         z-index: 10 !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.05) !important;
         width: 100% !important;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.05) !important;
     }
 
-    .product-title {
-        font-size: 1.3rem !important;
+    /* 4. CORREÇÃO DE FONTES (O tamanho 46px estava quebrando tudo) */
+    .product-title, #detailsProductName {
+        font-size: 1.5rem !important; /* Reduzido de 46px para legível */
+        line-height: 1.2 !important;
         margin-bottom: 5px !important;
+        font-weight: 600 !important;
     }
 
-    .product-header-wrapper {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-
-    /* Preços grandes e visíveis */
-    .price-current {
+    .price-current, #detailsPriceNew {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #000 !important;
     }
 
-    /* 3. BOTÃO DE COMPRA FIXO (Sticky Footer) */
+    /* 5. BOTÃO COMPRAR FIXO (Sticky Footer) */
     .product-action-buttons {
         position: fixed !important;
         bottom: 0 !important;
@@ -853,36 +855,20 @@ body.product-page .hamburger-btn {
         width: 100% !important;
         background: #fff !important;
         padding: 15px 20px !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.15) !important; /* Sombra flutuante */
         z-index: 9999 !important;
         margin: 0 !important;
-        /* Garante que fique acima do footer do navegador no iPhone */
-        padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
+        display: flex !important;
+        /* Proteção para iPhone X e novos */
+        padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important; 
     }
 
-    /* Botão Ocupa Largura Total */
     .btn-primary, .btn-add-cart-large {
         width: 100% !important;
-        height: 52px !important;
+        height: 50px !important;
         font-size: 1rem !important;
         border-radius: 8px !important;
         margin: 0 !important;
-    }
-
-    /* Esconder footer padrão na página de produto para não atrapalhar o sticky */
-    .site-footer {
-        padding-bottom: 100px !important;
-    }
-    
-    /* Seletores de Tamanho/Cor maiores para toque */
-    .size-option {
-        min-width: 50px !important;
-        height: 50px !important;
-    }
-    .color-option {
-        width: 35px !important;
-        height: 35px !important;
+        text-transform: uppercase;
     }
 }
-
-
