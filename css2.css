@@ -229,183 +229,105 @@ header {
 
 /* --- HEADER (ESTILO LIVE! - BALANCEADO) --- */
 
+/* ======================================================= */
+/* HEADER ROBUSTO (LOGO ESQ | BUSCA CENTRO | ÍCONES DIR)   */
+/* Aumento de +35% em tudo                                 */
+/* ======================================================= */
+
 nav {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Separa logo (esq) e grupo da direita */
-    padding: 0.8rem 2rem; /* Altura mais compacta */
+    justify-content: space-between; /* Distribui: Esq - Meio - Dir */
+    padding: 1rem 3rem !important;  /* Mais altura e respiro lateral */
     max-width: 100%;
     margin: 0;
-    height: 70px; /* Altura fixa */
-    gap: 0;
+    height: 90px; /* Altura aumentada para caber os itens maiores */
+    gap: 2rem;
 }
 
-/* Logo (Esquerda) - Reduzida para proporção */
-.logo {
+/* 1. LOGO (Aumentada) */
+.logo, .nav-left .logo {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 1.6rem; /* Reduzido de 2rem para 1.6rem */
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: 2px;
+    font-size: 2.2rem !important; /* De 1.6rem para 2.2rem (+35%) */
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+    color: #000 !important;
+    white-space: nowrap;
     flex-shrink: 0;
-    cursor: pointer;
-    margin: 0;
-    padding: 0;
 }
 
-.logo:hover { opacity: 0.8; }
-
-/* Container da Direita (Agrupa Busca + Ícones) */
-/* Lembre-se de criar essa div no HTML! */
-.nav-right-group {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem; 
-}
-
-/* Barra de Pesquisa (Direita, Compacta e Transparente) */
+/* 2. BARRA DE BUSCA (Centro, Grande e Larga) */
 .search-bar {
     display: flex;
     align-items: center;
-    background: transparent; /* Fundo transparente */
-    border-bottom: 1px solid #ddd; /* Apenas linha embaixo */
-    border-radius: 0;
-    padding: 0.4rem 0;
-    width: 200px; /* Largura fixa discreta */
-    transition: all 0.3s;
-    margin: 0; /* Remove margens antigas */
-}
-
-.search-bar:focus-within {
-    border-bottom-color: #000;
-    width: 250px; /* Efeito de crescer ao clicar */
-}
-
-.search-bar input {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
-    font-size: 0.85rem;
-    text-align: right; /* Digita da direita para esquerda (Estilo Live) */
-    padding-right: 10px;
-    border: none;
-    background: transparent;
-    outline: none;
-    flex: 1;
-}
-
-/* Ícone de Lupa */
-.search-btn {
-    order: 2; /* Joga a lupa para a direita do input */
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-/* Ícones (Login, Fav, Cart) */
-.nav-icons {
-    display: flex;
-    gap: 1.2rem;
-    align-items: center;
-}
-
-.nav-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 1.5px;
-    color: var(--primary);
-}
-
-/* Esconde menu de texto antigo se houver */
-.nav-menu { display: none; }
-
-.nav-icon {
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    display: flex;
-    align-items: center; /* ← Centraliza verticalmente */
-    justify-content: center; /* ← Centraliza horizontalmente */
-    padding: 0.5rem;
-}
-
-.nav-icon svg {
-    color: var(--primary);
-    transition: all 0.3s;
-    width: 20px; /* Tamanho fixo */
-    height: 20px; /* Tamanho fixo */
-}
-
-.nav-icon:hover svg {
-    color: var(--secondary);
-    transform: translateY(-2px); /* ← ADICIONE (animação no hover) */
-}
-
-.nav-icon-label {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: var(--primary);
-    white-space: nowrap; /* Evitar quebra de linha */
-}
-
-.nav-icon:hover {
-    transform: scale(1.05); /* ← ADICIONE (zoom suave no hover) */
-}
-
-.nav-icon:hover .nav-icon-label {
-    color: var(--secondary); /* ← ADICIONE (cor no hover) */
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-/* Barra de Pesquisa Central */
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    background: #f5f5f5;
-    border-radius: 50px;
-    padding: 0.6rem 1.2rem;
-    flex: 1;
-    max-width: 500px;
-    margin: 0 2rem;
+    flex: 1; /* Tenta ocupar o espaço central */
+    max-width: 700px; /* Bem larga */
+    background: #f5f5f5; /* Fundo cinza claro para destaque */
+    border-radius: 50px; /* Bem arredondada */
+    padding: 0.8rem 1.5rem; /* Mais gordinha */
+    margin: 0 auto; /* Garante centralização */
+    border: 1px solid transparent;
     transition: all 0.3s;
 }
 
 .search-bar:focus-within {
     background: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    border-color: #000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
+/* Favicon dentro da busca */
 .search-logo {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    flex-shrink: 0;
+    width: 28px !important; /* Aumentado */
+    height: 28px !important;
+    margin-right: 15px !important;
+    opacity: 0.6;
 }
 
 .search-bar input {
-    flex: 1;
-    border: none;
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 1.1rem !important; /* Texto maior */
+    width: 100%;
     background: transparent;
+    border: none;
     outline: none;
-    font-size: 0.9rem;
-    color: var(--text);
-    padding: 0;
+    text-align: left; /* Volta para esquerda padrão */
 }
 
-.search-bar input::placeholder {
-    color: #999;
-    font-size: 0.85rem;
+/* Lupa */
+.search-btn svg {
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 2px;
+}
+
+/* 3. ÍCONES (Direita e Maiores) */
+.nav-icons {
+    display: flex;
+    gap: 1.8rem !important; /* Mais espaço entre eles */
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-icon svg {
+    width: 28px !important; /* De 20px para 28px (+35%) */
+    height: 28px !important;
+    stroke-width: 1.8px; /* Traço mais grosso para acompanhar o tamanho */
+    color: #000;
+    transition: transform 0.2s;
+}
+
+.nav-icon:hover {
+    transform: scale(1.15);
+}
+
+/* Contador do carrinho ajustado */
+.cart-count {
+    top: -5px !important;
+    right: -8px !important;
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 0.75rem !important;
 }
 
 .search-btn {
@@ -4404,6 +4326,7 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
 
 
 
