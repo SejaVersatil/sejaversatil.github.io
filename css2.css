@@ -1121,11 +1121,6 @@ nav {
 
 /* Tablets Verticais e Mobile (Geral) */
 @media (max-width: 768px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 Colunas (Estilo App) */
-        gap: 4px !important; /* Gap reduzido para fotos maiores */
-        padding: 0 4px !important;
-    }
     
     /* Removemos alturas fixas para deixar a foto comandar */
     .product-card {
@@ -4298,9 +4293,8 @@ css@keyframes slideInRight {
 
     /* 3. VITRINE DE PRODUTOS (Grid Apertado estilo Instagram) */
     .products-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 4px !important; /* Gap mínimo estilo Live! */
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 Colunas (Estilo App) */
+        gap: 4px !important; /* Gap reduzido para fotos maiores */
         padding: 0 4px !important;
     }
 
@@ -4345,6 +4339,7 @@ css@keyframes slideInRight {
         display: none !important; 
     }
 }
+
 
 
 
