@@ -3624,11 +3624,6 @@ footer {
     }
 } 
     
-    .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-}
-    
     .filters-bar {
         overflow-x: auto;
         justify-content: flex-start;
@@ -4381,4 +4376,5 @@ css@keyframes slideInRight {
         display: none !important; 
     }
 }
+
 
