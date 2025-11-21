@@ -313,7 +313,10 @@ function renderGallery(specificImages = null) {
                       }
                   });
                   // Rola suavemente de volta para o topo da galeria
-                  galleryContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  window.scrollTo({ 
+    top: galleryContainer.offsetTop - 100, 
+    behavior: 'smooth' 
+});
                   
                   // Muda texto para "MOSTRAR MAIS" e volta a seta ao normal
                   this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -1371,3 +1374,4 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
