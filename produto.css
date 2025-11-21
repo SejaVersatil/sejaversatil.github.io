@@ -655,13 +655,14 @@ body, .short-desc-text, .model-info-text {
    .gallery-photo-full {
     min-width: 100vw !important;
     width: 100vw !important;
-    height: 75vh !important; /* Altura explícita */
-    min-height: 400px !important; /* Altura mínima */
+    height: 75vh !important;
+    min-height: 500px !important;        /* ← MUDOU de 400px para 500px */
+    max-height: 600px !important;        /* ← LINHA NOVA */
     aspect-ratio: 3/4 !important;
     scroll-snap-align: start;
-    background-size: cover !important; /* ✅ CRÍTICO */
-    background-position: center !important; /* ✅ CRÍTICO */
-    background-repeat: no-repeat !important; /* ✅ CRÍTICO */
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     margin: 0 !important;
 }
 
@@ -891,3 +892,4 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
