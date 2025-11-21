@@ -1727,161 +1727,46 @@ function renderProductColorsManager() {
 }
 
 function addColorToProduct() {
-    // Verificar se há imagens adicionadas
+    // 1. Validação: Precisa ter fotos antes
     if (!tempProductImages || tempProductImages.length === 0) {
-        alert('⚠️ Adicione pelo menos 1 imagem antes de criar uma cor!\n\nFluxo correto:\n1. Adicione as imagens da cor\n2. Clique em "Adicionar Nova Cor"\n3. Preencha os dados');
+        alert('⚠️ Adicione as imagens da cor primeiro!');
         return;
     }
-    
-    // 🆕 DETECTAR COR AUTOMATICAMENTE DA PRIMEIRA IMAGEM
-    const firstImage = tempProductImages[0];
-    
-    if (firstImage.startsWith('http') || firstImage.startsWith('data:image')) {
-        // Imagem real - detectar cor
-        detectColorFromImage(firstImage, (detectedHex) => {
-            promptColorDetails(detectedHex);
-        });
-    } else {
-        // Gradiente - não detectar
-        promptColorDetails(null);
-    }
-}
 
-// 🆕 FUNÇÃO DE DETECÇÃO DE COR
-function detectColorFromImage(imageUrl, callback) {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    
-    img.onload = function() {
-        // Criar canvas temporário
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Reduzir imagem para análise rápida
-        canvas.width = 100;
-        canvas.height = 100;
-        ctx.drawImage(img, 0, 0, 100, 100);
-        
-        // Extrair dados de pixels
-        const imageData = ctx.getImageData(0, 0, 100, 100);
-        const pixels = imageData.data;
-        
-        // Calcular cor média (ignorando brancos/pretos extremos)
-        let r = 0, g = 0, b = 0, count = 0;
-        
-        for (let i = 0; i < pixels.length; i += 4) {
-            const red = pixels[i];
-            const green = pixels[i + 1];
-            const blue = pixels[i + 2];
-            const alpha = pixels[i + 3];
-            
-            // Ignorar pixels muito claros ou muito escuros
-            const brightness = (red + green + blue) / 3;
-            if (alpha > 200 && brightness > 30 && brightness < 225) {
-                r += red;
-                g += green;
-                b += blue;
-                count++;
-            }
-        }
-        
-        if (count > 0) {
-            r = Math.round(r / count);
-            g = Math.round(g / count);
-            b = Math.round(b / count);
-            
-            // Converter RGB para HEX
-            const hex = '#' + [r, g, b].map(x => {
-                const hexValue = x.toString(16);
-                return hexValue.length === 1 ? '0' + hexValue : hexValue;
-            }).join('').toUpperCase();
-            
-            callback(hex);
-        } else {
-            callback(null);
-        }
-    };
-    
-    img.onerror = function() {
-        console.warn('Erro ao carregar imagem para detecção de cor');
-        callback(null);
-    };
-    
-    img.src = imageUrl;
-}
-
-// 🆕 FUNÇÃO PARA SOLICITAR DETALHES DA COR
-function promptColorDetails(detectedHex) {
-    const colorName = prompt('🎨 Nome da cor:\n\nExemplos: Rosa, Preto, Azul Marinho, Verde Militar, Branco');
+    // 2. Pergunta o Nome
+    const colorName = prompt('🎨 Digite o Nome da Cor (Ex: Preto, Rosa Choque):');
     if (!colorName || colorName.trim() === '') return;
+
+    // 3. Pergunta o Hex (Aceita vírgula para bicolor)
+    const colorHex = prompt(
+        '🎨 Digite o Código Hex (Ex: #000000):\n\n' +
+        '💡 Dica: Para duas cores, use vírgula (Ex: #000, #FFF)'
+    );
     
-    let colorHex;
-    
-    if (detectedHex) {
-        // Mostrar cor detectada
-        const useDetected = confirm(
-            `🤖 COR DETECTADA AUTOMATICAMENTE!\n\n` +
-            `Cor encontrada: ${detectedHex}\n\n` +
-            `Clique OK para usar esta cor\n` +
-            `Clique Cancelar para digitar manualmente`
-        );
-        
-        if (useDetected) {
-            colorHex = detectedHex;
-        } else {
-            colorHex = prompt('🎨 Digite o código hexadecimal manualmente:\n\n💡 Formato: #FFFFFF');
-        }
-    } else {
-        colorHex = prompt('🎨 Código hexadecimal da cor:\n\nExemplos:\n#FFB6C1 (rosa)\n#000000 (preto)\n#FFFFFF (branco)\n#4169E1 (azul)\n\n💡 Use colorpicker.me se precisar de ajuda');
-    }
-    
-    if (!colorHex || !colorHex.startsWith('#')) {
-        alert('❌ Código inválido!\n\nUse o formato #FFFFFF (6 caracteres após o #)');
+    // Validação básica do Hex
+    if (!colorHex || !colorHex.includes('#')) {
+        alert('❌ Código inválido! O código deve ter o símbolo #');
         return;
     }
-    
-    // Validar formato hex
-    const hexPattern = /^#[0-9A-Fa-f]{6}$/;
-    if (!hexPattern.test(colorHex)) {
-        alert('❌ Código hexadecimal inválido!\n\nUse exatamente 6 caracteres (0-9, A-F) após o #\n\nExemplo correto: #FFB6C1');
-        return;
-    }
-    
-    // Verificar se cor já existe
-    if (productColors.some(c => c.name.toLowerCase() === colorName.trim().toLowerCase())) {
-        alert('⚠️ Já existe uma cor com este nome neste produto!');
-        return;
-    }
-    
-    // Adicionar cor com as imagens atuais
+
+    // 4. Salva a Cor
     productColors.push({
         name: colorName.trim(),
-        hex: colorHex.trim().toUpperCase(),
-        images: [...tempProductImages]
+        hex: colorHex.trim().toUpperCase(), // Salva exatamente como digitou
+        images: [...tempProductImages]      // Copia as imagens atuais
     });
-    
+
+    // 5. Atualiza a tela
     renderProductColorsManager();
-    
-    // Mostrar prévia da cor
-    showToast(`✅ Cor "${colorName}" (${colorHex}) adicionada com ${tempProductImages.length} imagens!`, 'success');
-    
-    // Sugestão para próxima cor
-    setTimeout(() => {
-        const hasMore = confirm(
-            `✅ Cor "${colorName}" adicionada!\n\n` +
-            `Prévia: [  ] ${colorHex}\n\n` +
-            `❓ Adicionar outra cor?\n\n` +
-            `OK = Limpar imagens e adicionar nova cor\n` +
-            `Cancelar = Finalizar (produto com ${productColors.length} cor${productColors.length > 1 ? 'es' : ''})`
-        );
-        
-        if (hasMore) {
-            tempProductImages = [];
-            renderProductImages();
-            showToast('📸 Imagens limpas! Adicione fotos da próxima cor.', 'info');
-        }
-    }, 500);
+    showToast(`✅ Cor "${colorName}" adicionada!`, 'success');
+
+    // 6. Pergunta se quer limpar para a próxima
+    if (confirm('Deseja limpar as imagens para adicionar a próxima cor?')) {
+        tempProductImages = [];
+        renderProductImages();
+    }
 }
+    
 
 function removeProductColor(index) {
     const color = productColors[index];
@@ -4332,6 +4217,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
