@@ -120,17 +120,14 @@ function initHeroCarousel() {
     if (!heroContainer) return;
 
     heroContainer.innerHTML = heroSlides.map((slide, index) => `
-        <div class="hero-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${slide.image}')">
+        <div class="hero-slide ${index === 0 ? 'active' : ''}" 
+             style="background-image: url('${slide.image}'); cursor: pointer;"
+             onclick="scrollToProducts()">
             <div class="hero-overlay"></div>
-            <div class="hero-content">
-                <h1 class="hero-title">${slide.title}</h1>
-                <p class="hero-subtitle">${slide.subtitle}</p>
-                <button class="hero-cta" onclick="scrollToProducts()">${slide.cta}</button>
             </div>
-        </div>
     `).join('');
 
-    const dotsContainer = document.querySelector('.carousel-dots');
+    const dotsContainer = document.querySelector('.hero-carousel-dots'); // Corrigido seletor se necessário
     if (dotsContainer) {
         dotsContainer.innerHTML = heroSlides.map((_, index) => `
             <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
@@ -4217,6 +4214,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
