@@ -463,5 +463,431 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 
 
 /* ======================================================= */
-/* AJUSTES FINAIS: COMPACTAÇÃO E ES
-(Content truncated due to size limit. Use page ranges or line ranges to read remaining content)
+/* AJUSTES FINAIS: COMPACTAÇÃO E ESPESSURA DE FONTE (LIVE!) */
+/* ======================================================= */
+
+/* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
+.product-info-section {
+    gap: 1.2rem !important;
+}
+
+/* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
+.product-selector-group {
+    padding-bottom: 10px !important; /* Mais compacto */
+    margin-bottom: 10px !important;
+    border-bottom: none !important; /* <--- REMOVE BORDAS VISÍVEIS NO DESKTOP */
+}
+
+/* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
+.product-title {
+    margin-bottom: 0.2rem !important; 
+}
+
+.product-pricing {
+    margin-bottom: 0.5rem !important;
+    gap: 0.1rem !important;
+}
+
+.short-description-container {
+    margin-bottom: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+}
+
+/* 3. ENGROSSAR FONTES (Fim das letras finas) */
+
+/* Textos gerais (Descrição, infos) */
+body, .short-desc-text, .model-info-text {
+    font-weight: 500 !important;
+    color: #333 !important;     
+}
+
+/* Títulos dos seletores (COR, TAMANHO...) */
+.selector-label {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important; /* Sem negrito */
+    color: #000 !important;
+    margin-bottom: 0.6rem !important;
+    text-transform: none !important; 
+}
+
+/* Links pequenos (Tabela de medidas, Ver descrição) */
+.view-full-desc, 
+.size-guide-link, 
+.action-link, 
+.badge-text a {
+    font-weight: 600 !important; 
+    text-decoration: underline;
+}
+
+/* Textos de "Últimas unidades" */
+.stock-msg {
+    font-weight: 700 !important; 
+}
+
+/* Botões de Tamanho */
+.size-option {
+    font-weight: 600 !important; 
+}
+
+/* Preço Base (Celular e Padrão) */
+.price-current {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 1.5rem !important; /* ✅ ADICIONAR PONTO E VÍRGULA */
+    color: #000000 !important;
+    letter-spacing: -1px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* Texto de Parcelamento */
+.price-installments {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 15px !important;
+    color: #555 !important;
+    font-weight: 400 !important; /* Sem negrito */
+    margin-top: 5px !important;
+}
+
+/* Ícones de confiança (Rodapé) */
+.badge-text strong {
+    font-weight: 700 !important;
+}
+
+/* ================================================= */
+/* PREÇO NO DESKTOP (Telas Grandes Apenas)           */
+/* ================================================= */
+
+@media (min-width: 769px) {
+    .price-current, 
+    #detailsPriceNew {
+        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+        font-weight: 400 !important;
+        font-size: 46px !important; /* GIGANTE só no PC */
+        color: #000000 !important;
+        letter-spacing: -1px !important;
+        line-height: 1.1 !important;
+    }
+}
+
+/* ============================================================ */
+/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
+/* Inclui: Header Grid, Swipe Gallery, Sticky Footer            */
+/* ============================================================ */
+
+@media (max-width: 768px) {
+    
+    /* --- 1. HEADER ALINHADO (Grid 3 Colunas) --- */
+    .site-header .nav {
+        display: grid !important;
+        grid-template-columns: 50px 1fr 50px !important; /* Espaço igual nas laterais */
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 10px !important;
+        height: 60px !important;
+        gap: 0 !important;
+    }
+
+    .nav-left { display: contents !important; } /* Remove container do fluxo */
+
+    /* Logo Centralizada */
+    .nav-left .logo {
+        grid-column: 2 !important; /* Meio */
+        justify-self: center !important;
+        font-size: 1.4rem !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        width: auto !important;
+    }
+
+    /* Hambúrguer Esquerda */
+    .hamburger-btn {
+        grid-column: 1 !important;
+        display: flex !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* Ícones Direita */
+    .nav-icons {
+        grid-column: 3 !important;
+        justify-self: end !important;
+        gap: 10px !important;
+    }
+
+    .nav-center, .search-bar { display: none !important; } /* Esconde busca */
+
+
+    /* --- 2. LAYOUT GERAL & GALERIA SWIPE --- */
+    .product-page-container .product-main-grid {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .product-gallery-section {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        padding: 0 !important;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .gallery-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    height: 75vh !important; /* ✅ ADICIONAR */
+    min-height: 400px !important; /* ✅ ADICIONAR */
+    gap: 0 !important;
+}
+
+    .gallery-container::-webkit-scrollbar { display: none; }
+
+   .gallery-photo-full {
+    min-width: 100vw !important;
+    width: 100vw !important;
+    height: 75vh !important; /* Altura explícita */
+    min-height: 400px !important; /* Altura mínima */
+    aspect-ratio: 3/4 !important;
+    scroll-snap-align: start;
+    background-size: cover !important; /* ✅ CRÍTICO */
+    background-position: center !important; /* ✅ CRÍTICO */
+    background-repeat: no-repeat !important; /* ✅ CRÍTICO */
+    margin: 0 !important;
+}
+
+    #btnShowMore { display: none !important; }
+    .product-thumbnails { display: none !important; }
+}
+
+
+    /* --- 3. CARD DE INFORMAÇÕES --- */
+    .product-info-section {
+        position: relative !important;
+        top: -15px !important;
+        background: #fff !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 25px 20px 100px 20px !important; /* Padding bottom grande pro botão */
+        z-index: 10 !important;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+    }
+
+    .product-title, #detailsProductName {
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 5px !important;
+    }
+
+    .price-current { font-size: 1.6rem !important; font-weight: 700 !important; }
+
+
+    /* --- 4. STICKY FOOTER (BOTÃO COMPRAR) --- */
+    .product-action-buttons {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+        padding: 10px 15px !important;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        border-top: 1px solid #f5f5f5 !important;
+    }
+
+    .btn-primary {
+        width: 100% !important;
+        height: 50px !important;
+        font-family: 'Century Gothic', sans-serif !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px !important;
+        border-radius: 4px !important;
+        background: #000 !important;
+        color: #fff !important;
+        border: none !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .btn-whatsapp-main { display: none !important; }
+
+} 
+
+/* ============================================================ */
+/* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
+/* ============================================================ */
+
+@media (min-width: 769px) {
+    
+    /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
+    .product-page-container .product-main-grid {
+        display: grid !important;
+        /* 68% para fotos (bem largo), 28% para info, 4% gap */
+        grid-template-columns: 68% 28% !important; 
+        gap: 4% !important;
+        
+        /* Ocupar largura total e colar na esquerda */
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 0px 40px 0 !important; /* Zero padding na esquerda */
+        margin: 0 auto !important;
+        
+        /* ESSENCIAL PARA O STICKY FUNCIONAR: */
+        align-items: start !important; 
+        position: relative !important;
+    }
+
+    /* 2. Galeria Mosaico (2 Fotos por linha) */
+    .product-gallery-section {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .gallery-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* 2 Colunas */
+        gap: 5px !important; /* Espaço fino entre fotos */
+        width: 100% !important;
+    }
+
+    .gallery-photo-full {
+    width: 100% !important;
+    aspect-ratio: 3/4 !important;
+    min-height: 400px !important; /* ✅ ADICIONAR */
+    object-fit: cover !important;
+    display: block !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+    
+   /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
+    .product-info-section {
+        position: sticky !important;
+        top: 85px !important;
+        height: fit-content !important;
+        
+        /* CRÍTICO: Remova limites de altura */
+        max-height: none !important; 
+        overflow-y: visible !important;
+        
+        padding: 0 20px 0 0 !important;
+        background: transparent !important;
+        z-index: 10 !important;
+    }
+    
+    /* Esconde scrollbar da coluna de info se aparecer */
+    .product-info-section::-webkit-scrollbar { display: none; }
+
+    /* 4. Ajuste do Botão Favoritos (Discreto e Alinhado) */
+    .btn-favorite {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 4px !important;
+        padding: 6px 12px !important;
+        
+        font-size: 0.75rem !important;
+        color: #666 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        width: fit-content !important;
+        margin-bottom: 15px !important;
+        box-shadow: none !important;
+    }
+    
+    .btn-favorite:hover {
+        border-color: #000 !important;
+        color: #000 !important;
+        transform: none !important;
+    }
+    
+    .btn-favorite svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    /* Títulos Grandes no Desktop */
+    .product-title, #detailsProductName {
+        font-size: 2.2rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    /* Resetar botão de compra para estilo desktop */
+    .product-action-buttons {
+        position: static !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        border: none !important;
+        margin-top: 20px !important;
+    }
+
+    .btn-primary {
+        height: 55px !important;
+        border-radius: 0 !important;
+        background: #000 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Esconder elementos mobile */
+    .btn-whatsapp-main { display: flex !important; }
+    /* --- RESTAURAÇÃO DA GALERIA SHOW MORE (Desktop) --- */
+
+    /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
+    .gallery-photo-full.gallery-hidden {
+    display: none !important;
+} /* <--- CHAVE FECHADA CORRETAMENTE */
+
+/* 2. SHOW: Força as 2 primeiras imagens a aparecerem */
+.gallery-photo-full:nth-child(1),
+.gallery-photo-full:nth-child(2) {
+    display: block !important;
+}
+
+    /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
+    .btn-show-more {
+        display: flex !important; 
+        justify-content: center;
+        width: 100%;
+        
+        /* Estilo elegante para o botão */
+        margin-top: 15px !important;
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        color: #000 !important;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* 3. FIX: Garante que a galeria não fique com margem excessiva */
+    .product-gallery-section {
+        /* Garante que o conteúdo cole na esquerda */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
