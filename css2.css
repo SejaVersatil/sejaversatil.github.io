@@ -4351,6 +4351,57 @@ css@keyframes slideInRight {
     .nav-menu { display: none !important; }
 }
 
+/* Botão de Definir Capa (Admin) */
+.image-item-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Escondido até passar o mouse */
+    transition: opacity 0.2s;
+}
 
+.image-item:hover .image-item-actions,
+.image-item.is-cover .image-item-actions {
+    opacity: 1; /* Aparece ao passar mouse ou se for capa */
+}
 
+.btn-set-cover {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
 
+.btn-set-cover:hover {
+    background: white;
+    color: black;
+}
+
+/* Estilo da Capa Atual */
+.image-item.is-cover {
+    border: 3px solid #27ae60; /* Borda Verde indicando capa */
+}
+
+.image-item.is-cover .image-item-actions {
+    background: #27ae60; /* Fundo verde */
+}
+
+.cover-badge {
+    color: white;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
