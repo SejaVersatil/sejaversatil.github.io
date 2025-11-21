@@ -1442,61 +1442,59 @@ nav {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Black Friday Badge - VERSÃO ÚNICA */
+/* ======================================================= */
+/* ADESIVO VERSÁTIL FRIDAY (ESTILO LIVE! - TOPO ESQUERDO)  */
+/* ======================================================= */
+
 .bf-product-badge {
-    position: absolute;
-    bottom: 0.8rem;
-    left: 0.8rem;
-    z-index: 4;
+    position: absolute !important;
+    top: 0 !important;          /* Cola no topo */
+    left: 0 !important;         /* Cola na esquerda */
+    bottom: auto !important;    /* Remove alinhamento antigo de baixo */
+    right: auto !important;
+    z-index: 20 !important;
+    margin: 0 !important;       /* Sem margem para colar na borda da foto */
     pointer-events: none;
 }
 
+/* Caixa Preta Quadrada e Compacta */
 .bf-badge-content {
-    background: #000000;
-    color: #FFFFFF;
-    padding: 0.5rem 0.8rem;
-    border-radius: 6px;
-    font-family: 'Oswald', sans-serif !important;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    position: relative;
-    overflow: hidden;
+    background: #000000 !important;
+    padding: 5px 8px !important; /* Tamanho compacto */
+    border-radius: 0 !important; /* Quadrado (Live Style) */
+    box-shadow: none !important; /* Remove sombra */
+    min-width: auto !important;
 }
 
-.bf-badge-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-    animation: shine-badge 3s infinite;
+/* Removemos a animação de brilho para ficar clean igual a referência */
+.bf-badge-content::before { display: none !important; }
+
+/* Texto "VERSÁTIL" (Override dos estilos inline do JS) */
+.bf-badge-text > span:first-child {
+    font-family: 'Century Gothic', sans-serif !important;
+    font-size: 11px !important;   /* Pequeno e nítido */
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.5px !important;
+    line-height: 1 !important;
+    display: block !important;
+    margin-bottom: 0 !important;
 }
 
-@keyframes shine-badge {
-    0% { left: -100%; }
-    100% { left: 100%; }
+/* Texto "FRIDAY" e Porcentagem */
+.bf-badge-text div span {
+    font-family: 'Century Gothic', sans-serif !important;
+    font-size: 9px !important;    /* Minúsculo */
+    font-weight: 400 !important;  /* Normal */
+    color: #FFFFFF !important;
+    letter-spacing: 0 !important;
 }
 
-.bf-badge-text {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.05rem;
-    line-height: 0.95;
-}
-
-/* Responsive Badge */
-@media (max-width: 768px) {
-    .bf-badge-content {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.65rem;
-    }
+/* Porcentagem (-18%) */
+.bf-badge-text div span:last-child {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    margin-left: 3px !important;
 }
 
 .stock-warning-badge {
@@ -4405,3 +4403,4 @@ css@keyframes slideInRight {
     align-items: center;
     gap: 5px;
 }
+
