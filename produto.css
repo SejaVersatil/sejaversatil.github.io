@@ -771,6 +771,7 @@ body, .short-desc-text, .model-info-text {
     aspect-ratio: 3/4 !important;
     min-height: 500px !important;
     max-height: 800px !important;
+    height: 100% !important;           /* ← ADICIONE ESTA LINHA */
     display: block !important;
     background-size: cover !important;
     background-position: center !important;
@@ -892,6 +893,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
