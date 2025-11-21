@@ -1095,15 +1095,6 @@ nav {
     margin-bottom: 0;
 }
 
-/* ⬇️ ADAPTAÇÕES PROGRESSIVAS */
-@media (max-width: 1400px) {
-    .products-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* === ADAPTAÇÃO PROGRESSIVA DE PRODUTOS (VITRINE FLUIDA & APP STYLE) === */
-
 /* Notebooks pequenos (1280px - 1366px) */
 @media (max-width: 1400px) {
     .products-grid {
@@ -4142,6 +4133,7 @@ css@keyframes slideInRight {
         display: none !important; 
     }
 }
+
 
 
 
