@@ -854,6 +854,9 @@ body, .short-desc-text, .model-info-text {
     /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
     .gallery-photo-full.gallery-hidden {
         display: none !important;
+    .gallery-photo-full:nth-child(1),
+    .gallery-photo-full:nth-child(2) {
+        display: block !important;
     }
 
     /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
@@ -881,4 +884,5 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
