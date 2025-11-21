@@ -244,7 +244,7 @@ function renderGallery(specificImages = null) {
   // Limpa conteúdo anterior
   galleryContainer.innerHTML = '';
 
-  // Define quais imagens usar (COM VALIDAÇÃO)
+  // Define quais imagens usar
   let imagesToRender = specificImages;
   if (!imagesToRender) {
       if (Array.isArray(p.images) && p.images.length > 0) {
@@ -256,27 +256,27 @@ function renderGallery(specificImages = null) {
       }
   }
 
-  // PROTEÇÃO: Se não há imagens, sai da função
   if (!imagesToRender || imagesToRender.length === 0) {
       console.warn('⚠️ Nenhuma imagem disponível para renderizar');
       galleryContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:#999;">Sem imagens disponíveis</div>';
       return;
   }
 
-  // DEBUG: Verificar URLs das imagens
   console.log('🖼️ Total de imagens:', imagesToRender.length);
   console.log('🖼️ URLs:', imagesToRender);
+
+  // ✅ DETECTA SE É DESKTOP OU MOBILE
+  const isDesktop = window.innerWidth > 768;
 
   // Loop para criar as fotos
   imagesToRender.forEach((img, index) => {
     const photoDiv = document.createElement('div');
     photoDiv.className = 'gallery-photo-full';
 
-    // Oculta da 3ª em diante (index >= 2)
-    const isDesktop = window.innerWidth > 768;
-if (!isDesktop && index >= 2) {
-    photoDiv.classList.add('gallery-hidden');
-}
+    // ✅ LÓGICA CORRIGIDA: Oculta da 3ª em diante APENAS NO DESKTOP
+    if (isDesktop && index >= 2) {
+        photoDiv.classList.add('gallery-hidden');
+    }
 
     if (isImageUrl(img)) {
       photoDiv.style.backgroundImage = `url("${img}")`;
@@ -289,15 +289,13 @@ if (!isDesktop && index >= 2) {
     galleryContainer.appendChild(photoDiv);
   });
 
-  // Lógica do Botão Alternar (Mais / Menos)
+  // ✅ BOTÃO "MOSTRAR MAIS" - APENAS NO DESKTOP
   if (btnShowMore) {
-      // Remove ouvintes de eventos antigos para evitar duplicação
       const newBtn = btnShowMore.cloneNode(true);
       btnShowMore.parentNode.replaceChild(newBtn, btnShowMore);
       
-      if (imagesToRender.length > 2) {
+      if (isDesktop && imagesToRender.length > 2) {
           newBtn.style.display = 'flex';
-          // Reseta o texto e ícone para o estado inicial
           newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
           
           let isExpanded = false;
@@ -306,11 +304,9 @@ if (!isDesktop && index >= 2) {
               const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
               
               if (!isExpanded) {
-                  // AÇÃO: EXPANDIR
                   hiddenPhotos.forEach((photo, index) => {
                       if (index >= 2) {
                           photo.classList.remove('gallery-hidden');
-                          // Animação suave
                           photo.style.opacity = '0';
                           requestAnimationFrame(() => {
                               photo.style.transition = 'opacity 0.5s';
@@ -318,23 +314,18 @@ if (!isDesktop && index >= 2) {
                           });
                       }
                   });
-                  // Muda texto para "MOSTRAR MENOS" e inverte a seta
                   this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                   isExpanded = true;
               } else {
-                  // AÇÃO: RECOLHER
                   hiddenPhotos.forEach((photo, index) => {
                       if (index >= 2) {
                           photo.classList.add('gallery-hidden');
                       }
                   });
-                  // Rola suavemente de volta para o topo da galeria
                   window.scrollTo({ 
-    top: galleryContainer.offsetTop - 100, 
-    behavior: 'smooth' 
-});
-                  
-                  // Muda texto para "MOSTRAR MAIS" e volta a seta ao normal
+                      top: galleryContainer.offsetTop - 100, 
+                      behavior: 'smooth' 
+                  });
                   this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                   isExpanded = false;
               }
@@ -1390,6 +1381,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
