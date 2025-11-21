@@ -754,10 +754,12 @@ body, .short-desc-text, .model-info-text {
 
     /* 2. Galeria Mosaico (2 Fotos por linha) */
     .product-gallery-section {
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    position: relative !important;
+}
 
     .gallery-container {
     display: grid !important;
@@ -902,6 +904,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
