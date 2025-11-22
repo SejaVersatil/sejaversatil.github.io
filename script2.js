@@ -970,4 +970,156 @@ function addGradientImage() {
     if (grad) { tempProductImages.push(grad); renderProductImages(); toggleGradientInput(); }
 }
 
+/* ==================== GERENCIAR CORES (ADMIN) ==================== */
+
+function removeProductColor(index) {
+    const color = productColors[index];
+    if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
+        productColors.splice(index, 1);
+        renderProductColorsManager();
+        showToast(`🗑️ Cor "${color.name}" removida`, 'info');
+    }
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem('sejaVersatilSettings');
+    if (saved) {
+        try {
+            const settings = JSON.parse(saved);
+            const topBanner = document.querySelector('.top-banner');
+            
+            // Atualiza a UI se os elementos existirem
+            if (topBanner && settings.topBanner) topBanner.textContent = settings.topBanner;
+
+            const titleInput = document.getElementById('settingBannerTitle');
+            const subtitleInput = document.getElementById('settingBannerSubtitle');
+            const bannerInput = document.getElementById('settingTopBanner');
+
+            if (titleInput) titleInput.value = settings.bannerTitle || '';
+            if (subtitleInput) subtitleInput.value = settings.bannerSubtitle || '';
+            if (bannerInput) bannerInput.value = settings.topBanner || '';
+        } catch (e) {
+            console.warn('Erro ao carregar configurações salvas', e);
+        }
+    }
+}
+
+/* ==================== UI: SIDEBAR E CHAT ==================== */
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    const btn = document.getElementById('hamburgerBtn');
+    
+    if (sidebar) sidebar.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
+    if (btn) btn.classList.toggle('active');
+}
+
+function toggleChat() {
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox) {
+        chatBox.classList.toggle('active');
+        if (chatBox.classList.contains('active')) {
+            const input = document.getElementById('chatInput');
+            if (input) input.focus();
+        }
+    }
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    if (!input) return;
+    
+    const message = input.value.trim();
+    if (message === '') return;
+    
+    addChatMessage(message, 'user');
+    input.value = '';
+    
+    setTimeout(() => {
+        const responses = [
+            'Obrigado pela sua mensagem! Como posso ajudar com seus produtos fitness?',
+            'Estou aqui para ajudar! Temos ótimas promoções hoje. O que você procura?',
+            'Que legal! Temos leggings, tops e conjuntos incríveis. Quer que eu mostre?',
+            'Posso te ajudar a encontrar o tamanho ideal! Qual peça te interessou?',
+            'Nossa equipe está disponível para atendimento personalizado. Em que posso ajudar?'
+        ];
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        addChatMessage(response, 'bot');
+    }, 1000);
+}
+
+function addChatMessage(text, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    if (!messagesContainer) return;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.textContent = text;
+    
+    messageDiv.appendChild(bubble);
+    messagesContainer.appendChild(messageDiv);
+    
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+/* ==================== FILTROS E ORDENAÇÃO ==================== */
+
+function filterProducts(category) {
+    currentFilter = category;
+    currentPage = 1;
+    renderProducts();
+    trackEvent('Products', 'Filter', category);
+}
+
+function sortProducts(sortType) {
+    currentSort = sortType;
+    renderProducts();
+    trackEvent('Products', 'Sort', sortType);
+}
+
+function getFilteredProducts() {
+    let filtered = [...productsData]; // Cria uma cópia para não alterar o original
+    
+    if (currentFilter !== 'all') {
+        if (currentFilter === 'sale') {
+            filtered = filtered.filter(p => p.oldPrice !== null);
+        } else if (currentFilter === 'favorites') {
+            filtered = filtered.filter(p => favorites.includes(p.id));
+        } else {
+            // Filtrar por categoria exata
+            filtered = filtered.filter(p => p.category === currentFilter);
+        }
+    }
+    
+    if (currentSort === 'price-asc') {
+        filtered.sort((a, b) => a.price - b.price);
+    } else if (currentSort === 'price-desc') {
+        filtered.sort((a, b) => b.price - a.price);
+    } else if (currentSort === 'name') {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    
+    return filtered;
+}
+
+function renderProductsSkeleton() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = Array(12).fill(0).map(() => `
+        <div class="product-card skeleton-loading">
+            <div class="skeleton-image shimmer"></div>
+            <div class="skeleton-info">
+                <div class="skeleton-line shimmer"></div>
+                <div class="skeleton-line short shimmer"></div>
+            </div>
+        </div>
+    `).join('');
+}
 // ==================== FIM DO ARQUIVO ====================
+
