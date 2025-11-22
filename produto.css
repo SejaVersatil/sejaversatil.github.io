@@ -993,3 +993,95 @@ body, .short-desc-text, .model-info-text {
         border-radius: 30px !important; /* Garante arredondado no celular também */
     }
 }
+
+/* === WIDGET DE COMPARTILHAMENTO === */
+
+/* Ajuste do container do título para alinhar lado a lado */
+.header-left {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Título na esq, Share na dir (se mobile) ou juntos */
+    gap: 15px;
+    width: 100%;
+    position: relative;
+}
+
+/* O container da pílula */
+.share-widget {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Ícone principal fica na direita */
+    background: transparent;
+    border-radius: 50px;
+    padding: 5px;
+    height: 40px;
+    width: 40px; /* Largura inicial fechada */
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Animação suave */
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Ao passar o mouse (Expandir) */
+.share-widget:hover {
+    background: #f0f0f0; /* Fundo cinza igual ao print */
+    width: 120px; /* Largura suficiente para 3 ícones */
+}
+
+/* O ícone principal de "network" */
+.share-trigger {
+    min-width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* Container das opções (Instagram/WhatsApp) */
+.share-options {
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px);
+    transition: all 0.3s ease 0.1s; /* Delay pequeno */
+    margin-right: 10px;
+}
+
+/* Revelar opções no hover */
+.share-widget:hover .share-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Botões individuais */
+.share-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.share-btn:hover {
+    transform: scale(1.2);
+    color: #000;
+}
+
+/* Ajuste para Mobile: Título pode ser grande, então alinhamos flex */
+@media (max-width: 768px) {
+    .header-left {
+        justify-content: space-between !important;
+    }
+    .product-title {
+        flex: 1; /* Título ocupa o espaço sobrando */
+    }
+    /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
+       Mas para manter o design, vamos manter o hover/click */
+}
