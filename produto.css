@@ -567,11 +567,11 @@ body, .short-desc-text, .model-info-text {
     /* --- 1. HEADER MOBILE --- */
 .site-header .nav {
     display: grid !important;
-    grid-template-columns: 35px 1fr 80px !important;
+    grid-template-columns: 30px 1fr 65px !important;
     align-items: center !important;
-    height: 50px !important;
-    padding: 0 10px !important;
-    gap: 5px !important;
+    height: 45px !important;
+    padding: 0 8px !important;
+    gap: 3px !important;
 }
 
 .nav-left { 
@@ -582,12 +582,12 @@ body, .short-desc-text, .model-info-text {
     grid-column: 2 !important;
     width: 100% !important;
     text-align: center !important;
-    font-size: 10px !important;
-    letter-spacing: 0.5px !important;
+    font-size: 8px !important;
+    letter-spacing: 0.2px !important;
     font-weight: 700 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: clip !important;
+    text-overflow: ellipsis !important;
     display: block !important;
 }
 
@@ -603,12 +603,17 @@ body, .short-desc-text, .model-info-text {
 .nav-icons {
     grid-column: 3 !important;
     justify-self: end !important;
-    gap: 10px !important;
+    gap: 6px !important;
 }
 
 .nav-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 15px !important;
+    height: 15px !important;
+}
+
+.cart-count {
+    font-size: 0.5rem !important;
+    padding: 0.1rem 0.25rem !important;
 }
 
 .nav-center, 
@@ -1194,6 +1199,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
