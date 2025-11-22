@@ -22,16 +22,10 @@ class SecureStorage {
 
 const secureStorage = new SecureStorage('sejaVersatil_v1');
 
-// Inicialização segura do Firebase (evita duplicidade se já iniciado no HTML)
+// Verifica se o Firebase foi iniciado no HTML
 if (!firebase.apps.length) {
-    console.warn("Firebase não foi iniciado no HTML. Iniciando fallback...");
-    // Insira sua config aqui apenas se remover do HTML. 
-    // Como está no HTML, este bloco não deve rodar.
+    console.error("CRÍTICO: Firebase não foi iniciado no HTML.");
 }
-
-const db = firebase.firestore();
-const auth = firebase.auth();
-const storage = firebase.storage();
 
 // Rate Limiter e Cache
 class CacheManager {
@@ -1115,3 +1109,4 @@ document.addEventListener('keydown', (e) => {
         toggleSidebar(); // Fecha se aberto
     }
 });
+
