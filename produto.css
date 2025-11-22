@@ -828,24 +828,6 @@ body, .short-desc-text, .model-info-text {
         margin-bottom: 5px !important;
     }
 
-    .product-action-buttons {
-        position: static !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        border: none !important;
-        margin-top: 20px !important;
-    }
-
-    .btn-primary {
-        height: 55px !important;
-        border-radius: 0 !important;
-        background: #000 !important;
-        font-size: 1.1rem !important;
-    }
-    
-    .btn-whatsapp-main { display: flex !important; }
-
     .btn-show-more {
         display: flex !important; 
         justify-content: center;
@@ -862,6 +844,62 @@ body, .short-desc-text, .model-info-text {
     }
 
 } /* ← FIM DA MEDIA QUERY DESKTOP */
+
+/* Correção: Botões de Ação Gerais (fora de media queries) */
+.product-action-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-top: 25px !important;
+}
+
+.btn-primary {
+    width: 100% !important;
+    height: 55px !important;
+    background: #000 !important;
+    color: #fff !important;
+    border: none !important;
+    font-family: 'Century Gothic', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+    background: #333 !important;
+}
+
+.btn-whatsapp-main {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    height: 55px !important;
+    background: #25D366 !important;
+    color: #fff !important;
+    border: none !important;
+    font-family: 'Century Gothic', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-whatsapp-main:hover {
+    background: #1fa855 !important;
+}
+
+.btn-whatsapp-main svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: currentColor !important;
+}
 
 /* ============================================================ */
 /* ESTILOS GERAIS (FORA DAS MEDIA QUERIES)                      */
@@ -886,5 +924,6 @@ body, .short-desc-text, .model-info-text {
 
 .stock-msg.warning { color: #e67e22; } 
 .stock-msg.error { color: #999; text-decoration: none; }
+
 
 
