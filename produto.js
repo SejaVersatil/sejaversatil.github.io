@@ -1382,8 +1382,62 @@ function goToFavoritesPage() {
     window.location.href = 'index.html?ver_favoritos=true';
 }
 
+/* =========================
+   Funções de Compartilhamento
+   ========================= */
 
+function shareToWhatsApp() {
+    const p = state.currentProduct;
+    if (!p) return;
+    
+    const text = `Olha esse produto que encontrei na Seja Versátil: *${p.name}*\n${window.location.href}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
 
+function shareToInstagram() {
+    // Como não existe API direta para postar no IG via Web, copiamos o link
+    const url = window.location.href;
+    
+    navigator.clipboard.writeText(url).then(() => {
+        // Feedback visual simples (Toast)
+        showToast('📋 Link copiado! Cole no seu Instagram.', 'success');
+    }).catch(err => {
+        console.error('Erro ao copiar', err);
+        showToast('Erro ao copiar link', 'error');
+    });
+}
 
+// Função auxiliar de Toast (caso você ainda não tenha no código, adicione esta também)
+function showToast(msg, type = 'success') {
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.background = type === 'success' ? '#333' : '#ff4444';
+    toast.style.color = '#fff';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '30px';
+    toast.style.zIndex = '10000';
+    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    toast.style.fontSize = '14px';
+    toast.style.fontWeight = '500';
+    toast.textContent = msg;
+    
+    document.body.appendChild(toast);
+    
+    // Animação de entrada
+    toast.animate([
+        { opacity: 0, transform: 'translate(-50%, 20px)' },
+        { opacity: 1, transform: 'translate(-50%, 0)' }
+    ], { duration: 300, fill: 'forwards' });
 
-
+    // Remove após 3 segundos
+    setTimeout(() => {
+        toast.animate([
+            { opacity: 1 },
+            { opacity: 0 }
+        ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
+    }, 3000);
+}
