@@ -823,53 +823,6 @@ body, .short-desc-text, .model-info-text {
     margin-top: 25px !important;
 }
 
-.btn-primary {
-    width: 100% !important;
-    height: 55px !important;
-    background: #000 !important;
-    color: #fff !important;
-    border: none !important;
-    font-family: 'Century Gothic', sans-serif !important;
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-}
-
-.btn-primary:hover {
-    background: #333 !important;
-}
-
-.btn-whatsapp-main {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    height: 55px !important;
-    background: #25D366 !important;
-    color: #fff !important;
-    border: none !important;
-    font-family: 'Century Gothic', sans-serif !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-}
-
-.btn-whatsapp-main:hover {
-    background: #1fa855 !important;
-}
-
-.btn-whatsapp-main svg {
-    width: 20px !important;
-    height: 20px !important;
-    fill: currentColor !important;
-}
-
 /* ============================================================ */
 /* ESTILOS GERAIS (FORA DAS MEDIA QUERIES)                      */
 /* ============================================================ */
@@ -965,5 +918,78 @@ body, .short-desc-text, .model-info-text {
     .btn-favorite-floating svg {
         width: 20px;
         height: 20px;
+    }
+}
+
+/* ================================================= */
+/* NOVOS BOTÕES DE AÇÃO (MINIMALISTAS & OUTLINE)     */
+/* ================================================= */
+
+.product-action-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important; /* Espaço maior entre os botões */
+    width: 100% !important;
+    margin-top: 25px !important;
+}
+
+/* ESTILO GERAL DOS BOTÕES (Base) */
+.btn-primary, 
+.btn-whatsapp-main {
+    width: 100% !important;
+    height: 55px !important;
+    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    letter-spacing: 1px !important;
+    box-shadow: none !important; /* Remove sombras antigas se houver */
+}
+
+/* 1. BOTÃO COMPRAR */
+.btn-primary {
+    background: #ffffff !important;       /* Fundo Branco */
+    color: #000000 !important;            /* Texto Preto */
+    border: 1px solid #000000 !important; /* Borda Fina Preta */
+    border-radius: 30px !important;       /* Bem arredondado (Pílula) */
+    font-weight: 800 !important;          /* Texto bem grosso/preenchido */
+    font-size: 16px !important;
+}
+
+.btn-primary:hover {
+    background: #000000 !important;       /* Vira preto ao passar o mouse */
+    color: #ffffff !important;
+}
+
+/* 2. BOTÃO WHATSAPP (Estilo Print 2) */
+.btn-whatsapp-main {
+    background: #ffffff !important;       /* Fundo Branco */
+    color: #25D366 !important;            /* Texto Verde WhatsApp */
+    border: 1px solid #25D366 !important; /* Borda Fina Verde */
+    border-radius: 30px !important;       /* Igual ao de cima para harmonia */
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    gap: 8px !important;
+}
+
+.btn-whatsapp-main:hover {
+    background: #25D366 !important;       /* Vira verde ao passar o mouse */
+    color: #ffffff !important;
+}
+
+/* Ícone do WhatsApp segue a cor do texto */
+.btn-whatsapp-main svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: currentColor !important; 
+}
+
+/* Ajuste para Mobile (caso tenha regras específicas lá em cima) */
+@media (max-width: 768px) {
+    .btn-primary, .btn-whatsapp-main {
+        border-radius: 30px !important; /* Garante arredondado no celular também */
     }
 }
