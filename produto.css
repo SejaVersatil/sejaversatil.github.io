@@ -313,95 +313,183 @@ body.product-page {
 }
 
 /* ============================================================ */
-/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
+/* 📱 MOBILE STYLE - REFERÊNCIA LIVE! (Ajuste Estrutural)       */
 /* ============================================================ */
+
 @media (max-width: 768px) {
-    /* Header Limpo */
+    
+    /* --- 1. HEADER COMPACTO E LIMPO --- */
     .site-header .nav {
-        display: grid !important; grid-template-columns: 30px 1fr 65px !important;
-        align-items: center !important; height: 45px !important; padding: 0 8px !important; gap: 3px !important;
+        display: grid !important;
+        grid-template-columns: 40px 1fr 40px !important; /* Hambúrguer | Logo | Carrinho */
+        align-items: center !important;
+        height: 55px !important;
+        padding: 0 15px !important;
+        border-bottom: 1px solid transparent !important; /* Remove linha para visual limpo sobre a foto */
     }
-    .nav-left { display: contents !important; }
+
     .nav-left .logo {
-        grid-column: 2 !important; width: 100% !important; text-align: center !important;
-        font-size: 8px !important; letter-spacing: 0.2px !important; font-weight: 700 !important;
-        white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; display: block !important;
+        grid-column: 2 !important;
+        width: 100% !important;
+        text-align: center !important;
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
     }
-    .hamburger-btn { grid-column: 1 !important; display: flex !important; position: relative !important; padding: 0 !important; }
-    .nav-icons { grid-column: 3 !important; justify-self: end !important; gap: 6px !important; }
-    .nav-icon svg { width: 15px !important; height: 15px !important; }
-    .cart-count { font-size: 0.5rem !important; padding: 0.1rem 0.25rem !important; }
+
+    .hamburger-btn {
+        position: relative !important;
+        top: auto !important; left: auto !important;
+        padding: 0 !important;
+        width: 24px !important;
+    }
+
+    .nav-icons {
+        grid-column: 3 !important;
+        justify-self: end !important;
+    }
+    
     .nav-center, .search-bar { display: none !important; }
 
-    /* Countdown */
-    .top-banner { padding: 5px 0 !important; }
-    .bf-content { flex-wrap: nowrap !important; justify-content: center !important; gap: 3px !important; font-size: 7px !important; line-height: 1 !important; }
-    .bf-label, .bf-countdown-label { font-size: 7px !important; letter-spacing: 0 !important; font-weight: 600 !important; white-space: nowrap !important; }
-    .bf-separator { display: none !important; }
-    .bf-countdown { gap: 2px !important; display: flex !important; align-items: center !important; }
-    .bf-time-unit { min-width: 18px !important; padding: 2px 3px !important; border-radius: 2px !important; display: flex !important; flex-direction: column !important; align-items: center !important; }
-    .bf-time-value { font-size: 9px !important; line-height: 1 !important; font-weight: 700 !important; }
-    .bf-time-label { font-size: 4px !important; margin-top: 1px !important; font-weight: 500 !important; }
-    .bf-colon { font-size: 7px !important; margin: 0 1px !important; }
+    /* --- 2. GALERIA IMERSIVA (FOTO GRANDE) --- */
+    .product-page-container .product-main-grid {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
 
-    /* Galeria Swipe */
-    .product-page-container .product-main-grid { display: block !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
     .product-gallery-section {
-        width: 100vw !important; max-width: 100vw !important; height: auto !important;
-        position: relative !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important;
-        left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important;
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        margin-right: calc(-50vw + 50%) !important;
+        position: relative !important;
+        /* Altura definida para garantir que a foto ocupe um bom espaço */
+        min-height: 65vh !important; 
     }
+
     .gallery-container {
-        display: flex !important; flex-direction: row !important;
-        overflow-x: auto !important; overflow-y: hidden !important;
-        scroll-snap-type: x mandatory !important; -webkit-overflow-scrolling: touch !important;
-        width: 100vw !important; max-width: 100vw !important; height: auto !important; aspect-ratio: 3/4 !important;
-        scrollbar-width: none !important; -ms-overflow-style: none !important;
+        display: flex !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        scrollbar-width: none !important;
     }
-    .gallery-container::-webkit-scrollbar { display: none !important; }
+
     .gallery-photo-full {
-        min-width: 100% !important; max-width: 100% !important; width: 100% !important;
-        height: 100% !important; aspect-ratio: 3/4 !important;
-        scroll-snap-align: center !important; scroll-snap-stop: always !important;
-        background-size: cover !important; background-position: center center !important; background-repeat: no-repeat !important;
-        display: block !important; visibility: visible !important; opacity: 1 !important; flex-shrink: 0 !important;
+        min-width: 100vw !important;
+        aspect-ratio: 3/4.2 !important; /* Formato vertical alongado (Estilo LIVE!) */
+        object-fit: cover !important;
+        scroll-snap-align: center !important;
+        display: block !important;
     }
-    .gallery-photo-full.gallery-hidden { display: block !important; }
-    #btnShowMore, .product-thumbnails, .btn-show-more { display: none !important; }
-
-    /* Card de Informações "Sheet" */
-    .product-info-section {
-        margin-top: -20px !important; border-radius: 15px 15px 0 0 !important;
-        background: #ffffff !important; position: relative !important; z-index: 20 !important;
-        padding: 15px 20px 30px 20px !important;
-    }
-    .product-title, #detailsProductName {
-        font-size: 1.4rem !important; line-height: 1.3 !important; margin-bottom: 10px !important;
-        font-weight: 600 !important; text-align: center !important;
-    }
-    .product-pricing {
-        display: flex !important; flex-direction: column !important; align-items: center !important;
-        text-align: center !important; gap: 5px !important; margin-bottom: 15px !important;
-    }
-    .price-current { font-size: 1.8rem !important; font-weight: 700 !important; margin-bottom: 5px !important; }
-    .price-old-text { font-size: 0.85rem !important; color: #999 !important; text-decoration: line-through !important; display: block !important; margin-bottom: 5px !important; }
-    .price-installments { font-size: 0.85rem !important; color: #666 !important; margin-bottom: 20px !important; }
     
-    .product-selector-group { padding-bottom: 15px !important; margin-bottom: 15px !important; border-bottom: 1px solid #f0f0f0 !important; }
-    .selector-label { font-size: 13px !important; font-weight: 600 !important; margin-bottom: 10px !important; color: #000 !important; text-transform: none !important; }
+    /* Esconde elementos desktop */
+    .product-thumbnails, #btnShowMore, .btn-show-more { display: none !important; }
 
-    /* Sticky Footer Buttons */
+    /* --- 3. CARD DE INFORMAÇÕES (EFEITO "SHEET") --- */
+    .product-info-section {
+        position: relative !important;
+        z-index: 10 !important;
+        background: #ffffff !important;
+        
+        /* O TRUQUE LIVE!: Margem negativa grande para subir na foto */
+        margin-top: -40px !important; 
+        border-radius: 25px 25px 0 0 !important;
+        
+        /* Espaçamento interno */
+        padding: 30px 24px 140px 24px !important; /* 140px embaixo garante que o botão fixo não cubra o texto */
+        
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.05) !important;
+    }
+
+    /* Barrinha cinza no topo (Indicador visual de card) */
+    .product-info-section::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background-color: #e5e5e5;
+        border-radius: 2px;
+        margin: 0 auto 20px auto;
+    }
+
+    /* Título e Preço (Ajuste de Distância) */
+    .product-title {
+        font-size: 1.5rem !important; /* Tamanho grande e legível */
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+        margin-bottom: 8px !important;
+        text-align: left !important; /* Alinhado à esquerda como LIVE! */
+    }
+
+    .product-pricing {
+        align-items: flex-start !important;
+        text-align: left !important;
+        margin-bottom: 25px !important; /* Mais respiro */
+    }
+
+    .price-current {
+        font-size: 1.6rem !important;
+    }
+
+    /* Seletores (Cor e Tamanho) */
+    .product-selector-group {
+        margin-bottom: 20px !important;
+        padding-bottom: 0 !important;
+        border: none !important;
+    }
+
+    .selector-label {
+        font-size: 0.9rem !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* --- 4. RODAPÉ FIXO "COMPRAR" (IDÊNTICO LIVE!) --- */
     .product-action-buttons {
-        position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important;
-        background: #ffffff !important; border-top: 1px solid rgba(0,0,0,0.1) !important; box-shadow: 0 -5px 20px rgba(0,0,0,0.15) !important;
-        padding: 12px 20px !important; padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
-        z-index: 999999 !important; margin: 0 !important;
-        display: flex !important; flex-direction: column !important; gap: 8px !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 1000 !important;
+        
+        background: #ffffff !important;
+        border-top: 1px solid #f0f0f0 !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.08) !important;
+        
+        /* Padding estratégico para afastar das bordas */
+        padding: 15px 20px !important;
+        padding-bottom: max(15px, env(safe-area-inset-bottom)) !important; /* Respeita a barra do iPhone */
+        
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: row !important; /* Botões lado a lado */
+        gap: 10px !important;
     }
-    .btn-primary, .btn-whatsapp-main {
-        width: 100% !important; height: 48px !important; font-size: 13px !important; border-radius: 25px !important; margin: 0 !important;
+
+    /* Botão Principal (Preto) */
+    .btn-primary {
+        flex: 1 !important; /* Ocupa espaço igual ou maior */
+        height: 50px !important;
+        border-radius: 8px !important; /* Canto levemente arredondado (LIVE style) */
+        font-size: 14px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin: 0 !important;
     }
-    .btn-whatsapp-main { display: flex !important; }
+
+    /* Botão WhatsApp (Verde Outline ou Ícone) */
+    .btn-whatsapp-main {
+        flex: 1 !important;
+        height: 50px !important;
+        border-radius: 8px !important;
+        margin: 0 !important;
+        font-size: 12px !important; /* Texto um pouco menor */
+        white-space: nowrap !important;
+    }
+    
+    /* Ajuste do botão flutuante do WhatsApp para não ficar em cima do rodapé fixo */
+    .whatsapp-float {
+        bottom: 100px !important;
+    }
 }
 
 /* ============================================================ */
@@ -459,3 +547,4 @@ body.product-page {
 .share-widget:hover .share-options { opacity: 1; visibility: visible; transform: translateX(0); }
 .share-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: transform 0.2s, color 0.2s; }
 .share-btn:hover { transform: scale(1.2); color: #000; }
+
