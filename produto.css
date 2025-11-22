@@ -725,8 +725,12 @@ body, .short-desc-text, .model-info-text {
     }
 
     .btn-whatsapp-main { display: none !important; }
+    .product-gallery-section, 
+    .gallery-container {
+        width: 100% !important;
+    }
 
-} 
+}
 
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
@@ -905,6 +909,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
