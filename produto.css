@@ -474,9 +474,11 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
     margin-bottom: 0.2rem !important; 
 }
 
-.product-pricing {
-    margin-bottom: 0.5rem !important;
-    gap: 0.1rem !important;
+@media (min-width: 769px) {
+    .product-pricing {
+        margin-bottom: 0.5rem !important;
+        gap: 0.1rem !important;
+    }
 }
 
 .short-description-container {
@@ -521,16 +523,6 @@ body, .short-desc-text, .model-info-text {
     font-weight: 600 !important; 
 }
 
-/* Preço Base (Celular e Padrão) */
-.price-current {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-weight: 400 !important;
-    font-size: 1.5rem !important; /* ✅ ADICIONAR PONTO E VÍRGULA */
-    color: #000000 !important;
-    letter-spacing: -1px !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-}
 
 /* Texto de Parcelamento */
 .price-installments {
@@ -1245,6 +1237,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
