@@ -784,6 +784,7 @@ body, .short-desc-text, .model-info-text {
     line-height: 1.3 !important;
     margin-bottom: 10px !important;
     font-weight: 600 !important;
+    text-align: center !important; /* ← CENTRALIZA NO MOBILE */
 }
 
 .product-pricing {
@@ -1244,6 +1245,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
