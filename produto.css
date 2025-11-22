@@ -574,7 +574,7 @@ body, .short-desc-text, .model-info-text {
     /* --- 1. HEADER ALINHADO (Grid 3 Colunas) --- */
     .site-header .nav {
         display: grid !important;
-        grid-template-columns: 50px 1fr 50px !important; /* Espaço igual nas laterais */
+        grid-template-columns: 50px 1fr 50px !important;
         align-items: center !important;
         justify-content: center !important;
         padding: 0 10px !important;
@@ -582,11 +582,10 @@ body, .short-desc-text, .model-info-text {
         gap: 0 !important;
     }
 
-    .nav-left { display: contents !important; } /* Remove container do fluxo */
+    .nav-left { display: contents !important; }
 
-    /* Logo Centralizada */
     .nav-left .logo {
-        grid-column: 2 !important; /* Meio */
+        grid-column: 2 !important;
         justify-self: center !important;
         font-size: 1.4rem !important;
         margin: 0 !important;
@@ -595,7 +594,6 @@ body, .short-desc-text, .model-info-text {
         width: auto !important;
     }
 
-    /* Hambúrguer Esquerda */
     .hamburger-btn {
         grid-column: 1 !important;
         display: flex !important;
@@ -604,15 +602,13 @@ body, .short-desc-text, .model-info-text {
         left: auto !important;
     }
 
-    /* Ícones Direita */
     .nav-icons {
         grid-column: 3 !important;
         justify-self: end !important;
         gap: 10px !important;
     }
 
-    .nav-center, .search-bar { display: none !important; } /* Esconde busca */
-
+    .nav-center, .search-bar { display: none !important; }
 
     /* --- 2. LAYOUT GERAL & GALERIA SWIPE --- */
     .product-page-container .product-main-grid {
@@ -632,37 +628,35 @@ body, .short-desc-text, .model-info-text {
     }
 
     .gallery-container {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    width: 100% !important;
-    height: 75vh !important; /* ✅ ADICIONAR */
-    min-height: 400px !important; /* ✅ ADICIONAR */
-    gap: 0 !important;
-}
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        width: 100% !important;
+        height: 75vh !important;
+        min-height: 400px !important;
+        gap: 0 !important;
+    }
 
     .gallery-container::-webkit-scrollbar { display: none; }
 
-   .gallery-photo-full {
-    min-width: 100vw !important;
-    width: 100vw !important;
-    height: 75vh !important;
-    min-height: 500px !important;        /* ← MUDOU de 400px para 500px */
-    max-height: 800px !important;        /* ← LINHA NOVA */
-    aspect-ratio: 3/4 !important;
-    scroll-snap-align: start;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    margin: 0 !important;
-}
+    .gallery-photo-full {
+        min-width: 100vw !important;
+        width: 100vw !important;
+        height: 75vh !important;
+        min-height: 500px !important;
+        max-height: 800px !important;
+        aspect-ratio: 3/4 !important;
+        scroll-snap-align: start;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        margin: 0 !important;
+    }
 
     #btnShowMore { display: none !important; }
     .product-thumbnails { display: none !important; }
-}
-
 
     /* --- 3. CARD DE INFORMAÇÕES --- */
     .product-info-section {
@@ -670,7 +664,7 @@ body, .short-desc-text, .model-info-text {
         top: -15px !important;
         background: #fff !important;
         border-radius: 20px 20px 0 0 !important;
-        padding: 25px 20px 100px 20px !important; /* Padding bottom grande pro botão */
+        padding: 25px 20px 100px 20px !important;
         z-index: 10 !important;
         box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
     }
@@ -682,7 +676,6 @@ body, .short-desc-text, .model-info-text {
     }
 
     .price-current { font-size: 1.6rem !important; font-weight: 700 !important; }
-
 
     /* --- 4. STICKY FOOTER (BOTÃO COMPRAR) --- */
     .product-action-buttons {
@@ -718,12 +711,8 @@ body, .short-desc-text, .model-info-text {
     }
 
     .btn-whatsapp-main { display: none !important; }
-    .product-gallery-section, 
-    .gallery-container {
-        width: 100% !important;
-    }
 
-}
+} /* ← FIM DA MEDIA QUERY MOBILE */
 
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
@@ -734,84 +723,83 @@ body, .short-desc-text, .model-info-text {
     /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
         display: grid !important;
-        /* 68% para fotos (bem largo), 28% para info, 4% gap */
         grid-template-columns: 68% 28% !important; 
         gap: 4% !important;
-        
-        /* Ocupar largura total e colar na esquerda */
         width: 100% !important;
         max-width: 100% !important;
-        padding: 20px 0px 40px 0 !important; /* Zero padding na esquerda */
+        padding: 20px 0px 40px 0 !important;
         margin: 0 auto !important;
-        
-        /* ESSENCIAL PARA O STICKY FUNCIONAR: */
         align-items: start !important; 
         position: relative !important;
     }
 
     /* 2. Galeria Mosaico (2 Fotos por linha) */
     .product-gallery-section {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-}
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        position: relative !important;
+    }
 
     .gallery-container {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 5px !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-    flex-wrap: wrap !important;
-    scroll-snap-type: none !important;
-    -webkit-overflow-scrolling: auto !important;
-}
-
-    .gallery-photo-full {
-        display: block !important; /* ← LINHA CRÍTICA */
-        visibility: visible !important; /* ← LINHA CRÍTICA */
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 5px !important;
         width: 100% !important;
-        min-width: 0 !important; /* ← Remove o 100vw do mobile */
-        max-width: 100% !important; /* ← Limita ao container */
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        flex-wrap: wrap !important;
+        scroll-snap-type: none !important;
+        -webkit-overflow-scrolling: auto !important;
+    }
+
+    /* ✅ CRITICAL FIX: Forçar exibição total das fotos */
+    .gallery-photo-full {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important; /* ← ADICIONAR */
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
         aspect-ratio: 3/4 !important;
         min-height: 500px !important;
-        height: auto !important; /* ← Remove altura fixa do mobile */
+        height: auto !important;
         scroll-snap-align: none !important;
         margin: 0 !important;
         background-size: cover !important;
         background-position: center !important;
         background-repeat: no-repeat !important;
-        position: relative !important; /* ← Garante fluxo normal */
+        position: relative !important;
         flex-shrink: 0 !important;
     }
 
     .gallery-photo-full:not(.gallery-hidden) {
-    display: block !important;
-}
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .gallery-photo-full.gallery-hidden {
+        display: none !important;
+    }
     
-   /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
+    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
         position: sticky !important;
         top: 85px !important;
         height: fit-content !important;
-        
-        /* CRÍTICO: Remova limites de altura */
         max-height: none !important; 
         overflow-y: visible !important;
-        
         padding: 0 20px 0 0 !important;
         background: transparent !important;
         z-index: 10 !important;
     }
     
-    /* Esconde scrollbar da coluna de info se aparecer */
     .product-info-section::-webkit-scrollbar { display: none; }
 
-    /* 4. Ajuste do Botão Favoritos (Discreto e Alinhado) */
+    /* 4. Ajuste do Botão Favoritos */
     .btn-favorite {
         position: relative !important;
         top: auto !important;
@@ -819,12 +807,10 @@ body, .short-desc-text, .model-info-text {
         display: inline-flex !important;
         align-items: center !important;
         gap: 8px !important;
-        
         background: transparent !important;
         border: 1px solid #e0e0e0 !important;
         border-radius: 4px !important;
         padding: 6px 12px !important;
-        
         font-size: 0.75rem !important;
         color: #666 !important;
         font-weight: 600 !important;
@@ -845,13 +831,11 @@ body, .short-desc-text, .model-info-text {
         height: 16px !important;
     }
 
-    /* Títulos Grandes no Desktop */
     .product-title, #detailsProductName {
         font-size: 2.2rem !important;
         margin-bottom: 5px !important;
     }
 
-    /* Resetar botão de compra para estilo desktop */
     .product-action-buttons {
         position: static !important;
         padding: 0 !important;
@@ -868,22 +852,12 @@ body, .short-desc-text, .model-info-text {
         font-size: 1.1rem !important;
     }
     
-    /* Esconder elementos mobile */
     .btn-whatsapp-main { display: flex !important; }
-    /* --- RESTAURAÇÃO DA GALERIA SHOW MORE (Desktop) --- */
 
-    /* 1. HIDE: Força as imagens marcadas pelo JS a ficarem invisíveis */
-    .gallery-photo-full.gallery-hidden {
-    display: none !important;
-} /* <--- CHAVE FECHADA CORRETAMENTE */
-
-    /* 2. BUTTON: Garante que o botão 'Mostrar Mais' apareça no lugar certo */
     .btn-show-more {
         display: flex !important; 
         justify-content: center;
         width: 100%;
-        
-        /* Estilo elegante para o botão */
         margin-top: 15px !important;
         background: transparent !important;
         border: 1px solid #e0e0e0 !important;
@@ -894,24 +868,29 @@ body, .short-desc-text, .model-info-text {
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
-    /* 3. FIX: Garante que a galeria não fique com margem excessiva */
-    .product-gallery-section {
-        /* Garante que o conteúdo cole na esquerda */
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+
+} /* ← FIM DA MEDIA QUERY DESKTOP */
+
+/* ============================================================ */
+/* ESTILOS GERAIS (FORA DAS MEDIA QUERIES)                      */
+/* ============================================================ */
+
+/* Container que agrupa Botão + Texto */
+.size-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45px;
 }
 
+.stock-msg {
+    font-size: 0.6rem;
+    margin-top: 4px;
+    text-align: center;
+    line-height: 1;
+    font-weight: 600;
+    white-space: nowrap;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+.stock-msg.warning { color: #e67e22; } 
+.stock-msg.error { color: #999; text-decoration: none; }
