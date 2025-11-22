@@ -936,6 +936,11 @@ function openProductDetails(id) {
 }
 
 // ==================== 8. CAROUSEL & FAVORITOS ====================
+function clearCarouselIntervals() {
+    Object.values(carouselIntervals).forEach(clearInterval);
+    carouselIntervals = {};
+    carouselEventsRegistered.clear();
+}
 
 function setupAutoCarousel() {
     if (carouselsPaused) return;
@@ -1091,3 +1096,4 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('headerDropdown')?.classList.remove('active');
     }
 });
+
