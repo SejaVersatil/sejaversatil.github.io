@@ -4005,6 +4005,90 @@ footer {
 
 }
 
+/* ==================== GERENCIADOR DE FOTOS (ADMIN) ==================== */
 
+/* Estilo do container da imagem */
+.image-item {
+    position: relative;
+    aspect-ratio: 3/4;
+    border: 2px solid #e5e5e5; /* Borda padrão cinza */
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
 
+/* Destaque visual para a FOTO DE CAPA (Primeira da lista) */
+.image-item.is-cover {
+    border: 3px solid #27ae60; /* Borda Verde */
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25); /* Sombra verde suave */
+}
 
+/* Container dos botões (Aparece embaixo) */
+.image-item-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(100%); /* Escondido por padrão (para baixo) */
+    transition: transform 0.3s ease;
+    z-index: 5;
+}
+
+/* Mostrar ações ao passar o mouse ou se for a capa */
+.image-item:hover .image-item-actions,
+.image-item.is-cover .image-item-actions {
+    transform: translateY(0); /* Sobe para aparecer */
+}
+
+/* Estilo do Botão "Virar Capa" */
+.btn-set-cover {
+    width: 100%;
+    padding: 8px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-set-cover:hover {
+    background: #000;
+}
+
+/* Estilo do Crachá "★ CAPA" */
+.cover-badge {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    background: #27ae60; /* Verde */
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Ajuste do botão de remover (X) para não ficar embaixo */
+.image-item-remove {
+    z-index: 10;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
