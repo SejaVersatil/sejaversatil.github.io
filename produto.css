@@ -582,11 +582,12 @@ body, .short-desc-text, .model-info-text {
     grid-column: 2 !important;
     width: 100% !important;
     text-align: center !important;
-    font-size: 14px !important;
+    font-size: 10px !important;
     letter-spacing: 0.5px !important;
     font-weight: 700 !important;
     white-space: nowrap !important;
-    overflow: visible !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
     display: block !important;
 }
 
@@ -615,23 +616,26 @@ body, .short-desc-text, .model-info-text {
     display: none !important; 
 }
 
-    /* --- 2. COUNTDOWN COMPACTO --- */
+/* --- 2. COUNTDOWN COMPACTO --- */
 .top-banner {
-    padding: 8px 0 !important;
+    padding: 5px 0 !important;
 }
 
 .bf-content {
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     justify-content: center !important;
-    gap: 5px !important;
-    font-size: 9px !important;
-    line-height: 1.2 !important;
+    gap: 3px !important;
+    font-size: 7px !important;
+    line-height: 1 !important;
+    align-items: center !important;
 }
 
 .bf-label, 
 .bf-countdown-label {
-    font-size: 9px !important;
+    font-size: 7px !important;
     letter-spacing: 0 !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
 }
 
 .bf-separator { 
@@ -639,31 +643,36 @@ body, .short-desc-text, .model-info-text {
 }
 
 .bf-countdown {
-    gap: 3px !important;
+    gap: 2px !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .bf-time-unit {
-    min-width: 22px !important;
-    padding: 3px 5px !important;
-    border-radius: 3px !important;
+    min-width: 18px !important;
+    padding: 2px 3px !important;
+    border-radius: 2px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 }
 
 .bf-time-value {
-    font-size: 11px !important;
+    font-size: 9px !important;
     line-height: 1 !important;
-    display: block !important;
+    font-weight: 700 !important;
 }
 
 .bf-time-label {
-    font-size: 5px !important;
+    font-size: 4px !important;
     text-transform: uppercase !important;
-    display: block !important;
     margin-top: 1px !important;
+    font-weight: 500 !important;
 }
 
 .bf-colon {
-    font-size: 9px !important;
-    margin: 0 !important;
+    font-size: 7px !important;
+    margin: 0 1px !important;
 }
 
     /* --- 3. GALERIA SWIPE HORIZONTAL (MOBILE) --- */
@@ -675,30 +684,33 @@ body, .short-desc-text, .model-info-text {
 }
 
 .product-gallery-section {
-    width: 100% !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     height: auto !important;
     position: relative !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
 }
 
 .gallery-container {
     display: flex !important;
     flex-direction: row !important;
     
-    /* SWIPE HORIZONTAL */
     overflow-x: auto !important;
     overflow-y: hidden !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
     
-    /* TAMANHO */
-    width: 100% !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     height: auto !important;
     aspect-ratio: 3/4 !important;
     
-    /* REMOVE SCROLLBAR */
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
 }
@@ -1182,5 +1194,6 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
