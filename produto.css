@@ -540,242 +540,554 @@ body, .short-desc-text, .model-info-text {
 .badge-text strong {
     font-weight: 700 !important;
 }
-/* ==========================================================================
-   ARQUITETURA DE LAYOUT DEFINITIVA
-   Respeita: Desktop (2 Fotos + Info Lateral) vs Mobile (App Swipe + Fixo)
-   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   🖥️ DESKTOP (Min-width: 769px)
-   Lógica: Galeria Mosaico Parcial (2 fotos), Coluna Fixa, Botões Grandes.
-   -------------------------------------------------------------------------- */
+/* ================================================= */
+/* PREÇO NO DESKTOP (Telas Grandes Apenas)           */
+/* ================================================= */
+
+@media (min-width: 769px) {
+    .price-current, 
+    #detailsPriceNew {
+        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+        font-weight: 400 !important;
+        font-size: 46px !important; /* GIGANTE só no PC */
+        color: #000000 !important;
+        letter-spacing: -1px !important;
+        line-height: 1.1 !important;
+    }
+}
+
+/* ============================================================ */
+/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
+/* Inclui: Header Grid, Swipe Gallery, Sticky Footer            */
+/* ============================================================ */
+
+@media (max-width: 768px) {
+    
+    /* --- 1. HEADER ALINHADO (Grid 3 Colunas) --- */
+
+    .nav-left { display: contents !important; }
+
+    .hamburger-btn {
+        grid-column: 1 !important;
+        display: flex !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    .nav-icons {
+        grid-column: 3 !important;
+        justify-self: end !important;
+        gap: 10px !important;
+    }
+
+    .nav-center, .search-bar { display: none !important; }
+
+    /* --- 2. LAYOUT GERAL & GALERIA SWIPE --- */
+    .product-page-container .product-main-grid {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .gallery-container::-webkit-scrollbar { display: none; }
+
+
+    #btnShowMore { display: none !important; }
+    .product-thumbnails { display: none !important; }
+
+    /* --- 3. CARD DE INFORMAÇÕES --- */
+
+    .product-title, #detailsProductName {
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 5px !important;
+    }
+
+   .price-current { font-size: 1.6rem !important; font-weight: 700 !important;
+    }
+
+}
+
+/* ============================================================ */
+/* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
+/* ============================================================ */
+
 @media (min-width: 769px) {
     
-    /* 1. GRID PRINCIPAL (68% / 28%) */
+    /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
         display: grid !important;
         grid-template-columns: 68% 28% !important; 
         gap: 4% !important;
-        padding: 40px 0 80px 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 0px 40px 0 !important;
         margin: 0 auto !important;
-        max-width: 1440px;
-        align-items: start !important;
+        align-items: start !important; 
+        position: relative !important;
     }
 
-    /* 2. GALERIA MOSAICO (Limitada a 2 fotos iniciais) */
+    /* 2. Galeria Mosaico (2 Fotos por linha) */
     .product-gallery-section {
         width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        position: relative !important;
     }
 
     .gallery-container {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important; /* 2 Colunas */
-        gap: 8px !important;
-    }
-    
-    .gallery-photo-full {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 5px !important;
         width: 100% !important;
-        aspect-ratio: 3/4 !important;
-        object-fit: cover !important;
-        cursor: zoom-in;
-        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        flex-wrap: wrap !important;
+        scroll-snap-type: none !important;
+        -webkit-overflow-scrolling: auto !important;
     }
 
-    /* CLASSE CRUCIAL: Oculta fotos extras no Desktop (JS controla isso) */
+    /* ✅ CRITICAL FIX: Forçar exibição total das fotos */
+    .gallery-photo-full {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important; /* ← ADICIONAR */
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        aspect-ratio: 3/4 !important;
+        min-height: 500px !important;
+        height: auto !important;
+        scroll-snap-align: none !important;
+        margin: 0 !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        position: relative !important;
+        flex-shrink: 0 !important;
+    }
+
+    .gallery-photo-full:not(.gallery-hidden) {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
     .gallery-photo-full.gallery-hidden {
         display: none !important;
     }
-
-    /* Botão Mostrar Mais (Visível só no Desktop) */
-    #btnShowMore { 
-        display: flex !important;
-        margin-top: 20px !important;
-    }
-
-    /* 3. COLUNA DE INFORMAÇÕES (Sticky/Fixa) */
+    
+    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
         position: sticky !important;
-        top: 100px !important;
+        top: 85px !important;
         height: fit-content !important;
-        padding-right: 20px !important;
+        max-height: none !important; 
+        overflow-y: visible !important;
+        padding: 0 20px 0 0 !important;
         background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        margin-top: 0 !important; /* Remove margem negativa do mobile */
-    }
-
-    /* 4. BOTÕES DE AÇÃO (Normais, grandes, na coluna) */
-    .product-action-buttons {
-        position: static !important; /* NÃO é fixo no desktop */
-        width: 100% !important;
-        padding: 0 !important;
-        margin-top: 30px !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 15px !important;
-    }
-
-    /* Estilo Visual dos Botões Desktop (Resgate do design original) */
-    .btn-primary {
-        background: #000 !important;
-        color: #fff !important;
-        border: 1px solid #000 !important;
-        height: 55px !important;
-        border-radius: 30px !important;
-        font-size: 16px !important;
-        font-weight: 700 !important;
+        z-index: 10 !important;
     }
     
-    .btn-primary:hover {
-        background: #333 !important;
+    .product-info-section::-webkit-scrollbar { display: none; }
+
+    .product-title, #detailsProductName {
+        font-size: 2.2rem !important;
+        margin-bottom: 5px !important;
     }
 
-    .btn-whatsapp-main {
-        background: #fff !important;
-        color: #25D366 !important;
-        border: 1px solid #25D366 !important;
-        height: 55px !important;
-        border-radius: 30px !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        display: flex !important;
+    .btn-show-more {
+        display: flex !important; 
+        justify-content: center;
+        width: 100%;
+        margin-top: 15px !important;
+        background: transparent !important;
+        border: 1px solid #e0e0e0 !important;
+        color: #000 !important;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    /* Header Grande */
-    .site-header .nav { height: 80px !important; padding: 0 40px !important; }
-    .nav-left .logo { font-size: 2rem !important; letter-spacing: 3px !important; }
-    
-    /* Títulos Grandes */
-    .product-title { font-size: 2.5rem !important; margin-bottom: 10px !important; }
-    .price-current { font-size: 2rem !important; }
+} /* ← FIM DA MEDIA QUERY DESKTOP */
+
+/* Correção: Botões de Ação Gerais (fora de media queries) */
+.product-action-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-top: 25px !important;
 }
 
+/* ============================================================ */
+/* ESTILOS GERAIS (FORA DAS MEDIA QUERIES)                      */
+/* ============================================================ */
 
-/* --------------------------------------------------------------------------
-   📱 MOBILE (Max-width: 768px)
-   Lógica: App Layout, Swipe Horizontal, Botões Fixos no Rodapé.
-   -------------------------------------------------------------------------- */
+/* Container que agrupa Botão + Texto */
+.size-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45px;
+}
+
+.stock-msg {
+    font-size: 0.6rem;
+    margin-top: 4px;
+    text-align: center;
+    line-height: 1;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.stock-msg.warning { color: #e67e22; } 
+.stock-msg.error { color: #999; text-decoration: none; }
+
+/* === BOTÃO FAVORITO MINIMALISTA (FLUTUANTE) === */
+
+/* Garante que o pai seja referência para o posicionamento absoluto */
+.product-gallery-section {
+    position: relative !important;
+}
+
+.btn-favorite-floating {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 20; /* Fica acima das fotos */
+    
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    
+    background: rgba(255, 255, 255, 0.9); /* Branco levemente transparente */
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    /* Remove estilos padrão de botão */
+    padding: 0;
+    outline: none;
+}
+
+.btn-favorite-floating svg {
+    width: 22px;
+    height: 22px;
+    color: #000; /* Cor padrão do contorno */
+    transition: all 0.3s ease;
+    stroke-width: 1.5px;
+}
+
+.btn-favorite-floating:hover {
+    transform: scale(1.1);
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* ESTADO ATIVO (CURTIDO) */
+.btn-favorite-floating.active svg {
+    fill: #ff4444;   /* Preenchimento vermelho */
+    stroke: #ff4444; /* Contorno vermelho */
+    animation: popHeart 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animação de "Pulo" ao curtir */
+@keyframes popHeart {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Ajuste para Mobile (Para não ficar muito na borda) */
+@media (max-width: 768px) {
+    .btn-favorite-floating {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+    }
+    .btn-favorite-floating svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ================================================= */
+/* NOVOS BOTÕES DE AÇÃO (MINIMALISTAS & OUTLINE)     */
+/* ================================================= */
+
+.product-action-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important; /* Espaço maior entre os botões */
+    width: 100% !important;
+    margin-top: 25px !important;
+}
+
+/* ESTILO GERAL DOS BOTÕES (Base) */
+.btn-primary, 
+.btn-whatsapp-main {
+    width: 100% !important;
+    height: 55px !important;
+    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    letter-spacing: 1px !important;
+    box-shadow: none !important; /* Remove sombras antigas se houver */
+}
+
+/* 1. BOTÃO COMPRAR */
+.btn-primary {
+    background: #ffffff !important;       /* Fundo Branco */
+    color: #000000 !important;            /* Texto Preto */
+    border: 1px solid #000000 !important; /* Borda Fina Preta */
+    border-radius: 30px !important;       /* Bem arredondado (Pílula) */
+    font-weight: 800 !important;          /* Texto bem grosso/preenchido */
+    font-size: 16px !important;
+}
+
+.btn-primary:hover {
+    background: #000000 !important;       /* Vira preto ao passar o mouse */
+    color: #ffffff !important;
+}
+
+/* 2. BOTÃO WHATSAPP (Estilo Print 2) */
+.btn-whatsapp-main {
+    background: #ffffff !important;       /* Fundo Branco */
+    color: #25D366 !important;            /* Texto Verde WhatsApp */
+    border: 1px solid #25D366 !important; /* Borda Fina Verde */
+    border-radius: 30px !important;       /* Igual ao de cima para harmonia */
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    gap: 8px !important;
+}
+
+.btn-whatsapp-main:hover {
+    background: #25D366 !important;       /* Vira verde ao passar o mouse */
+    color: #ffffff !important;
+}
+
+/* Ícone do WhatsApp segue a cor do texto */
+.btn-whatsapp-main svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: currentColor !important; 
+}
+
+/* Ajuste para Mobile (caso tenha regras específicas lá em cima) */
+@media (max-width: 768px) {
+    .btn-primary, .btn-whatsapp-main {
+        border-radius: 30px !important; /* Garante arredondado no celular também */
+    }
+}
+
+/* === WIDGET DE COMPARTILHAMENTO === */
+
+/* Ajuste do container do título para alinhar lado a lado */
+.header-left {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Título na esq, Share na dir (se mobile) ou juntos */
+    gap: 15px;
+    width: 100%;
+    position: relative;
+}
+
+/* O container da pílula */
+.share-widget {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Ícone principal fica na direita */
+    background: transparent;
+    border-radius: 50px;
+    padding: 5px;
+    height: 40px;
+    width: 40px; /* Largura inicial fechada */
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Animação suave */
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Ao passar o mouse (Expandir) */
+.share-widget:hover {
+    background: #f0f0f0; /* Fundo cinza igual ao print */
+    width: 120px; /* Largura suficiente para 3 ícones */
+}
+
+/* O ícone principal de "network" */
+.share-trigger {
+    min-width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* Container das opções (Instagram/WhatsApp) */
+.share-options {
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px);
+    transition: all 0.3s ease 0.1s; /* Delay pequeno */
+    margin-right: 10px;
+}
+
+/* Revelar opções no hover */
+.share-widget:hover .share-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Botões individuais */
+.share-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.share-btn:hover {
+    transform: scale(1.2);
+    color: #000;
+}
+
+/* Ajuste para Mobile: Título pode ser grande, então alinhamos flex */
+@media (max-width: 768px) {
+    .header-left {
+        justify-content: space-between !important;
+    }
+    .product-title {
+        flex: 1; /* Título ocupa o espaço sobrando */
+    }
+    /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
+       Mas para manter o design, vamos manter o hover/click */
+}
+
+/* ============================================================ */
+/* 📱 CORREÇÃO FINAL MOBILE (ESTILO LIVE! IMPECÁVEL)            */
+/* ============================================================ */
+
 @media (max-width: 768px) {
 
-    /* 1. HEADER APP (Ajustado) */
+    /* --- 1. CORREÇÃO DO HEADER (Logo x Ícones) --- */
     .site-header .nav {
-        display: grid !important;
-        grid-template-columns: 50px 1fr auto !important;
-        height: 56px !important;
+        /* Ajusta colunas: Menu(40px) | Logo(Flexível) | Ícones(Auto) */
+        grid-template-columns: 40px 1fr auto !important;
+        gap: 5px !important;
         padding: 0 15px !important;
-        align-items: center !important;
-        gap: 0 !important;
     }
 
     .nav-left .logo {
-        grid-column: 2 !important;
-        font-size: 16px !important; /* Pequeno para caber */
-        font-weight: 700 !important;
-        letter-spacing: 1px !important;
-        text-align: center !important;
-        width: 100% !important;
-        display: block !important;
+        font-size: 1.1rem !important; /* Fonte menor para caber */
         white-space: nowrap !important;
-        overflow: visible !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
     }
 
-    .nav-icons { grid-column: 3 !important; gap: 10px !important; }
-    .hamburger-btn { display: flex !important; position: relative !important; }
+    .nav-icons {
+        gap: 12px !important; /* Espaço entre a sacola e o login */
+        justify-content: flex-end !important;
+        width: auto !important;
+    }
 
-    /* 2. GALERIA SWIPE (Carrossel) */
-    .product-page-container .product-main-grid {
-        display: block !important; /* Bloqueia o Grid do Desktop */
-        width: 100% !important;
-        margin: 0 !important; padding: 0 !important;
+    /* --- 2. CORREÇÃO DA GALERIA DE FOTOS --- */
+    /* A foto não deve ocupar 100vh forçado, ela deve respeitar a proporção */
+    .product-gallery-section {
+        height: auto !important;
+        margin-bottom: 0 !important;
     }
 
     .gallery-container {
-        display: flex !important;
-        flex-direction: row !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory !important;
-        width: 100% !important;
-        aspect-ratio: 3/4 !important;
-        gap: 0 !important;
-        scrollbar-width: none !important;
+        height: auto !important;
+        aspect-ratio: 3/4 !important; /* Proporção Retrato Padrão */
     }
-    
-    .gallery-container::-webkit-scrollbar { display: none !important; }
-    
-    .gallery-photo-full {
-        min-width: 100% !important;
-        width: 100% !important;
-        height: 100% !important;
-        scroll-snap-align: center !important;
-        display: block !important;
-        opacity: 1 !important; /* Força visibilidade de todas no mobile */
-    }
-    
-    /* A classe hidden NÃO deve funcionar no mobile para permitir o swipe */
-    .gallery-photo-full.gallery-hidden { display: block !important; }
-    
-    #btnShowMore { display: none !important; } /* Esconde botão no mobile */
 
-    /* 3. CARD DE INFORMAÇÕES (Sheet) */
+    .gallery-photo-full {
+        height: auto !important;
+        aspect-ratio: 3/4 !important;
+        background-size: cover !important;
+        background-position: top center !important; /* Foca no rosto/cima */
+    }
+
+    /* --- 3. INFORMAÇÕES DO PRODUTO (CARD ARREDONDADO) --- */
     .product-info-section {
-        margin-top: -25px !important;
+        margin-top: -25px !important; /* Sobe levemente sobre a foto */
         border-radius: 25px 25px 0 0 !important;
-        background: #fff !important;
+        background: #ffffff !important;
+        padding: 25px 20px 140px 20px !important; /* Padding bottom gigante para os botões não cobrirem o texto */
         position: relative !important;
         z-index: 20 !important;
-        padding: 25px 20px 160px 20px !important; /* Espaço para botão fixo */
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05) !important;
     }
 
-    .product-title { font-size: 20px !important; line-height: 1.2 !important; }
-    .price-current { font-size: 24px !important; }
-
-    /* 4. BOTÕES FIXOS (Sticky Footer) */
+    /* --- 4. BOTÕES FIXOS NO RODAPÉ (STICKY FOOTER) --- */
+    /* Isso cria a barra branca fixa lá embaixo igual ao video */
     .product-action-buttons {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        z-index: 2147483647 !important;
+        background: #ffffff !important; /* Fundo BRANCO sólido */
         
-        background: rgba(255,255,255,0.98) !important;
-        border-top: 1px solid rgba(0,0,0,0.08) !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.15) !important;
+        /* Sombra suave para separar do conteúdo */
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
         
-        padding: 12px 20px !important;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+        padding: 15px 20px !important;
+        /* Respeita a área segura do iPhone (barrinha preta de baixo) */
+        padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
+        
+        z-index: 9999 !important;
+        margin: 0 !important;
         
         display: flex !important;
         flex-direction: column !important;
-        margin: 0 !important;
         gap: 10px !important;
     }
 
-    .btn-primary, .btn-whatsapp-main {
+    /* Ajuste fino dos botões no mobile */
+    .btn-primary, 
+    .btn-whatsapp-main {
+        height: 50px !important;
+        font-size: 14px !important;
         width: 100% !important;
-        height: 48px !important;
-        font-size: 15px !important;
-        border-radius: 50px !important;
-        
-        /* Restaura cores para o Mobile também */
-        background: #000 !important; 
-        color: #fff !important;
-        border: 1px solid #000 !important;
     }
     
-    .btn-whatsapp-main {
-        background: #fff !important;
-        color: #25D366 !important;
-        border: 1px solid #25D366 !important;
+    /* --- 5. CORREÇÃO DE BANNERS CORTADOS --- */
+    /* Garante que imagens de banner na home se ajustem */
+    .main-banner img, 
+    .hero-banner img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important; /* Mostra a imagem inteira sem cortar */
     }
+}
 
-    /* 5. ADJUSTES FINAIS MOBILE */
-    .secondary-actions { display: none !important; } 
-    .bf-content { padding: 2px !important; gap: 5px !important; }
-    .bf-time-unit { min-width: 20px !important; padding: 2px !important; }
-    .bf-label { font-size: 10px !important; }
-    .bf-countdown-label, .bf-separator, .bf-time-label { display: none !important; }
-
-} /* FIM DO CSS */
