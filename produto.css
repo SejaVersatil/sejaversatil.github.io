@@ -747,6 +747,61 @@ body, .short-desc-text, .model-info-text {
     display: none !important;
 }
 
+/* --- 4. CARD DE INFORMAÇÕES --- */
+.product-info-section {
+    margin-top: -20px !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: #ffffff !important;
+    position: relative !important;
+    z-index: 20 !important;
+    padding: 20px 20px 160px 20px !important;
+}
+
+.product-title, #detailsProductName {
+    font-size: 1.3rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 5px !important;
+}
+
+.price-current { 
+    font-size: 1.6rem !important; 
+    font-weight: 700 !important;
+}
+    /* --- 5. BOTÕES FIXOS (STICKY FOOTER) --- */
+.product-action-buttons {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    
+    background: #ffffff !important;
+    border-top: 1px solid rgba(0,0,0,0.1) !important;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.15) !important;
+    
+    padding: 12px 20px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    
+    z-index: 999999 !important;
+    margin: 0 !important;
+    
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.btn-primary, 
+.btn-whatsapp-main {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 13px !important;
+    border-radius: 25px !important;
+    margin: 0 !important;
+}
+
+.btn-whatsapp-main { 
+    display: flex !important; 
+}
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
 /* ============================================================ */
@@ -1125,3 +1180,4 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
