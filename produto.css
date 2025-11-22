@@ -565,27 +565,8 @@ body, .short-desc-text, .model-info-text {
 @media (max-width: 768px) {
     
     /* --- 1. HEADER ALINHADO (Grid 3 Colunas) --- */
-    .site-header .nav {
-        display: grid !important;
-        grid-template-columns: 50px 1fr 50px !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 10px !important;
-        height: 60px !important;
-        gap: 0 !important;
-    }
 
     .nav-left { display: contents !important; }
-
-    .nav-left .logo {
-        grid-column: 2 !important;
-        justify-self: center !important;
-        font-size: 1.4rem !important;
-        margin: 0 !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-        width: auto !important;
-    }
 
     .hamburger-btn {
         grid-column: 1 !important;
@@ -611,56 +592,13 @@ body, .short-desc-text, .model-info-text {
         width: 100% !important;
     }
 
-    .product-gallery-section {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%);
-        margin-right: calc(-50vw + 50%);
-        padding: 0 !important;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .gallery-container {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        width: 100% !important;
-        height: 75vh !important;
-        min-height: 400px !important;
-        gap: 0 !important;
-    }
-
     .gallery-container::-webkit-scrollbar { display: none; }
 
-    .gallery-photo-full {
-        min-width: 100vw !important;
-        width: 100vw !important;
-        height: 75vh !important;
-        min-height: 500px !important;
-        max-height: 800px !important;
-        aspect-ratio: 3/4 !important;
-        scroll-snap-align: start;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        margin: 0 !important;
-    }
 
     #btnShowMore { display: none !important; }
     .product-thumbnails { display: none !important; }
 
     /* --- 3. CARD DE INFORMAÇÕES --- */
-    .product-info-section {
-        position: relative !important;
-        top: -15px !important;
-        background: #fff !important;
-        border-radius: 20px 20px 0 0 !important;
-        padding: 25px 20px 100px 20px !important;
-        z-index: 10 !important;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-    }
 
     .product-title, #detailsProductName {
         font-size: 1.3rem !important;
@@ -669,43 +607,6 @@ body, .short-desc-text, .model-info-text {
     }
 
     .price-current { font-size: 1.6rem !important; font-weight: 700 !important; }
-
-    /* --- 4. STICKY FOOTER (BOTÃO COMPRAR) --- */
-    .product-action-buttons {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        background: #fff !important;
-        padding: 10px 15px !important;
-        padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
-        z-index: 9999 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        border-top: 1px solid #f5f5f5 !important;
-    }
-
-    .btn-primary {
-        width: 100% !important;
-        height: 50px !important;
-        font-family: 'Century Gothic', sans-serif !important;
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        text-transform: uppercase;
-        letter-spacing: 1px !important;
-        border-radius: 4px !important;
-        background: #000 !important;
-        color: #fff !important;
-        border: none !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-    }
-
-    .btn-whatsapp-main { display: none !important; }
-
-} /* ← FIM DA MEDIA QUERY MOBILE */
 
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
@@ -1186,3 +1087,4 @@ body, .short-desc-text, .model-info-text {
         object-fit: contain !important; /* Mostra a imagem inteira sem cortar */
     }
 }
+
