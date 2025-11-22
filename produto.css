@@ -1,4 +1,4 @@
-/* PRODUTO.CSS - INTEGRAL COM CORREÇÕES VISUAIS */
+/* PRODUTO.CSS - VERSÃO FINAL LIMPA E OTIMIZADA */
 
 :root {
     --primary: #000000;
@@ -15,63 +15,31 @@
 * { box-sizing: border-box; }
 
 body.product-page {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
     color: var(--text-primary);
     background: #ffffff;
     line-height: 1.5;
     margin: 0;
+    /* Correção para Sticky funcionar */
+    overflow-x: clip; 
+    overflow-y: visible;
 }
 
-/* Título do Produto */
-.product-title, #detailsProductName {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-weight: 400 !important;
-    line-height: 1.1 !important;
-    color: #1a1a1a !important;
-    text-transform: none !important;
-    letter-spacing: -1px !important; 
-}
-
-/* Descrição Curta (Nova) */
-.short-description-container {
-    border-top: 1px solid #f0f0f0 !important; /* Linha fina acima */
-    border-bottom: 1px solid #f0f0f0 !important; /* Linha fina abaixo */
-    padding: 25px 0 !important;
-    margin: 20px 0 !important;
-}
-
-.short-desc-text {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-size: 15px !important;
-    line-height: 1.6 !important; /* Espaçamento bom para leitura */
-    color: #333333 !important;
-    font-weight: 400 !important;
-}
-
-.view-full-desc {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-size: 14px !important;
-    font-weight: 700 !important; /* Negrito */
-    text-decoration: underline !important;
-    color: #000000 !important;
-    margin-top: 10px !important;
-    display: block !important;
-    cursor: pointer;
-}
-
-/* --- HEADER, NAV & BANNER (MANTIDOS DO ORIGINAL) --- */
-.product-page-container { max-width: 100%; padding: 0; margin: 0; }
+/* --- HEADER, NAV & BANNER (BASE) --- */
+.product-page-container { max-width: 100%; padding: 0; margin: 0; position: relative; }
 
 .site-header { background: white; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f0f0f0; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
 .nav { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 2rem; gap: 2rem; }
+
 .nav-left .logo {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    font-size: 2rem !important; /* Aumenta tamanho */
+    font-size: 2rem !important;
     letter-spacing: 3px !important;
     color: var(--primary) !important;
 }
+
 .nav-center { flex: 1; max-width: 500px; }
 .search-bar { display: flex; align-items: center; background: #f5f5f5; border-radius: 25px; padding: 0.5rem 1rem; gap: 0.75rem; }
 .search-bar input { flex: 1; border: none; background: transparent; outline: none; }
@@ -80,63 +48,31 @@ body.product-page {
 .nav-icon { background: none; border: none; cursor: pointer; position: relative; }
 .cart-count { position: absolute; top: -8px; right: -8px; background: #ff4444; color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 10px; }
 
-/* Black Friday */
+/* Black Friday Banner */
 .top-banner { background: #000; color: white; padding: 0.75rem 1rem; text-align: center; }
 .black-friday-banner { background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%); }
 .bf-content { display: flex; justify-content: center; gap: 1rem; font-size: 0.85rem; align-items: center; }
 .bf-countdown { display: flex; gap: 0.4rem; }
 .bf-time-unit { background: rgba(255,255,255,0.15); padding: 0.4rem 0.6rem; border-radius: 4px; min-width: 50px; font-weight: bold; }
 
-/* Sidebar & Menu (Atualizado: Estilo Glassmorphism Dark) */
-.hamburger-btn { display: none; position: fixed;
-top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; cursor: pointer; padding: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+/* Sidebar & Menu (Glassmorphism) */
+.hamburger-btn { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; cursor: pointer; padding: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .hamburger-line { display: block; width: 24px; height: 2px; background: #000; margin: 4px 0; }
-.sidebar-overlay { position: fixed; inset: 0;
-background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: 0.3s; }
 .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
-/* Menu Lateral com Fundo Transparente e Blur */
 .sidebar-menu { 
-    position: fixed;
-    top: 0; 
-    left: -280px; 
-    width: 280px; 
-    height: 100vh; 
-    /* Fundo Preto 85% + Blur */
-    background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 999; 
-    padding: 4rem 1.5rem; 
-    transition: 0.3s;
-    box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 999; padding: 4rem 1.5rem; transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
 }
-
 .sidebar-menu.active { left: 0; }
-
 .sidebar-section { margin-bottom: 2rem; }
-
-/* Títulos em Cinza Claro */
-.sidebar-section h4 { 
-    font-size: 0.8rem; 
-    text-transform: uppercase;
-    color: #999; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-    padding-bottom: 0.5rem; 
-}
-
+.sidebar-section h4 { font-size: 0.8rem; text-transform: uppercase; color: #999; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.5rem; }
 .sidebar-section ul { list-style: none; padding: 0; }
+.sidebar-section a { text-decoration: none; color: #e0e0e0; display: block; padding: 0.5rem 0; }
 
-/* Links em Branco Suave */
-.sidebar-section a { 
-    text-decoration: none; 
-    color: #e0e0e0;
-    display: block; 
-    padding: 0.5rem 0; 
-}
-
-/* Cart Sidebar */
+/* Cart Sidebar & Modals */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; opacity: 0; visibility: hidden; transition: 0.3s; }
 .cart-overlay.active { opacity: 1; visibility: visible; }
 .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: white; z-index: 9999; display: flex; flex-direction: column; transition: 0.3s; box-shadow: -4px 0 15px rgba(0,0,0,0.1); }
@@ -148,7 +84,7 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 .cart-footer { padding: 1.5rem; background: #fafafa; border-top: 1px solid #eee; }
 .checkout-btn { width: 100%; padding: 1rem; background: #000; color: #fff; border: none; font-weight: 600; cursor: pointer; }
 
-/* Modal Pagamento */
+/* Payment Modal */
 .payment-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
 .payment-modal.active { opacity: 1; visibility: visible; }
 .payment-modal-content { background: white; padding: 0; border-radius: 8px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
@@ -158,1094 +94,368 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 .payment-option:hover { background: #fafafa; }
 .payment-confirm-btn { width: calc(100% - 3rem); margin: 0 1.5rem 1.5rem; padding: 1rem; background: #25D366; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
-/* .gallery-photo-full:first-child {
-    grid-column: span 2; 
-} 
-*/
-.gallery-photo-full:first-child {
-    grid-column: auto !important;
-}
-
-/* Detalhes */
-.breadcrumb {
-    display: flex !important;
-    justify-content: flex-start !important; /* Garante que fiquem juntos na esquerda */
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 6px !important; /* Espaço pequeno entre os itens */
-    margin-bottom: 1rem !important;
-    font-size: 0.75rem !important;
-    color: #999 !important;
-    width: 100% !important;
-}
-
-.breadcrumb span {
-    margin: 0 !important;
-}
-.product-title { font-size: 2rem; font-weight: 500; margin: 0; }
-
-@media (min-width: 769px) {
-    /* Container de Preço - PADRÃO DESKTOP (Esquerda) */
-    .product-pricing {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        text-align: left !important;
-        gap: 2px !important;
-        margin-bottom: 20px !important;
-        margin-top: 0 !important;
-        flex: 0 !important;
-    }
-
-    .price-current {
-        font-size: 1.2rem !important;
-        line-height: 1.2;
-        font-weight: 700 !important;
-        color: #000 !important;
-        margin-bottom: 2px !important;
-        order: 1;
-    }
-    
-    .price-old-text {
-        font-size: 0.8rem !important;
-        color: #999 !important;
-        text-decoration: line-through;
-        margin-bottom: 0 !important;
-        order: 2;
-    }
-    
-    .price-installments {
-        font-size: 0.7rem !important;
-        color: #666 !important;
-        margin-top: 2px !important;
-        order: 3;
-    }
-
-    .price-discount-badge { 
-        display: none !important; 
-    }
-}
-
-/* Seletores - Estilo Live! (Quadrados e Limpos) */
-.product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
-.selector-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.8rem; }
-
-/* CORES (Configuração Blindada) */
-.color-options-grid {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-/* Bolinhas de Cor (Reduzidas e Travadas em 26px) */
-.color-option {
-    width: 23px !important;
-    height: 23px !important;
-    min-width: 23px !important;  /* Impede achatar */
-    min-height: 23px !important; /* Impede achatar */
-    border-radius: 50% !important;
-    border: 1px solid #e0e0e0;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s ease;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-.color-option:hover {
-    border-color: #999;
-    transform: scale(1.1);
-}
-
-.color-option.active {
-    border: 1px solid #e0e0e0 !important; 
-    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000 !important;
-    transform: none !important; 
-}
-
-/* Remove qualquer ícone antigo */
-.color-option.active::after {
-    display: none !important;
-}
-
-/* TAMANHOS */
-.size-options-grid {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-/* Tamanhos (Estilo Versiani - Clean) */
-.size-option {
-    min-width: 48px !important;
-    height: 48px !important;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-    color: #555;
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
-    font-size: 14px !important;
-    font-weight: 400 !important; /* Regular */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 8px !important; /* Borda suave */
-    transition: all 0.2s ease;
-}
-
-.size-option:hover {
-    border-color: #999;
-}
-
-.size-option.active {
-    background: transparent !important; /* Fundo transparente */
-    color: #000 !important;
-    border: 2px solid #000 !important; /* Borda grossa preta */
-    font-weight: 600 !important;
-}
-
-.size-option.unavailable {
-    opacity: 0.4;
-    text-decoration: line-through;
-    background: #f9f9f9;
-    cursor: not-allowed;
-    border-color: #eee;
-}
-
-/* Quantidade e Frete */
-.quantity-controls { display: flex; border: 1px solid #ddd; width: fit-content; }
-.qty-control-btn { width: 40px; height: 40px; background: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
-#productQuantity { width: 50px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: 600; }
-
-.shipping-input-row { display: flex; gap: 0.5rem; }
-.shipping-input { flex: 1; padding: 0.7rem; border: 1px solid #ccc; }
-.shipping-calc-btn { padding: 0 1.5rem; background: #000; color: white; border: none; font-weight: bold; cursor: pointer; }
-.shipping-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.shipping-option { display: flex; justify-content: space-between; padding: 0.8rem; background: #f9f9f9; font-size: 0.85rem; }
-
-/* Footer & Floating Button */
-.site-footer { background: #1a1a1a; color: white; padding: 3rem 2rem 1.5rem; margin-top: 5rem; }
-.whatsapp-float { position: fixed; bottom: 24px; right: 24px; background: #25D366; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-.whatsapp-float svg { width: 30px; height: 30px; }
-
 /* Loading */
 .loading-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: 0.3s; opacity: 0; visibility: hidden; }
 .loading-overlay.active { opacity: 1; visibility: visible; }
 .loading-spinner { font-size: 3rem; animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* RELACIONADOS */
+/* Footer Global */
+.site-footer { background: #1a1a1a; color: white; padding: 3rem 2rem 1.5rem; margin-top: 5rem; }
+.whatsapp-float { position: fixed; bottom: 24px; right: 24px; background: #25D366; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.whatsapp-float svg { width: 30px; height: 30px; }
+
+/* --- ELEMENTOS GERAIS DE PRODUTO (BASE) --- */
+
+/* Breadcrumbs */
+.breadcrumb {
+    display: flex !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 1rem !important;
+    font-size: 0.75rem !important;
+    color: #999 !important;
+    width: 100% !important;
+}
+.breadcrumb span { margin: 0 !important; }
+
+/* Descrição Curta */
+.short-description-container {
+    margin-bottom: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+    border-top: 1px solid #f0f0f0 !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    padding: 25px 0 !important;
+    margin: 20px 0 !important;
+}
+.short-desc-text {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+}
+.view-full-desc {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+    color: #000 !important;
+    margin-top: 10px !important;
+    display: block !important;
+    cursor: pointer;
+}
+
+/* Títulos dos seletores */
+.selector-label {
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #000 !important;
+    margin-bottom: 0.6rem !important;
+    text-transform: none !important;
+}
+
+/* CORES (Configuração Final) */
+.color-options-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.color-option {
+    width: 23px !important; height: 23px !important;
+    min-width: 23px !important; min-height: 23px !important;
+    border-radius: 50% !important;
+    border: 1px solid #e0e0e0;
+    cursor: pointer; position: relative;
+    transition: all 0.2s ease;
+    padding: 0 !important; box-sizing: border-box !important;
+}
+.color-option:hover { border-color: #999; transform: scale(1.1); }
+.color-option.active {
+    border: 1px solid #e0e0e0 !important;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000 !important;
+    transform: none !important;
+}
+.color-option.active::after { display: none !important; }
+
+/* TAMANHOS (Configuração Final) */
+.size-options-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.size-option {
+    min-width: 48px !important; height: 48px !important;
+    border: 1px solid #e0e0e0; background: #fff; color: #555;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important; font-weight: 400 !important;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 8px !important;
+    transition: all 0.2s ease;
+}
+.size-option:hover { border-color: #999; }
+.size-option.active {
+    background: transparent !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+    font-weight: 600 !important;
+}
+.size-option.unavailable {
+    opacity: 0.4; text-decoration: line-through; background: #f9f9f9;
+    cursor: not-allowed; border-color: #eee;
+}
+.size-wrapper { display: flex; flex-direction: column; align-items: center; width: 45px; }
+.stock-msg { font-size: 0.6rem; margin-top: 4px; text-align: center; line-height: 1; font-weight: 700 !important; white-space: nowrap; }
+.stock-msg.warning { color: #e67e22; }
+.stock-msg.error { color: #999; text-decoration: none; }
+
+/* Quantidade e Frete */
+.quantity-controls { display: flex; border: 1px solid #ddd; width: fit-content; }
+.qty-control-btn { width: 40px; height: 40px; background: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
+#productQuantity { width: 50px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: 600; }
+.shipping-input-row { display: flex; gap: 0.5rem; }
+.shipping-input { flex: 1; padding: 0.7rem; border: 1px solid #ccc; }
+.shipping-calc-btn { padding: 0 1.5rem; background: #000; color: white; border: none; font-weight: bold; cursor: pointer; }
+.shipping-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.shipping-option { display: flex; justify-content: space-between; padding: 0.8rem; background: #f9f9f9; font-size: 0.85rem; }
+
+/* Links Secundários e Confiança */
+.secondary-actions { display: flex; gap: 1.5rem; margin-top: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
+.action-link { background: transparent; border: none; padding: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #666; cursor: pointer; font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important; text-decoration: underline; font-weight: 600 !important; }
+.action-link:hover { color: #000; }
+.action-link svg { width: 16px; height: 16px; stroke-width: 1.5px; }
+
+.trust-badges-list { margin-top: 30px !important; padding-top: 25px !important; border-top: 1px solid #f0f0f0 !important; display: flex; flex-direction: column; gap: 20px !important; }
+.trust-badge { display: flex; gap: 15px !important; align-items: center !important; }
+.trust-badge svg { width: 32px !important; height: 32px !important; color: #000 !important; stroke-width: 1.2px !important; flex-shrink: 0; }
+.badge-text { display: flex; flex-direction: column; font-size: 13px !important; line-height: 1.4; }
+.badge-text strong { font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important; font-weight: 700 !important; color: #1a1a1a !important; margin-bottom: 2px; }
+.badge-text a { color: #555 !important; text-decoration: underline; font-weight: 600 !important; transition: color 0.2s; }
+.badge-text a:hover { color: #000; }
+
+/* Relacionados */
 .related-products-section { margin-top: 4rem; border-top: 1px solid #f5f5f5; padding-top: 3rem; }
 .related-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
 .product-card { cursor: pointer; border: 1px solid #f5f5f5; }
 .product-card .product-image { aspect-ratio: 3/4; background-size: cover; background-position: center; }
 .product-card .product-info { padding: 1rem; }
 
-/* Links pequenos abaixo do botão comprar */
-.secondary-actions {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 1rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.action-link {
-    background: transparent;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: #666;
-    cursor: pointer;
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
-    text-decoration: underline;
-}
-
-.action-link:hover {
-    color: #000;
-}
-
-.action-link svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 1.5px;
-}
-
-/* Lista de Ícones de Confiança (Rodapé da Info) */
-/* Ícones de Confiança (Rodapé) */
-.trust-badges-list {
-    margin-top: 30px !important;
-    padding-top: 25px !important;
-    border-top: 1px solid #f0f0f0 !important; /* Linha extra de separação */
-    display: flex;
-    flex-direction: column;
-    gap: 20px !important;
-}
-
-.trust-badge {
-    display: flex;
-    gap: 15px !important;
-    align-items: center !important; /* Centraliza ícone com texto */
-}
-
-.trust-badge svg {
-    width: 32px !important;  /* Ícone maior */
-    height: 32px !important;
-    color: #000 !important; 
-    stroke-width: 1.2px !important; /* Traço fino elegante */
-    flex-shrink: 0;
-}
-
-.badge-text {
-    display: flex;
-    flex-direction: column;
-    font-size: 13px !important;
-    line-height: 1.4;
-}
-
-.badge-text strong {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
-    font-weight: 700 !important;
-    color: #1a1a1a !important;
-    margin-bottom: 2px;
-}
-
-.badge-text a {
-    color: #555 !important;
-    text-decoration: underline;
-    font-weight: 500 !important;
-    transition: color 0.2s;
-}
-
-.badge-text a:hover {
-    color: #000;
-}
-
-/* ADICIONE NO FINAL DO ARQUIVO */
-
-/* Container que agrupa Botão + Texto */
-.size-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 45px;
-}
-
-/* O texto de aviso (Últimas/Esgotado) */
-.stock-msg {
-    font-size: 0.6rem;
-    margin-top: 4px;
-    text-align: center;
-    line-height: 1;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-/* Cores dos avisos */
-.stock-msg.warning { color: #e67e22; } 
-.stock-msg.error { color: #999; text-decoration: none; } 
-
-
-/* ======================================================= */
-/* AJUSTES FINAIS: COMPACTAÇÃO E ESPESSURA DE FONTE (LIVE!) */
-/* ======================================================= */
-
-/* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
-.product-info-section {
-    gap: 1.2rem !important;
-}
-
-/* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
-@media (min-width: 769px) {
-    .product-selector-group {
-        padding-bottom: 10px !important;
-        margin-bottom: 10px !important;
-        border-bottom: none !important;
-    }
-}
-
-/* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
-@media (min-width: 769px) {
-    .product-title {
-        margin-bottom: 0.2rem !important; 
-    }
-}
-
-@media (min-width: 769px) {
-    .product-pricing {
-        margin-bottom: 0.5rem !important;
-        gap: 0.1rem !important;
-    }
-}
-
-.short-description-container {
-    margin-bottom: 0.8rem !important;
-    padding-bottom: 0.8rem !important;
-}
-
-/* 3. ENGROSSAR FONTES (Fim das letras finas) */
-
-/* Textos gerais (Descrição, infos) */
-body, .short-desc-text, .model-info-text {
-    font-weight: 500 !important;
-    color: #333 !important;     
-}
-
-/* Títulos dos seletores (COR, TAMANHO...) */
-.selector-label {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 14px !important;
-    font-weight: 400 !important; /* Sem negrito */
-    color: #000 !important;
-    margin-bottom: 0.6rem !important;
-    text-transform: none !important; 
-}
-
-/* Links pequenos (Tabela de medidas, Ver descrição) */
-.view-full-desc, 
-.size-guide-link, 
-.action-link, 
-.badge-text a {
-    font-weight: 600 !important; 
-    text-decoration: underline;
-}
-
-/* Textos de "Últimas unidades" */
-.stock-msg {
-    font-weight: 700 !important; 
-}
-
-/* Botões de Tamanho */
-.size-option {
-    font-weight: 600 !important; 
-}
-
-
-/* Texto de Parcelamento */
-.price-installments {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 15px !important;
-    color: #555 !important;
-    font-weight: 400 !important; /* Sem negrito */
-    margin-top: 5px !important;
-}
-
-/* Ícones de confiança (Rodapé) */
-.badge-text strong {
-    font-weight: 700 !important;
-}
-
-/* ================================================= */
-/* PREÇO NO DESKTOP (Telas Grandes Apenas)           */
-/* ================================================= */
-
-@media (min-width: 769px) {
-    .price-current, 
-    #detailsPriceNew {
-        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-        font-weight: 400 !important;
-        font-size: 46px !important; /* GIGANTE só no PC */
-        color: #000000 !important;
-        letter-spacing: -1px !important;
-        line-height: 1.1 !important;
-    }
-}
-
 /* ============================================================ */
-/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
-/* Inclui: Header Grid, Swipe Gallery, Sticky Footer            */
+/* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)               */
 /* ============================================================ */
-
-@media (max-width: 768px) {
-    
-    /* --- 1. HEADER MOBILE --- */
-.site-header .nav {
-    display: grid !important;
-    grid-template-columns: 30px 1fr 65px !important;
-    align-items: center !important;
-    height: 45px !important;
-    padding: 0 8px !important;
-    gap: 3px !important;
-}
-
-.nav-left { 
-    display: contents !important; 
-}
-
-.nav-left .logo {
-    grid-column: 2 !important;
-    width: 100% !important;
-    text-align: center !important;
-    font-size: 8px !important;
-    letter-spacing: 0.2px !important;
-    font-weight: 700 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    display: block !important;
-}
-
-.hamburger-btn {
-    grid-column: 1 !important;
-    display: flex !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    padding: 0 !important;
-}
-
-.nav-icons {
-    grid-column: 3 !important;
-    justify-self: end !important;
-    gap: 6px !important;
-}
-
-.nav-icon svg {
-    width: 15px !important;
-    height: 15px !important;
-}
-
-.cart-count {
-    font-size: 0.5rem !important;
-    padding: 0.1rem 0.25rem !important;
-}
-
-.nav-center, 
-.search-bar { 
-    display: none !important; 
-}
-
-/* --- 2. COUNTDOWN COMPACTO --- */
-.top-banner {
-    padding: 5px 0 !important;
-}
-
-.bf-content {
-    flex-wrap: nowrap !important;
-    justify-content: center !important;
-    gap: 3px !important;
-    font-size: 7px !important;
-    line-height: 1 !important;
-    align-items: center !important;
-}
-
-.bf-label, 
-.bf-countdown-label {
-    font-size: 7px !important;
-    letter-spacing: 0 !important;
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-}
-
-.bf-separator { 
-    display: none !important;
-}
-
-.bf-countdown {
-    gap: 2px !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-.bf-time-unit {
-    min-width: 18px !important;
-    padding: 2px 3px !important;
-    border-radius: 2px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-
-.bf-time-value {
-    font-size: 9px !important;
-    line-height: 1 !important;
-    font-weight: 700 !important;
-}
-
-.bf-time-label {
-    font-size: 4px !important;
-    text-transform: uppercase !important;
-    margin-top: 1px !important;
-    font-weight: 500 !important;
-}
-
-.bf-colon {
-    font-size: 7px !important;
-    margin: 0 1px !important;
-}
-
-    /* --- 3. GALERIA SWIPE HORIZONTAL (MOBILE) --- */
-.product-page-container .product-main-grid {
-    display: block !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-}
-
-.product-gallery-section {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: auto !important;
-    position: relative !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    left: 50% !important;
-    right: 50% !important;
-    margin-left: -50vw !important;
-    margin-right: -50vw !important;
-}
-
-.gallery-container {
-    display: flex !important;
-    flex-direction: row !important;
-    
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: auto !important;
-    aspect-ratio: 3/4 !important;
-    
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-}
-
-.gallery-container::-webkit-scrollbar { 
-    display: none !important; 
-}
-
-/* CADA FOTO */
-.gallery-photo-full {
-    /* OCUPA TELA INTEIRA */
-    min-width: 100% !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    
-    /* ALTURA PROPORCIONAL */
-    height: 100% !important;
-    aspect-ratio: 3/4 !important;
-    
-    /* SNAP NO CENTRO */
-    scroll-snap-align: center !important;
-    scroll-snap-stop: always !important;
-    
-    /* IMAGEM */
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    
-    /* CRÍTICO: FORÇA EXIBIÇÃO */
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    
-    flex-shrink: 0 !important;
-}
-
-/* REMOVE FOTOS OCULTAS NO MOBILE */
-.gallery-photo-full.gallery-hidden {
-    display: block !important;
-}
-
-/* ESCONDE ELEMENTOS DESKTOP */
-#btnShowMore,
-.product-thumbnails,
-.btn-show-more {
-    display: none !important;
-}
-
-/* --- 4. CARD DE INFORMAÇÕES --- */
-.product-info-section {
-    margin-top: -20px !important;
-    border-radius: 15px 15px 0 0 !important;
-    background: #ffffff !important;
-    position: relative !important;
-    z-index: 20 !important;
-    padding: 15px 20px 30px 20px !important;
-}
-
-.product-title, #detailsProductName {
-    font-size: 1.4rem !important;
-    line-height: 1.3 !important;
-    margin-bottom: 10px !important;
-    font-weight: 600 !important;
-    text-align: center !important; /* ← CENTRALIZA NO MOBILE */
-}
-
-.product-pricing {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    gap: 5px !important;
-    margin-bottom: 15px !important;
-}
-    
-.price-current { 
-    font-size: 1.8rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 5px !important;
-}
-
-.price-old-text {
-    font-size: 0.85rem !important;
-    color: #999 !important;
-    text-decoration: line-through !important;
-    display: block !important;
-    margin-bottom: 5px !important;
-}
-
-.price-installments {
-    font-size: 0.85rem !important;
-    color: #666 !important;
-    margin-bottom: 20px !important;
-}
-
-    /* Seletores compactos */
-.product-selector-group {
-    padding-bottom: 15px !important;
-    margin-bottom: 15px !important;
-    border-bottom: 1px solid #f0f0f0 !important;
-}
-
-.selector-label {
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    margin-bottom: 10px !important;
-    color: #000 !important;
-    text-transform: none !important;
-}
-    /* --- 5. BOTÕES FIXOS (STICKY FOOTER) --- */
-.product-action-buttons {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    
-    background: #ffffff !important;
-    border-top: 1px solid rgba(0,0,0,0.1) !important;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.15) !important;
-    
-    padding: 12px 20px !important;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
-    
-    z-index: 999999 !important;
-    margin: 0 !important;
-    
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-}
-
-.btn-primary, 
-.btn-whatsapp-main {
-    width: 100% !important;
-    height: 48px !important;
-    font-size: 13px !important;
-    border-radius: 25px !important;
-    margin: 0 !important;
-}
-
-.btn-whatsapp-main { 
-    display: flex !important; 
-}
-
-}
-/* ============================================================ */
-/* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
-/* ============================================================ */
-
 @media (min-width: 769px) {
-    
-    /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
         display: grid !important;
-        grid-template-columns: 68% 28% !important; 
+        grid-template-columns: 68% 28% !important;
         gap: 4% !important;
         width: 100% !important;
         max-width: 100% !important;
         padding: 20px 0px 40px 0 !important;
         margin: 0 auto !important;
-        align-items: start !important; 
+        align-items: start !important;
         position: relative !important;
     }
 
-    /* 2. Galeria Mosaico (2 Fotos por linha) */
-    .product-gallery-section {
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        position: relative !important;
-    }
-
+    .product-gallery-section { width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; position: relative !important; }
+    
     .gallery-container {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         gap: 5px !important;
         width: 100% !important;
         height: auto !important;
-        min-height: 0 !important;
         overflow: visible !important;
-        flex-wrap: wrap !important;
-        scroll-snap-type: none !important;
-        -webkit-overflow-scrolling: auto !important;
     }
 
-    /* ✅ CRITICAL FIX: Forçar exibição total das fotos */
     .gallery-photo-full {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important; /* ← ADICIONAR */
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
-        aspect-ratio: 3/4 !important;
-        min-height: 500px !important;
-        height: auto !important;
-        scroll-snap-align: none !important;
-        margin: 0 !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        position: relative !important;
-        flex-shrink: 0 !important;
+        display: block !important; visibility: visible !important; opacity: 1 !important;
+        width: 100% !important; aspect-ratio: 3/4 !important;
+        min-height: 500px !important; height: auto !important;
+        background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important;
     }
+    .gallery-photo-full.gallery-hidden { display: none !important; }
+    .gallery-photo-full:first-child { grid-column: auto !important; }
 
-    .gallery-photo-full:not(.gallery-hidden) {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    .gallery-photo-full.gallery-hidden {
-        display: none !important;
-    }
-    
-    /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
         position: sticky !important;
         top: 85px !important;
         height: fit-content !important;
-        max-height: none !important; 
         overflow-y: visible !important;
         padding: 0 20px 0 0 !important;
         background: transparent !important;
         z-index: 10 !important;
+        gap: 1.2rem !important;
     }
-    
-    .product-info-section::-webkit-scrollbar { display: none; }
 
-    .product-title, #detailsProductName {
-    font-size: 46px !important;  /* ← Ajustado de 2.2rem para 46px */
-    margin-bottom: 10px !important;  /* ← Ajustado de 5px para 10px */
-}
+    /* Botão Mostrar Mais */
     .btn-show-more {
-        display: flex !important; 
-        justify-content: center;
-        width: 100%;
-        margin-top: 15px !important;
-        background: transparent !important;
-        border: 1px solid #e0e0e0 !important;
-        color: #000 !important;
-        padding: 10px 0;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        display: flex !important; justify-content: center; width: 100%;
+        margin-top: 15px !important; background: transparent !important; border: 1px solid #e0e0e0 !important;
+        color: #000 !important; padding: 10px 0; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
-} /* ← FIM DA MEDIA QUERY DESKTOP */
-
-/* Correção: Botões de Ação Gerais (fora de media queries) */
-.product-action-buttons {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-    margin-top: 25px !important;
+    /* Preço Desktop */
+    .price-current, #detailsPriceNew {
+        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+        font-weight: 400 !important; font-size: 46px !important; color: #000000 !important;
+        letter-spacing: -1px !important; line-height: 1.1 !important;
+    }
+    
+    .product-pricing {
+        display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important;
+        gap: 2px !important; margin-bottom: 20px !important; flex: 0 !important;
+    }
+    .price-old-text { font-size: 0.8rem !important; color: #999 !important; text-decoration: line-through; margin-bottom: 0 !important; order: 2; }
+    .price-installments { font-size: 0.7rem !important; color: #666 !important; margin-top: 2px !important; order: 3; }
+    .price-discount-badge { display: none !important; }
+    
+    /* Título Desktop */
+    .product-title, #detailsProductName {
+        font-size: 46px !important; margin-bottom: 10px !important; font-weight: 400 !important; line-height: 1.1 !important;
+    }
+    
+    .product-selector-group { padding-bottom: 10px !important; margin-bottom: 10px !important; border-bottom: none !important; }
 }
 
 /* ============================================================ */
-/* ESTILOS GERAIS (FORA DAS MEDIA QUERIES)                      */
+/* ✨ PÁGINA DE PRODUTO MOBILE (APP-LIKE STYLE)                 */
 /* ============================================================ */
-
-/* Container que agrupa Botão + Texto */
-.size-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 45px;
-}
-
-.stock-msg {
-    font-size: 0.6rem;
-    margin-top: 4px;
-    text-align: center;
-    line-height: 1;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.stock-msg.warning { color: #e67e22; } 
-.stock-msg.error { color: #999; text-decoration: none; }
-
-/* === BOTÃO FAVORITO MINIMALISTA (FLUTUANTE) === */
-
-/* Garante que o pai seja referência para o posicionamento absoluto */
-.product-gallery-section {
-    position: relative !important;
-}
-
-.btn-favorite-floating {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 20; /* Fica acima das fotos */
-    
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    
-    background: rgba(255, 255, 255, 0.9); /* Branco levemente transparente */
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    
-    /* Remove estilos padrão de botão */
-    padding: 0;
-    outline: none;
-}
-
-.btn-favorite-floating svg {
-    width: 22px;
-    height: 22px;
-    color: #000; /* Cor padrão do contorno */
-    transition: all 0.3s ease;
-    stroke-width: 1.5px;
-}
-
-.btn-favorite-floating:hover {
-    transform: scale(1.1);
-    background: #fff;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-/* ESTADO ATIVO (CURTIDO) */
-.btn-favorite-floating.active svg {
-    fill: #ff4444;   /* Preenchimento vermelho */
-    stroke: #ff4444; /* Contorno vermelho */
-    animation: popHeart 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Animação de "Pulo" ao curtir */
-@keyframes popHeart {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
-
-/* Ajuste para Mobile (Para não ficar muito na borda) */
 @media (max-width: 768px) {
-    .btn-favorite-floating {
-        top: 15px;
-        right: 15px;
-        width: 40px;
-        height: 40px;
+    /* Header Limpo */
+    .site-header .nav {
+        display: grid !important; grid-template-columns: 30px 1fr 65px !important;
+        align-items: center !important; height: 45px !important; padding: 0 8px !important; gap: 3px !important;
     }
-    .btn-favorite-floating svg {
-        width: 20px;
-        height: 20px;
+    .nav-left { display: contents !important; }
+    .nav-left .logo {
+        grid-column: 2 !important; width: 100% !important; text-align: center !important;
+        font-size: 8px !important; letter-spacing: 0.2px !important; font-weight: 700 !important;
+        white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; display: block !important;
     }
-}
+    .hamburger-btn { grid-column: 1 !important; display: flex !important; position: relative !important; padding: 0 !important; }
+    .nav-icons { grid-column: 3 !important; justify-self: end !important; gap: 6px !important; }
+    .nav-icon svg { width: 15px !important; height: 15px !important; }
+    .cart-count { font-size: 0.5rem !important; padding: 0.1rem 0.25rem !important; }
+    .nav-center, .search-bar { display: none !important; }
 
-/* ================================================= */
-/* NOVOS BOTÕES DE AÇÃO (MINIMALISTAS & OUTLINE)     */
-/* ================================================= */
+    /* Countdown */
+    .top-banner { padding: 5px 0 !important; }
+    .bf-content { flex-wrap: nowrap !important; justify-content: center !important; gap: 3px !important; font-size: 7px !important; line-height: 1 !important; }
+    .bf-label, .bf-countdown-label { font-size: 7px !important; letter-spacing: 0 !important; font-weight: 600 !important; white-space: nowrap !important; }
+    .bf-separator { display: none !important; }
+    .bf-countdown { gap: 2px !important; display: flex !important; align-items: center !important; }
+    .bf-time-unit { min-width: 18px !important; padding: 2px 3px !important; border-radius: 2px !important; display: flex !important; flex-direction: column !important; align-items: center !important; }
+    .bf-time-value { font-size: 9px !important; line-height: 1 !important; font-weight: 700 !important; }
+    .bf-time-label { font-size: 4px !important; margin-top: 1px !important; font-weight: 500 !important; }
+    .bf-colon { font-size: 7px !important; margin: 0 1px !important; }
 
-.product-action-buttons {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 15px !important; /* Espaço maior entre os botões */
-    width: 100% !important;
-    margin-top: 25px !important;
-}
+    /* Galeria Swipe */
+    .product-page-container .product-main-grid { display: block !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
+    .product-gallery-section {
+        width: 100vw !important; max-width: 100vw !important; height: auto !important;
+        position: relative !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important;
+        left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important;
+    }
+    .gallery-container {
+        display: flex !important; flex-direction: row !important;
+        overflow-x: auto !important; overflow-y: hidden !important;
+        scroll-snap-type: x mandatory !important; -webkit-overflow-scrolling: touch !important;
+        width: 100vw !important; max-width: 100vw !important; height: auto !important; aspect-ratio: 3/4 !important;
+        scrollbar-width: none !important; -ms-overflow-style: none !important;
+    }
+    .gallery-container::-webkit-scrollbar { display: none !important; }
+    .gallery-photo-full {
+        min-width: 100% !important; max-width: 100% !important; width: 100% !important;
+        height: 100% !important; aspect-ratio: 3/4 !important;
+        scroll-snap-align: center !important; scroll-snap-stop: always !important;
+        background-size: cover !important; background-position: center center !important; background-repeat: no-repeat !important;
+        display: block !important; visibility: visible !important; opacity: 1 !important; flex-shrink: 0 !important;
+    }
+    .gallery-photo-full.gallery-hidden { display: block !important; }
+    #btnShowMore, .product-thumbnails, .btn-show-more { display: none !important; }
 
-/* ESTILO GERAL DOS BOTÕES (Base) */
-.btn-primary, 
-.btn-whatsapp-main {
-    width: 100% !important;
-    height: 55px !important;
-    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
-    text-transform: uppercase !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    letter-spacing: 1px !important;
-    box-shadow: none !important; /* Remove sombras antigas se houver */
-}
+    /* Card de Informações "Sheet" */
+    .product-info-section {
+        margin-top: -20px !important; border-radius: 15px 15px 0 0 !important;
+        background: #ffffff !important; position: relative !important; z-index: 20 !important;
+        padding: 15px 20px 30px 20px !important;
+    }
+    .product-title, #detailsProductName {
+        font-size: 1.4rem !important; line-height: 1.3 !important; margin-bottom: 10px !important;
+        font-weight: 600 !important; text-align: center !important;
+    }
+    .product-pricing {
+        display: flex !important; flex-direction: column !important; align-items: center !important;
+        text-align: center !important; gap: 5px !important; margin-bottom: 15px !important;
+    }
+    .price-current { font-size: 1.8rem !important; font-weight: 700 !important; margin-bottom: 5px !important; }
+    .price-old-text { font-size: 0.85rem !important; color: #999 !important; text-decoration: line-through !important; display: block !important; margin-bottom: 5px !important; }
+    .price-installments { font-size: 0.85rem !important; color: #666 !important; margin-bottom: 20px !important; }
+    
+    .product-selector-group { padding-bottom: 15px !important; margin-bottom: 15px !important; border-bottom: 1px solid #f0f0f0 !important; }
+    .selector-label { font-size: 13px !important; font-weight: 600 !important; margin-bottom: 10px !important; color: #000 !important; text-transform: none !important; }
 
-/* 1. BOTÃO COMPRAR */
-.btn-primary {
-    background: #ffffff !important;       /* Fundo Branco */
-    color: #000000 !important;            /* Texto Preto */
-    border: 1px solid #000000 !important; /* Borda Fina Preta */
-    border-radius: 30px !important;       /* Bem arredondado (Pílula) */
-    font-weight: 800 !important;          /* Texto bem grosso/preenchido */
-    font-size: 16px !important;
-}
-
-.btn-primary:hover {
-    background: #000000 !important;       /* Vira preto ao passar o mouse */
-    color: #ffffff !important;
-}
-
-/* 2. BOTÃO WHATSAPP (Estilo Print 2) */
-.btn-whatsapp-main {
-    background: #ffffff !important;       /* Fundo Branco */
-    color: #25D366 !important;            /* Texto Verde WhatsApp */
-    border: 1px solid #25D366 !important; /* Borda Fina Verde */
-    border-radius: 30px !important;       /* Igual ao de cima para harmonia */
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    gap: 8px !important;
-}
-
-.btn-whatsapp-main:hover {
-    background: #25D366 !important;       /* Vira verde ao passar o mouse */
-    color: #ffffff !important;
-}
-
-/* Ícone do WhatsApp segue a cor do texto */
-.btn-whatsapp-main svg {
-    width: 20px !important;
-    height: 20px !important;
-    fill: currentColor !important; 
-}
-
-/* Ajuste para Mobile (caso tenha regras específicas lá em cima) */
-@media (max-width: 768px) {
+    /* Sticky Footer Buttons */
+    .product-action-buttons {
+        position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important;
+        background: #ffffff !important; border-top: 1px solid rgba(0,0,0,0.1) !important; box-shadow: 0 -5px 20px rgba(0,0,0,0.15) !important;
+        padding: 12px 20px !important; padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+        z-index: 999999 !important; margin: 0 !important;
+        display: flex !important; flex-direction: column !important; gap: 8px !important;
+    }
     .btn-primary, .btn-whatsapp-main {
-        border-radius: 30px !important; /* Garante arredondado no celular também */
+        width: 100% !important; height: 48px !important; font-size: 13px !important; border-radius: 25px !important; margin: 0 !important;
     }
+    .btn-whatsapp-main { display: flex !important; }
 }
 
-/* === WIDGET DE COMPARTILHAMENTO === */
+/* ============================================================ */
+/* BOTÕES GERAIS (FINAL ROBUSTO)                                */
+/* ============================================================ */
+.product-action-buttons { display: flex !important; flex-direction: column !important; gap: 15px !important; width: 100% !important; margin-top: 25px !important; }
 
-/* Ajuste do container do título para alinhar lado a lado */
-.header-left {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important; /* Título na esq, Share na dir (se mobile) ou juntos */
-    gap: 15px;
-    width: 100%;
-    position: relative;
+/* Botão Comprar */
+.btn-primary {
+    background: #ffffff !important; color: #000000 !important;
+    border: 1px solid #000000 !important; border-radius: 30px !important;
+    font-weight: 800 !important; font-size: 16px !important;
+    width: 100% !important; height: 55px !important;
+    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
+    text-transform: uppercase !important; cursor: pointer !important;
+    transition: all 0.3s ease !important; display: flex !important; align-items: center !important; justify-content: center !important; letter-spacing: 1px !important;
 }
+.btn-primary:hover { background: #000000 !important; color: #ffffff !important; }
 
-/* O container da pílula */
+/* Botão WhatsApp */
+.btn-whatsapp-main {
+    background: #ffffff !important; color: #25D366 !important;
+    border: 1px solid #25D366 !important; border-radius: 30px !important;
+    font-weight: 600 !important; font-size: 14px !important; gap: 8px !important;
+    width: 100% !important; height: 55px !important;
+    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
+    text-transform: uppercase !important; cursor: pointer !important;
+    transition: all 0.3s ease !important; display: flex !important; align-items: center !important; justify-content: center !important; letter-spacing: 1px !important;
+}
+.btn-whatsapp-main:hover { background: #25D366 !important; color: #ffffff !important; }
+.btn-whatsapp-main svg { width: 20px !important; height: 20px !important; fill: currentColor !important; }
+
+/* Botão Favorito Flutuante */
+.btn-favorite-floating {
+    position: absolute; top: 15px; right: 15px; z-index: 20;
+    width: 45px; height: 45px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; padding: 0; outline: none;
+}
+.btn-favorite-floating svg { width: 22px; height: 22px; color: #000; transition: all 0.3s ease; stroke-width: 1.5px; }
+.btn-favorite-floating:hover { transform: scale(1.1); background: #fff; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.btn-favorite-floating.active svg { fill: #ff4444; stroke: #ff4444; animation: popHeart 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popHeart { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* Widget Share */
+.header-left { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 15px; width: 100%; position: relative; }
 .share-widget {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Ícone principal fica na direita */
-    background: transparent;
-    border-radius: 50px;
-    padding: 5px;
-    height: 40px;
-    width: 40px; /* Largura inicial fechada */
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Animação suave */
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
+    display: flex; align-items: center; justify-content: flex-end;
+    background: transparent; border-radius: 50px; padding: 5px; height: 40px; width: 40px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow: hidden; cursor: pointer; position: relative;
 }
-
-/* Ao passar o mouse (Expandir) */
-.share-widget:hover {
-    background: #f0f0f0; /* Fundo cinza igual ao print */
-    width: 120px; /* Largura suficiente para 3 ícones */
-}
-
-/* O ícone principal de "network" */
-.share-trigger {
-    min-width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-}
-
-/* Container das opções (Instagram/WhatsApp) */
-.share-options {
-    display: flex;
-    gap: 10px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(20px);
-    transition: all 0.3s ease 0.1s; /* Delay pequeno */
-    margin-right: 10px;
-}
-
-/* Revelar opções no hover */
-.share-widget:hover .share-options {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
-}
-
-/* Botões individuais */
-.share-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #555;
-    transition: transform 0.2s, color 0.2s;
-}
-
-.share-btn:hover {
-    transform: scale(1.2);
-    color: #000;
-}
-
-/* Ajuste para Mobile: Título pode ser grande, então alinhamos flex */
-@media (max-width: 768px) {
-    .header-left {
-        justify-content: space-between !important;
-    }
-    .product-title {
-        flex: 1; /* Título ocupa o espaço sobrando */
-    }
-    /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
-       Mas para manter o design, vamos manter o hover/click */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
+.share-widget:hover { background: #f0f0f0; width: 120px; }
+.share-trigger { min-width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.share-options { display: flex; gap: 10px; opacity: 0; visibility: hidden; transform: translateX(20px); transition: all 0.3s ease 0.1s; margin-right: 10px; }
+.share-widget:hover .share-options { opacity: 1; visibility: visible; transform: translateX(0); }
+.share-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: transform 0.2s, color 0.2s; }
+.share-btn:hover { transform: scale(1.2); color: #000; }
