@@ -186,25 +186,26 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 }
 .product-title { font-size: 2rem; font-weight: 500; margin: 0; }
 
-/* Container de Preço - PADRÃO DESKTOP (Esquerda) */
-.product-pricing {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important; /* ✅ Corrige para esquerda no PC */
-    text-align: left !important;        /* ✅ Texto à esquerda */
-    gap: 2px !important;
-    margin-bottom: 20px !important;
-    margin-top: 0 !important;
-    flex: 0 !important; /* Não estica no desktop */
-}
+@media (min-width: 769px) {
+    /* Container de Preço - PADRÃO DESKTOP (Esquerda) */
+    .product-pricing {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-align: left !important;
+        gap: 2px !important;
+        margin-bottom: 20px !important;
+        margin-top: 0 !important;
+        flex: 0 !important;
+    }
 
     .price-current {
-        font-size: 1.2rem !important; /* IGUAL AO TÍTULO */
+        font-size: 1.2rem !important;
         line-height: 1.2;
         font-weight: 700 !important;
         color: #000 !important;
         margin-bottom: 2px !important;
-        order: 1; /* Força ser o primeiro */
+        order: 1;
     }
     
     .price-old-text {
@@ -212,17 +213,19 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
         color: #999 !important;
         text-decoration: line-through;
         margin-bottom: 0 !important;
-        order: 2; /* Força ser o segundo (EMBAIXO) */
+        order: 2;
     }
     
     .price-installments {
         font-size: 0.7rem !important;
         color: #666 !important;
         margin-top: 2px !important;
-        order: 3; /* Terceiro */
+        order: 3;
     }
 
-.price-discount-badge { display: none !important; 
+    .price-discount-badge { 
+        display: none !important; 
+    }
 }
 
 /* Seletores - Estilo Live! (Quadrados e Limpos) */
@@ -1230,6 +1233,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
