@@ -775,17 +775,22 @@ body, .short-desc-text, .model-info-text {
 }
 
     .gallery-photo-full {
-    width: 100% !important;
-    min-width: auto !important;
-    aspect-ratio: 3/4 !important;
-    min-height: 500px !important;
-    display: block !important;
-    scroll-snap-align: none !important;
-    margin: 0 !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
+        display: block !important; /* ← LINHA CRÍTICA */
+        visibility: visible !important; /* ← LINHA CRÍTICA */
+        width: 100% !important;
+        min-width: 0 !important; /* ← Remove o 100vw do mobile */
+        max-width: 100% !important; /* ← Limita ao container */
+        aspect-ratio: 3/4 !important;
+        min-height: 500px !important;
+        height: auto !important; /* ← Remove altura fixa do mobile */
+        scroll-snap-align: none !important;
+        margin: 0 !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        position: relative !important; /* ← Garante fluxo normal */
+        flex-shrink: 0 !important;
+    }
 
     .gallery-photo-full:not(.gallery-hidden) {
     display: block !important;
@@ -900,6 +905,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
