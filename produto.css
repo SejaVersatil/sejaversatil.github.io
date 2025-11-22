@@ -584,31 +584,85 @@ body, .short-desc-text, .model-info-text {
 
     .nav-center, .search-bar { display: none !important; }
 
-    /* --- 2. LAYOUT GERAL & GALERIA SWIPE --- */
-    .product-page-container .product-main-grid {
-        display: block !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
+    /* --- 3. GALERIA SWIPE HORIZONTAL (MOBILE) --- */
+.product-page-container .product-main-grid {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
 
-    .gallery-container::-webkit-scrollbar { display: none; }
+.product-gallery-section {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
 
+.gallery-container {
+    display: flex !important;
+    flex-direction: row !important;
+    
+    /* SWIPE HORIZONTAL */
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    
+    /* TAMANHO */
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 3/4 !important;
+    
+    /* REMOVE SCROLLBAR */
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
 
-    #btnShowMore { display: none !important; }
-    .product-thumbnails { display: none !important; }
+.gallery-container::-webkit-scrollbar { 
+    display: none !important; 
+}
 
-    /* --- 3. CARD DE INFORMAÇÕES --- */
+/* CADA FOTO */
+.gallery-photo-full {
+    /* OCUPA TELA INTEIRA */
+    min-width: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    
+    /* ALTURA PROPORCIONAL */
+    height: 100% !important;
+    aspect-ratio: 3/4 !important;
+    
+    /* SNAP NO CENTRO */
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+    
+    /* IMAGEM */
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    
+    /* CRÍTICO: FORÇA EXIBIÇÃO */
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    flex-shrink: 0 !important;
+}
 
-    .product-title, #detailsProductName {
-        font-size: 1.3rem !important;
-        line-height: 1.2 !important;
-        margin-bottom: 5px !important;
-    }
+/* REMOVE FOTOS OCULTAS NO MOBILE */
+.gallery-photo-full.gallery-hidden {
+    display: block !important;
+}
 
-   .price-current { font-size: 1.6rem !important; font-weight: 700 !important;
-    }
-
+/* ESCONDE ELEMENTOS DESKTOP */
+#btnShowMore,
+.product-thumbnails,
+.btn-show-more {
+    display: none !important;
 }
 
 /* ============================================================ */
@@ -1090,4 +1144,5 @@ body, .short-desc-text, .model-info-text {
         object-fit: contain !important; /* Mostra a imagem inteira sem cortar */
     }
 }
+
 
