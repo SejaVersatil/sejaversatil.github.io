@@ -606,7 +606,10 @@ body, .short-desc-text, .model-info-text {
         margin-bottom: 5px !important;
     }
 
-    .price-current { font-size: 1.6rem !important; font-weight: 700 !important; }
+   .price-current { font-size: 1.6rem !important; font-weight: 700 !important;
+    }
+
+}
 
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)                */
@@ -1087,4 +1090,5 @@ body, .short-desc-text, .model-info-text {
         object-fit: contain !important; /* Mostra a imagem inteira sem cortar */
     }
 }
+
 
