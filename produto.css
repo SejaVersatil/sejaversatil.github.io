@@ -786,6 +786,15 @@ body, .short-desc-text, .model-info-text {
     font-weight: 600 !important;
 }
 
+.product-pricing {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 5px !important;
+    margin-bottom: 15px !important;
+}
+    
 .price-current { 
     font-size: 1.8rem !important;
     font-weight: 700 !important;
@@ -1235,6 +1244,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
