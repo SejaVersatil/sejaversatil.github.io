@@ -470,8 +470,10 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
-.product-title {
-    margin-bottom: 0.2rem !important; 
+@media (min-width: 769px) {
+    .product-title {
+        margin-bottom: 0.2rem !important; 
+    }
 }
 
 @media (min-width: 769px) {
@@ -1237,6 +1239,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
