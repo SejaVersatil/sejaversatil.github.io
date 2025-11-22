@@ -991,48 +991,97 @@ body, .short-desc-text, .model-info-text {
 }
 
 /* ============================================================ */
-/* 📱 CORREÇÃO FINAL MOBILE - ESTILO APP (SWIPE & STICKY)       */
+/* 📱 MOBILE DEFINITIVO - AJUSTE DE PROPORÇÃO E FIXAÇÃO         */
 /* ============================================================ */
 
 @media (max-width: 768px) {
 
-    /* --- 1. HEADER & LOGO (Ajuste de Tamanho) --- */
+    /* --- 1. HEADER: O FIM DO LOGO CORTADO --- */
     .site-header .nav {
-        grid-template-columns: 40px 1fr auto !important;
+        display: grid !important;
+        /* Coluna 1: Menu (40px) | Coluna 2: Logo (Flexível) | Coluna 3: Ícones (Auto) */
+        grid-template-columns: 40px 1fr auto !important; 
+        align-items: center !important;
+        height: 55px !important; /* Altura menor e mais elegante */
         padding: 0 15px !important;
-        height: 60px !important;
+        gap: 0 !important;
     }
 
     .nav-left .logo {
-        font-size: 1.1rem !important; /* Fonte menor para não encavalar */
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        display: block !important;
+        grid-column: 2 !important;
         width: 100% !important;
         text-align: center !important;
+        
+        /* A MÁGICA: Reduz a fonte drasticamente no mobile */
+        font-size: 16px !important; 
+        letter-spacing: 1px !important;
+        font-weight: 700 !important;
+        
+        white-space: nowrap !important;
+        overflow: visible !important; /* Permite mostrar tudo */
+        display: block !important;
     }
 
-    /* --- 2. BANNER DA HOME & BLACK FRIDAY --- */
-    /* Corrige o banner cortado */
-    .main-banner img, 
-    .hero-banner img {
-        width: 100% !important;
-        height: auto !important; /* Permite altura natural */
-        object-fit: contain !important; /* Mostra imagem inteira */
-        aspect-ratio: auto !important;
+    /* Ícones da direita mais compactos */
+    .nav-icons {
+        grid-column: 3 !important;
+        justify-content: flex-end !important;
+        gap: 10px !important;
     }
     
-    /* Ajusta o countdown para não quebrar linha feio */
+    .nav-icon svg {
+        width: 18px !important; /* Ícones ligeiramente menores */
+        height: 18px !important;
+    }
+
+    .hamburger-btn {
+        grid-column: 1 !important;
+        display: flex !important;
+        padding: 0 !important;
+    }
+
+    /* --- 2. COUNTDOWN BLACK FRIDAY PROPORCIONAL --- */
+    .top-banner {
+        padding: 5px 0 !important;
+    }
+
     .bf-content {
         flex-wrap: wrap !important;
+        justify-content: center !important;
         gap: 5px !important;
-        line-height: 1.2 !important;
-        padding: 5px !important;
+        line-height: 1 !important;
     }
-    .bf-label { font-size: 0.75rem !important; }
 
-    /* --- 3. GALERIA SWIPE HORIZONTAL (Carrossel) --- */
+    .bf-label, .bf-countdown-label {
+        font-size: 10px !important; /* Texto bem pequeno */
+        letter-spacing: 0.5px !important;
+    }
+    
+    .bf-separator { display: none !important; } /* Remove barra vertical para economizar espaço */
+
+    /* Caixinhas do tempo REDUZIDAS */
+    .bf-time-unit {
+        min-width: 25px !important;
+        padding: 2px 4px !important;
+        border-radius: 3px !important;
+    }
+
+    .bf-time-value {
+        font-size: 12px !important; /* Números pequenos */
+        line-height: 1 !important;
+    }
+
+    .bf-time-label {
+        font-size: 6px !important; /* Texto "dias/horas" minúsculo */
+        text-transform: uppercase;
+    }
+    
+    .bf-colon {
+        font-size: 10px !important;
+        margin: 0 1px !important;
+    }
+
+    /* --- 3. GALERIA SWIPE (Mantendo o que funcionou) --- */
     .product-page-container .product-main-grid {
         display: block !important;
         padding: 0 !important;
@@ -1042,78 +1091,62 @@ body, .short-desc-text, .model-info-text {
 
     .product-gallery-section {
         width: 100% !important;
-        height: auto !important;
-        margin: 0 !important;
         position: relative !important;
+        margin-bottom: 0 !important;
     }
 
-    /* Transforma a Grid em Flex para permitir Swipe lateral */
     .gallery-container {
-        display: flex !important; /* Alinha fotos lado a lado */
+        display: flex !important;
         flex-direction: row !important;
-        overflow-x: auto !important; /* Permite rolagem horizontal */
-        scroll-snap-type: x mandatory !important; /* Trava a rolagem na foto */
-        -webkit-overflow-scrolling: touch !important; /* Rolagem suave no iOS */
-        
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
         width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 3/4 !important; /* Mantém proporção vertical bonita */
-        
-        gap: 0 !important; /* Sem espaço entre fotos no swipe */
-        scrollbar-width: none !important; /* Esconde barra no Firefox */
+        aspect-ratio: 3/4 !important;
+        scrollbar-width: none !important;
     }
-
-    /* Esconde barra de rolagem no Chrome/Safari */
     .gallery-container::-webkit-scrollbar { display: none !important; }
 
-    /* Ajuste de cada foto individual */
     .gallery-photo-full {
-        min-width: 100% !important; /* Ocupa 100% da tela */
+        min-width: 100% !important;
         width: 100% !important;
-        height: 100% !important;
         aspect-ratio: 3/4 !important;
-        
-        scroll-snap-align: center !important; /* Centraliza ao soltar o dedo */
+        scroll-snap-align: center !important;
         background-size: cover !important;
         background-position: top center !important;
-        margin: 0 !important;
-        border: none !important;
-        border-radius: 0 !important;
     }
 
-    /* --- 4. ÁREA DE INFORMAÇÕES (Card Arredondado) --- */
+    /* --- 4. AJUSTE DO CARD DE INFORMAÇÕES --- */
     .product-info-section {
-        margin-top: -20px !important; /* Sobe levemente sobre a foto */
+        margin-top: -20px !important;
         border-radius: 20px 20px 0 0 !important;
         background: #ffffff !important;
-        
-        padding: 25px 20px 180px 20px !important; /* Padding GIGANTE embaixo para o botão fixo não cobrir texto */
-        
         position: relative !important;
-        z-index: 10 !important; /* Fica acima da foto */
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05) !important;
+        z-index: 20 !important;
+        /* Padding inferior GIGANTE para o texto não ficar atrás do botão fixo */
+        padding: 20px 20px 140px 20px !important; 
     }
 
-    /* Títulos e Preços Mobile */
-    .product-title { font-size: 1.4rem !important; margin-bottom: 5px !important; }
-    .price-current { font-size: 1.6rem !important; }
+    .product-title { font-size: 1.3rem !important; margin-bottom: 5px !important; }
+    .price-current { font-size: 1.5rem !important; }
 
-    /* --- 5. BOTÕES DE AÇÃO (FIXOS/STICKY NO RODAPÉ) --- */
+    /* --- 5. BOTÕES FIXOS (STICKY FOOTER REAL) --- */
     .product-action-buttons {
-        position: fixed !important;
+        position: fixed !important; /* FIXO NA TELA */
         bottom: 0 !important;
         left: 0 !important;
+        right: 0 !important;
         width: 100% !important;
         
         background: #ffffff !important; /* Fundo branco sólido */
-        border-top: 1px solid #f0f0f0 !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important;
+        border-top: 1px solid rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.15) !important; /* Sombra forte para destacar */
         
         padding: 12px 20px !important;
-        /* Compensa a área segura do iPhone (barrinha preta de baixo) */
+        /* Ajuste para iPhones sem botão home */
         padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
         
-        z-index: 99999 !important; /* Garante que fique acima de TUDO */
+        z-index: 2147483647 !important; /* Z-Index máximo possível */
         margin: 0 !important;
         
         display: flex !important;
@@ -1121,24 +1154,20 @@ body, .short-desc-text, .model-info-text {
         gap: 8px !important;
     }
 
-    /* Estilo dos botões no mobile */
+    /* Botões dentro do footer */
     .btn-primary, 
     .btn-whatsapp-main {
         width: 100% !important;
-        height: 48px !important; /* Altura confortável para o dedo */
+        height: 48px !important;
         font-size: 14px !important;
+        border-radius: 25px !important;
         margin: 0 !important;
-        border-radius: 30px !important;
     }
+    
+    /* Garante que o whats apareça */
+    .btn-whatsapp-main { display: flex !important; }
+    
+    /* Esconde botão mostrar mais */
+    #btnShowMore { display: none !important; }
 
-    /* Garante que o botão WhatsApp apareça (se tiver sido oculto antes) */
-    .btn-whatsapp-main {
-        display: flex !important;
-    }
-
-    /* Ajuste os botões secundários (Tabela de medidas) para não ficarem escondidos */
-    .secondary-actions {
-        justify-content: center !important;
-        padding-bottom: 0 !important;
-    }
-} 
+} /* FIM DO MOBILE */
