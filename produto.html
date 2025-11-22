@@ -161,6 +161,12 @@
     <div class="product-main-grid">
 
       <div class="product-gallery-section">
+        
+        <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+    </button>
 
     <div id="galleryContainer" class="gallery-container"></div>
 
@@ -246,14 +252,7 @@
             </button>
         </div>
       </div>
-
-        <button class="btn-favorite" onclick="toggleProductFavorite()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            Adicionar aos favoritos
-        </button>
-
+      
         <div class="secondary-actions">
             <button class="action-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -420,5 +419,6 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
