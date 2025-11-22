@@ -26,10 +26,8 @@ body.product-page {
 .product-title, #detailsProductName {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-weight: 400 !important;
-    font-size: 46px !important;    
     line-height: 1.1 !important;
     color: #1a1a1a !important;
-    margin-bottom: 10px !important;
     text-transform: none !important;
     letter-spacing: -1px !important; 
 }
@@ -947,10 +945,9 @@ body, .short-desc-text, .model-info-text {
     .product-info-section::-webkit-scrollbar { display: none; }
 
     .product-title, #detailsProductName {
-        font-size: 2.2rem !important;
-        margin-bottom: 5px !important;
-    }
-
+    font-size: 46px !important;  /* ← Ajustado de 2.2rem para 46px */
+    margin-bottom: 10px !important;  /* ← Ajustado de 5px para 10px */
+}
     .btn-show-more {
         display: flex !important; 
         justify-content: center;
@@ -1239,6 +1236,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
