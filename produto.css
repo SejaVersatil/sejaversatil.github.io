@@ -461,10 +461,12 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
 }
 
 /* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
-.product-selector-group {
-    padding-bottom: 10px !important; /* Mais compacto */
-    margin-bottom: 10px !important;
-    border-bottom: none !important; /* <--- REMOVE BORDAS VISÍVEIS NO DESKTOP */
+@media (min-width: 769px) {
+    .product-selector-group {
+        padding-bottom: 10px !important;
+        margin-bottom: 10px !important;
+        border-bottom: none !important;
+    }
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO (Mais juntos) */
@@ -1233,6 +1235,7 @@ body, .short-desc-text, .model-info-text {
     /* No mobile, removemos o efeito hover complexo e deixamos fixo ou clicável se preferir.
        Mas para manter o design, vamos manter o hover/click */
 }
+
 
 
 
