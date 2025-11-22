@@ -1332,27 +1332,27 @@ function toggleProductFavorite() {
     updateFavoritesCount();
 }
 
-// 3. Atualizar Visual dos Botões (Header e Mobile)
+// 3. Atualizar Visual dos Botões (Header e Mobile/Desktop Flutuante)
 function updateFavoriteStatus() {
     const p = state.currentProduct;
     if (!p) return; // Aguarda carregar produto
 
     const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
     const isFav = favorites.includes(p.id);
-    
-    // Botão Mobile (Texto "Adicionar aos favoritos")
-    const btnMobile = document.querySelector('.btn-favorite');
-    if (btnMobile) {
+
+    // --- LÓGICA NOVA DO BOTÃO FLUTUANTE ---
+    const btnFloating = document.querySelector('.btn-favorite-floating');
+    if (btnFloating) {
         if (isFav) {
-            btnMobile.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#ff4444" stroke="#ff4444" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Remover dos favoritos`;
-            btnMobile.style.color = '#ff4444';
+            // Se é favorito: Adiciona classe active (fica vermelho pelo CSS)
+            btnFloating.classList.add('active');
         } else {
-            btnMobile.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Adicionar aos favoritos`;
-            btnMobile.style.color = '#666';
+            // Se não é favorito: Remove classe active (volta a ser contorno preto)
+            btnFloating.classList.remove('active');
         }
     }
 
-    // Ícone do Header (Coração)
+    // Ícone do Header (Coração do menu superior)
     const headerIcon = document.querySelector('.nav-icon[title="Meus favoritos"] svg');
     if (headerIcon) {
         if (isFav) {
@@ -1381,6 +1381,7 @@ function goToFavoritesPage() {
     // Redireciona para a Home com o parâmetro especial
     window.location.href = 'index.html?ver_favoritos=true';
 }
+
 
 
 
