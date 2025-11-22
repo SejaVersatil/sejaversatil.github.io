@@ -430,13 +430,6 @@ background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; trans
     color: #000;
 }
 
-    /* Garante que no celular a galeria não fique "torta" */
-    .product-gallery-section, 
-    .gallery-container {
-        width: 100% !important;
-    }
-}
-
 /* ADICIONE NO FINAL DO ARQUIVO */
 
 /* Container que agrupa Botão + Texto */
@@ -909,6 +902,7 @@ body, .short-desc-text, .model-info-text {
         padding: 0 !important;
     }
 }
+
 
 
 
