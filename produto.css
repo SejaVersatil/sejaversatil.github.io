@@ -572,9 +572,9 @@ body, .short-desc-text, .model-info-text {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9); 
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background: transparent !important;  /* REMOVIDO O FUNDO BRANCO */
+    border: none !important;  /* REMOVIDA A BORDA */
+    box-shadow: none !important;  /* REMOVIDA A SOMBRA */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -972,6 +972,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
