@@ -606,7 +606,7 @@ body, .short-desc-text, .model-info-text {
         font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
         font-size: 1rem !important; /* ✅ AJUSTE CRÍTICO */
         font-weight: 700 !important;
-        letter-spacing: 2px !important;
+        letter-spacing: 1px !important;
         color: #000 !important;
         white-space: nowrap !important;
         line-height: 1 !important;
@@ -1139,6 +1139,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
