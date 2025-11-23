@@ -506,19 +506,41 @@ body, .short-desc-text, .model-info-text {
     }
 
     .btn-show-more {
-        display: flex !important; 
-        justify-content: center;
-        width: 100%;
-        margin-top: 15px !important;
-        background: transparent !important;
-        border: 1px solid #e0e0e0 !important;
-        color: #000 !important;
-        padding: 10px 0;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
+    display: flex !important; 
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #000 !important;
+    padding: 0 !important;
+    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-show-more:hover {
+    color: #666;
+    text-decoration-thickness: 2px;
+}
+
+.btn-show-more svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+}
+
+.btn-show-more.expanded svg {
+    transform: rotate(180deg);
+}
 
 } /* ← FIM DA MEDIA QUERY DESKTOP */
 
@@ -944,5 +966,6 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
