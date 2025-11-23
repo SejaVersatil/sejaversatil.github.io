@@ -379,11 +379,11 @@ if (!availableColors.length) {
 }
 
     colorSelector.innerHTML = '';
-    // BLOCO NOVO (COM DIVISÃO DIAGONAL)
+
+    // Loop para criar os botões de cor
     availableColors.forEach((colorObj) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        // Mantém a classe active se for a cor selecionada
         btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`;
         btn.title = colorObj.name;
         btn.dataset.color = colorObj.name;
@@ -391,34 +391,34 @@ if (!availableColors.length) {
         // Pega o código hex (ex: "#000, #fff")
         const rawHex = colorObj.hex || getColorHex(colorObj.name);
 
-        // 1. Separa as cores pela vírgula
+        // Separa as cores pela vírgula
         const colors = rawHex.split(',').map(c => c.trim());
 
-        // 2. Aplica a lógica visual (Diagonal 135deg)
+        // Aplica a lógica visual (Diagonal 135deg)
         if (colors.length === 1) {
-            // --- UMA COR (SÓLIDA) ---
             btn.style.background = colors[0];
-
-            // Borda extra se for branco
             if (colors[0].toLowerCase() === '#ffffff' || colors[0].toLowerCase() === '#fff') {
                 btn.style.border = '1px solid #ccc';
             }
         } else if (colors.length === 2) {
-            // --- DUAS CORES (DIAGONAL 50/50) ---
             btn.style.background = `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`;
         } else if (colors.length >= 3) {
-            // --- TRÊS CORES (3 FAIXAS DIAGONAIS) ---
             btn.style.background = `linear-gradient(135deg, 
-            ${colors[0]} 33.33%, 
-            ${colors[1]} 33.33% 66.66%, 
-            ${colors[2]} 66.66%)`;
+                ${colors[0]} 33.33%, 
+                ${colors[1]} 33.33% 66.66%, 
+                ${colors[2]} 66.66%)`;
         }
 
+        // ✅ EVENTO DE CLIQUE
         btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    console.log('🖱️ Clicou na cor:', colorObj.name);
-    selectColor(colorObj.name, colorObj.images);
-});
+            e.preventDefault();
+            console.log('🖱️ Clicou na cor:', colorObj.name);
+            selectColor(colorObj.name, colorObj.images);
+        });
+
+        // ✅ ADICIONA O BOTÃO AO DOM (ESTAVA FALTANDO!)
+        colorSelector.appendChild(btn);
+    });
 
     // SE NÃO TIVER COR SELECIONADA: Mostra texto "Selecione" e renderiza galeria completa
     if (!state.selectedColor) {
@@ -1485,5 +1485,6 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
