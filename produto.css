@@ -9,6 +9,10 @@ body.product-page {
     margin: 0;
 }
 
+body.product-page .search-bar {
+    max-width: 500px !important;
+}
+
 /* Título do Produto */
 .product-title, #detailsProductName {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
@@ -944,6 +948,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
