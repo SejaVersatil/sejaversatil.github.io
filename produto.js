@@ -12,8 +12,9 @@ const state = {
     selectedSize: null,
     selectedQuantity: 1,
     cart: [],
-    productVariants: {}, // { productId: [variants] }
-    countdownInterval: null
+    productVariants: {},
+    countdownInterval: null,
+    galleryExpanded: false // ✅ ADICIONE ESTA LINHA
 };
 window.productState = state;
 
@@ -297,36 +298,36 @@ function renderGallery(specificImages = null) {
 
             let isExpanded = false;
 
-            newBtn.onclick = function() {
-                const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
+            nnewBtn.onclick = function() {
+    const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
 
-                if (!isExpanded) {
-                    hiddenPhotos.forEach((photo, index) => {
-                        if (index >= 2) {
-                            photo.classList.remove('gallery-hidden');
-                            photo.style.opacity = '0';
-                            requestAnimationFrame(() => {
-                                photo.style.transition = 'opacity 0.5s';
-                                photo.style.opacity = '1';
-                            });
-                        }
-                    });
-                    this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-                    isExpanded = true;
-                } else {
-                    hiddenPhotos.forEach((photo, index) => {
-                        if (index >= 2) {
-                            photo.classList.add('gallery-hidden');
-                        }
-                    });
-                    window.scrollTo({
-                        top: galleryContainer.offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-                    this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-                    isExpanded = false;
-                }
-            };
+    if (!state.galleryExpanded) {
+        hiddenPhotos.forEach((photo, index) => {
+            if (index >= 2) {
+                photo.classList.remove('gallery-hidden');
+                photo.style.opacity = '0';
+                requestAnimationFrame(() => {
+                    photo.style.transition = 'opacity 0.5s';
+                    photo.style.opacity = '1';
+                });
+            }
+        });
+        this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        state.galleryExpanded = true; // ✅ USA O STATE GLOBAL
+    } else {
+        hiddenPhotos.forEach((photo, index) => {
+            if (index >= 2) {
+                photo.classList.add('gallery-hidden');
+            }
+        });
+        window.scrollTo({
+            top: galleryContainer.offsetTop - 100,
+            behavior: 'smooth'
+        });
+        this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        state.galleryExpanded = false; // ✅ USA O STATE GLOBAL
+    }
+};
         } else {
             newBtn.style.display = 'none';
         }
@@ -1485,6 +1486,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
