@@ -343,13 +343,14 @@ body.product-page .search-bar {
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO */
-.product-title {
-    margin-bottom: 0.2rem !important; 
+body.product-page .product-title {
+    margin-bottom: 3px !important; 
 }
 
-.product-pricing {
-    margin-bottom: 0.5rem !important;
-    gap: 0.1rem !important;
+body.product-page .product-pricing {
+    margin-bottom: 8px !important;
+    gap: 0px !important;
+    margin-top: 0px !important;
 }
 
 .short-description-container {
@@ -948,6 +949,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
