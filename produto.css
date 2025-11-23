@@ -783,6 +783,33 @@ body, .short-desc-text, .model-info-text {
     font-size: 1.6rem !important; 
     font-weight: 700 !important;
 }
+
+/* Oculta breadcrumb no mobile */
+.breadcrumb {
+    display: none !important;
+}
+
+/* Reposiciona share widget ao lado do preço */
+.product-header-wrapper {
+    position: relative !important;
+}
+
+.header-left {
+    position: relative !important;
+    display: block !important;
+}
+
+.share-widget {
+    position: absolute !important;
+    top: 50px !important;
+    right: 0 !important;
+    margin: 0 !important;
+}
+
+.product-pricing {
+    padding-right: 50px !important;
+}
+    
     /* --- 5. BOTÕES FIXOS (STICKY FOOTER) --- */
 .product-action-buttons {
     position: static !important;
@@ -1196,5 +1223,6 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
