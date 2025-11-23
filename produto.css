@@ -583,7 +583,7 @@ body, .short-desc-text, .model-info-text {
     /* --- 1. HEADER GRID (Igual à Home) --- */
     .site-header .nav {
         display: grid !important;
-        grid-template-columns: 50px 1fr 80px !important; /* Menu | Logo | Ícones */
+        grid-template-columns: 45px 1fr 70px !important; /* Menu | Logo | Ícones */
         align-items: center !important;
         height: 60px !important;
         padding: 0 10px !important;
@@ -1139,6 +1139,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
