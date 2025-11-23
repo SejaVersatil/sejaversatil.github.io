@@ -929,80 +929,74 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .section-title { font-size: 1.1rem !important; letter-spacing: 1px !important; margin-top: 1rem !important; margin-bottom: 1rem !important; padding-bottom: 0 !important; }
     .products-section { padding-top: 10px !important; }
 
-    /* Header e Nav */
+/* Header e Nav (CORRIGIDO) */
     nav { 
-    display: grid !important; 
-    grid-template-columns: 40px 1fr 90px !important;
-    align-items: center !important; 
-    height: 56px !important;
-    padding: 0 12px !important;
-    background: #fff !important; 
-    border-bottom: 1px solid #f0f0f0;
-    gap: 8px !important;
-}
+        display: flex !important; /* MUDADO DE GRID PARA FLEX */
+        justify-content: space-between !important;
+        align-items: center !important;
+        position: relative !important; /* ESSENCIAL PARA O LOGO */
+        height: 60px !important;
+        padding: 0 15px !important;
+        background: #fff !important; 
+        border-bottom: 1px solid #f0f0f0;
+        gap: 0 !important;
+    }
+
     .hamburger-btn { 
-    display: flex !important; 
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 32px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    gap: 4px !important;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-}
+        display: flex !important; 
+        flex-direction: column !important;
+        justify-content: center !important;
+        width: 40px !important;
+        height: 40px !important;
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        z-index: 20; 
+    }
    
-.hamburger-line {
-    width: 20px !important;
-    height: 2px !important;
-    background: #000 !important;
-    transition: all 0.3s ease !important;
-    display: block !important;
-}
+    .hamburger-line {
+        width: 22px !important;
+        height: 2px !important;
+        background: #000 !important;
+        margin: 2px 0 !important;
+        display: block !important;
+    }
    
-    .logo { 
-    grid-column: 2 !important; 
-    display: flex !important; 
-    justify-content: center !important; 
-    align-items: center !important;
-    font-size: 11px !important;
-    font-weight: 700 !important; 
-    letter-spacing: 1.5px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    padding: 0 8px !important;
-    line-height: 1 !important;
-}
+    /* LOGO CENTRALIZADO COM ABSOLUTE */
+    .logo, .nav-left .logo { 
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        
+        font-family: 'Century Gothic', sans-serif !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        color: #000 !important;
+        letter-spacing: 1px !important;
+        
+        width: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        z-index: 10;
+        display: block !important;
+    }
+
     .nav-icons { 
-    grid-column: 3 !important; 
-    display: flex !important; 
-    justify-content: flex-end !important; 
-    align-items: center !important;
-    gap: 14px !important;
-    margin: 0 !important; 
-    width: 100% !important;
-}
-   .nav-icon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    padding: 0 !important;
-}
+        display: flex !important; 
+        align-items: center !important;
+        gap: 15px !important;
+        z-index: 20;
+    }
+
     .nav-icon svg { 
-    width: 20px !important; 
-    height: 20px !important; 
-    stroke-width: 1.5px !important;
-    color: #000 !important;
-}
-    .hamburger-btn svg { width: 22px !important; height: 22px !important; stroke-width: 1.2px !important; }
-    .search-bar, .search-bar input { display: none !important; }
-    .nav-menu { display: none !important; }
+        width: 22px !important; 
+        height: 22px !important; 
+    }
+    
+    .search-bar, .search-bar input, .nav-menu { display: none !important; }
 
     /* Cart Sidebar */
     .cart-sidebar { width: 100%; right: -100%; }
@@ -1144,5 +1138,6 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 /* Boosters e Utilitários */
 .footer-content, .bestsellers-section, .info-bar { content-visibility: auto; contain-intrinsic-size: 1px 1000px; }
 .site-header, .cart-sidebar, .sidebar-menu { will-change: transform; }
+
 
 
