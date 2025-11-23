@@ -9,16 +9,6 @@ body.product-page {
     margin: 0;
 }
 
-/* Garante que o header seja controlado APENAS pelo CSS principal */
-body.product-page header,
-body.product-page nav,
-body.product-page .search-bar,
-body.product-page .search-bar *,
-body.product-page .nav-icons,
-body.product-page .nav-icon,
-body.product-page .logo {
-    all: revert !important;
-}
 /* Título do Produto */
 .product-title, #detailsProductName {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
@@ -982,6 +972,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
