@@ -627,11 +627,11 @@ body, .short-desc-text, .model-info-text {
     }
 
     .hamburger-line {
-        background-color: #000 !important;
-        width: 24px !important;
-        height: 2px !important;
-        margin: 4px 0 !important;
-    }
+    background-color: #000 !important;
+    width: 20px !important;      /* era 24px */
+    height: 1.5px !important;    /* era 2px */
+    margin: 3.5px 0 !important;  /* era 4px */
+}
 
     /* ÍCONES: Alinhados na direita */
     .nav-icons {
@@ -1139,6 +1139,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
