@@ -740,7 +740,7 @@
             background: white;
             border-radius: 20px;
             width: 95%;
-            max-width: 1000px;
+            max-width: 1100px;
             max-height: 90vh;
             overflow: hidden;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
@@ -859,10 +859,10 @@
         
         .number-input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 1rem;
             border: 2px solid var(--border);
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: 700;
             text-align: center;
             transition: all 0.3s;
@@ -1055,6 +1055,30 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+            
+            .modal {
+                width: 100%;
+                max-width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .modal-body {
+                max-height: calc(100vh - 180px);
+            }
+            
+            .header-right {
+                gap: 0.5rem;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .dashboard-main {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -1224,7 +1248,7 @@
             <section class="content-section" id="section-products">
                 <div class="page-header">
                     <h1 class="page-title">Gerenciar Produtos</h1>
-                    <p class="page-subtitle">Visualize e edite seus produtos</p>
+                    <p class="page-subtitle">Visualize e edite seus produtos • Use Ctrl+Clique para seleção múltipla</p>
                 </div>
 
                 <div class="action-bar">
@@ -1441,10 +1465,13 @@
                 <div id="variantsGrid"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('stockModal')">Cancelar</button>
+                <button class="btn btn-secondary" onclick="closeModal('stockModal')">
+                    <span>✗</span>
+                    <span>Cancelar (ESC)</span>
+                </button>
                 <button class="btn btn-success" onclick="saveStockChanges()">
                     <span>💾</span>
-                    <span>Salvar Alterações</span>
+                    <span>Salvar Alterações (Ctrl+S)</span>
                 </button>
             </div>
         </div>
@@ -1887,7 +1914,7 @@
                                 <input type="number" class="number-input" value="${variant.stock}" min="0" data-field="stock">
                             </div>
                             <div class="checkbox-field">
-                                <input type="checkbox" ${variant.available ? 'checked' : ''} data-field="available" id="available-${variant.id}">
+                                <input type="checkbox" data-field="available" id="available-${variant.id}">
                                 <label for="available-${variant.id}">Disponível para venda</label>
                             </div>
                         </div>
@@ -1896,6 +1923,18 @@
             });
 
             html += '</div>';
+            html += `
+                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--light); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn btn-secondary" onclick="toggleAllAvailable()" id="toggleAllBtn">
+                        <span>✓</span>
+                        <span>Marcar Todos Disponíveis</span>
+                    </button>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong id="totalStockPreview">${product.totalStock}</strong> unidades no total
+                    </div>
+                </div>
+            `;
+            
             document.getElementById('variantsGrid').innerHTML = html;
             document.getElementById('stockModal').classList.add('active');
         }
@@ -1934,12 +1973,12 @@
             });
 
             if (hasErrors) {
-                alert('❌ Corrija os valores inválidos (números negativos)');
+                alert('❌ Corrija os valores inválidos (números negativos ou vazios)');
                 return;
             }
 
-            // Show loading
-            const saveBtn = event.target;
+            // Show loading on button
+            const saveBtn = document.querySelector('#stockModal .btn-success');
             const originalText = saveBtn.innerHTML;
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<span>⏳</span><span>Salvando...</span>';
@@ -1996,10 +2035,12 @@
                 closeModal('stockModal');
                 await loadAllProducts();
                 loadSectionData(getCurrentSection());
+                loadDashboard(); // Update dashboard stats
 
             } catch (error) {
                 console.error('Erro ao salvar:', error);
                 alert('❌ Erro ao salvar as alterações: ' + error.message);
+            } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = originalText;
             }
@@ -2009,6 +2050,80 @@
             document.getElementById(modalId).classList.remove('active');
             currentEditingProduct = null;
         }
+
+        function toggleAllAvailable() {
+            const checkboxes = document.querySelectorAll('[data-field="available"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const btn = document.getElementById('toggleAllBtn');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = !allChecked;
+                const card = cb.closest('.variant-card');
+                if (!allChecked) {
+                    card.classList.remove('unavailable');
+                } else {
+                    card.classList.add('unavailable');
+                }
+            });
+
+            if (!allChecked) {
+                btn.innerHTML = '<span>✗</span><span>Desmarcar Todos</span>';
+            } else {
+                btn.innerHTML = '<span>✓</span><span>Marcar Todos Disponíveis</span>';
+            }
+            
+            updateStockPreview();
+        }
+
+        function updateStockPreview() {
+            const stockInputs = document.querySelectorAll('[data-field="stock"]');
+            let total = 0;
+            stockInputs.forEach(input => {
+                total += parseInt(input.value) || 0;
+            });
+            const preview = document.getElementById('totalStockPreview');
+            if (preview) {
+                preview.textContent = total;
+            }
+        }
+
+        // Add real-time stock preview update
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('[data-field="stock"]')) {
+                updateStockPreview();
+            }
+        });
+
+        // Add real-time checkbox update for card styling
+        document.addEventListener('change', (e) => {
+            if (e.target.matches('[data-field="available"]')) {
+                const card = e.target.closest('.variant-card');
+                if (e.target.checked) {
+                    card.classList.remove('unavailable');
+                } else {
+                    card.classList.add('unavailable');
+                }
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // ESC to close modal
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal-overlay.active');
+                modals.forEach(modal => modal.classList.remove('active'));
+                currentEditingProduct = null;
+            }
+            
+            // Ctrl/Cmd + S to save (when modal is open)
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                const stockModal = document.getElementById('stockModal');
+                if (stockModal.classList.contains('active')) {
+                    e.preventDefault();
+                    saveStockChanges();
+                }
+            }
+        });
 
         // ==================== FILTERS ====================
         function quickFilter(filter) {
@@ -2485,12 +2600,16 @@
         }
 
         function downloadCSV(content, filename) {
-            const blob = new Blob([content], { type: 'text/csv' });
+            // Escape CSV properly
+            const escapedContent = content.replace(/"/g, '""');
+            const blob = new Blob(['\ufeff' + escapedContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }
 
@@ -2500,10 +2619,13 @@
             allProducts.forEach(product => {
                 const status = product.totalStock === 0 ? 'Sem Estoque' : 
                               product.totalStock < 5 ? 'Baixo' : 'OK';
-                csv += `"${product.name}","${product.category}",${product.price},${product.totalStock},"${status}"\n`;
+                const name = product.name.replace(/"/g, '""');
+                const category = product.category.replace(/"/g, '""');
+                csv += `"${name}","${category}",${product.price},${product.totalStock},"${status}"\n`;
             });
 
-            downloadCSV(csv, 'produtos-completo.csv');
+            downloadCSV(csv, `produtos-${new Date().toISOString().split('T')[0]}.csv`);
+            showSuccessNotification('✅ Produtos exportados com sucesso!');
         }
 
         function exportInventory() {
@@ -2511,11 +2633,14 @@
             
             allProducts.forEach(product => {
                 product.variants.forEach(variant => {
-                    csv += `"${product.name}","${variant.size}","${variant.color}","${variant.sku}",${variant.stock},"${variant.available ? 'Sim' : 'Não'}"\n`;
+                    const name = product.name.replace(/"/g, '""');
+                    const color = variant.color.replace(/"/g, '""');
+                    csv += `"${name}","${variant.size}","${color}","${variant.sku}",${variant.stock},"${variant.available ? 'Sim' : 'Não'}"\n`;
                 });
             });
 
-            downloadCSV(csv, 'inventario-completo.csv');
+            downloadCSV(csv, `inventario-${new Date().toISOString().split('T')[0]}.csv`);
+            showSuccessNotification('✅ Inventário exportado com sucesso!');
         }
 
         function addNewProduct() {
