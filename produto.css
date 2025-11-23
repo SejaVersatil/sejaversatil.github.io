@@ -770,7 +770,7 @@ body, .short-desc-text, .model-info-text {
     background: #ffffff !important;
     position: relative !important;
     z-index: 20 !important;
-    padding: 20px !important;
+    padding: 16px !important;
 }
 
 .product-title, #detailsProductName {
@@ -1255,6 +1255,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
