@@ -921,11 +921,77 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .products-section { padding-top: 10px !important; }
 
     /* Header e Nav */
-    nav { display: grid !important; grid-template-columns: 50px 1fr 80px !important; align-items: center !important; height: 60px !important; padding: 0 10px !important; background: #fff !important; border-bottom: 1px solid #f0f0f0; }
-    .hamburger-btn { display: flex !important; justify-content: flex-start; width: auto !important; margin: 0 !important; padding: 0 !important; }
-    .logo { grid-column: 2; display: flex; justify-content: center; font-size: 1.3rem !important; font-weight: 700 !important; letter-spacing: 2px !important; white-space: nowrap; }
-    .nav-icons { grid-column: 3; display: flex !important; justify-content: flex-end !important; gap: 12px !important; margin: 0 !important; width: 100%; }
-    .nav-icon svg, .hamburger-btn svg { width: 22px !important; height: 22px !important; stroke-width: 1.2px !important; }
+    nav { 
+    display: grid !important; 
+    grid-template-columns: 40px 1fr 90px !important;
+    align-items: center !important; 
+    height: 56px !important;
+    padding: 0 12px !important;
+    background: #fff !important; 
+    border-bottom: 1px solid #f0f0f0;
+    gap: 8px !important;
+}
+    .hamburger-btn { 
+    display: flex !important; 
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 4px !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+   
+.hamburger-line {
+    width: 20px !important;
+    height: 2px !important;
+    background: #000 !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+}
+   
+    .logo { 
+    grid-column: 2 !important; 
+    display: flex !important; 
+    justify-content: center !important; 
+    align-items: center !important;
+    font-size: 11px !important;
+    font-weight: 700 !important; 
+    letter-spacing: 1.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 0 8px !important;
+    line-height: 1 !important;
+}
+    .nav-icons { 
+    grid-column: 3 !important; 
+    display: flex !important; 
+    justify-content: flex-end !important; 
+    align-items: center !important;
+    gap: 14px !important;
+    margin: 0 !important; 
+    width: 100% !important;
+}
+   .nav-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+}
+    .nav-icon svg { 
+    width: 20px !important; 
+    height: 20px !important; 
+    stroke-width: 1.5px !important;
+    color: #000 !important;
+}
+    .hamburger-btn svg { width: 22px !important; height: 22px !important; stroke-width: 1.2px !important; }
     .search-bar, .search-bar input { display: none !important; }
     .nav-menu { display: none !important; }
 
@@ -952,6 +1018,84 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .user-panel-body { padding: 1.5rem; }
     .form-group input { padding: 0.9rem; font-size: 16px; }
     .user-panel-tab { font-size: 0.85rem; padding: 1rem 0.5rem; }
+
+   /* Black Friday Mobile */
+    .top-banner {
+        padding: 8px 0 !important;
+    }
+
+    .bf-content {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 4px !important;
+        line-height: 1.2 !important;
+    }
+
+    .bf-label {
+        font-size: 9px !important;
+        letter-spacing: 0.5px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        margin-right: 4px !important;
+    }
+
+    .bf-separator { 
+        display: inline !important;
+        font-size: 9px !important;
+        margin: 0 3px !important;
+        opacity: 0.6 !important;
+    }
+
+    .bf-countdown-label {
+        font-size: 7px !important;
+        letter-spacing: 0 !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+        margin-right: 4px !important;
+    }
+
+    .bf-countdown {
+        display: flex !important;
+        align-items: center !important;
+        gap: 2px !important;
+    }
+
+    .bf-time-unit {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 22px !important;
+        padding: 3px 4px !important;
+        border-radius: 3px !important;
+        background: rgba(255,255,255,0.12) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+    }
+
+    .bf-time-value {
+        font-size: 11px !important;
+        line-height: 1 !important;
+        font-weight: 700 !important;
+        color: #FFD700 !important;
+    }
+
+    .bf-time-label {
+        font-size: 5px !important;
+        text-transform: uppercase !important;
+        margin-top: 1px !important;
+        font-weight: 500 !important;
+        color: rgba(255,255,255,0.7) !important;
+        letter-spacing: 0.3px !important;
+    }
+
+    .bf-colon {
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        margin: 0 1px !important;
+        color: #FFD700 !important;
+    }
 
     /* Geral */
     .hero-title { font-size: 3rem; letter-spacing: 3px; }
@@ -980,11 +1124,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .promo-card { max-height: 600px; }
     .promo-value { font-size: 4rem; }
     .hero-title { font-size: 2.5rem; letter-spacing: 2px; }
-    .section-title { font-size: 1.5rem; letter-spacing: 1.5px; }
-    .top-banner { padding: 0.5rem; font-size: 0.65rem; }
-    .bf-time-unit { min-width: 35px; padding: 0.2rem 0.3rem; }
-    .bf-time-value { font-size: 1rem; }
-    .bf-time-label { font-size: 0.5rem; }
+    .section-title { font-size: 1.5rem; letter-spacing: 1.5px; }   
     .user-panel-content { width: 100%; max-height: 100vh; border-radius: 0; margin: 0; }
     .user-panel-header { border-radius: 0; }
     .product-title { font-size: 1.5rem; }
@@ -995,3 +1135,4 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 /* Boosters e Utilitários */
 .footer-content, .bestsellers-section, .info-bar { content-visibility: auto; contain-intrinsic-size: 1px 1000px; }
 .site-header, .cart-sidebar, .sidebar-menu { will-change: transform; }
+
