@@ -414,9 +414,11 @@ if (!availableColors.length) {
             ${colors[2]} 66.66%)`;
         }
 
-        btn.addEventListener('click', () => selectColor(colorObj.name, colorObj.images));
-        colorSelector.appendChild(btn);
-    });
+        btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log('🖱️ Clicou na cor:', colorObj.name);
+    selectColor(colorObj.name, colorObj.images);
+});
 
     // SE NÃO TIVER COR SELECIONADA: Mostra texto "Selecione" e renderiza galeria completa
     if (!state.selectedColor) {
@@ -427,33 +429,45 @@ if (!availableColors.length) {
 
 /* Função Unificada de Seleção de Cor */
 function selectColor(colorName, specificImages = null) {
+    console.log('🎨 Selecionando cor:', colorName);
+    console.log('📸 Imagens recebidas:', specificImages);
+    
     state.selectedColor = colorName;
 
-    // 1. Atualiza UI dos botões (Círculo/Quadrado ativo)
+    // 1. Atualiza visual dos botões de cor
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === colorName);
     });
 
-    // 2. Atualiza texto da cor
-    if (elExists('selectedColorName')) $('selectedColorName').textContent = colorName;
+    // 2. Atualiza o texto da cor selecionada
+    if (elExists('selectedColorName')) {
+        $('selectedColorName').textContent = colorName;
+    }
 
-    // 3. ATUALIZA A GALERIA INTEIRA (Lógica Mosaico)
+    // 3. CORREÇÃO PRINCIPAL: Renderiza galeria com as imagens específicas
     if (specificImages && Array.isArray(specificImages) && specificImages.length > 0) {
+        console.log('✅ Renderizando galeria com', specificImages.length, 'imagens');
         renderGallery(specificImages);
     } else {
-        // Se não passou imagens diretas, tenta achar no objeto do produto original
+        console.log('⚠️ Nenhuma imagem específica, buscando no produto...');
         const p = state.currentProduct;
-        const found = p.colors && p.colors.find(c => (typeof c === 'string' ? c === colorName : c.name === colorName));
+        
+        // Busca a cor no array de cores do produto
+        const colorObj = p.colors && p.colors.find(c => {
+            const cName = typeof c === 'string' ? c : c.name;
+            return cName === colorName;
+        });
 
-        if (found && found.images && found.images.length) {
-            renderGallery(found.images);
+        if (colorObj && colorObj.images && colorObj.images.length > 0) {
+            console.log('✅ Encontrou', colorObj.images.length, 'imagens para a cor');
+            renderGallery(colorObj.images);
         } else {
-            // Se não tem fotos específicas da cor, restaura a galeria padrão
-            renderGallery();
+            console.log('❌ Cor sem imagens específicas, usando galeria padrão');
+            renderGallery(p.images);
         }
     }
 
-    // 4. Re-calcula tamanhos disponíveis para esta cor
+    // 4. Re-renderiza os tamanhos disponíveis para esta cor
     renderSizes();
 }
 
@@ -1471,4 +1485,5 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
