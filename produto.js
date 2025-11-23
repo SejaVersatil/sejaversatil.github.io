@@ -255,15 +255,7 @@ function renderGallery(specificImages = null) {
             imagesToRender = [];
         }
     }
-if (imagesToRender && Array.isArray(imagesToRender)) {
-    imagesToRender = imagesToRender.filter(img => 
-        img && 
-        typeof img === 'string' && 
-        !img.includes('favicon') && 
-        !img.includes('logo.') &&
-        img.length > 10
-    );
-}
+
     if (!imagesToRender || imagesToRender.length === 0) {
         console.warn('⚠️ Nenhuma imagem disponível para renderizar');
         galleryContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:#999;">Sem imagens disponíveis</div>';
@@ -350,41 +342,37 @@ function renderColors() {
     const p = state.currentProduct;
 
     // Prepara lista de cores
-const variants = state.productVariants[p.id] || [];
-let availableColors = [];
+    const variants = state.productVariants[p.id] || [];
+    let availableColors = [];
 
-if (Array.isArray(p.colors) && p.colors.length > 0) {
-    availableColors = p.colors.map(c => {
-        if (typeof c === 'string') {
-            return {
+    if (Array.isArray(p.colors) && p.colors.length > 0) {
+        availableColors = p.colors.map(c => {
+            if (typeof c === 'string') return {
                 name: c,
                 hex: getColorHex(c),
                 images: p.images || []
             };
-        } else {
-            const isHexName = c.name && c.name.startsWith('#');
-            
-            return {
+            else return {
                 name: c.name || 'Cor',
-                hex: isHexName ? c.name : (c.hex || getColorHex(c.name)),
+                hex: c.hex || getColorHex(c.name),
                 images: c.images || p.images || []
             };
-        }
-    });
-} else {
-    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
-    availableColors = unique.map(name => ({
-        name,
-        hex: getColorHex(name),
-        images: p.images || []
-    }));
-}
+        });
+    } else {
+        const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+        availableColors = unique.map(name => ({
+            name,
+            hex: getColorHex(name),
+            images: p.images || []
+        }));
+    }
 
-if (!availableColors.length) {
-    const group = colorSelector.closest('.product-selector-group');
-    if (group) group.style.display = 'none';
-    return;
-}
+    if (!availableColors.length) {
+        const group = colorSelector.closest('.product-selector-group');
+        if (group) group.style.display = 'none';
+        return;
+    }
+
     colorSelector.innerHTML = '';
     // BLOCO NOVO (COM DIVISÃO DIAGONAL)
     availableColors.forEach((colorObj) => {
@@ -1478,5 +1466,3 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
-
-
