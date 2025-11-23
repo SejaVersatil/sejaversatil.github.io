@@ -1,4 +1,6 @@
-/* 1. CONFIGURAÇÕES GERAIS */
+/* PRODUTO.CSS - APENAS CONTEÚDO ESPECÍFICO DO PRODUTO */
+/* Header, Footer, Menu e Banners são herdados do CSS Principal */
+
 body.product-page {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     color: #000000;
@@ -7,12 +9,8 @@ body.product-page {
     margin: 0;
 }
 
-body.product-page .search-bar {
-    max-width: 500px !important;
-}
-
 /* Título do Produto */
-.pd-title, #detailsProductName {
+.product-title, #detailsProductName {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-weight: 400 !important;
     font-size: 46px !important;    
@@ -20,18 +18,18 @@ body.product-page .search-bar {
     color: #1a1a1a !important;
     margin-bottom: 5px !important;
     text-transform: none !important;
-    letter-spacing: -1px !important;
+    letter-spacing: -1px !important; 
 }
 
 /* Descrição Curta */
-.pd-short-desc {
+.short-description-container {
     border-top: 1px solid #f0f0f0 !important;
     border-bottom: 1px solid #f0f0f0 !important;
     padding: 25px 0 !important;
     margin: 20px 0 !important;
 }
 
-.pd-short-desc-text {
+.short-desc-text {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 15px !important;
     line-height: 1.6 !important;
@@ -39,7 +37,7 @@ body.product-page .search-bar {
     font-weight: 400 !important;
 }
 
-.pd-view-full-desc {
+.view-full-desc {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-size: 14px !important;
     font-weight: 700 !important;
@@ -50,18 +48,18 @@ body.product-page .search-bar {
     cursor: pointer;
 }
 
-.pd-container { 
-    max-width: 100%; 
-    padding: 0;
-    margin: 0; 
-}
+.product-page-container { max-width: 100%; padding: 0; margin: 0; }
 
-.pd-gallery-photo:first-child {
+/* .gallery-photo-full:first-child {
+    grid-column: span 2; 
+} 
+*/
+.gallery-photo-full:first-child {
     grid-column: auto !important;
 }
 
 /* Detalhes */
-.pd-breadcrumb {
+.breadcrumb {
     display: flex !important;
     justify-content: flex-start !important;
     flex-wrap: wrap !important;
@@ -73,25 +71,23 @@ body.product-page .search-bar {
     width: 100% !important;
 }
 
-.pd-breadcrumb span {
+.breadcrumb span {
     margin: 0 !important;
 }
 
 /* Container de Preço - PADRÃO DESKTOP (Esquerda) */
-.pd-pricing {
+.product-pricing {
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    text-align: left !important;
-    gap: 2px;
-    margin-bottom: 15px;
-    margin-top: 0;
-    flex: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    text-align: left !important;       
+    gap: 2px !important;
+    margin-bottom: 15px !important;
+    margin-top: 0 !important;
+    flex: 0 !important;
 }
 
-    .pd-price-current {
+    .price-current {
         font-size: 1.2rem !important;
         line-height: 1.2;
         font-weight: 700 !important;
@@ -100,7 +96,7 @@ body.product-page .search-bar {
         order: 1;
     }
     
-    .pd-price-old {
+    .price-old-text {
         font-size: 0.8rem !important;
         color: #999 !important;
         text-decoration: line-through;
@@ -108,85 +104,75 @@ body.product-page .search-bar {
         order: 2;
     }
     
-    .pd-price-installments {
+    .price-installments {
         font-size: 0.7rem !important;
         color: #666 !important;
         margin-top: 2px !important;
         order: 3;
     }
 
-.pd-price-discount-badge { display: none !important; }
+.price-discount-badge { display: none !important; }
 
 /* Seletores */
-.pd-selector-group { 
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #f0f0f0; 
-}
-
-.pd-selector-label { 
-    font-size: 0.85rem; 
-    font-weight: 600; 
-    text-transform: uppercase; 
-    display: block; 
-    margin-bottom: 0.8rem;
-}
+.product-selector-group { padding-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; }
+.selector-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 0.8rem; }
 
 /* Oculta seletor de quantidade - ajuste fica no carrinho */
-.pd-selector-group:has(.pd-quantity) {
+.product-selector-group:has(.quantity-controls) {
     display: none !important;
 }
 
 /* CORES */
-.pd-color-grid {
+.color-options-grid {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.pd-color {
-    width: 23px;
-    height: 23px;
-    min-width: 23px;  
-    min-height: 23px; 
+.color-option {
+    width: 23px !important;
+    height: 23px !important;
+    min-width: 23px !important;  
+    min-height: 23px !important; 
     border-radius: 50% !important;
     border: 1px solid #e0e0e0;
     cursor: pointer;
     position: relative;
     transition: all 0.2s ease;
-    padding: 0;
-    box-sizing: border-box;
+    padding: 0 !important;
+    box-sizing: border-box !important;
 }
 
-.pd-color:hover {
+.color-option:hover {
     border-color: #999;
     transform: scale(1.1);
 }
 
-.pd-color.active {
-    border: 1px solid #e0e0e0;
+.color-option.active {
+    border: 1px solid #e0e0e0 !important; 
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000 !important;
-    transform: none !important;
+    transform: none !important; 
 }
 
-.pd-color.active::after {
+.color-option.active::after {
     display: none !important;
 }
 
 /* TAMANHOS */
-.pd-size-grid {
+.size-options-grid {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.pd-size {
-    min-width: 48px;
-    height: 48px;
+.size-option {
+    min-width: 48px !important;
+    height: 48px !important;
     border: 1px solid #e0e0e0;
     background: #fff;
     color: #555;
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
-    font-size: 14px;
+    font-size: 14px !important;
     font-weight: 400 !important;
     display: flex;
     align-items: center;
@@ -194,21 +180,20 @@ body.product-page .search-bar {
     cursor: pointer;
     border-radius: 8px !important;
     transition: all 0.2s ease;
-    padding: 0;
 }
 
-.pd-size:hover {
+.size-option:hover {
     border-color: #999;
 }
 
-.pd-size.active {
+.size-option.active {
     background: transparent !important;
     color: #000 !important;
-    border: 2px solid #000;
+    border: 2px solid #000 !important;
     font-weight: 600 !important;
 }
 
-.pd-size.unavailable {
+.size-option.unavailable {
     opacity: 0.4;
     text-decoration: line-through;
     background: #f9f9f9;
@@ -217,33 +202,25 @@ body.product-page .search-bar {
 }
 
 /* Quantidade e Frete */
-.pd-quantity { display: flex; border: 1px solid #ddd; width: fit-content; }
-.pd-qty-btn { width: 40px; height: 40px;
-    background: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
-#productQuantity { width: 50px; text-align: center; border: none; border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd; font-weight: 600; }
+.quantity-controls { display: flex; border: 1px solid #ddd; width: fit-content; }
+.qty-control-btn { width: 40px; height: 40px; background: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
+#productQuantity { width: 50px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: 600; }
 
-.pd-shipping-row { display: flex; gap: 0.5rem; }
-.pd-shipping-input { flex: 1; padding: 0.7rem;
-    border: 1px solid #ccc; }
-.pd-shipping-btn { padding: 0 1.5rem; background: #000; color: white; border: none; font-weight: bold; cursor: pointer;
-}
-.pd-shipping-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.pd-shipping-option { display: flex; justify-content: space-between; padding: 0.8rem; background: #f9f9f9;
-    font-size: 0.85rem; }
+.shipping-input-row { display: flex; gap: 0.5rem; }
+.shipping-input { flex: 1; padding: 0.7rem; border: 1px solid #ccc; }
+.shipping-calc-btn { padding: 0 1.5rem; background: #000; color: white; border: none; font-weight: bold; cursor: pointer; }
+.shipping-results { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.shipping-option { display: flex; justify-content: space-between; padding: 0.8rem; background: #f9f9f9; font-size: 0.85rem; }
 
 /* RELACIONADOS */
-.pd-related-section { margin-top: 4rem; border-top: 1px solid #f5f5f5; padding-top: 3rem; }
-.pd-related-grid { display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-/* .product-card e .product-image dentro de related-section mantidos como original pois vem do styles.css */
-.pd-related-section .product-card { cursor: pointer; border: 1px solid #f5f5f5; }
-.pd-related-section .product-card .product-image { aspect-ratio: 3/4;
-    background-size: cover; background-position: center; }
-.pd-related-section .product-card .product-info { padding: 1rem; }
+.related-products-section { margin-top: 4rem; border-top: 1px solid #f5f5f5; padding-top: 3rem; }
+.related-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+.product-card { cursor: pointer; border: 1px solid #f5f5f5; }
+.product-card .product-image { aspect-ratio: 3/4; background-size: cover; background-position: center; }
+.product-card .product-info { padding: 1rem; }
 
 /* Links pequenos abaixo do botão comprar */
-.pd-secondary-actions {
+.secondary-actions {
     display: flex;
     gap: 1.5rem;
     margin-top: 1rem;
@@ -251,7 +228,7 @@ body.product-page .search-bar {
     border-bottom: 1px solid #f0f0f0;
 }
 
-.pd-action-link {
+.action-link {
     background: transparent;
     border: none;
     padding: 0;
@@ -265,33 +242,33 @@ body.product-page .search-bar {
     text-decoration: underline;
 }
 
-.pd-action-link:hover {
+.action-link:hover {
     color: #000;
 }
 
-.pd-action-link svg {
+.action-link svg {
     width: 16px;
     height: 16px;
     stroke-width: 1.5px;
 }
 
 /* Ícones de Confiança */
-.pd-trust-badges {
+.trust-badges-list {
     margin-top: 30px !important;
     padding-top: 25px !important;
-    border-top: 1px solid #f0f0f0 !important;
+    border-top: 1px solid #f0f0f0 !important; 
     display: flex;
     flex-direction: column;
     gap: 20px !important;
 }
 
-.pd-trust-badge {
+.trust-badge {
     display: flex;
     gap: 15px !important;
     align-items: center !important;
 }
 
-.pd-trust-badge svg {
+.trust-badge svg {
     width: 32px !important; 
     height: 32px !important;
     color: #000 !important; 
@@ -299,33 +276,33 @@ body.product-page .search-bar {
     flex-shrink: 0;
 }
 
-.pd-badge-text {
+.badge-text {
     display: flex;
     flex-direction: column;
     font-size: 13px !important;
     line-height: 1.4;
 }
 
-.pd-badge-text strong {
+.badge-text strong {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
     font-weight: 700 !important;
     color: #1a1a1a !important;
     margin-bottom: 2px;
 }
 
-.pd-badge-text a {
+.badge-text a {
     color: #555 !important;
     text-decoration: underline;
     font-weight: 500 !important;
     transition: color 0.2s;
 }
 
-.pd-badge-text a:hover {
+.badge-text a:hover {
     color: #000;
 }
 
 /* Container que agrupa Botão + Texto */
-.pd-size-wrapper {
+.size-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -333,7 +310,7 @@ body.product-page .search-bar {
 }
 
 /* O texto de aviso (Últimas/Esgotado) */
-.pd-stock-msg {
+.stock-msg {
     font-size: 0.6rem;
     margin-top: 4px;
     text-align: center;
@@ -342,74 +319,72 @@ body.product-page .search-bar {
     white-space: nowrap;
 }
 
-.pd-stock-msg.warning { color: #e67e22; } 
-.pd-stock-msg.error { color: #999;
-    text-decoration: none; } 
+.stock-msg.warning { color: #e67e22; } 
+.stock-msg.error { color: #999; text-decoration: none; } 
 
 /* ======================================================= */
 /* AJUSTES FINAIS: COMPACTAÇÃO E ESPESSURA DE FONTE (LIVE!) */
 /* ======================================================= */
 
 /* 1. COMPACTAR OS BLOCOS DE INFORMAÇÃO */
-.pd-info {
+.product-info-section {
     gap: 1.2rem !important;
 }
 
 /* Reduzir altura de cada grupo (Cor, Tamanho, Frete) */
-.pd-selector-group {
+.product-selector-group {
     padding-bottom: 10px !important;
     margin-bottom: 10px !important;
     border-bottom: none !important;
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO */
-body.product-page .pd-title {
-    margin-bottom: 3px !important;
+.product-title {
+    margin-bottom: 0.2rem !important; 
 }
 
-body.product-page .pd-pricing {
-    margin-bottom: 8px;
-    gap: 0px;
-    margin-top: 0px;
+.product-pricing {
+    margin-bottom: 0.5rem !important;
+    gap: 0.1rem !important;
 }
 
-.pd-short-desc {
+.short-description-container {
     margin-bottom: 0.8rem !important;
     padding-bottom: 0.8rem !important;
 }
 
 /* 3. ENGROSSAR FONTES */
-body, .pd-short-desc-text, .pd-model-info-text {
+body, .short-desc-text, .model-info-text {
     font-weight: 500 !important;
-    color: #333 !important;
+    color: #333 !important;      
 }
 
-.pd-selector-label {
+.selector-label {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-size: 14px;
+    font-size: 14px !important;
     font-weight: 400 !important;
     color: #000 !important;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.6rem !important;
     text-transform: none !important; 
 }
 
-.pd-view-full-desc, 
-.pd-size-guide-link, 
-.pd-action-link, 
-.pd-badge-text a {
-    font-weight: 600 !important;
+.view-full-desc, 
+.size-guide-link, 
+.action-link, 
+.badge-text a {
+    font-weight: 600 !important; 
     text-decoration: underline;
 }
 
-.pd-stock-msg {
+.stock-msg {
     font-weight: 700 !important; 
 }
 
-.pd-size {
-    font-weight: 600 !important;
+.size-option {
+    font-weight: 600 !important; 
 }
 
-.pd-price-current {
+.price-current {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-weight: 400 !important;
     font-size: 1.5rem !important;
@@ -419,7 +394,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     margin: 0 !important;
 }
 
-.pd-price-installments {
+.price-installments {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
     font-size: 15px !important;
     color: #555 !important;
@@ -427,7 +402,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     margin-top: 5px !important;
 }
 
-.pd-badge-text strong {
+.badge-text strong {
     font-weight: 700 !important;
 }
 
@@ -437,7 +412,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
 
 @media (min-width: 769px) {
     
-    .pd-price-current, 
+    .price-current, 
     #detailsPriceNew {
         font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
         font-weight: 400 !important;
@@ -448,7 +423,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     }
 
     /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
-    .pd-container .pd-main-grid {
+    .product-page-container .product-main-grid {
         display: grid !important;
         grid-template-columns: 68% 28% !important; 
         gap: 4% !important;
@@ -461,7 +436,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     }
 
     /* 2. Galeria Mosaico (2 Fotos por linha) */
-    .pd-gallery-section {
+    .product-gallery-section {
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -469,7 +444,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
         position: relative !important;
     }
 
-    .pd-gallery {
+    .gallery-container {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         gap: 5px !important;
@@ -482,7 +457,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
         -webkit-overflow-scrolling: auto !important;
     }
 
-    .pd-gallery-photo {
+    .gallery-photo-full {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -501,18 +476,18 @@ body, .pd-short-desc-text, .pd-model-info-text {
         flex-shrink: 0 !important;
     }
 
-    .pd-gallery-photo:not(.gallery-hidden) {
+    .gallery-photo-full:not(.gallery-hidden) {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
     }
 
-    .pd-gallery-photo.gallery-hidden {
+    .gallery-photo-full.gallery-hidden {
         display: none !important;
     }
     
     /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
-    .pd-info {
+    .product-info-section {
         position: sticky !important;
         top: 85px !important;
         height: fit-content !important;
@@ -523,15 +498,14 @@ body, .pd-short-desc-text, .pd-model-info-text {
         z-index: 10 !important;
     }
     
-    .pd-info::-webkit-scrollbar { display: none;
-    }
+    .product-info-section::-webkit-scrollbar { display: none; }
 
-    .pd-title, #detailsProductName {
+    .product-title, #detailsProductName {
         font-size: 2.2rem !important;
         margin-bottom: 5px !important;
     }
 
-    .pd-btn-show-more {
+    .btn-show-more {
         display: flex !important; 
         justify-content: center;
         width: 100%;
@@ -549,21 +523,20 @@ body, .pd-short-desc-text, .pd-model-info-text {
 } /* ← FIM DA MEDIA QUERY DESKTOP */
 
 /* Correção: Botões de Ação Gerais (fora de media queries) */
-.pd-actions {
+.product-action-buttons {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px;
+    gap: 12px !important;
     width: 100% !important;
-    margin-top: 25px;
-    margin-bottom: 0;
+    margin-top: 25px !important;
 }
 
 /* === BOTÃO FAVORITO MINIMALISTA (FLUTUANTE) === */
-.pd-gallery-section {
+.product-gallery-section {
     position: relative !important;
 }
 
-.pd-btn-favorite {
+.btn-favorite-floating {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -583,7 +556,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     outline: none;
 }
 
-.pd-btn-favorite svg {
+.btn-favorite-floating svg {
     width: 22px;
     height: 22px;
     color: #000; 
@@ -591,34 +564,32 @@ body, .pd-short-desc-text, .pd-model-info-text {
     stroke-width: 1.5px;
 }
 
-.pd-btn-favorite:hover {
+.btn-favorite-floating:hover {
     transform: scale(1.1);
     background: #fff;
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-.pd-btn-favorite.active svg {
+.btn-favorite-floating.active svg {
     fill: #ff4444;   
-    stroke: #ff4444;
+    stroke: #ff4444; 
     animation: popHeart 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popHeart {
-    0% { transform: scale(1);
-    }
+    0% { transform: scale(1); }
     50% { transform: scale(1.3); }
-    100% { transform: scale(1);
-    }
+    100% { transform: scale(1); }
 }
 
 @media (max-width: 768px) {
-    .pd-btn-favorite {
+    .btn-favorite-floating {
         top: 15px;
         right: 15px;
         width: 40px;
         height: 40px;
     }
-    .pd-btn-favorite svg {
+    .btn-favorite-floating svg {
         width: 20px;
         height: 20px;
     }
@@ -628,8 +599,16 @@ body, .pd-short-desc-text, .pd-model-info-text {
 /* NOVOS BOTÕES DE AÇÃO (MINIMALISTAS & OUTLINE)     */
 /* ================================================= */
 
-.pd-btn-primary, 
-.pd-btn-whatsapp {
+.product-action-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+    margin-top: 25px !important;
+}
+
+.btn-primary, 
+.btn-whatsapp-main {
     width: 100% !important;
     height: 55px !important;
     font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
@@ -643,22 +622,22 @@ body, .pd-short-desc-text, .pd-model-info-text {
     box-shadow: none !important; 
 }
 
-.pd-btn-primary {
+.btn-primary {
     background: #ffffff !important;       
-    color: #000000 !important;
+    color: #000000 !important;            
     border: 1px solid #000000 !important; 
     border-radius: 30px !important;       
     font-weight: 800 !important;          
     font-size: 16px !important;
 }
 
-.pd-btn-primary:hover {
+.btn-primary:hover {
     background: #000000 !important;       
     color: #ffffff !important;
 }
 
-.pd-btn-whatsapp {
-    background: #ffffff !important;
+.btn-whatsapp-main {
+    background: #ffffff !important;       
     color: #25D366 !important;            
     border: 1px solid #25D366 !important; 
     border-radius: 30px !important;       
@@ -667,35 +646,35 @@ body, .pd-short-desc-text, .pd-model-info-text {
     gap: 8px !important;
 }
 
-.pd-btn-whatsapp:hover {
+.btn-whatsapp-main:hover {
     background: #25D366 !important;       
     color: #ffffff !important;
 }
 
-.pd-btn-whatsapp svg {
+.btn-whatsapp-main svg {
     width: 20px !important;
     height: 20px !important;
     fill: currentColor !important; 
 }
 
 @media (max-width: 768px) {
-    .pd-btn-primary, .pd-btn-whatsapp {
-        border-radius: 30px !important;
+    .btn-primary, .btn-whatsapp-main {
+        border-radius: 30px !important; 
     }
 }
 
 /* === WIDGET DE COMPARTILHAMENTO === */
 
-.pd-header-left {
+.header-left {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: space-between !important; 
     gap: 15px;
     width: 100%;
     position: relative;
 }
 
-.pd-share-widget {
+.share-widget {
     display: flex;
     align-items: center;
     justify-content: flex-end; 
@@ -710,12 +689,12 @@ body, .pd-short-desc-text, .pd-model-info-text {
     position: relative;
 }
 
-.pd-share-widget:hover {
+.share-widget:hover {
     background: #f0f0f0; 
     width: 120px; 
 }
 
-.pd-share-trigger {
+.share-trigger {
     min-width: 30px;
     height: 30px;
     display: flex;
@@ -724,7 +703,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     z-index: 2;
 }
 
-.pd-share-options {
+.share-options {
     display: flex;
     gap: 10px;
     opacity: 0;
@@ -734,13 +713,13 @@ body, .pd-short-desc-text, .pd-model-info-text {
     margin-right: 10px;
 }
 
-.pd-share-widget:hover .pd-share-options {
+.share-widget:hover .share-options {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
 }
 
-.pd-share-btn {
+.share-btn {
     background: none;
     border: none;
     padding: 0;
@@ -752,7 +731,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     transition: transform 0.2s, color 0.2s;
 }
 
-.pd-share-btn:hover {
+.share-btn:hover {
     transform: scale(1.2);
     color: #000;
 }
@@ -774,21 +753,21 @@ body, .pd-short-desc-text, .pd-model-info-text {
         box-sizing: border-box !important;
     }
 
-    .pd-container,
-    .pd-main-grid,
-    .pd-info {
+    .product-page-container,
+    .product-main-grid,
+    .product-info-section {
         overflow-x: hidden !important;
     }
 
     /* --- 3. GALERIA SWIPE HORIZONTAL (MOBILE) --- */
-    .pd-container .pd-main-grid {
+    .product-page-container .product-main-grid {
         display: block !important;
         padding: 0 !important;
         margin: 0 !important;
         width: 100% !important;
     }
 
-    .pd-gallery-section {
+    .product-gallery-section {
         width: 100vw !important;
         max-width: 100vw !important;
         height: auto !important;
@@ -802,9 +781,10 @@ body, .pd-short-desc-text, .pd-model-info-text {
         margin-right: -50vw !important;
     }
 
-    .pd-gallery {
+    .gallery-container {
         display: flex !important;
         flex-direction: row !important;
+        
         overflow-x: auto !important;
         overflow-y: hidden !important;
         scroll-snap-type: x mandatory !important;
@@ -819,11 +799,11 @@ body, .pd-short-desc-text, .pd-model-info-text {
         -ms-overflow-style: none !important;
     }
 
-    .pd-gallery::-webkit-scrollbar { 
-        display: none !important;
+    .gallery-container::-webkit-scrollbar { 
+        display: none !important; 
     }
 
-    .pd-gallery-photo {
+    .gallery-photo-full {
         min-width: 100% !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -840,18 +820,18 @@ body, .pd-short-desc-text, .pd-model-info-text {
         flex-shrink: 0 !important;
     }
 
-    .pd-gallery-photo.gallery-hidden {
+    .gallery-photo-full.gallery-hidden {
         display: block !important;
     }
 
     #btnShowMore,
-    .pd-thumbnails,
-    .pd-btn-show-more {
+    .product-thumbnails,
+    .btn-show-more {
         display: none !important;
     }
 
     /* --- 4. CARD DE INFORMAÇÕES --- */
-    .pd-info {
+    .product-info-section {
         margin-top: -20px !important;
         border-radius: 20px 20px 0 0 !important;
         background: #ffffff !important;
@@ -860,49 +840,49 @@ body, .pd-short-desc-text, .pd-model-info-text {
         padding: 16px !important;
     }
 
-    .pd-title, #detailsProductName {
+    .product-title, #detailsProductName {
         font-size: 1.3rem !important;
         line-height: 1.2 !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 5px !important
         white-space: normal !important;      
         word-wrap: break-word !important;      
-        overflow: visible !important;
+        overflow: visible !important; 
     }
 
-    .pd-price-current { 
+    .price-current { 
         font-size: 1.6rem !important; 
         font-weight: 700 !important;
     }
 
-    .pd-breadcrumb {
+    .breadcrumb {
         display: none !important;
     }
 
     /* Reposiciona share widget ao lado do preço */
-    .pd-header-wrapper {
+    .product-header-wrapper {
         position: relative !important;
     }
 
-    .pd-header-left {
+    .header-left {
         position: relative !important;
         display: block !important;
     }
 
-    .pd-share-widget {
+    .share-widget {
         position: absolute !important;
         top: 50px !important;
         right: 0 !important;
         margin: 0 !important;
     }
 
-    .pd-pricing {
+    .product-pricing {
         padding-right: 50px !important;
         margin-top: 0 !important;
         margin-bottom: 10px !important;
     }
     
     /* --- 5. BOTÕES FIXOS (STICKY FOOTER) --- */
-    .pd-actions {
+    .product-action-buttons {
         position: static !important;
         bottom: auto !important;
         left: auto !important;
@@ -919,8 +899,8 @@ body, .pd-short-desc-text, .pd-model-info-text {
         gap: 12px !important;
     }
 
-    .pd-btn-primary, 
-    .pd-btn-whatsapp {
+    .btn-primary, 
+    .btn-whatsapp-main {
         width: 100% !important;
         height: 52px !important;
         font-size: 14px !important;
@@ -929,7 +909,7 @@ body, .pd-short-desc-text, .pd-model-info-text {
     }
 
     /* Layout Nome + Preço lado a lado */
-    .pd-header-wrapper {
+    .product-header-wrapper {
         display: grid !important;
         grid-template-columns: 1fr auto !important;
         gap: 15px !important;
@@ -937,30 +917,30 @@ body, .pd-short-desc-text, .pd-model-info-text {
         margin-bottom: 15px !important;
     }
 
-    .pd-header-left {
+    .header-left {
         grid-column: 1 / -1 !important;
         display: flex !important;
         justify-content: space-between !important;
         align-items: flex-start !important;
     }
 
-    .pd-title {
+    .product-title {
         flex: 1 !important;
         margin: 0 !important;
         padding-right: 10px !important;
     }
 
-    .pd-pricing {
+    .product-pricing {
         text-align: right !important;
         padding: 0 !important;
     }
 
-    .pd-share-widget {
+    .share-widget {
         position: static !important;
         margin-top: 5px !important;
     }
 
-    .pd-btn-whatsapp { 
-        display: flex !important;
+    .btn-whatsapp-main { 
+        display: flex !important; 
     }
 }
