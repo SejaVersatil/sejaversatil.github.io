@@ -843,7 +843,10 @@ body, .short-desc-text, .model-info-text {
     .product-title, #detailsProductName {
         font-size: 1.3rem !important;
         line-height: 1.2 !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 5px !important
+        white-space: normal !important;      
+        word-wrap: break-word !important;      
+        overflow: visible !important; 
     }
 
     .price-current { 
@@ -939,3 +942,4 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
