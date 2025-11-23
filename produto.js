@@ -343,35 +343,40 @@ function renderColors() {
 
     // Prepara lista de cores
     const variants = state.productVariants[p.id] || [];
-    let availableColors = [];
+let availableColors = [];
 
-    if (Array.isArray(p.colors) && p.colors.length > 0) {
-        availableColors = p.colors.map(c => {
-            if (typeof c === 'string') return {
+if (Array.isArray(p.colors) && p.colors.length > 0) {
+    availableColors = p.colors.map(c => {
+        if (typeof c === 'string') {
+            return {
                 name: c,
                 hex: getColorHex(c),
                 images: p.images || []
             };
-            else return {
+        } else {
+            const isHexName = c.name && c.name.startsWith('#');
+            
+            return {
                 name: c.name || 'Cor',
-                hex: c.hex || getColorHex(c.name),
+                hex: isHexName ? c.name : (c.hex || getColorHex(c.name)),
                 images: c.images || p.images || []
             };
-        });
-    } else {
-        const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
-        availableColors = unique.map(name => ({
-            name,
-            hex: getColorHex(name),
-            images: p.images || []
-        }));
-    }
+        }
+    });
+} else {
+    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+    availableColors = unique.map(name => ({
+        name,
+        hex: getColorHex(name),
+        images: p.images || []
+    }));
+}
 
-    if (!availableColors.length) {
-        const group = colorSelector.closest('.product-selector-group');
-        if (group) group.style.display = 'none';
-        return;
-    }
+if (!availableColors.length) {
+    const group = colorSelector.closest('.product-selector-group');
+    if (group) group.style.display = 'none';
+    return;
+}
 
     colorSelector.innerHTML = '';
     // BLOCO NOVO (COM DIVISÃO DIAGONAL)
@@ -1466,3 +1471,4 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
