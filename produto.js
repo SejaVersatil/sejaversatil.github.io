@@ -271,8 +271,8 @@ function renderGallery(specificImages = null) {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'gallery-photo-full';
 
-        // ✅ LÓGICA CORRIGIDA: Oculta da 3ª em diante APENAS NO DESKTOP
-        if (isDesktop && index >= 2) {
+        // ✅ LÓGICA CORRIGIDA: Oculta da 3ª em diante APENAS NO DESKTOP (se não estiver expandido)
+        if (isDesktop && index >= 2 && !state.galleryExpanded) {
             photoDiv.classList.add('gallery-hidden');
         }
 
@@ -294,40 +294,44 @@ function renderGallery(specificImages = null) {
 
         if (isDesktop && imagesToRender.length > 2) {
             newBtn.style.display = 'flex';
-            newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-            let isExpanded = false;
-
-            nnewBtn.onclick = function() {
-    const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
-
-    if (!state.galleryExpanded) {
-        hiddenPhotos.forEach((photo, index) => {
-            if (index >= 2) {
-                photo.classList.remove('gallery-hidden');
-                photo.style.opacity = '0';
-                requestAnimationFrame(() => {
-                    photo.style.transition = 'opacity 0.5s';
-                    photo.style.opacity = '1';
-                });
+            
+            // Define o texto do botão baseado no estado atual
+            if (state.galleryExpanded) {
+                newBtn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            } else {
+                newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
             }
-        });
-        this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        state.galleryExpanded = true; // ✅ USA O STATE GLOBAL
-    } else {
-        hiddenPhotos.forEach((photo, index) => {
-            if (index >= 2) {
-                photo.classList.add('gallery-hidden');
-            }
-        });
-        window.scrollTo({
-            top: galleryContainer.offsetTop - 100,
-            behavior: 'smooth'
-        });
-        this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        state.galleryExpanded = false; // ✅ USA O STATE GLOBAL
-    }
-};
+
+            newBtn.onclick = function() {
+                const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
+
+                if (!state.galleryExpanded) {
+                    hiddenPhotos.forEach((photo, index) => {
+                        if (index >= 2) {
+                            photo.classList.remove('gallery-hidden');
+                            photo.style.opacity = '0';
+                            requestAnimationFrame(() => {
+                                photo.style.transition = 'opacity 0.5s';
+                                photo.style.opacity = '1';
+                            });
+                        }
+                    });
+                    this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                    state.galleryExpanded = true;
+                } else {
+                    hiddenPhotos.forEach((photo, index) => {
+                        if (index >= 2) {
+                            photo.classList.add('gallery-hidden');
+                        }
+                    });
+                    window.scrollTo({
+                        top: galleryContainer.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                    state.galleryExpanded = false;
+                }
+            };
         } else {
             newBtn.style.display = 'none';
         }
@@ -1486,6 +1490,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
