@@ -255,7 +255,15 @@ function renderGallery(specificImages = null) {
             imagesToRender = [];
         }
     }
-
+if (imagesToRender && Array.isArray(imagesToRender)) {
+    imagesToRender = imagesToRender.filter(img => 
+        img && 
+        typeof img === 'string' && 
+        !img.includes('favicon') && 
+        !img.includes('logo.') &&
+        img.length > 10
+    );
+}
     if (!imagesToRender || imagesToRender.length === 0) {
         console.warn('⚠️ Nenhuma imagem disponível para renderizar');
         galleryContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:#999;">Sem imagens disponíveis</div>';
@@ -1470,4 +1478,5 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
