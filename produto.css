@@ -16,7 +16,7 @@ body.product-page {
     font-size: 46px !important;    
     line-height: 1.1 !important;
     color: #1a1a1a !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 5px !important;
     text-transform: none !important;
     letter-spacing: -1px !important; 
 }
@@ -877,6 +877,8 @@ body, .short-desc-text, .model-info-text {
 
     .product-pricing {
         padding-right: 50px !important;
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
     }
     
     /* --- 5. BOTÕES FIXOS (STICKY FOOTER) --- */
@@ -942,4 +944,5 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
