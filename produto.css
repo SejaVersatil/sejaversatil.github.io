@@ -9,10 +9,6 @@ body.product-page {
     margin: 0;
 }
 
-body.product-page .search-bar {
-    max-width: 500px !important;
-}
-
 /* Título do Produto */
 .product-title, #detailsProductName {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
@@ -343,14 +339,13 @@ body.product-page .search-bar {
 }
 
 /* 2. AJUSTAR TÍTULOS E PREÇO */
-body.product-page .product-title {
-    margin-bottom: 3px !important; 
+.product-title {
+    margin-bottom: 0.2rem !important; 
 }
 
-body.product-page .product-pricing {
-    margin-bottom: 8px !important;
-    gap: 0px !important;
-    margin-top: 0px !important;
+.product-pricing {
+    margin-bottom: 0.5rem !important;
+    gap: 0.1rem !important;
 }
 
 .short-description-container {
