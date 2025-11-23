@@ -841,6 +841,38 @@ body, .short-desc-text, .model-info-text {
     margin: 0 !important;
 }
 
+    /* Layout Nome + Preço lado a lado */
+.product-header-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 15px !important;
+    align-items: start !important;
+    margin-bottom: 15px !important;
+}
+
+.header-left {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+}
+
+.product-title {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding-right: 10px !important;
+}
+
+.product-pricing {
+    text-align: right !important;
+    padding: 0 !important;
+}
+
+.share-widget {
+    position: static !important;
+    margin-top: 5px !important;
+}
+
 .btn-whatsapp-main { 
     display: flex !important; 
 }
@@ -1223,6 +1255,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
