@@ -568,27 +568,19 @@ body, .short-desc-text, .model-info-text {
 
 @media (max-width: 768px) {
 
-    /* --- 0. RESETS GERAIS MOBILE --- */
-    body.product-page,
-    html {
+    /* --- 0. RESETS DE SEGURANÇA --- */
+    body.product-page, html {
         overflow-x: hidden !important;
         max-width: 100vw !important;
     }
 
-    * {
-        max-width: 100vw !important;
-        box-sizing: border-box !important;
-    }
+    * { box-sizing: border-box !important; }
 
-    .site-header,
-    .top-banner,
-    .product-page-container,
-    .product-main-grid,
-    .product-info-section {
+    .site-header, .top-banner, .product-main-grid {
         overflow-x: hidden !important;
     }
 
-    /* --- 1. HEADER MOBILE (CORRIGIDO - GRID PERFEITO) --- */
+    /* --- 1. HEADER GRID (Igual à Home) --- */
     .site-header .nav {
         display: grid !important;
         grid-template-columns: 50px 1fr 80px !important; /* Menu | Logo | Ícones */
@@ -597,40 +589,37 @@ body, .short-desc-text, .model-info-text {
         padding: 0 10px !important;
         background: #fff !important;
         gap: 0 !important;
+        border-bottom: 1px solid #f0f0f0;
     }
 
-    .nav-left {
-        display: contents !important; /* Permite que filhos obedeçam ao Grid pai */
-    }
+    /* Truque para o logo obedecer ao grid */
+    .nav-left { display: contents !important; }
 
-    .nav-left .logo, 
-    .logo {
-        grid-column: 2 !important; /* Centralizado */
+    /* LOGO: Tamanho corrigido para 1.3rem */
+    .nav-left .logo, .logo {
+        grid-column: 2 !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
         width: 100% !important;
-        text-align: center !important;
         
-        /* Tipografia Corrigida */
         font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-        font-size: 1.3rem !important; /* Tamanho igual Home */
+        font-size: 1.3rem !important; /* ✅ AJUSTE CRÍTICO */
         font-weight: 700 !important;
         letter-spacing: 2px !important;
         color: #000 !important;
         white-space: nowrap !important;
-        margin: 0 !important;
         line-height: 1 !important;
+        margin: 0 !important;
     }
 
+    /* MENU HAMBÚRGUER: Alinhado na esquerda */
     .hamburger-btn {
-        grid-column: 1 !important; /* Esquerda */
+        grid-column: 1 !important;
         display: flex !important;
         justify-content: flex-start !important;
         align-items: center !important;
         width: auto !important;
-        height: auto !important;
-        margin: 0 !important;
         padding: 0 !important;
         background: transparent !important;
         border: none !important;
@@ -644,13 +633,13 @@ body, .short-desc-text, .model-info-text {
         margin: 4px 0 !important;
     }
 
+    /* ÍCONES: Alinhados na direita */
     .nav-icons {
-        grid-column: 3 !important; /* Direita */
+        grid-column: 3 !important;
         display: flex !important;
         justify-content: flex-end !important;
         align-items: center !important;
         gap: 12px !important;
-        margin: 0 !important;
         width: 100% !important;
     }
 
@@ -660,168 +649,114 @@ body, .short-desc-text, .model-info-text {
         stroke-width: 1.2px !important;
     }
 
-    /* Oculta Desktop Elements */
-    .nav-center, 
-    .search-bar { 
-        display: none !important; 
-    }
+    /* Esconde busca e breadcrumb no mobile */
+    .nav-center, .search-bar, .breadcrumb { display: none !important; }
 
-    .cart-count {
-        top: -5px !important;
-        right: -5px !important;
-    }
+    /* Ajuste fino do contador carrinho */
+    .cart-count { top: -5px !important; right: -5px !important; }
 
-    /* --- 2. COUNTDOWN COMPACTO --- */
+    /* --- 2. BANNER BLACK FRIDAY COMPACTO --- */
     .top-banner { padding: 5px 0 !important; }
-    .bf-content { flex-wrap: nowrap !important; justify-content: center !important; gap: 2px !important; font-size: 7px !important; line-height: 1 !important; align-items: center !important; }
-    .bf-label, .bf-countdown-label { font-size: 7px !important; letter-spacing: 0 !important; font-weight: 600 !important; white-space: nowrap !important; }
+    .bf-content { flex-wrap: nowrap !important; justify-content: center; gap: 4px; }
+    .bf-label { font-size: 8px !important; white-space: nowrap; }
+    .bf-countdown { display: flex; gap: 2px; }
+    .bf-time-unit { min-width: 18px; padding: 1px; }
+    .bf-time-value { font-size: 9px !important; }
     .bf-separator { display: none !important; }
-    .bf-countdown { gap: 2px !important; display: flex !important; align-items: center !important; }
-    .bf-time-unit { min-width: 20px !important; padding: 2px !important; border-radius: 2px !important; display: flex !important; flex-direction: column !important; align-items: center !important; }
-    .bf-time-value { font-size: 9px !important; line-height: 1 !important; font-weight: 700 !important; }
-    .bf-time-label { font-size: 5px !important; text-transform: uppercase !important; margin-top: 1px !important; font-weight: 500 !important; }
-    .bf-colon { font-size: 7px !important; margin: 0 1px !important; }
 
-    /* --- 3. GALERIA SWIPE HORIZONTAL --- */
-    .product-page-container .product-main-grid {
-        display: block !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
-
+    /* --- 3. GALERIA SWIPE (INSTAGRAM STYLE) --- */
+    .product-page-container .product-main-grid { display: block !important; padding: 0 !important; }
+    
     .product-gallery-section {
         width: 100vw !important;
-        max-width: 100vw !important;
-        height: auto !important;
         position: relative !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        /* Hack Full Width */
-        left: 50% !important;
-        right: 50% !important;
-        margin-left: -50vw !important;
-        margin-right: -50vw !important;
+        left: 50% !important; right: 50% !important;
+        margin-left: -50vw !important; margin-right: -50vw !important;
     }
 
     .gallery-container {
         display: flex !important;
-        flex-direction: row !important;
         overflow-x: auto !important;
-        overflow-y: hidden !important;
         scroll-snap-type: x mandatory !important;
-        -webkit-overflow-scrolling: touch !important;
         width: 100vw !important;
-        max-width: 100vw !important;
-        height: auto !important;
         aspect-ratio: 3/4 !important;
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
     }
-
-    .gallery-container::-webkit-scrollbar { display: none !important; }
+    
+    .gallery-container::-webkit-scrollbar { display: none; }
 
     .gallery-photo-full {
         min-width: 100% !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        height: 100% !important;
-        aspect-ratio: 3/4 !important;
         scroll-snap-align: center !important;
-        scroll-snap-stop: always !important;
-        background-size: cover !important;
-        background-position: center center !important;
-        background-repeat: no-repeat !important;
         display: block !important;
-        visibility: visible !important;
         opacity: 1 !important;
-        flex-shrink: 0 !important;
     }
-
-    .gallery-photo-full.gallery-hidden { display: block !important; }
     
-    #btnShowMore, .product-thumbnails, .btn-show-more { display: none !important; }
+    /* Remove botão "Mostrar Mais" no mobile */
+    #btnShowMore, .btn-show-more { display: none !important; }
 
-    /* --- 4. CARD DE INFORMAÇÕES (COM CORREÇÃO DE LAYOUT) --- */
+    /* --- 4. LAYOUT DE INFORMAÇÕES (CLEAN) --- */
     .product-info-section {
         margin-top: -20px !important;
         border-radius: 20px 20px 0 0 !important;
-        background: #ffffff !important;
+        background: #fff !important;
         position: relative !important;
         z-index: 20 !important;
-        padding: 20px !important;
+        padding: 24px 20px !important;
     }
 
-    /* Oculta breadcrumb */
-    .breadcrumb { display: none !important; }
-
-    /* --- LAYOUT TITULO + SHARE + PREÇO (LÓGICA CONSOLIDADA) --- */
+    /* Título e Compartilhar na mesma linha */
     .product-header-wrapper {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 5px !important;
-        width: 100% !important;
-        margin-bottom: 15px !important;
-    }
-
-    /* Linha Superior: Titulo (Esq) + Share (Dir) */
-    .header-left {
         display: flex !important;
         justify-content: space-between !important;
         align-items: flex-start !important;
-        width: 100% !important;
-        position: relative !important;
+        margin-bottom: 5px !important;
     }
 
+    .header-left { width: 100% !important; display: flex !important; justify-content: space-between; }
+    
     .product-title, #detailsProductName {
-        font-size: 1.3rem !important;
+        font-size: 1.4rem !important;
         line-height: 1.2 !important;
         margin: 0 !important;
-        max-width: 85% !important; /* Espaço para não bater no botão share */
+        padding-right: 10px;
+        max-width: 85%;
     }
 
-    /* Widget Share corrigido para ficar no fluxo */
     .share-widget {
         position: static !important;
         margin: 0 !important;
-        margin-top: -5px !important; /* Ajuste fino para alinhar topo */
+        transform: scale(0.9);
     }
 
-    /* Linha Inferior: Preço */
+    /* Preço logo abaixo */
     .product-pricing {
         padding: 0 !important;
         margin-top: 5px !important;
         text-align: left !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
     }
 
-    .price-current { 
-        font-size: 1.6rem !important; 
+    .price-current {
+        font-size: 1.8rem !important;
         font-weight: 700 !important;
+        color: #000 !important;
         margin: 0 !important;
     }
 
     /* --- 5. BOTÕES DE AÇÃO --- */
     .product-action-buttons {
-        position: static !important;
-        width: 100% !important;
+        margin-top: 30px !important;
         padding: 0 !important;
-        margin-top: 25px !important;
+        position: static !important;
         display: flex !important;
         flex-direction: column !important;
         gap: 12px !important;
     }
 
-    .btn-primary, 
-    .btn-whatsapp-main {
+    .btn-primary, .btn-whatsapp-main {
         width: 100% !important;
-        height: 52px !important;
-        font-size: 14px !important;
-        border-radius: 30px !important;
-        margin: 0 !important;
+        height: 54px !important;
+        border-radius: 50px !important;
+        font-size: 15px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -1204,6 +1139,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
