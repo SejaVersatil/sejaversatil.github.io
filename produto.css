@@ -644,10 +644,10 @@ body, .short-desc-text, .model-info-text {
     }
 
     .nav-icon svg {
-        width: 22px !important;
-        height: 22px !important;
-        stroke-width: 1.2px !important;
-    }
+    width: 20px !important;      /* era 22px */
+    height: 20px !important;     /* era 22px */
+    stroke-width: 1.5px !important; /* ajuste visual */
+}
 
     /* Esconde busca e breadcrumb no mobile */
     .nav-center, .search-bar, .breadcrumb { display: none !important; }
@@ -1139,6 +1139,7 @@ body, .short-desc-text, .model-info-text {
     }
    
 }
+
 
 
 
