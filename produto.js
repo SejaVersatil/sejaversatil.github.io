@@ -233,17 +233,14 @@ function renderPrices() {
 /* =========================
    Galeria Mosaico com "Mostrar Mais / Menos"
    ========================= */
+/* =========================
+   Galeria: Lógica "Hero + Thumbnails" (Novo Layout)
+   ========================= */
 function renderGallery(specificImages = null) {
     const p = state.currentProduct;
     if (!p) return;
 
-    const galleryContainer = document.getElementById('galleryContainer');
-    const btnShowMore = document.getElementById('btnShowMore');
-
-    if (!galleryContainer) return;
-
-    galleryContainer.innerHTML = '';
-
+    // 1. Determina quais imagens usar
     let imagesToRender = specificImages;
     if (!imagesToRender) {
         if (Array.isArray(p.images) && p.images.length > 0) {
@@ -255,77 +252,74 @@ function renderGallery(specificImages = null) {
         }
     }
 
-    if (!imagesToRender || imagesToRender.length === 0) {
-        console.warn('⚠️ Nenhuma imagem disponível para renderizar');
-        galleryContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:#999;">Sem imagens disponíveis</div>';
-        return;
+    // 2. Chama a função que atualiza o DOM sem apagar a estrutura
+    updateGalleryDisplay(imagesToRender);
+}
+
+// Função que distribui as fotos nos lugares certos (Hero 1, Hero 2 e Grid)
+function updateGalleryDisplay(images) {
+    if (!images || images.length === 0) return;
+
+    // --- PARTE 1: FOTOS GIGANTES (HERO) ---
+    const img1 = document.getElementById('mainImg1');
+    const img2 = document.getElementById('mainImg2');
+
+    // Foto Principal 1
+    if (img1) {
+        // Se tiver imagem, atualiza. Se não, põe placeholder transparente
+        const src1 = images[0] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        
+        // Pequeno fade visual
+        img1.style.opacity = '0.7';
+        setTimeout(() => {
+            img1.src = src1;
+            img1.style.opacity = '1';
+        }, 150);
     }
 
-    const isDesktop = window.innerWidth > 768;
+    // Foto Principal 2
+    if (img2) {
+        const src2 = images[1] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        
+        img2.style.opacity = '0.7';
+        setTimeout(() => {
+            img2.src = src2;
+            img2.style.opacity = '1';
+        }, 150);
+    }
 
-    // RESETAR estado de expansão ao trocar de cor
-    state.galleryExpanded = false;
+    // --- PARTE 2: MINIATURAS / RESTANTE ---
+    const thumbnailContainer = document.getElementById('thumbnailList');
+    
+    if (thumbnailContainer) {
+        // Pega as imagens a partir da terceira (índice 2)
+        const remainingImages = images.slice(2);
 
-    imagesToRender.forEach((img, index) => {
-        const photoDiv = document.createElement('div');
-        photoDiv.className = 'gallery-photo-full';
-
-        if (isDesktop && index >= 2) {
-            photoDiv.classList.add('gallery-hidden');
-        }
-
-        if (isImageUrl(img)) {
-            photoDiv.style.backgroundImage = `url("${img}")`;
-        } else if (isGradient(img)) {
-            photoDiv.style.background = img;
+        if (remainingImages.length > 0) {
+            thumbnailContainer.style.display = 'grid';
+            thumbnailContainer.innerHTML = remainingImages.map(img => `
+                <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+            `).join('');
         } else {
-            photoDiv.style.background = '#eee';
+            // Se não tiver mais fotos, limpa e esconde
+            thumbnailContainer.innerHTML = '';
+            thumbnailContainer.style.display = 'none';
         }
+    }
+}
 
-        galleryContainer.appendChild(photoDiv);
-    });
-
-    if (btnShowMore) {
-        const newBtn = btnShowMore.cloneNode(true);
-        btnShowMore.parentNode.replaceChild(newBtn, btnShowMore);
-
-        if (isDesktop && imagesToRender.length > 2) {
-            newBtn.style.display = 'flex';
-            newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-            newBtn.onclick = function() {
-                const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
-
-                if (!state.galleryExpanded) {
-                    hiddenPhotos.forEach((photo, index) => {
-                        if (index >= 2) {
-                            photo.classList.remove('gallery-hidden');
-                            photo.style.opacity = '0';
-                            requestAnimationFrame(() => {
-                                photo.style.transition = 'opacity 0.5s';
-                                photo.style.opacity = '1';
-                            });
-                        }
-                    });
-                    this.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-                    state.galleryExpanded = true;
-                } else {
-                    hiddenPhotos.forEach((photo, index) => {
-                        if (index >= 2) {
-                            photo.classList.add('gallery-hidden');
-                        }
-                    });
-                    window.scrollTo({
-                        top: galleryContainer.offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-                    this.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-                    state.galleryExpanded = false;
-                }
-            };
-        } else {
-            newBtn.style.display = 'none';
-        }
+// Função para clicar na miniatura e jogar ela para a principal
+function swapMainImage(newSrc) {
+    const img1 = document.getElementById('mainImg1');
+    if (img1) {
+        img1.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        img1.style.opacity = '0.5';
+        setTimeout(() => {
+            img1.src = newSrc;
+            img1.style.opacity = '1';
+        }, 200);
     }
 }
 
@@ -346,7 +340,6 @@ function renderColors() {
                 return {
                     name: c.name || 'Cor',
                     hex: c.hex || getColorHex(c.name),
-                    // Pega imagens da cor. Se não tiver, pega do produto.
                     images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || [])
                 };
             } else {
@@ -399,66 +392,67 @@ function renderColors() {
             btn.style.background = gradient;
         }
 
-        // 3. O Clique que muda a foto
+        // 3. O Clique que muda a foto e o estado
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            selectColor(colorObj.name, colorObj.images);
+            selectColor(colorObj.name); // Chama a nova função selectColor abaixo
         });
 
         colorSelector.appendChild(btn);
     });
 
-    if (!state.selectedColor) {
-        if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
-        renderGallery(p.images);
+    // Se nenhuma cor estiver selecionada, seleciona a primeira visualmente (opcional) ou mantém estado
+    if (!state.selectedColor && availableColors.length > 0) {
+       if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
+       // Renderiza as imagens padrão do produto ao iniciar
+       renderGallery(p.images);
     }
 }
 
-/* Função Unificada de Seleção de Cor (Sem fechar galeria) */
-function selectColor(colorName, specificImages = null) {
+/* Função Unificada de Seleção de Cor */
+function selectColor(colorName) {
     console.log('🎨 Trocando cor para:', colorName);
     
+    // 1. Atualiza Estado Global
     state.selectedColor = colorName;
 
-    // 1. Atualiza visual das bolinhas
+    // 2. Atualiza visual das bolinhas
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === colorName);
     });
 
-    // 2. Atualiza o texto escrito
+    // 3. Atualiza o texto escrito
     if (elExists('selectedColorName')) {
         $('selectedColorName').textContent = colorName;
     }
 
-    // 3. Troca as Fotos - LÓGICA CORRIGIDA
-const p = state.currentProduct;
+    // 4. Busca as imagens da cor selecionada
+    const p = state.currentProduct;
+    let newImages = [];
 
-// Primeiro: Tenta usar as imagens passadas diretamente
-if (specificImages && Array.isArray(specificImages) && specificImages.length > 0) {
-    console.log('📸 Usando imagens fornecidas:', specificImages.length);
-    renderGallery(specificImages);
-    return; // ← IMPORTANTE: Para aqui
-}
-
-// Segundo: Busca no objeto colors do produto
-if (p.colors && Array.isArray(p.colors)) {
-    const colorObj = p.colors.find(c => {
-        const cName = typeof c === 'object' ? c.name : c;
-        return cName === colorName;
-    });
-    
-    if (colorObj && colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
-        console.log('📸 Fotos da cor', colorName, ':', colorObj.images.length);
-        renderGallery(colorObj.images);
-        return; // ← IMPORTANTE: Para aqui
+    if (p.colors && Array.isArray(p.colors)) {
+        const colorObj = p.colors.find(c => {
+            const cName = typeof c === 'object' ? c.name : c;
+            return cName === colorName;
+        });
+        
+        if (colorObj && colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
+            newImages = colorObj.images;
+        }
     }
+
+    // 5. Atualiza a Galeria
+    if (newImages.length > 0) {
+        updateGalleryDisplay(newImages);
+    } else {
+        console.warn('⚠️ Cor sem fotos específicas, mantendo fotos atuais ou padrão');
+        // Opcional: resetar para fotos padrão se a cor não tiver fotos
+        // updateGalleryDisplay(p.images);
+    }
+
+    // 6. Atualiza disponibilidade de tamanhos para a nova cor
+    renderSizes();
 }
-
-// Terceiro: Fallback para imagens gerais do produto
-console.warn('⚠️ Cor sem fotos específicas, usando fotos gerais');
-renderGallery(p.images || []);
-
-} 
 
 /* =========================
    Tamanhos (Corrigido: Clique + Sem Pré-seleção)
@@ -1474,4 +1468,5 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
