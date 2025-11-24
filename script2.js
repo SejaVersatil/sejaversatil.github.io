@@ -1890,23 +1890,6 @@ function linkImageToColor(imageIndex) {
     showToast(`✅ Foto vinculada à cor "${selectedColor.name}"!`, 'success');
 }
 
-    // Adicionar à cor escolhida
-    const selectedColor = productColors[colorIndex];
-    if (!selectedColor.images) selectedColor.images = [];
-    
-    // Evitar duplicatas
-    if (!selectedColor.images.includes(imageUrl)) {
-        selectedColor.images.push(imageUrl);
-    }
-
-    // Atualizar interface
-    renderProductImages();
-    renderProductColorsManager();
-    
-    showToast(`✅ Foto vinculada à cor "${selectedColor.name}"!`, 'success');
-}
-    
-
 function removeProductColor(index) {
     const color = productColors[index];
     if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
@@ -4322,6 +4305,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
