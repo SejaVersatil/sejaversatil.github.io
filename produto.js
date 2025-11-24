@@ -324,7 +324,7 @@ if (remainingImages.length > 0) {
     thumbnailContainer.innerHTML = '';
     thumbnailContainer.style.maxHeight = '0';
     btnShowMore.style.display = 'none';
-}
+  }
 }
 // Função para clicar na miniatura e jogar ela para a principal
 function swapMainImage(newSrc) {
@@ -1512,4 +1512,5 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
