@@ -346,46 +346,51 @@ function renderColors() {
     if (!colorSelector) return;
     const p = state.currentProduct;
 
-    // Prepara lista de cores
-    const variants = state.productVariants[p.id] || [];
-let availableColors = [];
+    // 1. Prepara a lista normalizada (Lógica Blindada para seu Firebase)
+    let availableColors = [];
 
-if (Array.isArray(p.colors) && p.colors.length > 0) {
-    availableColors = p.colors.map(c => {
-        if (typeof c === 'string') {
-            return {
-                name: c,
-                hex: getColorHex(c),
-                images: p.images || []
-            };
-        } else {
-            const isHexName = c.name && c.name.startsWith('#');
-            
-            return {
-                name: c.name || 'Cor',
-                hex: isHexName ? c.name : (c.hex || getColorHex(c.name)),
-                images: c.images || p.images || []
-            };
-        }
-    });
-} else {
-    const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
-    availableColors = unique.map(name => ({
-        name,
-        hex: getColorHex(name),
-        images: p.images || []
-    }));
-}
+    // Verifica se p.colors existe e é um array
+    if (Array.isArray(p.colors) && p.colors.length > 0) {
+        availableColors = p.colors.map(c => {
+            // Se for apenas texto (legado)
+            if (typeof c === 'string') {
+                return {
+                    name: c,
+                    hex: getColorHex(c),
+                    images: p.images || [] // Usa imagens padrão
+                };
+            } 
+            // Se for Objeto (Seu formato atual do Firebase)
+            else {
+                return {
+                    name: c.name || 'Cor',
+                    hex: c.hex || getColorHex(c.name),
+                    // AQUI: Garante que estamos lendo o array 'images' do objeto da cor
+                    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || []) 
+                };
+            }
+        });
+    } else {
+        // Fallback: Se não tiver cores cadastradas, tenta extrair das variantes
+        const variants = state.productVariants[p.id] || [];
+        const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+        availableColors = unique.map(name => ({
+            name,
+            hex: getColorHex(name),
+            images: p.images || []
+        }));
+    }
 
-if (!availableColors.length) {
-    const group = colorSelector.closest('.product-selector-group');
-    if (group) group.style.display = 'none';
-    return;
-}
+    // Se não tiver cores, esconde o seletor
+    if (!availableColors.length) {
+        const group = colorSelector.closest('.product-selector-group');
+        if (group) group.style.display = 'none';
+        return;
+    }
 
     colorSelector.innerHTML = '';
 
-    // Loop para criar os botões de cor
+    // 2. Cria os botões
     availableColors.forEach((colorObj) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -393,35 +398,32 @@ if (!availableColors.length) {
         btn.title = colorObj.name;
         btn.dataset.color = colorObj.name;
 
-        // Pega o código hex (ex: "#000, #fff")
+        // Renderiza visual da bolinha (Gradiente ou Cor Sólida)
         const rawHex = colorObj.hex || getColorHex(colorObj.name);
-
-        // Separa as cores pela vírgula
         const colors = rawHex.split(',').map(c => c.trim());
 
-        // Aplica a lógica visual (Diagonal 135deg)
         if (colors.length === 1) {
             btn.style.background = colors[0];
-            if (colors[0].toLowerCase() === '#ffffff' || colors[0].toLowerCase() === '#fff') {
+            if (['#ffffff', '#fff', 'white'].includes(colors[0].toLowerCase())) {
                 btn.style.border = '1px solid #ccc';
             }
-        } else if (colors.length === 2) {
-            btn.style.background = `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`;
-        } else if (colors.length >= 3) {
-            btn.style.background = `linear-gradient(135deg, 
-                ${colors[0]} 33.33%, 
-                ${colors[1]} 33.33% 66.66%, 
-                ${colors[2]} 66.66%)`;
+        } else {
+            // Lógica para bolinha bicolor/tricolor
+            const gradient = colors.length === 2 
+                ? `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`
+                : `linear-gradient(135deg, ${colors[0]} 33%, ${colors[1]} 33% 66%, ${colors[2]} 66%)`;
+            btn.style.background = gradient;
         }
 
-        // ✅ EVENTO DE CLIQUE
+        // 3. O Evento de Clique (CRUCIAL)
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🖱️ Clicou na cor:', colorObj.name);
+            console.log('🎨 Mudando para:', colorObj.name);
+            
+            // Passa explicitamente as imagens desta cor
             selectColor(colorObj.name, colorObj.images);
         });
 
-        // ✅ ADICIONA O BOTÃO AO DOM (ESTAVA FALTANDO!)
         colorSelector.appendChild(btn);
     });
 
@@ -1490,6 +1492,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
