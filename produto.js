@@ -472,7 +472,6 @@ function renderColors() {
 }
 
 /* Função Unificada de Seleção de Cor */
-/* Função Unificada de Seleção de Cor */
 function selectColor(colorName) {
     console.log('🎨 Trocando cor para:', colorName);
     
@@ -493,31 +492,53 @@ function selectColor(colorName) {
     const p = state.currentProduct;
     let newImages = [];
 
+    // ✅ LÓGICA MELHORADA: Busca as fotos da cor
     if (p.colors && Array.isArray(p.colors)) {
         const colorObj = p.colors.find(c => {
-            const cName = typeof c === 'object' ? c.name : c;
+            // Normaliza para comparar strings exatas
+            const cName = typeof c === 'object' ? String(c.name).trim() : String(c).trim();
             return cName === colorName;
         });
         
-        if (colorObj && colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
-            newImages = colorObj.images;
+        if (colorObj) {
+            console.log('✅ Cor encontrada:', colorObj);
+            
+            // Se o objeto for tipo string simples (só o nome)
+            if (typeof colorObj === 'string') {
+                console.warn('⚠️ Cor é string simples, usando fotos padrão');
+                newImages = p.images || [];
+            }
+            // Se for objeto com array de imagens
+            else if (colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
+                newImages = colorObj.images;
+                console.log('✅ Imagens da cor carregadas:', newImages.length);
+            }
+            // Se for objeto mas sem imagens
+            else {
+                console.warn('⚠️ Cor encontrada mas sem campo "images"');
+                newImages = p.images || [];
+            }
+        } else {
+            console.warn('⚠️ Cor não encontrada no array');
+            newImages = p.images || [];
         }
-    }
-
-    // 5. Se não achou fotos da cor, usa as fotos padrão do produto
-    if (newImages.length === 0) {
-        console.warn('⚠️ Cor sem fotos específicas, usando fotos padrão do produto');
+    } else {
+        console.warn('⚠️ Produto sem array de cores');
         newImages = p.images || [];
     }
 
-    // 6. Atualiza a Galeria (SEMPRE atualiza, mesmo se for fotos padrão)
-    if (newImages.length > 0) {
-        updateGalleryDisplay(newImages);
-    } else {
-        console.error('❌ Nenhuma foto disponível para exibir');
+    // 5. Validação Final
+    if (newImages.length === 0) {
+        console.error('❌ Nenhuma imagem disponível, usando placeholder');
+        newImages = ['https://via.placeholder.com/600x800/cccccc/666666?text=Sem+Foto'];
     }
 
-    // 7. Atualiza disponibilidade de tamanhos para a nova cor
+    console.log('📸 Atualizando galeria com:', newImages);
+
+    // 6. Atualiza a Galeria (SEMPRE)
+    updateGalleryDisplay(newImages);
+
+    // 7. Atualiza disponibilidade de tamanhos
     renderSizes();
 }
 /* =========================
@@ -1562,6 +1583,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
