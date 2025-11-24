@@ -1244,17 +1244,17 @@ function renderProductImages() {
     
     <!-- BOTÃO CAPA (Sempre visível, muda apenas o estilo) -->
     <button type="button" 
-            onclick="${isCover ? 'return false;' : `setProductCover(${index})`}" 
-            style="width: 100%; padding: 12px; 
-                   background: ${isCover ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#3498db'}; 
-                   color: white; border: none; border-radius: 8px; 
-                   cursor: ${isCover ? 'default' : 'pointer'}; 
-                   font-weight: 600; font-size: 0.9rem; transition: all 0.3s;"
-            ${isCover ? 'disabled' : ''}
-            onmouseover="${isCover ? '' : `this.style.background='#2980b9'; this.style.transform='translateY(-2px)'`}"
-            onmouseout="${isCover ? '' : `this.style.background='#3498db'; this.style.transform='translateY(0)'`}">
-        ${isCover ? '★ CAPA ATUAL' : '🏠 Definir como Capa'}
-    </button>
+        ${isCover ? '' : `onclick="setProductCover(${index})"`}
+        style="width: 100%; padding: 12px; 
+               background: ${isCover ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#3498db'}; 
+               color: white; border: none; border-radius: 8px; 
+               cursor: ${isCover ? 'default' : 'pointer'}; 
+               font-weight: 600; font-size: 0.9rem; transition: all 0.3s;
+               ${isCover ? 'pointer-events: none;' : ''}"
+        ${isCover ? '' : `onmouseover="this.style.background='#2980b9'; this.style.transform='translateY(-2px)'"`}
+        ${isCover ? '' : `onmouseout="this.style.background='#3498db'; this.style.transform='translateY(0)'"`}>
+    ${isCover ? '★ CAPA ATUAL' : '🏠 Definir como Capa'}
+</button>
     
     <!-- BOTÃO VINCULAR COR (Separado) -->
     <button type="button" 
@@ -4313,6 +4313,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
