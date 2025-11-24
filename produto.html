@@ -166,7 +166,15 @@
             </svg>
         </button>
 
-        <div id="galleryContainer" class="gallery-container"></div>
+        <div id="galleryContainer" class="gallery-container">
+    <div class="main-gallery-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+        <img id="mainImg1" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Imagem Principal 1" class="main-product-image" style="width:100%; object-fit: cover; aspect-ratio: 3/4;">
+        <img id="mainImg2" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Imagem Principal 2" class="main-product-image" style="width:100%; object-fit: cover; aspect-ratio: 3/4;">
+    </div>
+
+    <div id="thumbnailList" class="thumbnail-list" style="display: none; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px;">
+        </div>
+</div>
 
         <button id="btnShowMore" class="btn-show-more" style="display: none;" type="button">
             MOSTRAR MAIS 
@@ -473,5 +481,6 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
