@@ -1197,134 +1197,177 @@ function switchDescTab(tab) {
     }
 }
 
-// Renderiza as imagens no Modal de Admin
+// Renderiza as imagens no Modal de Admin com correção de cliques
 function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
 
-    // ===== 1. RENDERIZAR HTML PURO =====
-    container.innerHTML = tempProductImages.map((img, index) => {
-        const isImage = img.startsWith('data:image') || img.startsWith('http');
-        const isCover = index === 0;
+    // Limpa o conteúdo atual
+    container.innerHTML = '';
+    
+    // Aplica estilo de GRID no container para organizar as fotos lado a lado
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
+    container.style.gap = '15px';
 
-        // Verificar vinculação de cor
+    // Verifica se existem cores cadastradas para mostrar as opções corretamente
+    const hasColors = Array.isArray(productColors) && productColors.length > 0;
+
+    tempProductImages.forEach((img, index) => {
+        const isCover = index === 0;
+        const isImage = img.startsWith('data:image') || img.startsWith('http');
+
+        // Verifica se essa imagem está vinculada a alguma cor
         let linkedColor = null;
-        if (productColors && productColors.length > 0) {
+        if (hasColors) {
             linkedColor = productColors.find(color => 
                 color.images && color.images.includes(img)
             );
         }
 
-        return `
-            <div class="image-item ${isCover ? 'is-cover' : ''}" 
-                 style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                
-                <!-- Preview da Imagem -->
-                <div class="image-item-preview" 
-                     style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
-                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
-                </div>
-                
-                <!-- Botão REMOVER -->
-                <button type="button" 
-                        class="btn-remove-image" 
-                        data-index="${index}"
-                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 100;"
-                        title="Remover imagem">×</button>
-                
-                <!-- Status de Vinculação -->
-                ${linkedColor ? `
-                    <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 30px; height: 30px; border-radius: 50%; background: ${linkedColor.hex}; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
-                        <div>
-                            <div style="font-weight: 700; color: #155724; font-size: 0.95rem;">✅ Vinculada</div>
-                            <div style="font-size: 0.8rem; color: #155724;">${linkedColor.name}</div>
-                        </div>
-                    </div>
-                ` : `
-                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; color: #856404;">
-                        ⚠️ Foto não vinculada a nenhuma cor
-                    </div>
-                `}
-                
-                <!-- Botões de Ação -->
-                <div style="display: flex; gap: 8px; flex-direction: column;">
-                    ${!isCover ? `
-                    <button type="button" 
-                            class="btn-set-cover" 
-                            data-index="${index}" 
-                            style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                        🏠 Definir como Capa
-                    </button>` : `
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
-                        ★ CAPA ATUAL
-                    </div>`}
-                    
-                    <button type="button" 
-                            class="btn-link-color" 
-                            data-index="${index}"
-                            style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                        🎨 ${linkedColor ? 'Alterar Cor Vinculada' : 'Vincular a uma Cor'}
-                    </button>
-                </div>
-            </div>
+        // 1. Cria o Card Principal
+        const card = document.createElement('div');
+        card.className = 'admin-image-card';
+        // Estilos inline críticos para garantir funcionamento visual
+        card.style.cssText = `
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: ${isCover ? '2px solid #3498db' : '1px solid #eee'};
         `;
-    }).join('');
 
-    // ===== 2. AGUARDAR RENDERIZAÇÃO COM TIMEOUT MAIOR =====
-    setTimeout(() => {
-        // ===== 3. ADICIONAR LISTENERS =====
-        
-        // A. Botões REMOVER
-        const removeButtons = document.querySelectorAll('.btn-remove-image');
-        console.log('🔴 Botões REMOVER encontrados:', removeButtons.length);
-        
-        removeButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
+        // 2. Cria a Área da Imagem (Visualização)
+        const imgArea = document.createElement('div');
+        imgArea.style.cssText = `
+            height: 140px;
+            width: 100%;
+            position: relative;
+            background: ${isImage ? '#f0f0f0' : img}; /* Se for gradiente, usa ele como bg */
+        `;
+
+        if (isImage) {
+            const imageEl = document.createElement('img');
+            imageEl.src = img;
+            imageEl.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+            imgArea.appendChild(imageEl);
+        }
+
+        // Badge de CAPA (Visual)
+        if (isCover) {
+            const badge = document.createElement('div');
+            badge.innerText = '★ CAPA PRINCIPAL';
+            badge.style.cssText = `
+                position: absolute; top: 0; left: 0; right: 0;
+                background: rgba(52, 152, 219, 0.9); color: white;
+                font-size: 0.7rem; font-weight: bold; text-align: center;
+                padding: 4px; z-index: 5;
+            `;
+            imgArea.appendChild(badge);
+        }
+
+        // Badge de COR VINCULADA (Visual)
+        if (linkedColor) {
+            const colorBadge = document.createElement('div');
+            colorBadge.title = `Vinculada a: ${linkedColor.name}`;
+            colorBadge.style.cssText = `
+                position: absolute; bottom: 5px; right: 5px;
+                width: 24px; height: 24px; border-radius: 50%;
+                background: ${linkedColor.hex};
+                border: 2px solid white;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                z-index: 5;
+            `;
+            imgArea.appendChild(colorBadge);
+        }
+
+        // Botão REMOVER (X) - Fica sobre a imagem
+        const btnRemove = document.createElement('button');
+        btnRemove.innerHTML = '✕';
+        btnRemove.type = 'button'; // Importante para não submeter form
+        btnRemove.style.cssText = `
+            position: absolute; top: 5px; right: 5px;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: rgba(231, 76, 60, 0.9); color: white;
+            border: none; cursor: pointer; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10;
+        `;
+        btnRemove.onclick = (e) => {
+            e.preventDefault(); 
+            e.stopPropagation();
+            removeProductImage(index);
+        };
+        imgArea.appendChild(btnRemove);
+
+        // 3. Cria a Barra de Ações (Botões embaixo da foto)
+        const actionsBar = document.createElement('div');
+        actionsBar.style.cssText = `
+            padding: 8px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+        `;
+
+        // Botão DEFINIR CAPA (Só aparece se não for a capa)
+        if (!isCover) {
+            const btnSetCover = document.createElement('button');
+            btnSetCover.type = 'button';
+            btnSetCover.innerText = '🏠 Virar Capa';
+            btnSetCover.style.cssText = `
+                background: white; border: 1px solid #3498db; color: #3498db;
+                padding: 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+                cursor: pointer; width: 100%;
+            `;
+            btnSetCover.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const index = parseInt(this.dataset.index);
-                if (!isNaN(index)) {
-                    if (confirm('🗑️ Remover esta imagem?')) {
-                        removeProductImage(index);
-                    }
-                }
-            });
-        });
-        
-        // B. Botões DEFINIR CAPA
-        const coverButtons = document.querySelectorAll('.btn-set-cover');
-        console.log('🏠 Botões CAPA encontrados:', coverButtons.length);
-        
-        coverButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
+                setProductCover(index);
+            };
+            actionsBar.appendChild(btnSetCover);
+        }
+
+        // Botão VINCULAR COR (Só aparece se tiver cores cadastradas)
+        if (hasColors) {
+            const btnLinkColor = document.createElement('button');
+            btnLinkColor.type = 'button';
+            // Muda o texto se já estiver vinculada
+            btnLinkColor.innerText = linkedColor ? `🎨 ${linkedColor.name}` : '🎨 Vincular Cor';
+            
+            // Muda o estilo se já estiver vinculada
+            const bg = linkedColor ? '#9b59b6' : 'white';
+            const fg = linkedColor ? 'white' : '#9b59b6';
+            
+            btnLinkColor.style.cssText = `
+                background: ${bg}; border: 1px solid #9b59b6; color: ${fg};
+                padding: 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+                cursor: pointer; width: 100%;
+            `;
+            
+            btnLinkColor.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const index = parseInt(this.dataset.index);
-                if (!isNaN(index)) {
-                    setProductCover(index);
-                }
-            });
-        });
+                linkImageToColor(index);
+            };
+            actionsBar.appendChild(btnLinkColor);
+        } else {
+            // Se não tem cores, mostra aviso discreto
+            const noColorMsg = document.createElement('div');
+            noColorMsg.innerText = 'Adicione cores acima para vincular';
+            noColorMsg.style.cssText = 'font-size: 0.65rem; color: #999; text-align: center; padding: 4px;';
+            actionsBar.appendChild(noColorMsg);
+        }
 
-        // C. Botões VINCULAR COR
-        const colorButtons = document.querySelectorAll('.btn-link-color');
-        console.log('🎨 Botões COR encontrados:', colorButtons.length);
-        
-        colorButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const index = parseInt(this.dataset.index);
-                if (!isNaN(index)) {
-                    linkImageToColor(index);
-                }
-            });
-        });
-
-        console.log('✅ Todos os listeners foram aplicados com sucesso!');
-        
-    }, 100); // ← MUDANÇA CRÍTICA: 100ms em vez de requestAnimationFrame
+        // Montagem final do Card
+        card.appendChild(imgArea);
+        card.appendChild(actionsBar);
+        container.appendChild(card);
+    });
 }
 
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
@@ -4388,6 +4431,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
