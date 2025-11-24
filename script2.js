@@ -1161,6 +1161,12 @@ function openProductModal(productId = null) {
         tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
         productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
 setTimeout(() => renderProductColorsManager(), 100);
+        productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
+console.log('📋 Cores carregadas para edição:', productColors.length);
+if (productColors.length > 0) {
+    console.log('🎨 Detalhes das cores:', productColors);
+}
+setTimeout(() => renderProductColorsManager(), 100);
     } else {
         title.textContent = 'Adicionar Novo Produto';
         document.getElementById('productForm').reset();
@@ -1774,6 +1780,11 @@ let productColors = [];
 function renderProductColorsManager() {
     const container = document.getElementById('productColorsManager');
     if (!container) return;
+    
+    // Garantir que productColors existe
+    if (!Array.isArray(productColors)) {
+        productColors = [];
+    }
     
     if (productColors.length === 0) {
         container.innerHTML = '<p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma cor adicionada ainda</p>';
@@ -4320,6 +4331,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
