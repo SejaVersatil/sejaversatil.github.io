@@ -1214,27 +1214,26 @@ function renderProductImages() {
             );
         }
 
+        // Correção crítica: Escapar aspas para não quebrar o HTML
+        const safeImg = img.replace(/'/g, "\\'");
+
         return `
             <div class="image-item ${isCover ? 'is-cover' : ''}" style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 
-                <!-- Preview -->
                 <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
                     ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
                 </div>
                 
-                <!-- Botão Remover -->
                 <button type="button" onclick="removeProductImage(${index})" 
-                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s;"
-                        onmouseover="this.style.transform='scale(1.1)'"
-                        onmouseout="this.style.transform='scale(1)'">×</button>
+                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10;"
+                        title="Remover imagem">×</button>
                 
-                <!-- Status da Cor -->
                 ${linkedColor ? `
                     <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                         <div style="width: 30px; height: 30px; border-radius: 50%; background: ${linkedColor.hex}; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
                         <div>
                             <div style="font-weight: 700; color: #155724; font-size: 0.95rem;">✅ Vinculada</div>
-                            <div style="font-size: 0.8rem; color: #155724;">${linkedColor.name} (${linkedColor.hex})</div>
+                            <div style="font-size: 0.8rem; color: #155724;">${linkedColor.name}</div>
                         </div>
                     </div>
                 ` : `
@@ -1243,36 +1242,21 @@ function renderProductImages() {
                     </div>
                 `}
                 
-                <!-- Botões de Ação -->
-<div style="display: flex; gap: 8px; flex-direction: column;">
-    
-    <!-- BOTÃO CAPA (Sempre visível, muda apenas o estilo) -->
-    <button type="button" 
-        ${isCover ? '' : `onclick="setProductCover(${index})"`}
-        style="width: 100%; padding: 12px; 
-               background: ${isCover ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#3498db'}; 
-               color: white; border: none; border-radius: 8px; 
-               cursor: ${isCover ? 'default' : 'pointer'}; 
-               font-weight: 600; font-size: 0.9rem; transition: all 0.3s;
-               ${isCover ? 'pointer-events: none;' : ''}"
-        ${isCover ? '' : `onmouseover="this.style.background='#2980b9'; this.style.transform='translateY(-2px)'"`}
-        ${isCover ? '' : `onmouseout="this.style.background='#3498db'; this.style.transform='translateY(0)'"`}>
-    ${isCover ? '★ CAPA ATUAL' : '🏠 Definir como Capa'}
-</button>
-    
-    <!-- BOTÃO VINCULAR COR (Separado) -->
-    <button type="button" 
-        onclick="linkImageToColor(${index})"
-            style="width: 100%; padding: 12px; 
-                   background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); 
-                   color: white; border: none; border-radius: 8px; 
-                   cursor: pointer; font-weight: 600; font-size: 0.9rem; 
-                   transition: all 0.3s;"
-            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(155,89,182,0.4)'"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-        🎨 ${linkedColor ? 'Alterar' : 'Vincular'} Cor
-    </button>
-</div>
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    ${!isCover ? `
+                    <button type="button" onclick="setProductCover(${index})" 
+                        style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🏠 Definir como Capa
+                    </button>` : `
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
+                        ★ CAPA ATUAL
+                    </div>`}
+                    
+                    <button type="button" onclick="linkImageToColor(${index})"
+                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
@@ -4339,6 +4323,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
