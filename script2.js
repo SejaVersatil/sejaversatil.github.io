@@ -1245,23 +1245,52 @@ function renderProductImages() {
                 <div style="display: flex; gap: 8px; flex-direction: column;">
                     ${!isCover ? `
                     <button type="button" class="btn-set-cover" data-index="${index}" 
-    style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-    🏠 Definir como Capa
-</button>` : `
+                        style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🏠 Definir como Capa
+                    </button>` : `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
                         ★ CAPA ATUAL
                     </div>`}
                     
                     <button type="button" class="btn-link-color" data-index="${index}"
-    style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-    🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
-</button>
+                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
-}
 
+    // Listener movido para DENTRO da função para funcionar corretamente
+    setTimeout(() => {
+        // Botões de Capa
+        document.querySelectorAll('.btn-set-cover').forEach(btn => {
+            // Remove listeners antigos para evitar duplicidade (opcional mas boa prática)
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const idx = parseInt(this.getAttribute('data-index'));
+                setProductCover(idx);
+            });
+        });
+
+        // Botões de Vincular Cor
+        document.querySelectorAll('.btn-link-color').forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const idx = parseInt(this.getAttribute('data-index'));
+                linkImageToColor(idx);
+            });
+        });
+    }, 50); 
+}
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
 function setProductCover(index) {
     if (index <= 0 || index >= tempProductImages.length) return;
@@ -4296,6 +4325,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
