@@ -1160,8 +1160,6 @@ function openProductModal(productId = null) {
         document.getElementById('productBlackFriday').checked = product.isBlackFriday || false;
         tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
         productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
-setTimeout(() => renderProductColorsManager(), 100);
-        productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
 console.log('📋 Cores carregadas para edição:', productColors.length);
 if (productColors.length > 0) {
     console.log('🎨 Detalhes das cores:', productColors);
@@ -1844,6 +1842,22 @@ function addColorToProduct() {
 }
 
 function linkImageToColor(imageIndex) {
+    if (!Array.isArray(productColors)) {
+        productColors = [];
+    }
+    
+    if (productColors.length === 0) {
+        alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
+        return;
+    }
+    
+    const imageUrl = tempProductImages[imageIndex];
+    
+    if (!imageUrl) {
+        alert('❌ Erro: Imagem não encontrada!');
+        return;
+    }
+    
     if (productColors.length === 0) {
         alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
         return;
@@ -4331,6 +4345,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
