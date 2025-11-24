@@ -242,10 +242,8 @@ function renderGallery(specificImages = null) {
 
     if (!galleryContainer) return;
 
-    // Limpa conteúdo anterior
     galleryContainer.innerHTML = '';
 
-    // Define quais imagens usar
     let imagesToRender = specificImages;
     if (!imagesToRender) {
         if (Array.isArray(p.images) && p.images.length > 0) {
@@ -263,16 +261,16 @@ function renderGallery(specificImages = null) {
         return;
     }
 
-    // ✅ DETECTA SE É DESKTOP OU MOBILE
     const isDesktop = window.innerWidth > 768;
 
-    // Loop para criar as fotos
+    // RESETAR estado de expansão ao trocar de cor
+    state.galleryExpanded = false;
+
     imagesToRender.forEach((img, index) => {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'gallery-photo-full';
 
-        // ✅ LÓGICA CORRIGIDA: Oculta da 3ª em diante APENAS NO DESKTOP (se não estiver expandido)
-        if (isDesktop && index >= 2 && !state.galleryExpanded) {
+        if (isDesktop && index >= 2) {
             photoDiv.classList.add('gallery-hidden');
         }
 
@@ -287,20 +285,13 @@ function renderGallery(specificImages = null) {
         galleryContainer.appendChild(photoDiv);
     });
 
-    // ✅ BOTÃO "MOSTRAR MAIS" - APENAS NO DESKTOP
     if (btnShowMore) {
         const newBtn = btnShowMore.cloneNode(true);
         btnShowMore.parentNode.replaceChild(newBtn, btnShowMore);
 
         if (isDesktop && imagesToRender.length > 2) {
             newBtn.style.display = 'flex';
-            
-            // Define o texto do botão baseado no estado atual
-            if (state.galleryExpanded) {
-                newBtn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            } else {
-                newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            }
+            newBtn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
             newBtn.onclick = function() {
                 const hiddenPhotos = galleryContainer.querySelectorAll('.gallery-photo-full');
@@ -338,9 +329,6 @@ function renderGallery(specificImages = null) {
     }
 }
 
-/* =========================
-   Cores (Renderização)
-   ========================= */
 /* =========================
    Cores (Renderização Blindada)
    ========================= */
@@ -1484,6 +1472,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
