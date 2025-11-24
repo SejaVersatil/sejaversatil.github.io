@@ -1196,19 +1196,45 @@ function renderProductImages() {
 
     container.innerHTML = tempProductImages.map((img, index) => {
         const isImage = img.startsWith('data:image') || img.startsWith('http');
-        const isCover = index === 0; // A primeira imagem é sempre a capa
-        
+        const isCover = index === 0; 
+
+        // LÓGICA INTELIGENTE:
+        // Verifica se essa foto já pertence a alguma cor para deixar o select marcado
+        let activeColorIndex = "";
+        if (productColors && productColors.length > 0) {
+            productColors.forEach((color, cIndex) => {
+                if (color.images && color.images.includes(img)) {
+                    activeColorIndex = cIndex;
+                }
+            });
+        }
+
+        // Cria as opções do Menu Dropdown
+        let optionsHtml = `<option value="">-- Geral / Capa --</option>`;
+        if (productColors && productColors.length > 0) {
+            productColors.forEach((color, cIndex) => {
+                const isSelected = cIndex === activeColorIndex ? 'selected' : '';
+                optionsHtml += `<option value="${cIndex}" ${isSelected}>Cor: ${color.name}</option>`;
+            });
+        }
+
         return `
-            <div class="image-item ${isCover ? 'is-cover' : ''}">
-                <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}">
+            <div class="image-item ${isCover ? 'is-cover' : ''}" style="height: auto; padding-bottom: 10px; display: flex; flex-direction: column; background: #fff;">
+                <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}; height: 180px; flex-shrink: 0;">
                     ${isImage ? `<img src="${img}" alt="Produto">` : ''}
                 </div>
                 
-                <button type="button" class="image-item-remove" onclick="removeProductImage(${index})" title="Remover imagem">×</button>
+                <button type="button" class="image-item-remove" onclick="removeProductImage(${index})" title="Remover">×</button>
                 
-                <div class="image-item-actions">
+                <div style="padding: 8px 8px 0 8px; display: flex; flex-direction: column; gap: 8px;">
+                    
+                    <select onchange="assignImageToColor('${img}', this.value)" 
+                            style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8rem; background-color: ${activeColorIndex !== "" ? '#f0f9ff' : '#fff'}; border-color: ${activeColorIndex !== "" ? '#3498db' : '#ccc'};">
+                        ${optionsHtml}
+                    </select>
+
                     ${isCover 
-                        ? `<span class="cover-badge">★ CAPA</span>` 
+                        ? `<div class="cover-badge">★ CAPA</div>` 
                         : `<button type="button" class="btn-set-cover" onclick="setProductCover(${index})">Virar Capa</button>`
                     }
                 </div>
@@ -1724,44 +1750,61 @@ function renderProductColorsManager() {
 }
 
 function addColorToProduct() {
-    // 1. Validação: Precisa ter fotos antes
-    if (!tempProductImages || tempProductImages.length === 0) {
-        alert('⚠️ Adicione as imagens da cor primeiro!');
-        return;
-    }
-
-    // 2. Pergunta o Nome
+    // 1. Validação básica
     const colorName = prompt('🎨 Digite o Nome da Cor (Ex: Preto, Rosa Choque):');
     if (!colorName || colorName.trim() === '') return;
 
-    // 3. Pergunta o Hex (Aceita vírgula para bicolor)
     const colorHex = prompt(
         '🎨 Digite o Código Hex (Ex: #000000):\n\n' +
         '💡 Dica: Para duas cores, use vírgula (Ex: #000, #FFF)'
     );
     
-    // Validação básica do Hex
     if (!colorHex || !colorHex.includes('#')) {
         alert('❌ Código inválido! O código deve ter o símbolo #');
         return;
     }
 
-    // 4. Salva a Cor
+    // 2. Cria a cor VAZIA (images: [])
+    // Isso é mais profissional: cria a "gaveta" primeiro, depois guardamos as fotos
     productColors.push({
         name: colorName.trim(),
-        hex: colorHex.trim().toUpperCase(), // Salva exatamente como digitou
-        images: [...tempProductImages]      // Copia as imagens atuais
+        hex: colorHex.trim().toUpperCase(),
+        images: [] 
     });
 
-    // 5. Atualiza a tela
-    renderProductColorsManager();
-    showToast(`✅ Cor "${colorName}" adicionada!`, 'success');
+    // 3. Atualiza a interface
+    renderProductColorsManager(); // Atualiza a lista de cores lá em cima
+    renderProductImages(); // Atualiza as fotos para aparecer a nova opção no Dropdown
+    
+    showToast(`✅ Cor "${colorName}" criada! Agora vincule as fotos abaixo.`, 'success');
+}
 
-    // 6. Pergunta se quer limpar para a próxima
-    if (confirm('Deseja limpar as imagens para adicionar a próxima cor?')) {
-        tempProductImages = [];
-        renderProductImages();
+function assignImageToColor(imgUrl, colorIndexStr) {
+    if (!productColors) return;
+
+    // 1. Faxina: Remove essa imagem de TODAS as cores primeiro
+    // Isso garante que uma foto não fique duplicada em "Azul" e "Preto" ao mesmo tempo
+    productColors.forEach(color => {
+        if (color.images) {
+            color.images = color.images.filter(url => url !== imgUrl);
+        }
+    });
+
+    // 2. Se o usuário escolheu uma cor (não selecionou "Geral"), adiciona nela
+    if (colorIndexStr !== "") {
+        const index = parseInt(colorIndexStr);
+        if (productColors[index]) {
+            // Garante que o array existe
+            if (!productColors[index].images) productColors[index].images = [];
+            
+            // Adiciona a foto na cor escolhida
+            productColors[index].images.push(imgUrl);
+        }
     }
+
+    // 3. Feedback Visual: Atualiza os contadores na lista de cores
+    renderProductColorsManager();
+    // Opcional: showToast('Foto vinculada!', 'success');
 }
     
 
@@ -4138,4 +4181,5 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
