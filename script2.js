@@ -1401,12 +1401,28 @@ function addGradientImage() {
 }
 
 function removeProductImage(index) {
-    if (tempProductImages.length > 1) {
+    if (tempProductImages.length > 0) { // Ajustado para permitir apagar mesmo se sobrar 0 (opcional)
+        // 1. Pega a URL da imagem que será removida
+        const imageToRemove = tempProductImages[index];
+
+        // 2. Remove da lista principal (Visual)
         tempProductImages.splice(index, 1);
+
+        // 3. FAXINA: Remove essa imagem de todas as cores onde ela estava vinculada
+        if (productColors && productColors.length > 0) {
+            productColors.forEach(color => {
+                if (color.images) {
+                    color.images = color.images.filter(url => url !== imageToRemove);
+                }
+            });
+        }
+
+        // 4. Atualiza a tela
         renderProductImages();
+        renderProductColorsManager(); // Atualiza a contagem de fotos nas cores
         showToast('Imagem removida', 'info');
     } else {
-        showToast('O produto precisa ter pelo menos 1 imagem!', 'error');
+        showToast('Não há imagens para remover!', 'error');
     }
 }
 
@@ -4181,5 +4197,6 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
