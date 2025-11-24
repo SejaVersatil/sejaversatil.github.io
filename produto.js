@@ -287,38 +287,44 @@ function updateGalleryDisplay(images) {
         }
     }
 
-    // --- PARTE 2: THUMBNAILS (CORRIGIDA) ---
-    const thumbnailContainer = document.getElementById('thumbnailList');
-    const btnShowMore = document.getElementById('btnShowMore');
+    // --- PARTE 2: FOTOS EXTRAS (Mesmo tamanho das principais) ---
+const thumbnailContainer = document.getElementById('thumbnailList');
+const btnShowMore = document.getElementById('btnShowMore');
 
-    if (!thumbnailContainer || !btnShowMore) return;
+if (!thumbnailContainer || !btnShowMore) return;
 
-    // Reseta estado ao trocar cor
-    state.galleryExpanded = false;
-    thumbnailContainer.classList.remove('expanded');
+// Reseta estado ao trocar cor
+state.galleryExpanded = false;
 
-    const remainingImages = images.slice(2);
+const remainingImages = images.slice(2);
 
-    if (remainingImages.length > 0) {
-        // Injeta thumbnails
-        thumbnailContainer.innerHTML = remainingImages.map(img => `
-            <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 8px;">
-                <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" 
-                     onmouseover="this.style.transform='scale(1.1)'" 
-                     onmouseout="this.style.transform='scale(1)'">
-            </div>
-        `).join('');
+if (remainingImages.length > 0) {
+    // Injeta fotos GRANDES (não miniaturas)
+    thumbnailContainer.innerHTML = remainingImages.map(img => `
+        <div class="gallery-photo-extra" style="
+            width: 100%;
+            aspect-ratio: 3/4;
+            background-image: url('${img}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 0;
+            cursor: pointer;
+        " onclick="swapMainImage('${img}')">
+            <img src="${img}" alt="Foto Extra" style="width:100%;height:100%;object-fit:cover;opacity:0;">
+        </div>
+    `).join('');
 
-        // Garante estado inicial colapsado
-        thumbnailContainer.style.maxHeight = '0';
-        thumbnailContainer.style.overflow = 'hidden';
-        btnShowMore.style.display = 'flex';
-        btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    } else {
-        thumbnailContainer.innerHTML = '';
-        thumbnailContainer.style.maxHeight = '0';
-        btnShowMore.style.display = 'none';
-    }
+    // Garante estado inicial colapsado
+    thumbnailContainer.style.maxHeight = '0';
+    thumbnailContainer.style.overflow = 'hidden';
+    btnShowMore.style.display = 'flex';
+    btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+} else {
+    thumbnailContainer.innerHTML = '';
+    thumbnailContainer.style.maxHeight = '0';
+    btnShowMore.style.display = 'none';
+}
 }
 // Função para clicar na miniatura e jogar ela para a principal
 function swapMainImage(newSrc) {
@@ -1506,3 +1512,4 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
