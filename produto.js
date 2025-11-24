@@ -1481,6 +1481,27 @@ function showToast(msg, type = 'success') {
     }, 3000);
 }
 
+// Função que o botão "MOSTRAR MAIS" chama no onclick
+window.toggleGalleryExpansion = function() {
+    const container = document.getElementById('thumbnailList');
+    const btn = document.getElementById('btnShowMore');
+    
+    if (!container || !btn) return;
+
+    state.galleryExpanded = !state.galleryExpanded;
+
+    if (state.galleryExpanded) {
+        // Expande
+        container.style.display = 'grid';
+        btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+        // Recolhe
+        container.style.display = 'none';
+        btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        // Rola de volta para o topo
+        document.getElementById('galleryContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
 
 
 
