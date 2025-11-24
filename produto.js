@@ -260,10 +260,56 @@ function renderGallery(specificImages = null) {
 function updateGalleryDisplay(images) {
     if (!images || images.length === 0) return;
 
-    // --- PARTE 1: ATUALIZAR AS 2 FOTOS PRINCIPAIS ---
+    const isMobile = window.innerWidth <= 768;
+
+    // ========================================
+    // MOBILE: TODAS AS FOTOS NO SWIPE
+    // ========================================
+    if (isMobile) {
+        const galleryContainer = document.getElementById('galleryContainer');
+        
+        if (galleryContainer) {
+            // Limpa container
+            galleryContainer.innerHTML = '';
+            
+            // Injeta TODAS as fotos no swipe
+            images.forEach((img, index) => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'gallery-photo-full';
+                photoDiv.style.backgroundImage = `url('${img}')`;
+                photoDiv.style.backgroundSize = 'cover';
+                photoDiv.style.backgroundPosition = 'center';
+                photoDiv.style.backgroundRepeat = 'no-repeat';
+                
+                const imgTag = document.createElement('img');
+                imgTag.src = img;
+                imgTag.alt = `Foto ${index + 1}`;
+                imgTag.style.width = '100%';
+                imgTag.style.height = '100%';
+                imgTag.style.objectFit = 'cover';
+                imgTag.style.opacity = '0'; // Invisível, só para SEO
+                
+                photoDiv.appendChild(imgTag);
+                galleryContainer.appendChild(photoDiv);
+            });
+        }
+        
+        // Esconde botão e thumbnails no mobile
+        const thumbnailContainer = document.getElementById('thumbnailList');
+        const btnShowMore = document.getElementById('btnShowMore');
+        if (thumbnailContainer) thumbnailContainer.style.display = 'none';
+        if (btnShowMore) btnShowMore.style.display = 'none';
+        
+        return; // Para aqui no mobile
+    }
+
+    // ========================================
+    // DESKTOP: 2 PRINCIPAIS + THUMBNAILS
+    // ========================================
     const img1 = document.getElementById('mainImg1');
     const img2 = document.getElementById('mainImg2');
 
+    // Atualiza Foto 1
     if (img1) {
         const src1 = images[0];
         img1.src = src1;
@@ -275,6 +321,7 @@ function updateGalleryDisplay(images) {
         }
     }
 
+    // Atualiza Foto 2
     if (img2) {
         const src2 = images[1] || images[0];
         img2.src = src2;
@@ -287,44 +334,43 @@ function updateGalleryDisplay(images) {
         }
     }
 
-    // --- PARTE 2: FOTOS EXTRAS (Mesmo tamanho das principais) ---
-const thumbnailContainer = document.getElementById('thumbnailList');
-const btnShowMore = document.getElementById('btnShowMore');
+    // THUMBNAILS (Desktop Only)
+    const thumbnailContainer = document.getElementById('thumbnailList');
+    const btnShowMore = document.getElementById('btnShowMore');
 
-if (!thumbnailContainer || !btnShowMore) return;
+    if (!thumbnailContainer || !btnShowMore) return;
 
-// Reseta estado ao trocar cor
-state.galleryExpanded = false;
+    state.galleryExpanded = false;
 
-const remainingImages = images.slice(2);
+    const remainingImages = images.slice(2);
 
-if (remainingImages.length > 0) {
-    // Injeta fotos GRANDES (não miniaturas)
-    thumbnailContainer.innerHTML = remainingImages.map(img => `
-        <div class="gallery-photo-extra" style="
-            width: 100%;
-            aspect-ratio: 3/4;
-            background-image: url('${img}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-radius: 0;
-            cursor: pointer;
-        " onclick="swapMainImage('${img}')">
-            <img src="${img}" alt="Foto Extra" style="width:100%;height:100%;object-fit:cover;opacity:0;">
-        </div>
-    `).join('');
+    if (remainingImages.length > 0) {
+        thumbnailContainer.innerHTML = remainingImages.map(img => `
+            <div class="gallery-photo-extra" style="
+                width: 100%;
+                aspect-ratio: 3/4;
+                background-image: url('${img}');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                border-radius: 0;
+                cursor: pointer;
+            " onclick="swapMainImage('${img}')">
+                <img src="${img}" alt="Foto Extra" style="width:100%;height:100%;object-fit:cover;opacity:0;">
+            </div>
+        `).join('');
 
-    // Garante estado inicial colapsado
-    thumbnailContainer.style.maxHeight = '0';
-    thumbnailContainer.style.overflow = 'hidden';
-    btnShowMore.style.display = 'flex';
-    btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-} else {
-    thumbnailContainer.innerHTML = '';
-    thumbnailContainer.style.maxHeight = '0';
-    btnShowMore.style.display = 'none';
-  }
+        thumbnailContainer.style.maxHeight = '0';
+        thumbnailContainer.style.overflow = 'hidden';
+        thumbnailContainer.style.display = 'grid';
+        btnShowMore.style.display = 'flex';
+        btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+        thumbnailContainer.innerHTML = '';
+        thumbnailContainer.style.maxHeight = '0';
+        thumbnailContainer.style.display = 'none';
+        btnShowMore.style.display = 'none';
+    }
 }
 // Função para clicar na miniatura e jogar ela para a principal
 function swapMainImage(newSrc) {
@@ -1512,5 +1558,6 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
