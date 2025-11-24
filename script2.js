@@ -1262,15 +1262,38 @@ function renderProductImages() {
     }).join('');
 
     // Listener movido para DENTRO da função para funcionar corretamente
-    setTimeout(() => {
-        document.querySelectorAll('.btn-remove-image').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const index = parseInt(this.dataset.index);
-        removeProductImage(index);
+    // ✅ CORREÇÃO DEFINITIVA: Aguardar renderização completa antes de aplicar listeners
+setTimeout(() => {
+    // 1. Botão Remover Imagem
+    document.querySelectorAll('.btn-remove-image').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = parseInt(this.dataset.index);
+            removeProductImage(index);
+        });
     });
-});
+    
+    // 2. Botão Definir como Capa
+    document.querySelectorAll('.btn-set-cover').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const idx = parseInt(this.getAttribute('data-index'));
+            setProductCover(idx);
+        });
+    });
+    
+    // 3. Botão Vincular Cor
+    document.querySelectorAll('.btn-link-color').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const idx = parseInt(this.getAttribute('data-index'));
+            linkImageToColor(idx);
+        });
+    });
+}, 100);
         // Botões de Capa
         document.querySelectorAll('.btn-set-cover').forEach(btn => {
             // Remove listeners antigos para evitar duplicidade (opcional mas boa prática)
@@ -4359,6 +4382,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
