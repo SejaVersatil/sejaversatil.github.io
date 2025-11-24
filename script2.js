@@ -1224,9 +1224,9 @@ function renderProductImages() {
                     ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
                 </div>
                 
-                <button type="button" onclick="removeProductImage(${index})" 
-                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10;"
-                        title="Remover imagem">×</button>
+                <button type="button" class="btn-remove-image" data-index="${index}"
+        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10;"
+        title="Remover imagem">×</button>
                 
                 ${linkedColor ? `
                     <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
@@ -1263,6 +1263,14 @@ function renderProductImages() {
 
     // Listener movido para DENTRO da função para funcionar corretamente
     setTimeout(() => {
+        document.querySelectorAll('.btn-remove-image').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const index = parseInt(this.dataset.index);
+        removeProductImage(index);
+    });
+});
         // Botões de Capa
         document.querySelectorAll('.btn-set-cover').forEach(btn => {
             // Remove listeners antigos para evitar duplicidade (opcional mas boa prática)
@@ -4351,6 +4359,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
