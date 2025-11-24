@@ -1432,29 +1432,35 @@ function addGradientImage() {
 }
 
 function removeProductImage(index) {
-    if (tempProductImages.length > 0) { // Ajustado para permitir apagar mesmo se sobrar 0 (opcional)
-        // 1. Pega a URL da imagem que será removida
-        const imageToRemove = tempProductImages[index];
-
-        // 2. Remove da lista principal (Visual)
-        tempProductImages.splice(index, 1);
-
-        // 3. FAXINA: Remove essa imagem de todas as cores onde ela estava vinculada
-        if (productColors && productColors.length > 0) {
-            productColors.forEach(color => {
-                if (color.images) {
-                    color.images = color.images.filter(url => url !== imageToRemove);
-                }
-            });
-        }
-
-        // 4. Atualiza a tela
-        renderProductImages();
-        renderProductColorsManager(); // Atualiza a contagem de fotos nas cores
-        showToast('Imagem removida', 'info');
-    } else {
+    if (tempProductImages.length === 0) {
         showToast('Não há imagens para remover!', 'error');
+        return;
     }
+
+    const imageToRemove = tempProductImages[index];
+
+    // 1. Remove da lista principal
+    tempProductImages.splice(index, 1);
+
+    // 2. Remove de TODAS as cores vinculadas
+    if (productColors && productColors.length > 0) {
+        productColors.forEach(color => {
+            if (color.images) {
+                color.images = color.images.filter(url => url !== imageToRemove);
+            }
+        });
+    }
+
+    // 3. Se removeu a capa e ainda existem imagens, a próxima se torna capa
+    if (index === 0 && tempProductImages.length > 0) {
+        showToast('Nova capa definida automaticamente', 'info');
+    }
+
+    // 4. Atualiza interface
+    renderProductImages();
+    renderProductColorsManager();
+    
+    showToast('Imagem removida', 'info');
 }
 
 function closeProductModal() {
@@ -4307,6 +4313,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
