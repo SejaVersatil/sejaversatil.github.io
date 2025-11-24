@@ -414,18 +414,18 @@ body, .short-desc-text, .model-info-text {
 
 /* === THUMBNAILS (Base - Todos os dispositivos) === */
 .thumbnail-grid {
-    display: grid;
-    gap: 15px;
-    margin-top: 15px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
-    grid-template-columns: 1fr 1fr; /* 2 colunas por padrão (mobile) */
+    display: grid !important;
+    gap: 5px !important;
+    margin-top: 5px !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    grid-template-columns: 1fr 1fr !important; /* Padrão: 2 colunas */
 }
 
 .thumbnail-grid.expanded {
-    max-height: 3000px; /* Aumentado para suportar muitas fotos */
+    max-height: 3000px !important;
 }
 
 /* Itens individuais da thumbnail */
@@ -1083,6 +1083,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
