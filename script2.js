@@ -45,6 +45,10 @@ let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 let carouselIntervals = {};
 const carouselEventsRegistered = new Set();
 let carouselsPaused = false;
+let selectedSize = 'M';
+let selectedColor = null;
+let selectedQuantity = 1;
+let currentProductDetails = null;
 // ==================== FUNÇÕES UTILITÁRIAS DE IMAGEM ====================
 function getProductImage(product) {
     if (Array.isArray(product.images) && product.images.length > 0) {
@@ -3767,6 +3771,13 @@ async function renderAvailableColors(productId) {
     `;
 }).join('');
 
+// Remove listeners antigos clonando os elementos
+const colorOptions = document.querySelectorAll('.color-option');
+colorOptions.forEach(colorBtn => {
+    colorBtn.replaceWith(colorBtn.cloneNode(true));
+});
+
+// Reaplicar listeners nos elementos limpos
 document.querySelectorAll('.color-option').forEach(colorBtn => {
     const hasStock = colorBtn.dataset.hasStock === 'true';
     
@@ -3836,6 +3847,8 @@ async function renderAvailableSizes(productId) {
 
 // Selecionar cor e TROCAR IMAGENS automaticamente
 function selectColor(colorName) {
+    const mainImage = document.getElementById('mainProductImage');
+    const thumbnailList = document.getElementById('thumbnailList');
     if (!colorName) {
         console.error('❌ selectColor: colorName ausente');
         return;
@@ -4291,6 +4304,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
