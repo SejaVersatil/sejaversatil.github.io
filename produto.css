@@ -1,14 +1,4 @@
 /* ==========================================================================
-   PRODUTO.CSS - VERSÃO PROFISSIONAL SCOPED
-   
-   REGRAS:
-   1. Tudo dentro de .product-page (scoped)
-   2. Sem !important (cascata natural)
-   3. Não toca header/nav/banner/footer (responsabilidade do CSS principal)
-   4. Especificidade controlada (BEM-like)
-   ========================================================================== */
-
-/* ==========================================================================
    VARIÁVEIS LOCAIS (Produto)
    ========================================================================== */
 .product-page {
@@ -1040,3 +1030,4 @@
         display: flex;
     }
 }
+
