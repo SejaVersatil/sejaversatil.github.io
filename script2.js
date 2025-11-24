@@ -1264,39 +1264,22 @@ function renderProductImages() {
     // Listener movido para DENTRO da função para funcionar corretamente
     // ✅ CORREÇÃO DEFINITIVA: Aguardar renderização completa antes de aplicar listeners
 setTimeout(() => {
-    // 1. Botão Remover Imagem
-    document.querySelectorAll('.btn-remove-image').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const index = parseInt(this.dataset.index);
-            removeProductImage(index);
+        // 1. Botão Remover Imagem
+        document.querySelectorAll('.btn-remove-image').forEach(btn => {
+            // Clonar para limpar listeners antigos (Boa prática)
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const index = parseInt(this.dataset.index);
+                removeProductImage(index);
+            });
         });
-    });
-    
-    // 2. Botão Definir como Capa
-    document.querySelectorAll('.btn-set-cover').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const idx = parseInt(this.getAttribute('data-index'));
-            setProductCover(idx);
-        });
-    });
-    
-    // 3. Botão Vincular Cor
-    document.querySelectorAll('.btn-link-color').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const idx = parseInt(this.getAttribute('data-index'));
-            linkImageToColor(idx);
-        });
-    });
-}, 100);
-        // Botões de Capa
+        
+        // 2. Botões de Capa
         document.querySelectorAll('.btn-set-cover').forEach(btn => {
-            // Remove listeners antigos para evitar duplicidade (opcional mas boa prática)
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             
@@ -1308,7 +1291,7 @@ setTimeout(() => {
             });
         });
 
-        // Botões de Vincular Cor
+        // 3. Botões de Vincular Cor
         document.querySelectorAll('.btn-link-color').forEach(btn => {
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
@@ -1320,8 +1303,9 @@ setTimeout(() => {
                 linkImageToColor(idx);
             });
         });
-    }, 50); 
-}
+    }, 100); 
+} // <--- Esta chave fecha a função renderProductImages
+
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
 function setProductCover(index) {
     if (index <= 0 || index >= tempProductImages.length) return;
@@ -4383,6 +4367,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
