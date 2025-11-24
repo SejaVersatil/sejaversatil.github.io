@@ -260,53 +260,47 @@ function renderGallery(specificImages = null) {
 function updateGalleryDisplay(images) {
     if (!images || images.length === 0) return;
 
-    // --- PARTE 1: FOTOS GIGANTES (HERO) ---
+    // --- PARTE 1: ATUALIZAR AS 2 FOTOS PRINCIPAIS ---
     const img1 = document.getElementById('mainImg1');
     const img2 = document.getElementById('mainImg2');
 
-    // Foto Principal 1
+    // Atualiza Foto 1
     if (img1) {
-        // Se tiver imagem, atualiza. Se não, põe placeholder transparente
-        const src1 = images[0] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
-        
-        // Pequeno fade visual
-        img1.style.opacity = '0.7';
-        setTimeout(() => {
-            img1.src = src1;
-            img1.style.opacity = '1';
-        }, 150);
-    }
-
-    // Foto Principal 2
-    if (img2) {
-        const src2 = images[1] || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
-        
-        img2.style.opacity = '0.7';
-        setTimeout(() => {
-            img2.src = src2;
-            img2.style.opacity = '1';
-        }, 150);
-    }
-
-    // --- PARTE 2: MINIATURAS / RESTANTE ---
-    const thumbnailContainer = document.getElementById('thumbnailList');
-    
-    if (thumbnailContainer) {
-        // Pega as imagens a partir da terceira (índice 2)
-        const remainingImages = images.slice(2);
-
-        if (remainingImages.length > 0) {
-            thumbnailContainer.style.display = 'grid';
-            thumbnailContainer.innerHTML = remainingImages.map(img => `
-                <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
-                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                </div>
-            `).join('');
-        } else {
-            // Se não tiver mais fotos, limpa e esconde
-            thumbnailContainer.innerHTML = '';
-            thumbnailContainer.style.display = 'none';
+        const src1 = images[0];
+        // Atualiza o SRC da imagem (para SEO e dados)
+        img1.src = src1; 
+        // Atualiza o Background da DIV pai (para manter o layout cover perfeito)
+        if (img1.parentElement) {
+            img1.parentElement.style.backgroundImage = `url('${src1}')`;
+            img1.parentElement.style.opacity = '0.5';
+            setTimeout(() => img1.parentElement.style.opacity = '1', 200); // Efeito fade
         }
+    }
+
+    // Atualiza Foto 2
+    if (img2) {
+        // Se tiver segunda foto, usa ela. Se não, repete a primeira ou deixa transparente.
+        const src2 = images[1] || images[0]; 
+        
+        img2.src = src2;
+        if (img2.parentElement) {
+            img2.parentElement.style.display = images[1] ? 'block' : 'none'; // Esconde se não tiver 2ª foto
+            img2.parentElement.style.backgroundImage = `url('${src2}')`;
+            img2.parentElement.style.opacity = '0.5';
+            setTimeout(() => img2.parentElement.style.opacity = '1', 200);
+        }
+    }
+
+    // --- PARTE 2: THUMBNAILS (Mostrar Mais) ---
+    // Mantém o código existente para thumbnails se houver mais de 2 fotos
+    const thumbnailContainer = document.getElementById('thumbnailList');
+    const btnShowMore = document.getElementById('btnShowMore');
+    
+    if (images.length > 2 && btnShowMore) {
+        btnShowMore.style.display = 'flex'; // Mostra o botão "Mostrar Mais"
+        // Aqui você pode injetar as divs extras ocultas se necessário para a lógica de expandir
+    } else if (btnShowMore) {
+        btnShowMore.style.display = 'none';
     }
 }
 
@@ -1468,5 +1462,6 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
