@@ -472,6 +472,7 @@ function renderColors() {
 }
 
 /* Função Unificada de Seleção de Cor */
+/* Função Unificada de Seleção de Cor */
 function selectColor(colorName) {
     console.log('🎨 Trocando cor para:', colorName);
     
@@ -503,19 +504,22 @@ function selectColor(colorName) {
         }
     }
 
-    // 5. Atualiza a Galeria
+    // 5. Se não achou fotos da cor, usa as fotos padrão do produto
+    if (newImages.length === 0) {
+        console.warn('⚠️ Cor sem fotos específicas, usando fotos padrão do produto');
+        newImages = p.images || [];
+    }
+
+    // 6. Atualiza a Galeria (SEMPRE atualiza, mesmo se for fotos padrão)
     if (newImages.length > 0) {
         updateGalleryDisplay(newImages);
     } else {
-        console.warn('⚠️ Cor sem fotos específicas, mantendo fotos atuais ou padrão');
-        // Opcional: resetar para fotos padrão se a cor não tiver fotos
-        // updateGalleryDisplay(p.images);
+        console.error('❌ Nenhuma foto disponível para exibir');
     }
 
-    // 6. Atualiza disponibilidade de tamanhos para a nova cor
+    // 7. Atualiza disponibilidade de tamanhos para a nova cor
     renderSizes();
 }
-
 /* =========================
    Tamanhos (Corrigido: Clique + Sem Pré-seleção)
    ========================= */
@@ -1558,6 +1562,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
