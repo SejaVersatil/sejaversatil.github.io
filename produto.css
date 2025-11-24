@@ -419,8 +419,9 @@ body, .short-desc-text, .model-info-text {
     margin-top: 15px;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%; /* ✅ IMPORTANTE: ocupa largura total fora do grid */
+    grid-column: 1 / -1; /* ✅ Se fosse filho do grid, ocuparia todas as colunas */
 }
 
 .thumbnail-grid.expanded {
@@ -1018,5 +1019,6 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
