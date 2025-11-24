@@ -1490,17 +1490,19 @@ window.toggleGalleryExpansion = function() {
 
     if (state.galleryExpanded) {
         // Expande
-        container.style.display = 'grid';
+        container.style.maxHeight = '2000px';
+        container.classList.add('expanded');
         btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     } else {
         // Recolhe
-        container.style.display = 'none';
+        container.style.maxHeight = '0';
+        container.classList.remove('expanded');
         btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        // Rola de volta para o topo
-        document.getElementById('galleryContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Rola suavemente para o topo
+        const galleryTop = document.getElementById('galleryContainer');
+        if (galleryTop) {
+            galleryTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 };
-
-
-
-
