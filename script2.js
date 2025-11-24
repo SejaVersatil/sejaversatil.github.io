@@ -3524,45 +3524,6 @@ function renderRelatedProducts(category, currentId) {
     }).join('');
 }
 
-// Listeners de seleção
-document.addEventListener('click', function(e) {
-    // Color selector
-    if (e.target.classList.contains('color-option')) {
-        const colorName = e.target.dataset.color;
-        if (colorName && typeof selectColor === 'function') {
-            selectColor(colorName);
-        } else {
-            // Fallback se função não existir
-            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-            e.target.classList.add('active');
-            selectedColor = colorName;
-        }
-    }
-    
-    // Size selector
-    if (e.target.classList.contains('size-option')) {
-        const sizeName = e.target.dataset.size;
-        if (sizeName && typeof selectSize === 'function') {
-            selectSize(sizeName);
-        } else {
-            // Fallback se função não existir
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
-            e.target.classList.add('active');
-            selectedSize = sizeName;
-        }
-    }
-});
-
-// Máscara de CEP
-document.addEventListener('input', function(e) {
-    if (e.target.id === 'zipCodeInput') {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 5) {
-            value = value.slice(0, 5) + '-' + value.slice(5, 8);
-        }
-        e.target.value = value;
-    }
-}); 
 // ==================== TRATAMENTO DE ERROS GLOBAIS ====================
 
 // Capturar erros de Promise não tratadas
@@ -4177,3 +4138,4 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
