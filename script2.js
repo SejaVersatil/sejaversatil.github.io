@@ -1772,6 +1772,40 @@ async function limparTodosProdutos() {
     }
 }
 
+function addColorToProduct() {
+    // 1. Validação básica via Prompt
+    const colorName = prompt('🎨 Digite o Nome da Cor (Ex: Preto, Rosa Choque):');
+    if (!colorName || colorName.trim() === '') return;
+
+    const colorHex = prompt(
+        '🎨 Digite o Código Hex (Ex: #000000):\n\n' +
+        '💡 Dica: Para duas cores, use vírgula (Ex: #000, #FFF)'
+    );
+    
+    if (!colorHex || !colorHex.includes('#')) {
+        alert('❌ Código inválido! O código deve ter o símbolo # (Ex: #FF0000)');
+        return;
+    }
+
+    // 2. Garante que o array existe
+    if (!Array.isArray(productColors)) {
+        productColors = [];
+    }
+
+    // 3. Cria a nova cor
+    productColors.push({
+        name: colorName.trim(),
+        hex: colorHex.trim().toUpperCase(),
+        images: [] 
+    });
+
+    // 4. Atualiza a interface
+    renderProductColorsManager(); 
+    renderProductImages(); 
+    
+    showToast(`✅ Cor "${colorName}" adicionada! Agora vincule as fotos.`, 'success');
+}
+
 // ==================== GERENCIAR CORES NO ADMIN ====================
 let productColors = [];
 
@@ -4305,6 +4339,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
