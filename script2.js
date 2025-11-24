@@ -1859,6 +1859,12 @@ function renderProductColorsManager() {
 }
 
 function linkImageToColor(imageIndex) {
+    // Validação de entrada
+    if (imageIndex < 0 || imageIndex >= tempProductImages.length) {
+        alert('❌ Índice de imagem inválido!');
+        return;
+    }
+    
     if (!Array.isArray(productColors) || productColors.length === 0) {
         alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
         return;
@@ -1866,47 +1872,67 @@ function linkImageToColor(imageIndex) {
     
     const imageUrl = tempProductImages[imageIndex];
     
-    // Menu de Cores
+    // Menu de Cores com numeração clara
     let colorList = '🎨 CORES DISPONÍVEIS:\n\n';
     productColors.forEach((color, index) => {
         const count = color.images ? color.images.length : 0;
-        colorList += `${index + 1}. ${color.name} (${color.hex}) - ${count} foto(s)\n`;
+        const isLinked = color.images && color.images.includes(imageUrl) ? '✅' : '⬜';
+        colorList += `${index + 1}. ${isLinked} ${color.name} (${color.hex}) - ${count} foto(s)\n`;
     });
-    colorList += '\n0. 🔓 Desvincular esta foto\n';
+    colorList += '\n0. 🔓 Desvincular esta foto de todas as cores\n';
+    colorList += '\n💡 Digite o NÚMERO da opção desejada:';
 
-    const choice = prompt(colorList + '\nDigite o NÚMERO da opção:');
-    if (!choice) return;
-
-    const idx = parseInt(choice) - 1;
-
+    const choice = prompt(colorList);
+    
+    // Validação da escolha
+    if (choice === null || choice.trim() === '') return;
+    
+    const choiceNum = parseInt(choice.trim());
+    
     // Desvincular (Opção 0)
-    if (choice === '0') {
+    if (choiceNum === 0) {
         productColors.forEach(c => {
-            if(c.images) c.images = c.images.filter(u => u !== imageUrl);
+            if (c.images) c.images = c.images.filter(u => u !== imageUrl);
         });
         renderProductImages();
         renderProductColorsManager();
-        showToast('Foto desvinculada', 'info');
+        showToast('🔓 Foto desvinculada de todas as cores', 'info');
         return;
     }
 
-    // Vincular
-    if (idx >= 0 && idx < productColors.length) {
-        // 1. Remove de outras cores (uma foto só pode ter uma cor)
-        productColors.forEach(c => {
-            if(c.images) c.images = c.images.filter(u => u !== imageUrl);
-        });
-        
-        // 2. Adiciona na nova cor
-        if(!productColors[idx].images) productColors[idx].images = [];
+    // Vincular a uma cor
+    const idx = choiceNum - 1;
+    
+    if (idx < 0 || idx >= productColors.length || isNaN(idx)) {
+        alert('❌ Opção inválida! Digite um número entre 0 e ' + productColors.length);
+        return;
+    }
+
+    // 1. Remove de outras cores (exclusividade)
+    productColors.forEach(c => {
+        if (c.images) c.images = c.images.filter(u => u !== imageUrl);
+    });
+    
+    // 2. Adiciona na cor escolhida
+    if (!productColors[idx].images) productColors[idx].images = [];
+    
+    // Evita duplicatas
+    if (!productColors[idx].images.includes(imageUrl)) {
         productColors[idx].images.push(imageUrl);
-        
-        // 3. Atualiza
-        renderProductImages();
+    }
+    
+    // 3. Atualiza interface
+    renderProductImages();
+    renderProductColorsManager();
+    showToast(`✅ Foto vinculada a "${productColors[idx].name}"`, 'success');
+}
+
+function removeProductColor(index) {
+    const color = productColors[index];
+    if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
+        productColors.splice(index, 1);
         renderProductColorsManager();
-        showToast(`✅ Vinculada a ${productColors[idx].name}`, 'success');
-    } else {
-        alert('❌ Opção inválida');
+        showToast(`🗑️ Cor "${color.name}" removida`, 'info');
     }
 }
 
@@ -4325,6 +4351,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
