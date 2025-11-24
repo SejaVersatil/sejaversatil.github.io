@@ -1196,47 +1196,63 @@ function renderProductImages() {
 
     container.innerHTML = tempProductImages.map((img, index) => {
         const isImage = img.startsWith('data:image') || img.startsWith('http');
-        const isCover = index === 0; 
+        const isCover = index === 0;
 
-        // LÓGICA INTELIGENTE:
-        // Verifica se essa foto já pertence a alguma cor para deixar o select marcado
-        let activeColorIndex = "";
+        // Verificar se foto está vinculada a alguma cor
+        let linkedColor = null;
         if (productColors && productColors.length > 0) {
-            productColors.forEach((color, cIndex) => {
-                if (color.images && color.images.includes(img)) {
-                    activeColorIndex = cIndex;
-                }
-            });
-        }
-
-        // Cria as opções do Menu Dropdown
-        let optionsHtml = `<option value="">-- Geral / Capa --</option>`;
-        if (productColors && productColors.length > 0) {
-            productColors.forEach((color, cIndex) => {
-                const isSelected = cIndex === activeColorIndex ? 'selected' : '';
-                optionsHtml += `<option value="${cIndex}" ${isSelected}>Cor: ${color.name}</option>`;
-            });
+            linkedColor = productColors.find(color => 
+                color.images && color.images.includes(img)
+            );
         }
 
         return `
-            <div class="image-item ${isCover ? 'is-cover' : ''}" style="height: auto; padding-bottom: 10px; display: flex; flex-direction: column; background: #fff;">
-                <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}; height: 180px; flex-shrink: 0;">
-                    ${isImage ? `<img src="${img}" alt="Produto">` : ''}
+            <div class="image-item ${isCover ? 'is-cover' : ''}" style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                
+                <!-- Preview -->
+                <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
+                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
                 </div>
                 
-                <button type="button" class="image-item-remove" onclick="removeProductImage(${index})" title="Remover">×</button>
+                <!-- Botão Remover -->
+                <button type="button" onclick="removeProductImage(${index})" 
+                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s;"
+                        onmouseover="this.style.transform='scale(1.1)'"
+                        onmouseout="this.style.transform='scale(1)'">×</button>
                 
-                <div style="padding: 8px 8px 0 8px; display: flex; flex-direction: column; gap: 8px;">
-                    
-                    <select onchange="assignImageToColor('${img}', this.value)" 
-                            style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8rem; background-color: ${activeColorIndex !== "" ? '#f0f9ff' : '#fff'}; border-color: ${activeColorIndex !== "" ? '#3498db' : '#ccc'};">
-                        ${optionsHtml}
-                    </select>
-
+                <!-- Status da Cor -->
+                ${linkedColor ? `
+                    <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 30px; height: 30px; border-radius: 50%; background: ${linkedColor.hex}; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
+                        <div>
+                            <div style="font-weight: 700; color: #155724; font-size: 0.95rem;">✅ Vinculada</div>
+                            <div style="font-size: 0.8rem; color: #155724;">${linkedColor.name} (${linkedColor.hex})</div>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; color: #856404;">
+                        ⚠️ Foto não vinculada a nenhuma cor
+                    </div>
+                `}
+                
+                <!-- Botões de Ação -->
+                <div style="display: flex; gap: 8px; flex-direction: column;">
                     ${isCover 
-                        ? `<div class="cover-badge">★ CAPA</div>` 
-                        : `<button type="button" class="btn-set-cover" onclick="setProductCover(${index})">Virar Capa</button>`
+                        ? `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.9rem;">★ CAPA DO PRODUTO</div>` 
+                        : `<button type="button" onclick="setProductCover(${index})" 
+                                  style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s;"
+                                  onmouseover="this.style.background='#2980b9'; this.style.transform='translateY(-2px)'"
+                                  onmouseout="this.style.background='#3498db'; this.style.transform='translateY(0)'">
+                              🏠 Definir como Capa
+                           </button>`
                     }
+                    
+                    <button type="button" onclick="linkImageToColor('${img.replace(/'/g, "\\'")}', ${index})" 
+                            style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s;"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(155,89,182,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        🎨 ${linkedColor ? 'Alterar' : 'Vincular'} Cor
+                    </button>
                 </div>
             </div>
         `;
@@ -1795,32 +1811,69 @@ function addColorToProduct() {
     showToast(`✅ Cor "${colorName}" criada! Agora vincule as fotos abaixo.`, 'success');
 }
 
-function assignImageToColor(imgUrl, colorIndexStr) {
-    if (!productColors) return;
+function linkImageToColor(imageUrl, imageIndex) {
+    if (productColors.length === 0) {
+        alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
+        return;
+    }
 
-    // 1. Faxina: Remove essa imagem de TODAS as cores primeiro
-    // Isso garante que uma foto não fique duplicada em "Azul" e "Preto" ao mesmo tempo
+    // Criar lista formatada de cores
+    let colorList = '🎨 CORES DISPONÍVEIS:\n\n';
+    productColors.forEach((color, index) => {
+        const photoCount = color.images ? color.images.length : 0;
+        colorList += `${index + 1}. ${color.name} (${color.hex}) - ${photoCount} foto(s)\n`;
+    });
+    colorList += '\n0. 🔓 Desvincular esta foto\n';
+
+    const choice = prompt(
+        colorList + '\n━━━━━━━━━━━━━━━━━━━━━━\n\n' +
+        '📌 Digite o NÚMERO da cor desejada:'
+    );
+
+    if (!choice || choice.trim() === '') return;
+
+    const colorIndex = parseInt(choice) - 1;
+
+    // Opção 0: Desvincular
+    if (choice === '0') {
+        productColors.forEach(color => {
+            if (color.images) {
+                color.images = color.images.filter(url => url !== imageUrl);
+            }
+        });
+        renderProductImages();
+        renderProductColorsManager();
+        showToast('🔓 Foto desvinculada de todas as cores', 'info');
+        return;
+    }
+
+    // Validar escolha
+    if (isNaN(colorIndex) || colorIndex < 0 || colorIndex >= productColors.length) {
+        alert('❌ Opção inválida! Digite um número da lista.');
+        return;
+    }
+
+    // Remover foto de TODAS as cores (uma foto = uma cor apenas)
     productColors.forEach(color => {
         if (color.images) {
-            color.images = color.images.filter(url => url !== imgUrl);
+            color.images = color.images.filter(url => url !== imageUrl);
         }
     });
 
-    // 2. Se o usuário escolheu uma cor (não selecionou "Geral"), adiciona nela
-    if (colorIndexStr !== "") {
-        const index = parseInt(colorIndexStr);
-        if (productColors[index]) {
-            // Garante que o array existe
-            if (!productColors[index].images) productColors[index].images = [];
-            
-            // Adiciona a foto na cor escolhida
-            productColors[index].images.push(imgUrl);
-        }
+    // Adicionar à cor escolhida
+    const selectedColor = productColors[colorIndex];
+    if (!selectedColor.images) selectedColor.images = [];
+    
+    // Evitar duplicatas
+    if (!selectedColor.images.includes(imageUrl)) {
+        selectedColor.images.push(imageUrl);
     }
 
-    // 3. Feedback Visual: Atualiza os contadores na lista de cores
+    // Atualizar interface
+    renderProductImages();
     renderProductColorsManager();
-    // Opcional: showToast('Foto vinculada!', 'success');
+    
+    showToast(`✅ Foto vinculada à cor "${selectedColor.name}"!`, 'success');
 }
     
 
@@ -3700,32 +3753,31 @@ async function renderAvailableColors(productId) {
     if (colorOption) colorOption.style.display = 'block';
     
     colorSelector.innerHTML = availableColors.map((color, index) => {
-        const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
-        const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
-        
-        return `
-            <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
-                 data-color="${color.name}"
-                 data-color-index="${index}"
-                 style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
-                 onclick="${hasStock ? `selectColor('${color.name.replace(/'/g, "\\'")}')` : 'event.preventDefault()'}"
-                 title="${color.name}">
-                ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
-            </div>
-        `;
-    }).join('');
+    const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
+    const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
     
-    const firstAvailable = availableColors.find(color => 
-        variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0)
-    );
+    return `
+        <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+             data-color="${color.name.replace(/"/g, '&quot;')}"
+             data-has-stock="${hasStock}"
+             style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
+             title="${color.name}">
+            ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
+        </div>
+    `;
+}).join('');
+
+document.querySelectorAll('.color-option').forEach(colorBtn => {
+    const hasStock = colorBtn.dataset.hasStock === 'true';
     
-    if (firstAvailable) {
-        selectedColor = firstAvailable.name;
-        const colorLabel = document.querySelector('.product-option label');
-        if (colorLabel) {
-            colorLabel.textContent = 'Cor:';
+    colorBtn.addEventListener('click', function() {
+        if (!hasStock) {
+            showToast('❌ Cor indisponível', 'error');
+            return;
         }
-    }
+        selectColor(this.dataset.color);
+    });
+});
 }
 
 // Função auxiliar para converter nome em hex (fallback)
@@ -3783,62 +3835,104 @@ async function renderAvailableSizes(productId) {
 }
 
 // Selecionar cor e TROCAR IMAGENS automaticamente
-function selectColor(color) {
-    selectedColor = color;
-
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.color === color);
-    });
-
-    // Trocar imagens da galeria
-    if (currentProductDetails && Array.isArray(currentProductDetails.colors)) {
-        const selectedColorData = currentProductDetails.colors.find(c => c.name === color);
-
-        if (selectedColorData && selectedColorData.images && selectedColorData.images.length > 0) {
-            const mainImage = document.getElementById('mainProductImage');
-            const thumbnailList = document.getElementById('thumbnailList');
-            const images = selectedColorData.images;
-
-            // Atualizar imagem principal
-            const firstImage = images[0];
-            const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-            
-            if (isImg) {
-                mainImage.style.backgroundImage = `url('${firstImage}')`;
-                mainImage.style.backgroundSize = 'cover';
-                mainImage.style.backgroundPosition = 'center';
-            } else {
-                mainImage.style.background = firstImage;
-            }
-
-            // Atualizar thumbnails
-            thumbnailList.innerHTML = images.map((img, index) => {
-                const isImgThumb = img.startsWith('data:image') || img.startsWith('http');
-                const bg = isImgThumb ? `background-image: url('${img}')` : `background: ${img}`;
-
-                return `
-                    <div class="thumbnail ${index === 0 ? 'active' : ''}"
-                        data-img="${img}"
-                        data-index="${index}"
-                        style="${bg}; background-size: cover; background-position: center;">
-                    </div>
-                `;
-            }).join('');
-
-            thumbnailList.querySelectorAll('.thumbnail').forEach(el => {
-                el.addEventListener('click', () => {
-                    changeMainImage(el.dataset.img, Number(el.dataset.index));
-                });
-            });
-
-            showToast(`🎨 Cor alterada: ${color}`, 'info');
-            //console.log(`✅ Imagens trocadas para cor: ${color} (${images.length} fotos)`);
-        } else {
-            console.warn(`⚠️ Cor "${color}" selecionada mas não possui imagens`);
-        }
+function selectColor(colorName) {
+    if (!colorName) {
+        console.error('❌ selectColor: colorName ausente');
+        return;
     }
 
-    if (currentProductDetails) {
+    if (!currentProductDetails) {
+        console.error('❌ selectColor: currentProductDetails não existe');
+        return;
+    }
+
+    if (!currentProductDetails.colors || !Array.isArray(currentProductDetails.colors)) {
+        console.warn('⚠️ Produto não possui campo "colors"');
+        return;
+    }
+
+    const selectedColorData = currentProductDetails.colors.find(c => c.name === colorName);
+
+    if (!selectedColorData) {
+        console.error(`❌ Cor "${colorName}" não encontrada`);
+        showToast(`⚠️ Cor "${colorName}" não cadastrada`, 'error');
+        return;
+    }
+
+    if (!selectedColorData.images || selectedColorData.images.length === 0) {
+        console.error(`❌ Cor "${colorName}" sem imagens`);
+        showToast(`⚠️ Cor "${colorName}" sem fotos`, 'error');
+        return;
+    }
+
+    selectedColor = colorName;
+
+    document.querySelectorAll('.color-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.color === colorName);
+    });
+
+    const mainImage = document.getElementById('mainProductImage');
+    const thumbnailList = document.getElementById('thumbnailList');
+
+    if (!mainImage || !thumbnailList) {
+        console.error('❌ Elementos de galeria não encontrados');
+        return;
+    }
+
+    const images = selectedColorData.images;
+    const firstImage = images[0];
+    const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+
+    if (isImg) {
+        mainImage.style.backgroundImage = `url('${firstImage}')`;
+        mainImage.style.backgroundSize = 'cover';
+        mainImage.style.backgroundPosition = 'center';
+        mainImage.style.background = '';
+    } else {
+        mainImage.style.background = firstImage;
+        mainImage.style.backgroundImage = '';
+    }
+
+    thumbnailList.innerHTML = images.map((img, index) => {
+        const isImgThumb = img.startsWith('data:image') || img.startsWith('http');
+        const bgStyle = isImgThumb 
+            ? `background-image: url('${img}'); background-size: cover; background-position: center;` 
+            : `background: ${img};`;
+
+        return `
+            <div class="thumbnail ${index === 0 ? 'active' : ''}"
+                 data-image-url="${img.replace(/"/g, '&quot;')}"
+                 style="${bgStyle} width: 80px; height: 100px; border-radius: 8px; cursor: pointer; transition: all 0.3s; border: 3px solid ${index === 0 ? '#667eea' : 'transparent'};">
+            </div>
+        `;
+    }).join('');
+
+    document.querySelectorAll('.thumbnail').forEach((thumb, idx) => {
+        const imgUrl = thumb.dataset.imageUrl;
+        thumb.addEventListener('click', () => {
+            const mainImg = document.getElementById('mainProductImage');
+            const isRealImg = imgUrl.startsWith('data:image') || imgUrl.startsWith('http');
+            
+            if (isRealImg) {
+                mainImg.style.backgroundImage = `url('${imgUrl}')`;
+                mainImg.style.backgroundSize = 'cover';
+                mainImg.style.backgroundPosition = 'center';
+                mainImg.style.background = '';
+            } else {
+                mainImg.style.background = imgUrl;
+                mainImg.style.backgroundImage = '';
+            }
+            
+            document.querySelectorAll('.thumbnail').forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+                t.style.border = i === idx ? '3px solid #667eea' : '3px solid transparent';
+            });
+        });
+    });
+
+    showToast(`🎨 ${images.length} foto(s) da cor ${colorName}`, 'info');
+
+    if (currentProductDetails.id) {
         renderAvailableSizes(currentProductDetails.id);
     }
 }
@@ -4197,6 +4291,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
