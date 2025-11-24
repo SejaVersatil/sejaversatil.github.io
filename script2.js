@@ -1258,7 +1258,7 @@ function renderProductImages() {
     
     <!-- BOTÃO VINCULAR COR (Separado) -->
     <button type="button" 
-            onclick="linkImageToColor('${img.replace(/'/g, "\\'")}', ${index})" 
+        onclick="linkImageToColor(${index})"
             style="width: 100%; padding: 12px; 
                    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); 
                    color: white; border: none; border-radius: 8px; 
@@ -4313,6 +4313,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
