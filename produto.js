@@ -442,25 +442,33 @@ function selectColor(colorName, specificImages = null) {
         $('selectedColorName').textContent = colorName;
     }
 
-    // 3. Troca as Fotos (Mantendo o estado "Mostrar Mais" como estiver)
-    if (specificImages && Array.isArray(specificImages) && specificImages.length > 0) {
-        console.log('📸 Trocando galeria para', specificImages.length, 'fotos da cor');
-        renderGallery(specificImages);
-    } else {
-        // Fallback
-        const p = state.currentProduct;
-        const colorObj = p.colors && p.colors.find(c => (c.name || c) === colorName);
-        
-        if (colorObj && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
-             renderGallery(colorObj.images);
-        } else {
-             renderGallery(p.images);
-        }
-    }
+    // 3. Troca as Fotos - LÓGICA CORRIGIDA
+const p = state.currentProduct;
 
-    // 4. Filtra tamanhos
-    renderSizes();
+// Primeiro: Tenta usar as imagens passadas diretamente
+if (specificImages && Array.isArray(specificImages) && specificImages.length > 0) {
+    console.log('📸 Usando imagens fornecidas:', specificImages.length);
+    renderGallery(specificImages);
+    return; // ← IMPORTANTE: Para aqui
 }
+
+// Segundo: Busca no objeto colors do produto
+if (p.colors && Array.isArray(p.colors)) {
+    const colorObj = p.colors.find(c => {
+        const cName = typeof c === 'object' ? c.name : c;
+        return cName === colorName;
+    });
+    
+    if (colorObj && colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
+        console.log('📸 Fotos da cor', colorName, ':', colorObj.images.length);
+        renderGallery(colorObj.images);
+        return; // ← IMPORTANTE: Para aqui
+    }
+}
+
+// Terceiro: Fallback para imagens gerais do produto
+console.warn('⚠️ Cor sem fotos específicas, usando fotos gerais');
+renderGallery(p.images || []);
 
 /* =========================
    Tamanhos (Corrigido: Clique + Sem Pré-seleção)
@@ -1476,6 +1484,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
