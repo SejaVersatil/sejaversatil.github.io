@@ -941,16 +941,17 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 
 /* Header e Nav (CORRIGIDO) */
     nav { 
-        display: flex !important; /* MUDADO DE GRID PARA FLEX */
-        justify-content: space-between !important;
-        align-items: center !important;
-        position: relative !important; /* ESSENCIAL PARA O LOGO */
-        height: 55px !important;
-        padding: 0 15px !important;
-        background: #fff !important; 
-        border-bottom: 1px solid #f0f0f0;
-        gap: 0 !important;
-    }
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    height: 55px !important;
+    padding: 0 15px !important;
+    background: #fff !important; 
+    border-bottom: 1px solid #f0f0f0;
+    gap: 0 !important;
+    z-index: 1001 !important; /* ← ADICIONE ESTA LINHA */
+}
 
     .hamburger-btn { 
         display: flex !important; 
@@ -1035,6 +1036,8 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
    /* Black Friday Mobile */
     .top-banner {
         padding: 8px 0 !important;
+        position: relative !important;
+        z-index: 100 !important; /* Abaixo do header */
     }
 
     .bf-content {
@@ -1173,6 +1176,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
