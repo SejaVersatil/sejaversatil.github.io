@@ -1496,7 +1496,7 @@ function removeProductImage(index) {
         });
     }
 
-    // 3. Se removeu a capa e ainda existem imagens, a próxima se torna capa
+    // 3. Se removeu a capa e ainda existem imagens
     if (index === 0 && tempProductImages.length > 0) {
         showToast('Nova capa definida automaticamente', 'info');
     }
@@ -1505,7 +1505,7 @@ function removeProductImage(index) {
     renderProductImages();
     renderProductColorsManager();
     
-    showToast('Imagem removida', 'info');
+    showToast('🗑️ Imagem removida', 'info');
 }
 
 function closeProductModal() {
@@ -1887,7 +1887,7 @@ function renderProductColorsManager() {
 }
 
 function linkImageToColor(imageIndex) {
-    // Validação de entrada
+    // Validação
     if (imageIndex < 0 || imageIndex >= tempProductImages.length) {
         showToast('❌ Índice de imagem inválido!', 'error');
         return;
@@ -4380,6 +4380,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
