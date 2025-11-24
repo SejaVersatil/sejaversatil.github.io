@@ -1887,14 +1887,14 @@ function renderProductColorsManager() {
 }
 
 function linkImageToColor(imageIndex) {
-    // Validação
-    if (imageIndex < 0 || imageIndex >= tempProductImages.length) {
-        showToast('❌ Índice de imagem inválido!', 'error');
+    // Validação CRÍTICA
+    if (!Array.isArray(productColors) || productColors.length === 0) {
+        showToast('❌ Cadastre pelo menos uma cor antes de vincular!', 'error');
         return;
     }
     
-    if (!Array.isArray(productColors) || productColors.length === 0) {
-        showToast('❌ Crie pelo menos uma cor antes de vincular fotos!', 'error');
+    if (imageIndex < 0 || imageIndex >= tempProductImages.length) {
+        showToast('❌ Índice de imagem inválido!', 'error');
         return;
     }
     
@@ -1910,7 +1910,7 @@ function linkImageToColor(imageIndex) {
     });
     
     colorList += '\n0. 🔓 Desvincular de todas\n';
-    colorList += '\n💡 Digite o número:';
+    colorList += '\n💡 Digite o número da cor:';
 
     const choice = prompt(colorList);
     
@@ -1925,7 +1925,7 @@ function linkImageToColor(imageIndex) {
         });
         renderProductImages();
         renderProductColorsManager();
-        showToast('🔓 Foto desvinculada', 'info');
+        showToast('🔓 Foto desvinculada de todas as cores', 'info');
         return;
     }
 
@@ -1937,7 +1937,7 @@ function linkImageToColor(imageIndex) {
         return;
     }
 
-    // Remove de outras cores
+    // Remove de outras cores primeiro
     productColors.forEach(c => {
         if (c.images) c.images = c.images.filter(u => u !== imageUrl);
     });
@@ -1953,7 +1953,7 @@ function linkImageToColor(imageIndex) {
     
     renderProductImages();
     renderProductColorsManager();
-    showToast(`✅ Vinculada a "${productColors[idx].name}"`, 'success');
+    showToast(`✅ Foto vinculada a "${productColors[idx].name}"`, 'success');
 }
 
 function removeProductColor(index) {
@@ -4380,6 +4380,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
