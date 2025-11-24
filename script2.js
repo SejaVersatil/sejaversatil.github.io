@@ -1832,9 +1832,16 @@ function addColorToProduct() {
     showToast(`✅ Cor "${colorName}" criada! Agora vincule as fotos abaixo.`, 'success');
 }
 
-function linkImageToColor(imageUrl, imageIndex) {
+function linkImageToColor(imageIndex) {
     if (productColors.length === 0) {
         alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
+        return;
+    }
+    
+    const imageUrl = tempProductImages[imageIndex];
+    
+    if (!imageUrl) {
+        alert('❌ Erro: Imagem não encontrada!');
         return;
     }
 
@@ -4313,6 +4320,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
