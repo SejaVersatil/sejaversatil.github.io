@@ -412,6 +412,42 @@ body, .short-desc-text, .model-info-text {
     font-weight: 700 !important;
 }
 
+/* === THUMBNAILS (Base - Todos os dispositivos) === */
+.thumbnail-grid {
+    display: grid;
+    gap: 10px;
+    margin-top: 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+}
+
+.thumbnail-grid.expanded {
+    max-height: 2000px; /* Aumentado para suportar muitas fotos */
+}
+
+.thumbnail-item {
+    aspect-ratio: 3/4;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    background-color: #f5f5f5;
+}
+
+.thumbnail-item:hover {
+    border-color: #000;
+    transform: scale(1.05);
+}
+
+.thumbnail-item:active {
+    transform: scale(0.98);
+}
+
 /* ============================================================ */
 /* 🖥️ DESKTOP: LAYOUT MOSAICO WIDE (Estilo Live!)             */
 /* ============================================================ */
@@ -543,6 +579,15 @@ body, .short-desc-text, .model-info-text {
     height: 14px;
     transition: transform 0.3s ease;
 }
+    .thumbnail-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        margin-top: 20px !important;
+        gap: 15px !important;
+    }
+    
+    .thumbnail-item {
+        min-height: 200px !important;
+    }
 
 .btn-show-more.expanded svg {
     transform: rotate(180deg);
@@ -972,3 +1017,4 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
