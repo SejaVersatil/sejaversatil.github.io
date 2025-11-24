@@ -587,19 +587,24 @@ body, .short-desc-text, .model-info-text {
 
      .thumbnail-grid {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important; /* ✅ 2 colunas igual as principais */
-        gap: 5px !important; /* ✅ Mesmo gap das fotos principais */
-        margin-top: 5px !important; /* ✅ Cola nas fotos de cima */
+        grid-template-columns: 1fr 1fr !important;
+        gap: 5px !important;
+        margin-top: 5px !important;
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         width: 100% !important;
     }
     
+    /* ✅ ADICIONE ESTE BLOCO NOVO */
     .gallery-photo-extra {
         width: 100% !important;
         aspect-ratio: 3/4 !important;
-        min-height: 500px !important; /* ✅ Mesma altura das principais */
+        min-height: 500px !important; /* ← CRÍTICO: força altura igual às principais */
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        display: block !important;
         transition: transform 0.3s ease;
     }
     
@@ -1052,6 +1057,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
