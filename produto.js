@@ -341,37 +341,35 @@ function renderGallery(specificImages = null) {
 /* =========================
    Cores (Renderização)
    ========================= */
+/* =========================
+   Cores (Renderização Blindada)
+   ========================= */
 function renderColors() {
     const colorSelector = $('colorSelector');
     if (!colorSelector) return;
     const p = state.currentProduct;
 
-    // 1. Prepara a lista normalizada (Lógica Blindada para seu Firebase)
     let availableColors = [];
 
-    // Verifica se p.colors existe e é um array
+    // 1. Extração Inteligente de Cores do Firebase
     if (Array.isArray(p.colors) && p.colors.length > 0) {
         availableColors = p.colors.map(c => {
-            // Se for apenas texto (legado)
-            if (typeof c === 'string') {
-                return {
-                    name: c,
-                    hex: getColorHex(c),
-                    images: p.images || [] // Usa imagens padrão
-                };
-            } 
-            // Se for Objeto (Seu formato atual do Firebase)
-            else {
+            if (typeof c === 'object' && c !== null) {
                 return {
                     name: c.name || 'Cor',
                     hex: c.hex || getColorHex(c.name),
-                    // AQUI: Garante que estamos lendo o array 'images' do objeto da cor
-                    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || []) 
+                    // Pega imagens da cor. Se não tiver, pega do produto.
+                    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || [])
+                };
+            } else {
+                return {
+                    name: String(c),
+                    hex: getColorHex(c),
+                    images: p.images || []
                 };
             }
         });
     } else {
-        // Fallback: Se não tiver cores cadastradas, tenta extrair das variantes
         const variants = state.productVariants[p.id] || [];
         const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
         availableColors = unique.map(name => ({
@@ -381,7 +379,6 @@ function renderColors() {
         }));
     }
 
-    // Se não tiver cores, esconde o seletor
     if (!availableColors.length) {
         const group = colorSelector.closest('.product-selector-group');
         if (group) group.style.display = 'none';
@@ -390,15 +387,15 @@ function renderColors() {
 
     colorSelector.innerHTML = '';
 
-    // 2. Cria os botões
+    // 2. Criar as Bolinhas
     availableColors.forEach((colorObj) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `color-option ${state.selectedColor === colorObj.name ? 'active' : ''}`;
+        const isActive = state.selectedColor === colorObj.name;
+        btn.className = `color-option ${isActive ? 'active' : ''}`;
         btn.title = colorObj.name;
         btn.dataset.color = colorObj.name;
 
-        // Renderiza visual da bolinha (Gradiente ou Cor Sólida)
         const rawHex = colorObj.hex || getColorHex(colorObj.name);
         const colors = rawHex.split(',').map(c => c.trim());
 
@@ -408,73 +405,60 @@ function renderColors() {
                 btn.style.border = '1px solid #ccc';
             }
         } else {
-            // Lógica para bolinha bicolor/tricolor
             const gradient = colors.length === 2 
                 ? `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`
                 : `linear-gradient(135deg, ${colors[0]} 33%, ${colors[1]} 33% 66%, ${colors[2]} 66%)`;
             btn.style.background = gradient;
         }
 
-        // 3. O Evento de Clique (CRUCIAL)
+        // 3. O Clique que muda a foto
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🎨 Mudando para:', colorObj.name);
-            
-            // Passa explicitamente as imagens desta cor
             selectColor(colorObj.name, colorObj.images);
         });
 
         colorSelector.appendChild(btn);
     });
 
-    // SE NÃO TIVER COR SELECIONADA: Mostra texto "Selecione" e renderiza galeria completa
     if (!state.selectedColor) {
         if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
         renderGallery(p.images);
     }
 }
 
-/* Função Unificada de Seleção de Cor */
+/* Função Unificada de Seleção de Cor (Sem fechar galeria) */
 function selectColor(colorName, specificImages = null) {
-    console.log('🎨 Selecionando cor:', colorName);
-    console.log('📸 Imagens recebidas:', specificImages);
+    console.log('🎨 Trocando cor para:', colorName);
     
     state.selectedColor = colorName;
 
-    // 1. Atualiza visual dos botões de cor
+    // 1. Atualiza visual das bolinhas
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === colorName);
     });
 
-    // 2. Atualiza o texto da cor selecionada
+    // 2. Atualiza o texto escrito
     if (elExists('selectedColorName')) {
         $('selectedColorName').textContent = colorName;
     }
 
-    // 3. CORREÇÃO PRINCIPAL: Renderiza galeria com as imagens específicas
+    // 3. Troca as Fotos (Mantendo o estado "Mostrar Mais" como estiver)
     if (specificImages && Array.isArray(specificImages) && specificImages.length > 0) {
-        console.log('✅ Renderizando galeria com', specificImages.length, 'imagens');
+        console.log('📸 Trocando galeria para', specificImages.length, 'fotos da cor');
         renderGallery(specificImages);
     } else {
-        console.log('⚠️ Nenhuma imagem específica, buscando no produto...');
+        // Fallback
         const p = state.currentProduct;
+        const colorObj = p.colors && p.colors.find(c => (c.name || c) === colorName);
         
-        // Busca a cor no array de cores do produto
-        const colorObj = p.colors && p.colors.find(c => {
-            const cName = typeof c === 'string' ? c : c.name;
-            return cName === colorName;
-        });
-
-        if (colorObj && colorObj.images && colorObj.images.length > 0) {
-            console.log('✅ Encontrou', colorObj.images.length, 'imagens para a cor');
-            renderGallery(colorObj.images);
+        if (colorObj && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
+             renderGallery(colorObj.images);
         } else {
-            console.log('❌ Cor sem imagens específicas, usando galeria padrão');
-            renderGallery(p.images);
+             renderGallery(p.images);
         }
     }
 
-    // 4. Re-renderiza os tamanhos disponíveis para esta cor
+    // 4. Filtra tamanhos
     renderSizes();
 }
 
@@ -1492,6 +1476,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
