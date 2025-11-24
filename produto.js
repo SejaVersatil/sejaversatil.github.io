@@ -296,14 +296,32 @@ function updateGalleryDisplay(images) {
     const thumbnailContainer = document.getElementById('thumbnailList');
     const btnShowMore = document.getElementById('btnShowMore');
     
-    if (images.length > 2 && btnShowMore) {
-        btnShowMore.style.display = 'flex'; // Mostra o botão "Mostrar Mais"
-        // Aqui você pode injetar as divs extras ocultas se necessário para a lógica de expandir
-    } else if (btnShowMore) {
-        btnShowMore.style.display = 'none';
+    state.galleryExpanded = false; // Reseta estado ao trocar cor
+
+    if (thumbnailContainer && btnShowMore) {
+        // Pega fotos a partir da 3ª (índice 2)
+        const remainingImages = images.slice(2);
+
+        if (remainingImages.length > 0) {
+            // Injeta as fotos na div oculta
+            thumbnailContainer.innerHTML = remainingImages.map(img => `
+                <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+            `).join('');
+
+            thumbnailContainer.style.display = 'none'; // Garante que começa fechado
+            btnShowMore.style.display = 'flex';        // Mostra o botão
+            
+            // Reseta o texto do botão
+            btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        } else {
+            thumbnailContainer.innerHTML = '';
+            thumbnailContainer.style.display = 'none';
+            btnShowMore.style.display = 'none'; // Esconde botão se não tiver fotos extras
+        }
     }
 }
-
 // Função para clicar na miniatura e jogar ela para a principal
 function swapMainImage(newSrc) {
     const img1 = document.getElementById('mainImg1');
@@ -1462,6 +1480,7 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
+
 
 
 
