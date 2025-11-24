@@ -1202,11 +1202,12 @@ function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
 
+    // ===== 1. RENDERIZAR HTML PURO (SEM LISTENERS) =====
     container.innerHTML = tempProductImages.map((img, index) => {
         const isImage = img.startsWith('data:image') || img.startsWith('http');
         const isCover = index === 0;
 
-        // Verificar se foto está vinculada a alguma cor
+        // Verificar vinculação de cor
         let linkedColor = null;
         if (productColors && productColors.length > 0) {
             linkedColor = productColors.find(color => 
@@ -1214,20 +1215,24 @@ function renderProductImages() {
             );
         }
 
-        // Correção crítica: Escapar aspas para não quebrar o HTML
-        const safeImg = img.replace(/'/g, "\\'");
-
         return `
-            <div class="image-item ${isCover ? 'is-cover' : ''}" style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div class="image-item ${isCover ? 'is-cover' : ''}" 
+                 style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); pointer-events: auto;">
                 
-                <div class="image-item-preview" style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
-                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
+                <!-- Preview da Imagem -->
+                <div class="image-item-preview" 
+                     style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden; pointer-events: none;">
+                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">` : ''}
                 </div>
                 
-                <button type="button" class="btn-remove-image" data-index="${index}"
-        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10;"
-        title="Remover imagem">×</button>
+                <!-- Botão REMOVER -->
+                <button type="button" 
+                        class="btn-remove-image" 
+                        data-index="${index}"
+                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10; pointer-events: auto !important;"
+                        title="Remover imagem">×</button>
                 
+                <!-- Status de Vinculação -->
                 ${linkedColor ? `
                     <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                         <div style="width: 30px; height: 30px; border-radius: 50%; background: ${linkedColor.hex}; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
@@ -1242,18 +1247,23 @@ function renderProductImages() {
                     </div>
                 `}
                 
+                <!-- Botões de Ação -->
                 <div style="display: flex; gap: 8px; flex-direction: column;">
                     ${!isCover ? `
-                    <button type="button" class="btn-set-cover" data-index="${index}" 
-                        style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    <button type="button" 
+                            class="btn-set-cover" 
+                            data-index="${index}" 
+                            style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; pointer-events: auto !important;">
                         🏠 Definir como Capa
                     </button>` : `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
                         ★ CAPA ATUAL
                     </div>`}
                     
-                    <button type="button" class="btn-link-color" data-index="${index}"
-                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    <button type="button" 
+                            class="btn-link-color" 
+                            data-index="${index}"
+                            style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; pointer-events: auto !important;">
                         🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
                     </button>
                 </div>
@@ -1261,46 +1271,53 @@ function renderProductImages() {
         `;
     }).join('');
 
-    // Listener movido para DENTRO da função para funcionar corretamente
-    // ✅ CORREÇÃO DEFINITIVA: Aguardar renderização completa antes de aplicar listeners
-setTimeout(() => {
-        // 1. Botão Remover Imagem
+    // ===== 2. AGUARDAR RENDERIZAÇÃO COMPLETA =====
+    requestAnimationFrame(() => {
+        // ===== 3. ADICIONAR LISTENERS (APÓS RENDERIZAÇÃO) =====
+        
+        // A. Botões REMOVER
         document.querySelectorAll('.btn-remove-image').forEach(btn => {
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 const index = parseInt(this.dataset.index);
-                removeProductImage(index);
-            });
+                if (!isNaN(index)) {
+                    removeProductImage(index);
+                }
+            }, { once: false }); // Permite múltiplos cliques
         });
         
-        // 2. Botões de Capa
+        // B. Botões DEFINIR CAPA
         document.querySelectorAll('.btn-set-cover').forEach(btn => {
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const idx = parseInt(this.getAttribute('data-index'));
-                setProductCover(idx);
-            });
+                const index = parseInt(this.dataset.index);
+                if (!isNaN(index)) {
+                    setProductCover(index);
+                }
+            }, { once: false });
         });
 
-        // 3. Botões de Vincular Cor
+        // C. Botões VINCULAR COR
         document.querySelectorAll('.btn-link-color').forEach(btn => {
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const idx = parseInt(this.getAttribute('data-index'));
-                linkImageToColor(idx);
-            });
+                const index = parseInt(this.dataset.index);
+                if (!isNaN(index)) {
+                    linkImageToColor(index);
+                }
+            }, { once: false });
         });
-    }, 100);
-} 
+
+        console.log('✅ Listeners aplicados:', {
+            remover: document.querySelectorAll('.btn-remove-image').length,
+            capa: document.querySelectorAll('.btn-set-cover').length,
+            cor: document.querySelectorAll('.btn-link-color').length
+        });
+    });
+}
 
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
 function setProductCover(index) {
@@ -4363,6 +4380,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
