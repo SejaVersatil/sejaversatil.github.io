@@ -264,62 +264,60 @@ function updateGalleryDisplay(images) {
     const img1 = document.getElementById('mainImg1');
     const img2 = document.getElementById('mainImg2');
 
-    // Atualiza Foto 1
     if (img1) {
         const src1 = images[0];
-        // Atualiza o SRC da imagem (para SEO e dados)
-        img1.src = src1; 
-        // Atualiza o Background da DIV pai (para manter o layout cover perfeito)
+        img1.src = src1;
         if (img1.parentElement) {
             img1.parentElement.style.backgroundImage = `url('${src1}')`;
+            img1.parentElement.style.transition = 'opacity 0.3s';
             img1.parentElement.style.opacity = '0.5';
-            setTimeout(() => img1.parentElement.style.opacity = '1', 200); // Efeito fade
+            setTimeout(() => img1.parentElement.style.opacity = '1', 200);
         }
     }
 
-    // Atualiza Foto 2
     if (img2) {
-        // Se tiver segunda foto, usa ela. Se não, repete a primeira ou deixa transparente.
-        const src2 = images[1] || images[0]; 
-        
+        const src2 = images[1] || images[0];
         img2.src = src2;
         if (img2.parentElement) {
-            img2.parentElement.style.display = images[1] ? 'block' : 'none'; // Esconde se não tiver 2ª foto
+            img2.parentElement.style.display = images[1] ? 'block' : 'none';
             img2.parentElement.style.backgroundImage = `url('${src2}')`;
+            img2.parentElement.style.transition = 'opacity 0.3s';
             img2.parentElement.style.opacity = '0.5';
             setTimeout(() => img2.parentElement.style.opacity = '1', 200);
         }
     }
 
-    // --- PARTE 2: THUMBNAILS (Mostrar Mais) ---
-    // Mantém o código existente para thumbnails se houver mais de 2 fotos
+    // --- PARTE 2: THUMBNAILS (CORRIGIDA) ---
     const thumbnailContainer = document.getElementById('thumbnailList');
     const btnShowMore = document.getElementById('btnShowMore');
-    
-    state.galleryExpanded = false; // Reseta estado ao trocar cor
 
-    if (thumbnailContainer && btnShowMore) {
-        // Pega fotos a partir da 3ª (índice 2)
-        const remainingImages = images.slice(2);
+    if (!thumbnailContainer || !btnShowMore) return;
 
-        if (remainingImages.length > 0) {
-            // Injeta as fotos na div oculta
-            thumbnailContainer.innerHTML = remainingImages.map(img => `
-                <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
-                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                </div>
-            `).join('');
+    // Reseta estado ao trocar cor
+    state.galleryExpanded = false;
+    thumbnailContainer.classList.remove('expanded');
 
-            thumbnailContainer.style.display = 'none'; // Garante que começa fechado
-            btnShowMore.style.display = 'flex';        // Mostra o botão
-            
-            // Reseta o texto do botão
-            btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        } else {
-            thumbnailContainer.innerHTML = '';
-            thumbnailContainer.style.display = 'none';
-            btnShowMore.style.display = 'none'; // Esconde botão se não tiver fotos extras
-        }
+    const remainingImages = images.slice(2);
+
+    if (remainingImages.length > 0) {
+        // Injeta thumbnails
+        thumbnailContainer.innerHTML = remainingImages.map(img => `
+            <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 8px;">
+                <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" 
+                     onmouseover="this.style.transform='scale(1.1)'" 
+                     onmouseout="this.style.transform='scale(1)'">
+            </div>
+        `).join('');
+
+        // Garante estado inicial colapsado
+        thumbnailContainer.style.maxHeight = '0';
+        thumbnailContainer.style.overflow = 'hidden';
+        btnShowMore.style.display = 'flex';
+        btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+        thumbnailContainer.innerHTML = '';
+        thumbnailContainer.style.maxHeight = '0';
+        btnShowMore.style.display = 'none';
     }
 }
 // Função para clicar na miniatura e jogar ela para a principal
@@ -1502,6 +1500,7 @@ window.toggleGalleryExpansion = function() {
         document.getElementById('galleryContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 };
+
 
 
 
