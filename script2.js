@@ -1811,37 +1811,8 @@ function renderProductColorsManager() {
     `).join('');
 }
 
-function addColorToProduct() {
-    // 1. Validação básica
-    const colorName = prompt('🎨 Digite o Nome da Cor (Ex: Preto, Rosa Choque):');
-    if (!colorName || colorName.trim() === '') return;
-
-    const colorHex = prompt(
-        '🎨 Digite o Código Hex (Ex: #000000):\n\n' +
-        '💡 Dica: Para duas cores, use vírgula (Ex: #000, #FFF)'
-    );
-    
-    if (!colorHex || !colorHex.includes('#')) {
-        alert('❌ Código inválido! O código deve ter o símbolo #');
-        return;
-    }
-
-    // 2. Cria a cor VAZIA (images: [])
-    // Isso é mais profissional: cria a "gaveta" primeiro, depois guardamos as fotos
-    productColors.push({
-        name: colorName.trim(),
-        hex: colorHex.trim().toUpperCase(),
-        images: [] 
-    });
-
-    // 3. Atualiza a interface
-    renderProductColorsManager(); // Atualiza a lista de cores lá em cima
-    renderProductImages(); // Atualiza as fotos para aparecer a nova opção no Dropdown
-    
-    showToast(`✅ Cor "${colorName}" criada! Agora vincule as fotos abaixo.`, 'success');
-}
-
 function linkImageToColor(imageIndex) {
+    // --- 1. Validações Iniciais ---
     if (!Array.isArray(productColors)) {
         productColors = [];
     }
@@ -1857,20 +1828,8 @@ function linkImageToColor(imageIndex) {
         alert('❌ Erro: Imagem não encontrada!');
         return;
     }
-    
-    if (productColors.length === 0) {
-        alert('❌ Crie pelo menos uma cor primeiro clicando em "Adicionar Nova Cor"!');
-        return;
-    }
-    
-    const imageUrl = tempProductImages[imageIndex];
-    
-    if (!imageUrl) {
-        alert('❌ Erro: Imagem não encontrada!');
-        return;
-    }
 
-    // Criar lista formatada de cores
+    // --- 2. Montar Menu de Escolha ---
     let colorList = '🎨 CORES DISPONÍVEIS:\n\n';
     productColors.forEach((color, index) => {
         const photoCount = color.images ? color.images.length : 0;
@@ -1887,7 +1846,7 @@ function linkImageToColor(imageIndex) {
 
     const colorIndex = parseInt(choice) - 1;
 
-    // Opção 0: Desvincular
+    // --- 3. Lógica: Desvincular (Opção 0) ---
     if (choice === '0') {
         productColors.forEach(color => {
             if (color.images) {
@@ -1900,18 +1859,36 @@ function linkImageToColor(imageIndex) {
         return;
     }
 
-    // Validar escolha
+    // --- 4. Validação da Escolha ---
     if (isNaN(colorIndex) || colorIndex < 0 || colorIndex >= productColors.length) {
         alert('❌ Opção inválida! Digite um número da lista.');
         return;
     }
 
-    // Remover foto de TODAS as cores (uma foto = uma cor apenas)
+    // --- 5. Lógica: Vincular à Nova Cor ---
+    
+    // Passo A: Remove a foto de TODAS as outras cores (garante que ela pertença a apenas uma)
     productColors.forEach(color => {
         if (color.images) {
             color.images = color.images.filter(url => url !== imageUrl);
         }
     });
+
+    // Passo B: Adiciona à cor que o usuário escolheu
+    const selectedColor = productColors[colorIndex];
+    if (!selectedColor.images) selectedColor.images = [];
+    
+    // Evita duplicatas na mesma cor
+    if (!selectedColor.images.includes(imageUrl)) {
+        selectedColor.images.push(imageUrl);
+    }
+
+    // --- 6. Atualizar Tela ---
+    renderProductImages();
+    renderProductColorsManager();
+    
+    showToast(`✅ Foto vinculada à cor "${selectedColor.name}"!`, 'success');
+}
 
     // Adicionar à cor escolhida
     const selectedColor = productColors[colorIndex];
@@ -4345,6 +4322,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
