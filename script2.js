@@ -1202,7 +1202,7 @@ function renderProductImages() {
     const container = document.getElementById('productImagesList');
     if (!container) return;
 
-    // ===== 1. RENDERIZAR HTML PURO (SEM LISTENERS) =====
+    // ===== 1. RENDERIZAR HTML PURO =====
     container.innerHTML = tempProductImages.map((img, index) => {
         const isImage = img.startsWith('data:image') || img.startsWith('http');
         const isCover = index === 0;
@@ -1217,19 +1217,19 @@ function renderProductImages() {
 
         return `
             <div class="image-item ${isCover ? 'is-cover' : ''}" 
-                 style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); pointer-events: auto;">
+                 style="position: relative; padding: 15px; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 
                 <!-- Preview da Imagem -->
                 <div class="image-item-preview" 
-                     style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden; pointer-events: none;">
-                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">` : ''}
+                     style="${isImage ? '' : 'background: ' + img}; height: 200px; border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
+                    ${isImage ? `<img src="${img}" alt="Produto" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
                 </div>
                 
                 <!-- Botão REMOVER -->
                 <button type="button" 
                         class="btn-remove-image" 
                         data-index="${index}"
-                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10; pointer-events: auto !important;"
+                        style="position: absolute; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 100;"
                         title="Remover imagem">×</button>
                 
                 <!-- Status de Vinculação -->
@@ -1253,7 +1253,7 @@ function renderProductImages() {
                     <button type="button" 
                             class="btn-set-cover" 
                             data-index="${index}" 
-                            style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; pointer-events: auto !important;">
+                            style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
                         🏠 Definir como Capa
                     </button>` : `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
@@ -1263,32 +1263,40 @@ function renderProductImages() {
                     <button type="button" 
                             class="btn-link-color" 
                             data-index="${index}"
-                            style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; pointer-events: auto !important;">
-                        🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
+                            style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                        🎨 ${linkedColor ? 'Alterar Cor Vinculada' : 'Vincular a uma Cor'}
                     </button>
                 </div>
             </div>
         `;
     }).join('');
 
-    // ===== 2. AGUARDAR RENDERIZAÇÃO COMPLETA =====
-    requestAnimationFrame(() => {
-        // ===== 3. ADICIONAR LISTENERS (APÓS RENDERIZAÇÃO) =====
+    // ===== 2. AGUARDAR RENDERIZAÇÃO COM TIMEOUT MAIOR =====
+    setTimeout(() => {
+        // ===== 3. ADICIONAR LISTENERS =====
         
         // A. Botões REMOVER
-        document.querySelectorAll('.btn-remove-image').forEach(btn => {
+        const removeButtons = document.querySelectorAll('.btn-remove-image');
+        console.log('🔴 Botões REMOVER encontrados:', removeButtons.length);
+        
+        removeButtons.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 const index = parseInt(this.dataset.index);
                 if (!isNaN(index)) {
-                    removeProductImage(index);
+                    if (confirm('🗑️ Remover esta imagem?')) {
+                        removeProductImage(index);
+                    }
                 }
-            }, { once: false }); // Permite múltiplos cliques
+            });
         });
         
         // B. Botões DEFINIR CAPA
-        document.querySelectorAll('.btn-set-cover').forEach(btn => {
+        const coverButtons = document.querySelectorAll('.btn-set-cover');
+        console.log('🏠 Botões CAPA encontrados:', coverButtons.length);
+        
+        coverButtons.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1296,11 +1304,14 @@ function renderProductImages() {
                 if (!isNaN(index)) {
                     setProductCover(index);
                 }
-            }, { once: false });
+            });
         });
 
         // C. Botões VINCULAR COR
-        document.querySelectorAll('.btn-link-color').forEach(btn => {
+        const colorButtons = document.querySelectorAll('.btn-link-color');
+        console.log('🎨 Botões COR encontrados:', colorButtons.length);
+        
+        colorButtons.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1308,15 +1319,12 @@ function renderProductImages() {
                 if (!isNaN(index)) {
                     linkImageToColor(index);
                 }
-            }, { once: false });
+            });
         });
 
-        console.log('✅ Listeners aplicados:', {
-            remover: document.querySelectorAll('.btn-remove-image').length,
-            capa: document.querySelectorAll('.btn-set-cover').length,
-            cor: document.querySelectorAll('.btn-link-color').length
-        });
-    });
+        console.log('✅ Todos os listeners foram aplicados com sucesso!');
+        
+    }, 100); // ← MUDANÇA CRÍTICA: 100ms em vez de requestAnimationFrame
 }
 
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
@@ -4380,6 +4388,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
