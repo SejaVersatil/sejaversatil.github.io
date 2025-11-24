@@ -1266,10 +1266,8 @@ function renderProductImages() {
 setTimeout(() => {
         // 1. Botão Remover Imagem
         document.querySelectorAll('.btn-remove-image').forEach(btn => {
-            // Clonar para limpar listeners antigos (Boa prática)
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
-
             newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1282,7 +1280,6 @@ setTimeout(() => {
         document.querySelectorAll('.btn-set-cover').forEach(btn => {
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
-            
             newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1295,7 +1292,6 @@ setTimeout(() => {
         document.querySelectorAll('.btn-link-color').forEach(btn => {
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
-
             newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1303,8 +1299,8 @@ setTimeout(() => {
                 linkImageToColor(idx);
             });
         });
-    }, 100); 
-} // <--- Esta chave fecha a função renderProductImages
+    }, 100);
+} 
 
 // NOVA FUNÇÃO: Move a imagem clicada para a posição 0 (Capa)
 function setProductCover(index) {
@@ -4367,6 +4363,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
