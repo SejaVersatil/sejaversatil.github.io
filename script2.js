@@ -1244,18 +1244,18 @@ function renderProductImages() {
                 
                 <div style="display: flex; gap: 8px; flex-direction: column;">
                     ${!isCover ? `
-                    <button type="button" onclick="setProductCover(${index})" 
-                        style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                        🏠 Definir como Capa
-                    </button>` : `
+                    <button type="button" class="btn-set-cover" data-index="${index}" 
+    style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+    🏠 Definir como Capa
+</button>` : `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700;">
                         ★ CAPA ATUAL
                     </div>`}
                     
-                    <button type="button" onclick="linkImageToColor(${index})"
-                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                        🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
-                    </button>
+                    <button type="button" class="btn-link-color" data-index="${index}"
+    style="width: 100%; padding: 12px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+    🎨 ${linkedColor ? 'Alterar Cor' : 'Vincular Cor'}
+</button>
                 </div>
             </div>
         `;
@@ -4296,6 +4296,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
