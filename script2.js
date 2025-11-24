@@ -1880,29 +1880,6 @@ function linkImageToColor(imageIndex) {
         alert('❌ Opção inválida');
     }
 }
-    
-    // Passo A: Remove a foto de TODAS as outras cores (garante que ela pertença a apenas uma)
-    productColors.forEach(color => {
-        if (color.images) {
-            color.images = color.images.filter(url => url !== imageUrl);
-        }
-    });
-
-    // Passo B: Adiciona à cor que o usuário escolheu
-    const selectedColor = productColors[colorIndex];
-    if (!selectedColor.images) selectedColor.images = [];
-    
-    // Evita duplicatas na mesma cor
-    if (!selectedColor.images.includes(imageUrl)) {
-        selectedColor.images.push(imageUrl);
-    }
-
-    // --- 6. Atualizar Tela ---
-    renderProductImages();
-    renderProductColorsManager();
-    
-    showToast(`✅ Foto vinculada à cor "${selectedColor.name}"!`, 'success');
-}
 
 function removeProductColor(index) {
     const color = productColors[index];
@@ -4319,6 +4296,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
