@@ -457,6 +457,7 @@ if (p.colors && Array.isArray(p.colors)) {
 // Terceiro: Fallback para imagens gerais do produto
 console.warn('⚠️ Cor sem fotos específicas, usando fotos gerais');
 renderGallery(p.images || []);
+   }
 
 /* =========================
    Tamanhos (Corrigido: Clique + Sem Pré-seleção)
@@ -1472,12 +1473,3 @@ function showToast(msg, type = 'success') {
         ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
     }, 3000);
 }
-
-
-
-
-
-
-
-
-
