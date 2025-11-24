@@ -3883,15 +3883,7 @@ function selectColor(colorName) {
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === colorName);
     });
-
-    const mainImage = document.getElementById('mainProductImage');
-    const thumbnailList = document.getElementById('thumbnailList');
-
-    if (!mainImage || !thumbnailList) {
-        console.error('❌ Elementos de galeria não encontrados');
-        return;
-    }
-
+    
     const images = selectedColorData.images;
     const firstImage = images[0];
     const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
@@ -4304,6 +4296,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
