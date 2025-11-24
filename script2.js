@@ -3981,99 +3981,115 @@ async function renderAvailableSizes(productId) {
 }
 
 // Selecionar cor e TROCAR IMAGENS automaticamente
+// ==================== ATUALIZAÇÃO DINÂMICA DE GALERIA ====================
+
 function selectColor(colorName) {
-    const mainImage = document.getElementById('mainProductImage');
-    const thumbnailList = document.getElementById('thumbnailList');
-    if (!colorName) {
-        console.error('❌ selectColor: colorName ausente');
-        return;
-    }
+    // 1. Validação Básica
+    if (!currentProductDetails || !currentProductDetails.colors) return;
 
-    if (!currentProductDetails) {
-        console.error('❌ selectColor: currentProductDetails não existe');
-        return;
-    }
-
-    if (!currentProductDetails.colors || !Array.isArray(currentProductDetails.colors)) {
-        console.warn('⚠️ Produto não possui campo "colors"');
-        return;
-    }
-
+    // 2. Encontrar os dados da cor selecionada
     const selectedColorData = currentProductDetails.colors.find(c => c.name === colorName);
-
-    if (!selectedColorData) {
-        console.error(`❌ Cor "${colorName}" não encontrada`);
-        showToast(`⚠️ Cor "${colorName}" não cadastrada`, 'error');
+    
+    if (!selectedColorData || !selectedColorData.images || selectedColorData.images.length === 0) {
+        showToast('Imagens desta cor indisponíveis', 'error');
         return;
     }
 
-    if (!selectedColorData.images || selectedColorData.images.length === 0) {
-        console.error(`❌ Cor "${colorName}" sem imagens`);
-        showToast(`⚠️ Cor "${colorName}" sem fotos`, 'error');
-        return;
-    }
-
+    // 3. Atualizar Variáveis Globais
     selectedColor = colorName;
-
+    
+    // 4. Atualizar Visual dos Botões de Cor (Feedback visual)
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === colorName);
+        
+        // Pequena animação de escala para confirmar o clique
+        if (opt.dataset.color === colorName) {
+            opt.style.transform = "scale(1.15)";
+            setTimeout(() => opt.style.transform = "scale(1)", 200);
+        }
     });
-    
-    const images = selectedColorData.images;
-    const firstImage = images[0];
-    const isImg = firstImage.startsWith('data:image') || firstImage.startsWith('http');
 
-    if (isImg) {
-        mainImage.style.backgroundImage = `url('${firstImage}')`;
-        mainImage.style.backgroundSize = 'cover';
-        mainImage.style.backgroundPosition = 'center';
-        mainImage.style.background = '';
-    } else {
-        mainImage.style.background = firstImage;
-        mainImage.style.backgroundImage = '';
+    // ==========================================================
+    // 🔥 O CORAÇÃO DA MUDANÇA: TROCAR AS FOTOS PRINCIPAIS 🔥
+    // ==========================================================
+    updateGalleryDisplay(selectedColorData.images);
+
+    // 5. Atualizar Tamanhos Disponíveis para essa cor (se houver lógica de estoque)
+    renderAvailableSizes(currentProductDetails.id);
+    
+    console.log(`🎨 Cor alterada para: ${colorName}`);
+}
+
+// Função auxiliar que manipula o DOM das imagens
+function updateGalleryDisplay(images) {
+    // --- PARTE 1: ATUALIZAR AS DUAS FOTOS GIGANTES (HERO) ---
+    
+    const img1 = document.getElementById('mainImg1');
+    const img2 = document.getElementById('mainImg2');
+
+    // Atualiza Foto Principal 1
+    if (img1 && images[0]) {
+        // Efeito suave de fade
+        img1.style.opacity = '0.5';
+        setTimeout(() => {
+            img1.src = images[0];
+            img1.style.opacity = '1';
+        }, 150);
     }
 
-    thumbnailList.innerHTML = images.map((img, index) => {
-        const isImgThumb = img.startsWith('data:image') || img.startsWith('http');
-        const bgStyle = isImgThumb 
-            ? `background-image: url('${img}'); background-size: cover; background-position: center;` 
-            : `background: ${img};`;
-
-        return `
-            <div class="thumbnail ${index === 0 ? 'active' : ''}"
-                 data-image-url="${img.replace(/"/g, '&quot;')}"
-                 style="${bgStyle} width: 80px; height: 100px; border-radius: 8px; cursor: pointer; transition: all 0.3s; border: 3px solid ${index === 0 ? '#667eea' : 'transparent'};">
-            </div>
-        `;
-    }).join('');
-
-    document.querySelectorAll('.thumbnail').forEach((thumb, idx) => {
-        const imgUrl = thumb.dataset.imageUrl;
-        thumb.addEventListener('click', () => {
-            const mainImg = document.getElementById('mainProductImage');
-            const isRealImg = imgUrl.startsWith('data:image') || imgUrl.startsWith('http');
+    // Atualiza Foto Principal 2
+    if (img2) {
+        if (images[1]) {
+            img2.style.display = 'block'; // Garante que aparece
+            img2.style.opacity = '0.5';
+            setTimeout(() => {
+                img2.src = images[1];
+                img2.style.opacity = '1';
+            }, 150);
+        } else {
+            // Se a cor só tiver 1 foto, esconde o segundo espaço ou repete a primeira
+            // Opção A: Esconder
+            // img2.style.display = 'none'; 
             
-            if (isRealImg) {
-                mainImg.style.backgroundImage = `url('${imgUrl}')`;
-                mainImg.style.backgroundSize = 'cover';
-                mainImg.style.backgroundPosition = 'center';
-                mainImg.style.background = '';
-            } else {
-                mainImg.style.background = imgUrl;
-                mainImg.style.backgroundImage = '';
-            }
-            
-            document.querySelectorAll('.thumbnail').forEach((t, i) => {
-                t.classList.toggle('active', i === idx);
-                t.style.border = i === idx ? '3px solid #667eea' : '3px solid transparent';
-            });
-        });
-    });
+            // Opção B: Deixar branco ou placeholder (recomendado para manter layout)
+            img2.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; // Pixel transparente
+        }
+    }
 
-    showToast(`🎨 ${images.length} foto(s) da cor ${colorName}`, 'info');
+    // --- PARTE 2: ATUALIZAR MINIATURAS / GRID INFERIOR ---
+    
+    // Pega as imagens restantes (a partir da terceira, índice 2)
+    // Se só tiver 2 fotos, esse array ficará vazio, o que é correto.
+    const remainingImages = images.slice(2);
+    
+    const thumbnailContainer = document.getElementById('thumbnailList'); // Ou o ID da sua grid inferior
+    
+    if (thumbnailContainer) {
+        if (remainingImages.length > 0) {
+            thumbnailContainer.innerHTML = remainingImages.map((img, index) => `
+                <div class="thumbnail-item" onclick="swapMainImage('${img}')" style="cursor: pointer; overflow: hidden; border-radius: 4px;">
+                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">
+                </div>
+            `).join('');
+            thumbnailContainer.style.display = 'grid'; // Garante que aparece
+        } else {
+            // Se não sobrar fotos, esconde a grid de baixo ou limpa
+            thumbnailContainer.innerHTML = '';
+            thumbnailContainer.style.display = 'none'; 
+        }
+    }
+}
 
-    if (currentProductDetails.id) {
-        renderAvailableSizes(currentProductDetails.id);
+// Função extra para clicar na miniatura de baixo e ela subir para a principal
+function swapMainImage(newSrc) {
+    const img1 = document.getElementById('mainImg1');
+    if (img1) {
+        img1.scrollIntoView({ behavior: 'smooth' }); // Rola para o topo suavemente
+        img1.style.opacity = '0.5';
+        setTimeout(() => {
+            img1.src = newSrc;
+            img1.style.opacity = '1';
+        }, 200);
     }
 }
 
@@ -4431,6 +4447,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
