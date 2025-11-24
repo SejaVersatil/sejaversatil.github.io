@@ -586,13 +586,26 @@ body, .short-desc-text, .model-info-text {
 }
 
      .thumbnail-grid {
-        grid-template-columns: repeat(4, 1fr) !important;
-        margin-top: 20px !important;
-        gap: 15px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* ✅ 2 colunas igual as principais */
+        gap: 5px !important; /* ✅ Mesmo gap das fotos principais */
+        margin-top: 5px !important; /* ✅ Cola nas fotos de cima */
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100% !important;
     }
     
-    .thumbnail-item {
-        min-height: 200px !important;
+    .gallery-photo-extra {
+        width: 100% !important;
+        aspect-ratio: 3/4 !important;
+        min-height: 500px !important; /* ✅ Mesma altura das principais */
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-photo-extra:hover {
+        transform: scale(1.02);
+        z-index: 5;
     }
 
 } /* ← FIM DA MEDIA QUERY DESKTOP */
@@ -1028,6 +1041,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
