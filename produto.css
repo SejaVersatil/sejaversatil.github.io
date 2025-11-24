@@ -913,13 +913,24 @@ body, .short-desc-text, .model-info-text {
     }
 
     .thumbnail-grid {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 colunas no mobile */
-        gap: 8px !important;
-        margin-top: 15px !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important; /* ✅ 1 coluna no mobile */
+        gap: 5px !important;
+        margin-top: 5px !important;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
     }
     
-    .thumbnail-item {
-        min-height: 150px !important; /* Altura mínima das miniaturas */
+    .gallery-photo-extra {
+        width: 100% !important;
+        aspect-ratio: 3/4 !important;
+        min-height: 400px !important; /* ✅ Altura proporcional mobile */
+    }
+    
+    .btn-show-more {
+        display: flex !important;
+        margin-top: 15px !important;
     }
     
     .btn-show-more {
@@ -1041,6 +1052,7 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
 
 
