@@ -81,6 +81,18 @@ h4 { font-size: 1.25rem; }
     top: 0;
 }
 
+*:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+.nav-icon:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}
+
 /* ==========================================================================
    HEADER & NAVEGAÇÃO (ESTILO LIVE!)
    ========================================================================== */
@@ -101,6 +113,13 @@ header.scrolled {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+    header,
+    header.scrolled {
+        background: rgba(255, 255, 255, 0.98);
+    }
 }
 
 nav {
@@ -249,7 +268,7 @@ nav {
     align-items: center;
     gap: 5px;
     padding: 0;
-    z-index: 1002;
+    z-index: calc(var(--z-header) + 1);
 }
 
 .hamburger-line {
@@ -392,7 +411,7 @@ nav {
     position: absolute; top: 110%; left: 0; width: 100%;
     background: white; border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    z-index: 9999; display: none; max-height: 400px; overflow-y: auto; border: 1px solid #e5e5e5;
+    z-index: calc(var(--z-modal) + 100); display: none; max-height: 400px; overflow-y: auto; border: 1px solid #e5e5e5;
 }
 .search-dropdown.active { display: block; }
 .search-dropdown-item {
@@ -1024,6 +1043,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
         width: 22px !important; 
         height: 22px !important; 
     }
+
+   .nav-icon {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
     
     .search-bar, .search-bar input, .nav-menu { display: none !important; }
 
@@ -1237,7 +1264,6 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .toast { min-width: auto; max-width: 90%; }
     
     /* Otimizações */
-    * { animation-duration: 0.3s !important; transition-duration: 0.2s !important; }
     html { scroll-behavior: smooth; }
     input, select, textarea { font-size: 16px !important; }
     img { max-width: 100%; height: auto; }
@@ -1463,3 +1489,4 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
