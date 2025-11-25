@@ -1102,11 +1102,11 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 /* Header e Nav (CORRIGIDO) */
     nav { 
     display: flex !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     align-items: center !important;
     position: relative !important;
     height: 55px !important;
-    padding: 0 15px !important;
+    padding: 0 10px !important;
     background: #fff !important; 
     border-bottom: 1px solid #f0f0f0;
     gap: 0 !important;
@@ -1123,6 +1123,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
         background: transparent !important;
         padding: 0 !important;
         z-index: 20; 
+        order: 1 !important;
     }
    
     .hamburger-line {
@@ -1135,24 +1136,25 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
    
     /* LOGO CENTRALIZADO COM ABSOLUTE */
     .logo, .nav-left .logo { 
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin-left: -8px !important;  /* AJUSTE FINO: compensa visualmente os ícones da direita */
+    position: static !important;
+    flex: 1 !important;
+    text-align: center !important;
+    margin: 0 !important;
     
     font-family: 'Century Gothic', sans-serif !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     color: #000 !important;
     letter-spacing: 0.5px !important;
     
-    width: auto !important;
-    padding: 0 !important;
+    padding: 0 10px !important;
     white-space: nowrap !important;
     text-decoration: none !important;
     z-index: 10;
     display: block !important;
+}
+   .logo, .nav-left .logo {
+    order: 2 !important;  /* ADICIONE ESTE BLOCO COMPLETO */
 }
 
     .nav-icons { 
@@ -1160,6 +1162,9 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
         align-items: center !important;
         gap: 15px !important;
         z-index: 20;
+        flex-shrink: 0 !important;
+        min-width: 100px !important;  /* ADICIONE ESTA LINHA */
+        order: 3 !important;
     }
 
     .nav-icon svg { 
@@ -1612,6 +1617,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
