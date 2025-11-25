@@ -1155,14 +1155,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     order: 2 !important;  /* ADICIONE ESTE BLOCO COMPLETO */
 }
 
-    .nav-icons { 
-        display: flex !important; 
-        align-items: center !important;
-        gap: 10px !important;
-        flex-shrink: 0 !important;
-        margin-left: auto !important;
-        z-index: 10 !important;
-    }
+   .nav-icons { 
+    display: flex !important; 
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+    z-index: 10 !important;
+}
 
     .nav-icon svg { 
         width: 22px !important; 
@@ -1615,6 +1615,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
