@@ -85,12 +85,22 @@ h4 { font-size: 1.25rem; }
    HEADER & NAVEGAÇÃO (ESTILO LIVE!)
    ========================================================================== */
 header {
-    background: white;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 1001;
-    border-bottom: 1px solid #f0f0f0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(240, 240, 240, 0.6);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 nav {
@@ -102,6 +112,7 @@ nav {
     margin: 0;
     height: 90px;
     gap: 2rem;
+    background: transparent;
 }
 
 /* Logo */
@@ -1452,6 +1463,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
