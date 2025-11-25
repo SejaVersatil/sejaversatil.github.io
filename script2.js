@@ -1090,9 +1090,6 @@ function switchAdminTab(tab) {
         document.getElementById('productsTab').classList.add('active');
     } else if (tab === 'settings') {
         document.getElementById('settingsTab').classList.add('active');
-    } else if (tab === 'coupons') {
-        document.getElementById('couponsTab').classList.add('active');
-        loadAdminCoupons();
     }
 }
 
@@ -1106,6 +1103,7 @@ function updateAdminStats() {
     document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 50) + 10;
     document.getElementById('activeProducts').textContent = activeProducts;
 }
+
 function renderAdminProducts() {
     const grid = document.getElementById('adminProductsGrid');
     if (!grid) return;
@@ -2737,35 +2735,11 @@ function updateCartUI() {
     const cartFooter = document.getElementById('cartFooter');
     const cartTotal = document.getElementById('cartTotal');
     
-    // ✅ CORREÇÃO: Adicione esta linha para calcular a quantidade total de itens
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-    // Calcular subtotal
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    // Aplicar desconto do cupom
-    const discount = couponDiscount || 0;
-    const total = Math.max(0, subtotal - discount);
-
-    // Atualizar UI de valores
-    const cartSubtotalEl = document.getElementById('cartSubtotal');
-    const discountBreakdownEl = document.getElementById('discountBreakdown');
-    const discountValueEl = document.getElementById('discountValue');
-    const cartTotalEl = document.getElementById('cartTotal');
-
-    if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
-    if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
-
-    if (discount > 0 && discountBreakdownEl && discountValueEl) {
-        discountBreakdownEl.style.display = 'flex';
-        discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
-    } else if (discountBreakdownEl) {
-        discountBreakdownEl.style.display = 'none';
-    }
     
-    // Atualizar DOM
+    // ✅ Batch de atualizações DOM usando requestAnimationFrame
     requestAnimationFrame(() => {
-        // Atualizar contador (Agora vai funcionar porque totalItems existe)
+        // Atualizar contador
         cartCount.textContent = totalItems;
         cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         
@@ -2773,6 +2747,7 @@ function updateCartUI() {
             cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
             cartFooter.style.display = 'none';
         } else {
+            // ✅ Usar DocumentFragment (mais rápido)
             const fragment = document.createDocumentFragment();
             
             cart.forEach(item => {
@@ -2788,12 +2763,12 @@ function updateCartUI() {
                         <div class="cart-item-title">${sanitizeInput(item.name)}</div>
                         
                         ${item.selectedSize || item.selectedColor ? `
-                            <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
-                                ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
-                                ${item.selectedSize && item.selectedColor ? ' | ' : ''}
-                                ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''}
-                            </div>
-                        ` : ''}
+        <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+            ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
+            ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''} <!-- ✅ ADICIONE sanitizeInput -->
+        </div>
+    ` : ''}
                         
                         <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
@@ -2808,9 +2783,12 @@ function updateCartUI() {
                 fragment.appendChild(itemDiv);
             });
             
+            // ✅ Atualizar DOM de uma vez
             cartItems.innerHTML = '';
             cartItems.appendChild(fragment);
             
+            // Atualizar total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             cartTotal.textContent = `R$ ${total.toFixed(2)}`;
             cartFooter.style.display = 'block';
         }
@@ -2861,201 +2839,6 @@ function saveCart() {
         cartItemId: item.cartItemId
     }));
     localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-}
-
-// ==================== SISTEMA DE CUPONS ====================
-
-let appliedCoupon = null;
-let couponDiscount = 0;
-
-// Aplicar cupom
-async function applyCoupon() {
-    const input = document.getElementById('couponInput');
-    const btn = document.getElementById('applyCouponBtn');
-    const message = document.getElementById('couponMessage');
-    
-    const code = input.value.trim().toUpperCase();
-    
-    if (!code) {
-        showCouponMessage('Digite um código de cupom', 'error');
-        return;
-    }
-    
-    // Desabilita botão durante verificação
-    btn.disabled = true;
-    btn.textContent = '...';
-    
-    try {
-        // 1. Buscar cupom no Firestore
-        const couponQuery = await db.collection('coupons')
-            .where('code', '==', code)
-            .where('active', '==', true)
-            .limit(1)
-            .get();
-        
-        if (couponQuery.empty) {
-            showCouponMessage('❌ Cupom inválido ou expirado', 'error');
-            input.classList.add('error');
-            setTimeout(() => input.classList.remove('error'), 500);
-            return;
-        }
-        
-        const couponDoc = couponQuery.docs[0];
-        const coupon = { id: couponDoc.id, ...couponDoc.data() };
-        
-        // 2. Validar data de validade
-        const now = new Date();
-        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
-        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
-        
-        if (validFrom && now < validFrom) {
-            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
-            return;
-        }
-        
-        if (validUntil && now > validUntil) {
-            showCouponMessage('❌ Este cupom expirou', 'error');
-            return;
-        }
-        
-        // 3. Verificar limite total de usos
-        if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
-            showCouponMessage('❌ Este cupom atingiu o limite de usos', 'error');
-            return;
-        }
-        
-        // 4. Verificar valor mínimo do carrinho
-        const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        if (coupon.minValue && cartValue < coupon.minValue) {
-            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
-            return;
-        }
-        
-        // 5. Verificar uso por usuário (se logado)
-        if (auth.currentUser && coupon.usagePerUser) {
-            const usageQuery = await db.collection('coupon_usage')
-                .where('couponId', '==', coupon.id)
-                .where('userId', '==', auth.currentUser.uid)
-                .get();
-            
-            if (usageQuery.size >= coupon.usagePerUser) {
-                showCouponMessage('❌ Você já usou este cupom', 'error');
-                return;
-            }
-        }
-        
-        // 6. Calcular desconto
-        let discount = 0;
-        
-        if (coupon.type === 'percentage') {
-            discount = (cartValue * coupon.value) / 100;
-            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
-                discount = coupon.maxDiscount;
-            }
-        } else if (coupon.type === 'fixed') {
-            discount = coupon.value;
-        }
-        
-        // Desconto não pode ser maior que o valor do carrinho
-        if (discount > cartValue) {
-            discount = cartValue;
-        }
-        
-        // 7. Aplicar cupom
-        appliedCoupon = coupon;
-        couponDiscount = discount;
-        
-        // 8. Atualizar UI
-        input.classList.add('success');
-        showAppliedCouponBadge(coupon, discount);
-        updateCartUI();
-        
-        showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
-        
-        // Limpar input
-        input.value = '';
-        input.disabled = true;
-        btn.style.display = 'none';
-        
-    } catch (error) {
-        console.error('Erro ao aplicar cupom:', error);
-        showCouponMessage('❌ Erro ao validar cupom', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'APLICAR';
-    }
-}
-
-// Remover cupom
-function removeCoupon() {
-    appliedCoupon = null;
-    couponDiscount = 0;
-    
-    // Resetar UI
-    document.getElementById('appliedCouponBadge').style.display = 'none';
-    document.getElementById('couponInput').disabled = false;
-    document.getElementById('couponInput').value = '';
-    document.getElementById('couponInput').classList.remove('success');
-    document.getElementById('applyCouponBtn').style.display = 'block';
-    document.getElementById('couponMessage').classList.remove('active');
-    
-    updateCartUI();
-    showToast('Cupom removido', 'info');
-}
-
-// Mostrar badge de cupom aplicado
-function showAppliedCouponBadge(coupon, discount) {
-    const badge = document.getElementById('appliedCouponBadge');
-    const codeEl = document.getElementById('appliedCouponCode');
-    const discountEl = document.getElementById('appliedCouponDiscount');
-    
-    codeEl.textContent = coupon.code;
-    
-    if (coupon.type === 'percentage') {
-        discountEl.textContent = `${coupon.value}% de desconto (R$ ${discount.toFixed(2)})`;
-    } else {
-        discountEl.textContent = `Desconto de R$ ${discount.toFixed(2)}`;
-    }
-    
-    badge.style.display = 'flex';
-}
-
-// Mostrar mensagem de cupom
-function showCouponMessage(text, type) {
-    const message = document.getElementById('couponMessage');
-    message.textContent = text;
-    message.className = `coupon-message ${type} active`;
-    
-    setTimeout(() => {
-        message.classList.remove('active');
-    }, 5000);
-}
-
-// Registrar uso do cupom (chamar após pagamento confirmado)
-async function registerCouponUsage(couponId, orderValue, discountApplied) {
-    if (!auth.currentUser) return;
-    
-    try {
-        // 1. Registrar uso
-        await db.collection('coupon_usage').add({
-            couponId: couponId,
-            userId: auth.currentUser.uid,
-            userEmail: auth.currentUser.email,
-            usedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            orderValue: orderValue,
-            discountApplied: discountApplied
-        });
-        
-        // 2. Incrementar contador de usos
-        await db.collection('coupons').doc(couponId).update({
-            usedCount: firebase.firestore.FieldValue.increment(1)
-        });
-        
-        console.log('✅ Uso do cupom registrado');
-    } catch (error) {
-        console.error('❌ Erro ao registrar uso do cupom:', error);
-    }
 }
 
 function loadCart() {
@@ -3733,8 +3516,7 @@ function sendToWhatsApp() {
     const paymentText = paymentMethods[paymentMethod];
     
     // Calcular total
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = Math.max(0, subtotal - (couponDiscount || 0));
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     // Montar mensagem
     let message = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
@@ -4665,7 +4447,3 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
-
-
-
-
