@@ -1134,11 +1134,10 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
    
     /* LOGO CENTRALIZADO COM ABSOLUTE */
     .logo, .nav-left .logo { 
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    margin: 0 auto !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
     
     font-family: 'Century Gothic', sans-serif !important;
     font-size: 15px !important;
@@ -1146,9 +1145,9 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     color: #000 !important;
     letter-spacing: 0.5px !important;
     
-    width: 100% !important;
-    max-width: 180px !important;
-    padding: 0 8px !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
     white-space: nowrap !important;
     text-decoration: none !important;
     z-index: 10;
@@ -1618,6 +1617,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
