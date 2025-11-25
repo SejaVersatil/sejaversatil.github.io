@@ -1,3 +1,4 @@
+
 /* ==========================================================================
    RESET & VARIÁVEIS GLOBAIS
    ========================================================================== */
@@ -1611,6 +1612,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
