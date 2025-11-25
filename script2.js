@@ -2737,32 +2737,35 @@ function updateCartUI() {
     const cartFooter = document.getElementById('cartFooter');
     const cartTotal = document.getElementById('cartTotal');
     
+    // ✅ CORREÇÃO: Adicione esta linha para calcular a quantidade total de itens
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
     // Calcular subtotal
-const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-// Aplicar desconto do cupom
-const discount = couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
+    // Aplicar desconto do cupom
+    const discount = couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
 
-// Atualizar UI
-const cartSubtotalEl = document.getElementById('cartSubtotal');
-const discountBreakdownEl = document.getElementById('discountBreakdown');
-const discountValueEl = document.getElementById('discountValue');
-const cartTotalEl = document.getElementById('cartTotal');
+    // Atualizar UI de valores
+    const cartSubtotalEl = document.getElementById('cartSubtotal');
+    const discountBreakdownEl = document.getElementById('discountBreakdown');
+    const discountValueEl = document.getElementById('discountValue');
+    const cartTotalEl = document.getElementById('cartTotal');
 
-if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
-if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
+    if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
+    if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
 
-if (discount > 0 && discountBreakdownEl && discountValueEl) {
-    discountBreakdownEl.style.display = 'flex';
-    discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
-} else if (discountBreakdownEl) {
-    discountBreakdownEl.style.display = 'none';
-}
+    if (discount > 0 && discountBreakdownEl && discountValueEl) {
+        discountBreakdownEl.style.display = 'flex';
+        discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
+    } else if (discountBreakdownEl) {
+        discountBreakdownEl.style.display = 'none';
+    }
     
-    // ✅ Batch de atualizações DOM usando requestAnimationFrame
+    // Atualizar DOM
     requestAnimationFrame(() => {
-        // Atualizar contador
+        // Atualizar contador (Agora vai funcionar porque totalItems existe)
         cartCount.textContent = totalItems;
         cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         
@@ -2770,7 +2773,6 @@ if (discount > 0 && discountBreakdownEl && discountValueEl) {
             cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
             cartFooter.style.display = 'none';
         } else {
-            // ✅ Usar DocumentFragment (mais rápido)
             const fragment = document.createDocumentFragment();
             
             cart.forEach(item => {
@@ -2786,12 +2788,12 @@ if (discount > 0 && discountBreakdownEl && discountValueEl) {
                         <div class="cart-item-title">${sanitizeInput(item.name)}</div>
                         
                         ${item.selectedSize || item.selectedColor ? `
-        <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
-            ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
-            ${item.selectedSize && item.selectedColor ? ' | ' : ''}
-            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''} <!-- ✅ ADICIONE sanitizeInput -->
-        </div>
-    ` : ''}
+                            <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+                                ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
+                                ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+                                ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''}
+                            </div>
+                        ` : ''}
                         
                         <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
                         <div class="cart-item-qty">
@@ -2806,12 +2808,9 @@ if (discount > 0 && discountBreakdownEl && discountValueEl) {
                 fragment.appendChild(itemDiv);
             });
             
-            // ✅ Atualizar DOM de uma vez
             cartItems.innerHTML = '';
             cartItems.appendChild(fragment);
             
-            // Atualizar total
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             cartTotal.textContent = `R$ ${total.toFixed(2)}`;
             cartFooter.style.display = 'block';
         }
@@ -4666,6 +4665,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
