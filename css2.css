@@ -1162,20 +1162,22 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     flex-shrink: 0 !important;
     margin-left: auto !important;
     z-index: 10 !important;
+    padding: 0;
 }
 
     .nav-icon svg { 
-        width: 22px !important; 
-        height: 22px !important; 
+        width: 20px !important; 
+        height: 20px !important; 
     }
 
    .nav-icon {
-        min-width: 40px !important;
-        min-height: 40px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         position: relative !important;
+        padding: 0;
     }
     
     .search-bar, .search-bar input, .nav-menu { display: none !important; }
@@ -1615,6 +1617,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
