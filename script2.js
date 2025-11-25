@@ -1090,6 +1090,9 @@ function switchAdminTab(tab) {
         document.getElementById('productsTab').classList.add('active');
     } else if (tab === 'settings') {
         document.getElementById('settingsTab').classList.add('active');
+    } else if (tab === 'coupons') {
+        document.getElementById('couponsTab').classList.add('active');
+        loadAdminCoupons();
     }
 }
 
@@ -1103,7 +1106,6 @@ function updateAdminStats() {
     document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 50) + 10;
     document.getElementById('activeProducts').textContent = activeProducts;
 }
-
 function renderAdminProducts() {
     const grid = document.getElementById('adminProductsGrid');
     if (!grid) return;
@@ -4664,4 +4666,5 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
