@@ -1105,7 +1105,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     align-items: center !important;
     position: relative !important;
     height: 55px !important;
-    padding: 0 15px !important;
+    padding: 0 12px !important;
     background: #fff !important; 
     border-bottom: 1px solid #f0f0f0;
     gap: 0 !important;
@@ -1141,13 +1141,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     margin: 0 auto !important;
     
     font-family: 'Century Gothic', sans-serif !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     color: #000 !important;
     letter-spacing: 0.5px !important;
     
-    width: auto !important;
-    padding: 0 !important;
+    width: 100% !important;
+    max-width: 180px !important;
+    padding: 0 8px !important;
     white-space: nowrap !important;
     text-decoration: none !important;
     z-index: 10;
@@ -1158,8 +1159,9 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .nav-icons { 
     display: flex !important; 
     align-items: center !important;
-    gap: 8px !important;
+    gap: 4px !important;
     justify-content: flex-end !important;
+    margin-left: auto !important;
     z-index: 20;
 }
 
@@ -1613,6 +1615,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
