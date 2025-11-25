@@ -1162,7 +1162,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     gap: 2px !important;
     justify-content: flex-end !important;
     margin-left: auto !important;
-    padding-right: 2px !important;
+    padding-right: 0px !important;
     z-index: 20;
 }
 
@@ -1616,6 +1616,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
