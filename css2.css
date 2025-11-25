@@ -1164,7 +1164,53 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     color: #FFD700 !important;
     flex-shrink: 0 !important;
 }
-
+   
+/* Black Friday Mobile Pequeno */
+@media (max-width: 380px) {
+    .top-banner {
+        padding: 8px 3px !important;
+    }
+    
+    .bf-content {
+        gap: 4px !important;
+        padding: 0 5px !important;
+    }
+    
+    .bf-label {
+        font-size: 11px !important;
+        letter-spacing: 0.8px !important;
+        margin-right: 4px !important;
+    }
+    
+    .bf-separator {
+        font-size: 11px !important;
+        margin: 0 2px !important;
+    }
+    
+    .bf-countdown-label {
+        font-size: 9px !important;
+        margin-right: 3px !important;
+    }
+    
+    .bf-time-unit {
+        min-width: 28px !important;
+        padding: 4px 5px !important;
+    }
+    
+    .bf-time-value {
+        font-size: 14px !important;
+    }
+    
+    .bf-time-label {
+        font-size: 6px !important;
+    }
+    
+    .bf-colon {
+        font-size: 12px !important;
+        margin: 0 1px !important;
+    }
+}
+   
     /* Geral */
     .hero-title { font-size: 3rem; letter-spacing: 3px; }
     .feature-banner-content h2 { font-size: 2.5rem; letter-spacing: 2px; }
@@ -1406,6 +1452,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
