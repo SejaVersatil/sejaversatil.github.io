@@ -61,7 +61,12 @@ function loadCartFromStorage() {
 
 function saveCartToStorage() {
     try {
-        localStorage.setItem('sejaVersatilCart', JSON.stringify(state.cart));
+        const cartData = {
+            items: state.cart,
+            appliedCoupon: state.appliedCoupon,
+            couponDiscount: state.couponDiscount
+        };
+        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
     } catch (err) {
         console.warn('Erro ao salvar carrinho', err);
     }
@@ -1827,6 +1832,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
