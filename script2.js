@@ -4290,36 +4290,13 @@ function getVariantStock(productId, size, color) {
     return variant ? variant.stock : 0;
 }
 
-async function openProductDetails(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) {
-        showToast('Produto não encontrado', 'error');
-        return;
-    }
+function openProductDetails(productId) {
+    // Salvar ID do produto no localStorage
+    localStorage.setItem('selectedProductId', productId);
     
-    currentProductDetails = product;
-    selectedSize = 'M';
-    selectedColor = product.colors?.[0]?.name || 'Preto';
-    selectedQuantity = 1;
-    
-    // Carregar variantes
-    await loadProductVariants(productId);
-    
-    // Abrir modal
-    const modal = document.getElementById('productDetailsModal');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // Renderizar conteúdo
-        renderProductDetailsContent(product);
-        renderAvailableColors(productId);
-        renderAvailableSizes(productId);
-        
-        trackEvent('Products', 'View Details', product.name);
-    }
+    // Redirecionar para página de produto
+    window.location.href = `produto.html?id=${productId}`;
 }
-
 function closeProductDetails() {
     const modal = document.getElementById('productDetailsModal');
     if (modal) {
@@ -4999,3 +4976,4 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
