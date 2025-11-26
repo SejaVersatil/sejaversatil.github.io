@@ -1267,14 +1267,8 @@ async function applyCoupon() {
             discount = cartValue;
         }
 
-if (typeof window.appliedCoupon === 'undefined') window.appliedCoupon = null;
-if (typeof window.couponDiscount === 'undefined') window.couponDiscount = 0;
-
-window.appliedCoupon = coupon;
-window.couponDiscount = discount;
-       
-        appliedCoupon = window.appliedCoupon;
-couponDiscount = window.couponDiscount;
+state.appliedCoupon = coupon;
+state.couponDiscount = discount;
 
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
@@ -1832,6 +1826,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
