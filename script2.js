@@ -2855,43 +2855,73 @@ function loadCart() {
     if (saved) {
         try {
             const cartData = JSON.parse(saved);
-            if (productsData.length === 0) {
-                console.warn('⚠️ Produtos ainda não carregados, adiando carregamento do carrinho');
-                setTimeout(loadCart, 500); // Tentar novamente em 500ms
-                return;
+            
+            // Compatibilidade com versão antiga (array direto)
+            if (Array.isArray(cartData)) {
+                const validItems = [];
+                cartData.forEach(item => {
+                    const product = productsData.find(p => p.id === item.id);
+                    if (product) {
+                        validItems.push({ 
+                            ...product, 
+                            quantity: item.quantity,
+                            selectedSize: item.selectedSize,
+                            selectedColor: item.selectedColor,
+                            cartItemId: item.cartItemId,
+                            image: getProductImage(product)
+                        });
+                    }
+                });
+                cart = validItems;
+                appliedCoupon = null;
+                couponDiscount = 0;
+            } 
+            // Nova versão com cupom
+            else if (cartData.items) {
+                const validItems = [];
+                cartData.items.forEach(item => {
+                    const product = productsData.find(p => p.id === item.id);
+                    if (product) {
+                        validItems.push({ 
+                            ...product, 
+                            quantity: item.quantity,
+                            selectedSize: item.selectedSize,
+                            selectedColor: item.selectedColor,
+                            cartItemId: item.cartItemId,
+                            image: getProductImage(product)
+                        });
+                    }
+                });
+                cart = validItems;
+                
+                // Restaurar cupom
+                if (cartData.appliedCoupon) {
+                    appliedCoupon = cartData.appliedCoupon;
+                    couponDiscount = cartData.couponDiscount || 0;
+                    
+                    // Atualizar UI do cupom
+                    requestAnimationFrame(() => {
+                        const input = document.getElementById('couponInput');
+                        const btn = document.getElementById('applyCouponBtn');
+                        if (input) {
+                            input.disabled = true;
+                            input.classList.add('success');
+                        }
+                        if (btn) btn.style.display = 'none';
+                        showAppliedCouponBadge(appliedCoupon, couponDiscount);
+                    });
+                }
             }
             
-            const validItems = [];
-            
-            cartData.forEach(item => {
-                const product = productsData.find(p => p.id === item.id);
-                
-                if (!product) {
-                    console.warn(`⚠️ Produto ${item.id} não encontrado, removendo do carrinho`);
-                    return; // Pula este item
-                }
-                
-                validItems.push({ 
-    ...product, 
-    quantity: item.quantity,
-    selectedSize: item.selectedSize,
-    selectedColor: item.selectedColor,
-    cartItemId: item.cartItemId,
-    image: getProductImage(product)
-});
-            });
-            
-            cart = validItems;
-            
-            // Se removeu algum item, salvar carrinho atualizado
-            if (validItems.length !== cartData.length) {
-                console.log(`🧹 Removidos ${cartData.length - validItems.length} itens inválidos do carrinho`);
-                saveCart();
+            if (cart.length === 0) {
+                localStorage.removeItem('sejaVersatilCart');
             }
             
         } catch (error) {
             console.error('❌ Erro ao carregar carrinho:', error);
             cart = [];
+            appliedCoupon = null;
+            couponDiscount = 0;
             localStorage.removeItem('sejaVersatilCart');
         }
     }
@@ -4456,4 +4486,5 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
