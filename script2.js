@@ -3823,20 +3823,20 @@ if (couponDiscount > 0) {
     msg += `*DESCONTO: -R$ ${couponDiscount.toFixed(2)}*\n`;
 }
 
-     msg += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
-    message += `*💳 FORMA DE PAGAMENTO:*\n`;
-    message += `${paymentText}\n\n`;
+    msg += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
+    msg += `*💳 FORMA DE PAGAMENTO:*\n`; // Corrigido de message para msg
+    msg += `${paymentText}\n\n`;        // Corrigido de message para msg
     
     if (paymentMethod === 'credito-parcelado') {
         const installmentValue = (total / installments).toFixed(2);
-        message += `📊 *${installments}x de R$ ${installmentValue}*\n\n`;
+        msg += `📊 *${installments}x de R$ ${installmentValue}*\n\n`; // Corrigido de message para msg
     }
     
-    message += `━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `_Pedido gerado automaticamente via site_`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`; // Corrigido de message para msg
+    msg += `_Pedido gerado automaticamente via site_`; // Corrigido de message para msg
     
     // Codificar mensagem para URL
-    const encodedMessage = encodeURIComponent(message);
+    const encodedMessage = encodeURIComponent(msg); // Corrigido de message para msg
     
     // Montar URL do WhatsApp
     const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
@@ -3869,7 +3869,6 @@ document.addEventListener('click', function(e) {
         closePaymentModal();
     }
 });
-
 // ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
 function animateProductToCart(sourceElement, product) {
     // Pegar posição do botão de origem
@@ -4732,6 +4731,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
