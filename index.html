@@ -545,6 +545,7 @@
       <div class="admin-tabs">
         <button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
         <button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
+        <button class="admin-tab" onclick="switchAdminTab('coupons')">Cupons</button>
       </div>
 
       <div class="admin-tab-content active" id="productsTab">
@@ -558,6 +559,20 @@
           <label for="settingBannerTitle">Banner Principal - Texto 1</label>
           <input type="text" id="settingBannerTitle" value="Seja Versátil">
         </div>
+        <!-- Nova Aba de Cupons -->
+<div class="admin-tab-content" id="couponsTab">
+  <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
+  
+  <div style="margin-top: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
+    <div id="activeCouponsList" class="coupons-list"></div>
+  </div>
+  
+  <div style="margin-top: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
+    <div id="inactiveCouponsList" class="coupons-list"></div>
+  </div>
+</div>
         <div class="admin-form-group">
           <label for="settingBannerSubtitle">Banner Principal - Subtítulo</label>
           <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
