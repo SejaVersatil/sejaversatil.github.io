@@ -112,7 +112,7 @@ const heroSlides = [
         cta: 'VER COLEÇÃO'
     },
     {
-        image: 'https://i.imgur.com/cVXt2ts.png',
+        image: 'https://i.imgur.com/2SHv3pc.jpeg',
         title: 'FITNESS & LIFESTYLE',
         subtitle: 'Do treino ao dia a dia com versatilidade',
         cta: 'DESCOBRIR'
@@ -5084,6 +5084,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
