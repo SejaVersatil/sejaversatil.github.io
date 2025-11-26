@@ -100,7 +100,7 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/oOCI2Sp.jpeg',
+        image: 'https://i.imgur.com/kOzFAAv.jpeg',
         title: '', // titulo da coleção//
         subtitle: '', //descrição do titulo//
         cta: 'EXPLORAR AGORA'
@@ -5004,6 +5004,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
