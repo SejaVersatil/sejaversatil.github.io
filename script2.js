@@ -3958,9 +3958,9 @@ async function sendToWhatsApp() {
     const total = Math.max(0, subtotal - (couponDiscount || 0));
     
     // Montar mensagem
-    let message = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
-    message += `*📦 PRODUTOS:*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    let msg = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
+msg += `*📦 PRODUTOS:*\n`;
+msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     
     cart.forEach((item, index) => {
         message += `${index+1}. *${item.name}*\n`;
@@ -4294,21 +4294,43 @@ function getVariantStock(productId, size, color) {
     return variant ? variant.stock : 0;
 }
 
-// SUBSTITUIR openProductDetails() existente por esta versão:
-/**
- * Redireciona o usuário para a página de detalhes do produto
- * @param {string} productId - ID do produto
- */
-function openProductDetails(productId) {
-    if (!productId) {
-        console.warn('openProductDetails: productId ausente!');
+async function openProductDetails(productId) {
+    const product = productsData.find(p => p.id === productId);
+    if (!product) {
+        showToast('Produto não encontrado', 'error');
         return;
     }
+    
+    currentProductDetails = product;
+    selectedSize = 'M';
+    selectedColor = product.colors?.[0]?.name || 'Preto';
+    selectedQuantity = 1;
+    
+    // Carregar variantes
+    await loadProductVariants(productId);
+    
+    // Abrir modal
+    const modal = document.getElementById('productDetailsModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Renderizar conteúdo
+        renderProductDetailsContent(product);
+        renderAvailableColors(productId);
+        renderAvailableSizes(productId);
+        
+        trackEvent('Products', 'View Details', product.name);
+    }
+}
 
-    console.log('🔗 Redirecionando para produto:', productId);
-
-    // Redireciona para a página de produto com query string segura
-    window.location.href = `produto.html?id=${encodeURIComponent(productId)}`;
+function closeProductDetails() {
+    const modal = document.getElementById('productDetailsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        currentProductDetails = null;
+    }
 }
 
 // Renderizar cores disponíveis COM IMAGENS do Firebase
@@ -4899,6 +4921,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
