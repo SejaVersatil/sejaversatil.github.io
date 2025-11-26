@@ -151,9 +151,52 @@
       <div class="empty-cart">Seu carrinho está vazio</div>
     </div>
     <div id="cartFooter" class="cart-footer" style="display:none;">
-      <div class="cart-total"><span>Total:</span><strong id="cartTotal">R$ 0,00</strong></div>
-      <button class="checkout-btn" onclick="checkout()" type="button">Finalizar Compra</button>
+  
+  <!-- Sistema de Cupons -->
+  <div class="coupon-section">
+    <h4>🎟️ Cupom de Desconto</h4>
+    <div class="coupon-input-row">
+      <input type="text" 
+             class="coupon-input" 
+             id="couponInput" 
+             placeholder="Digite o código" 
+             maxlength="20"
+             autocomplete="off">
+      <button class="coupon-apply-btn" 
+              id="applyCouponBtn" 
+              type="button"
+              onclick="applyCoupon()">
+        APLICAR
+      </button>
     </div>
+    <div class="coupon-message" id="couponMessage"></div>
+    <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
+      <div class="applied-coupon-info">
+        <span class="applied-coupon-code" id="appliedCouponCode"></span>
+        <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
+      </div>
+      <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
+    </div>
+  </div>
+  
+  <!-- Total com Desconto -->
+  <div class="cart-total">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+      <span>Subtotal:</span>
+      <span id="cartSubtotal">R$ 0,00</span>
+    </div>
+    <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
+      <span>Desconto:</span>
+      <span id="discountValue">- R$ 0,00</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
+      <span>Total:</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+  </div>
+  
+  <button class="checkout-btn" onclick="checkout()" type="button">Finalizar Compra</button>
+</div>
   </aside>
 
   <main class="product-page-container" role="main">
@@ -484,6 +527,7 @@
   <script src="produto.js" defer></script>
 </body>
 </html>
+
 
 
 
