@@ -4424,12 +4424,10 @@ async function renderAvailableColors(productId) {
     
     if (!colorSelector) return;
     
-    // Priorizar cores cadastradas no campo `colors`
     let availableColors = [];
     
     if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
         availableColors = product.colors;
-        //console.log(`✅ Produto "${product.name}" tem ${product.colors.length} cores cadastradas`);
     } else if (variants.length > 0) {
         const uniqueColors = [...new Set(variants.map(v => v.color))];
         availableColors = uniqueColors.map(colorName => ({
@@ -4437,11 +4435,9 @@ async function renderAvailableColors(productId) {
             hex: getColorHex(colorName),
             images: product.images || []
         }));
-        //console.log(`⚠️ Produto "${product.name}" usando cores das variantes de estoque`);
     } else {
         const colorOption = colorSelector.closest('.product-option');
         if (colorOption) colorOption.style.display = 'none';
-        //console.log(`❌ Produto "${product.name}" não tem cores cadastradas`);
         return;
     }
     
@@ -4449,38 +4445,37 @@ async function renderAvailableColors(productId) {
     if (colorOption) colorOption.style.display = 'block';
     
     colorSelector.innerHTML = availableColors.map((color, index) => {
-    const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
-    const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
-    
-    return `
-        <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
-             data-color="${color.name.replace(/"/g, '&quot;')}"
-             data-has-stock="${hasStock}"
-             style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
-             title="${color.name}">
-            ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
-        </div>
-    `;
-}).join('');
+        const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
+        const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
+        
+        return `
+            <div class="color-option ${index === 0 ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+                 data-color="${sanitizeInput(color.name)}"
+                 data-has-stock="${hasStock}"
+                 style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
+                 title="${sanitizeInput(color.name)}">
+                ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
+            </div>
+        `;
+    }).join('');
 
-// Remove listeners antigos clonando os elementos
-const colorOptions = document.querySelectorAll('.color-option');
-colorOptions.forEach(colorBtn => {
-    colorBtn.replaceWith(colorBtn.cloneNode(true));
-});
-
-// Reaplicar listeners nos elementos limpos
-document.querySelectorAll('.color-option').forEach(colorBtn => {
-    const hasStock = colorBtn.dataset.hasStock === 'true';
-    
-    colorBtn.addEventListener('click', function() {
-        if (!hasStock) {
-            showToast('❌ Cor indisponível', 'error');
-            return;
-        }
-        selectColor(this.dataset.color);
+    const colorOptions = document.querySelectorAll('.color-option');
+    colorOptions.forEach(colorBtn => {
+        const newColorBtn = colorBtn.cloneNode(true);
+        colorBtn.replaceWith(newColorBtn);
     });
-});
+
+    document.querySelectorAll('.color-option').forEach(colorBtn => {
+        const hasStock = colorBtn.dataset.hasStock === 'true';
+        
+        colorBtn.addEventListener('click', function() {
+            if (!hasStock) {
+                showToast('❌ Cor indisponível', 'error');
+                return;
+            }
+            selectColor(this.dataset.color);
+        });
+    });
 }
 
 // Função auxiliar para converter nome em hex (fallback)
@@ -5004,6 +4999,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
