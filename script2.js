@@ -3140,6 +3140,10 @@ async function applyCoupon() {
 }
         
         // 6. Calcular desconto
+// ✅ CORREÇÃO: Definir cartValue antes de usar
+        const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        // 6. Calcular desconto
         let discount = 0;
         
         if (coupon.type === 'percentage') {
@@ -3177,10 +3181,13 @@ async function applyCoupon() {
         console.error('Erro ao aplicar cupom:', error);
         showCouponMessage('❌ Erro ao validar cupom', 'error');
     } finally {
-    btn.disabled = false;
-    btn.textContent = 'APLICAR';
-    btn.style.opacity = '1';
-  }
+        // Verifica se btn existe antes de acessar propriedades para evitar erro
+        if (typeof btn !== 'undefined' && btn) {
+            btn.disabled = false;
+            btn.textContent = 'APLICAR';
+            btn.style.opacity = '1';
+        }
+    }
 }
 
 // Remover cupom
@@ -4893,6 +4900,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
