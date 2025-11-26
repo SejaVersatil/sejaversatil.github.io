@@ -1166,6 +1166,176 @@ window.sendToWhatsApp = sendToWhatsApp;
 
 console.log('✅ Produto.js (Mosaico) carregado.');
 
+// ==================== SISTEMA DE CUPONS NA PÁGINA DE PRODUTO ====================
+
+let appliedCoupon = null;
+let couponDiscount = 0;
+
+async function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyCouponBtn');
+
+    if (!input || !btn) return;
+
+    const code = input.value
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+        .slice(0, 20);
+
+    if (!code || code.length < 3) {
+        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Validando...';
+    btn.style.opacity = '0.6';
+
+    try {
+        const couponDoc = await db.collection('coupons').doc(code).get();
+
+        if (!couponDoc.exists) {
+            showCouponMessage('❌ Cupom não encontrado', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const coupon = { id: couponDoc.id, ...couponDoc.data() };
+
+        if (!coupon.active) {
+            showCouponMessage('❌ Cupom inativo', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const now = new Date();
+        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
+        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
+
+        if (validFrom && now < validFrom) {
+            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        if (validUntil && now > validUntil) {
+            showCouponMessage('❌ Este cupom expirou', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        if (coupon.minValue && cartValue < coupon.minValue) {
+            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
+            resetCouponButton();
+            return;
+        }
+
+        let discount = 0;
+
+        if (coupon.type === 'percentage') {
+            discount = (cartValue * coupon.value) / 100;
+            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+                discount = coupon.maxDiscount;
+            }
+        } else if (coupon.type === 'fixed') {
+            discount = coupon.value;
+        }
+
+        if (discount > cartValue) {
+            discount = cartValue;
+        }
+
+        appliedCoupon = coupon;
+        couponDiscount = discount;
+
+        input.classList.add('success');
+        showAppliedCouponBadge(coupon, discount);
+        updateCartUI();
+        saveCart();
+
+        showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
+
+        input.value = '';
+        input.disabled = true;
+        btn.style.display = 'none';
+
+    } catch (error) {
+        console.error('Erro ao aplicar cupom:', error);
+        showCouponMessage('❌ Erro ao validar cupom', 'error');
+        resetCouponButton();
+    }
+}
+
+function resetCouponButton() {
+    const btn = document.getElementById('applyCouponBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'APLICAR';
+        btn.style.opacity = '1';
+    }
+}
+
+function removeCoupon() {
+    appliedCoupon = null;
+    couponDiscount = 0;
+    
+    const badge = document.getElementById('appliedCouponBadge');
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyCouponBtn');
+    const message = document.getElementById('couponMessage');
+    
+    if (badge) badge.style.display = 'none';
+    if (input) {
+        input.disabled = false;
+        input.value = '';
+        input.classList.remove('success');
+    }
+    if (btn) {
+        btn.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'APLICAR';
+        btn.style.opacity = '1';
+    }
+    if (message) message.classList.remove('active');
+    
+    updateCartUI();
+    saveCart();
+    showToast('Cupom removido', 'info');
+}
+
+function showAppliedCouponBadge(coupon, discount) {
+    const badge = document.getElementById('appliedCouponBadge');
+    const codeEl = document.getElementById('appliedCouponCode');
+    const discountEl = document.getElementById('appliedCouponDiscount');
+    
+    if (!badge || !codeEl || !discountEl) return;
+    
+    codeEl.textContent = coupon.code;
+    
+    if (coupon.type === 'percentage') {
+        discountEl.textContent = `${coupon.value}% de desconto (R$ ${discount.toFixed(2)})`;
+    } else {
+        discountEl.textContent = `Desconto de R$ ${discount.toFixed(2)}`;
+    }
+    
+    badge.style.display = 'flex';
+}
+
+function showCouponMessage(text, type) {
+    const message = document.getElementById('couponMessage');
+    if (!message) return;
+    
+    message.textContent = text;
+    message.className = `coupon-message ${type} active`;
+    
+    setTimeout(() => {
+        message.classList.remove('active');
+    }, 5000);
+}
+
 /* =================================================================== */
 /* BUSCA INTELIGENTE COMPLETA (LIVE SEARCH) - PÁGINA DE PRODUTO        */
 /* =================================================================== */
@@ -1583,6 +1753,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
