@@ -2368,7 +2368,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
 
     .hero-overlay {
-        background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6)) !important;
+        background: none;
     }
 
     .hero-content {
@@ -2572,6 +2572,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
