@@ -3049,41 +3049,33 @@ async function applyCoupon() {
     .replace(/[^A-Z0-9]/g, '') // ✅ Remove caracteres especiais
     .slice(0, 20); // ✅ Limita tamanho
 
-if (!code || code.length < 3) {
-    showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
-    return;
-}
+    if (!code || code.length < 3) {
+        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
+        return;
+    }
     
     // Desabilita botão durante verificação
     btn.disabled = true;
-btn.innerHTML = '⏳ Validando...';
-btn.style.opacity = '0.6';
+    btn.innerHTML = '⏳ Validando...';
+    btn.style.opacity = '0.6';
     
     try {
         // 1. Buscar cupom no Firestore
         const couponDoc = await db.collection('coupons').doc(code).get();
 
-if (!couponDoc.exists) {
-    showCouponMessage('❌ Cupom não encontrado', 'error');
-    return;
-}
+        if (!couponDoc.exists) {
+            showCouponMessage('❌ Cupom não encontrado', 'error');
+            return;
+        }
 
-const coupon = { id: couponDoc.id, ...couponDoc.data() };
+        const coupon = { id: couponDoc.id, ...couponDoc.data() };
 
-if (!coupon.active) {
-    showCouponMessage('❌ Cupom inativo', 'error');
-    return;
-}
-        
-        if (couponQuery.empty) {
-            showCouponMessage('❌ Cupom inválido ou expirado', 'error');
-            input.classList.add('error');
-            setTimeout(() => input.classList.remove('error'), 500);
+        if (!coupon.active) {
+            showCouponMessage('❌ Cupom inativo', 'error');
             return;
         }
         
-        const couponDoc = couponQuery.docs[0];
-        const coupon = { id: couponDoc.id, ...couponDoc.data() };
+        // [BLOCO DE CÓDIGO DUPLICADO/ERRADO REMOVIDO AQUI]
         
         // 2. Validar data de validade
         const now = new Date();
@@ -3115,20 +3107,35 @@ if (!coupon.active) {
         }
         
         // 5. Verificar uso por usuário (se logado)
-if (coupon.usagePerUser) {
-    if (!auth.currentUser) {
-        showCouponMessage('❌ Faça login para usar este cupom', 'error');
-        return;
-    }
-    
-    const usageQuery = await db.collection('coupon_usage')
-        .where('couponId', '==', coupon.id)
-        .where('userId', '==', auth.currentUser.uid)
-        .get();
-    
-    if (usageQuery.size >= coupon.usagePerUser) {
-        showCouponMessage('❌ Você já usou este cupom', 'error');
-        return;
+        if (coupon.usagePerUser) {
+            if (!auth.currentUser) {
+                showCouponMessage('❌ Faça login para usar este cupom', 'error');
+                return;
+            }
+            
+            const usageQuery = await db.collection('coupon_usage')
+                .where('couponId', '==', coupon.id)
+                .where('userId', '==', auth.currentUser.uid)
+                .get();
+            
+            if (usageQuery.size >= coupon.usagePerUser) {
+                showCouponMessage('❌ Você já usou este cupom', 'error');
+                return;
+            }
+        }
+
+        // Código para aplicar o desconto deve vir aqui...
+
+    } catch (error) {
+        console.error(error);
+        showCouponMessage('❌ Erro ao processar cupom', 'error');
+    } finally {
+        // Reabilita o botão
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'APLICAR';
+            btn.style.opacity = '1';
+        }
     }
 }
         
@@ -4886,6 +4893,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
