@@ -559,20 +559,7 @@
           <label for="settingBannerTitle">Banner Principal - Texto 1</label>
           <input type="text" id="settingBannerTitle" value="Seja Versátil">
         </div>
-        <!-- Nova Aba de Cupons -->
-<div class="admin-tab-content" id="couponsTab">
-  <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
-  
-  <div style="margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
-    <div id="activeCouponsList" class="coupons-list"></div>
-  </div>
-  
-  <div style="margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
-    <div id="inactiveCouponsList" class="coupons-list"></div>
-  </div>
-</div>
+
         <div class="admin-form-group">
           <label for="settingBannerSubtitle">Banner Principal - Subtítulo</label>
           <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
@@ -588,49 +575,61 @@
         </div>
         <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
       </div>
-    </div>
-  </div>
+              <!-- Nova Aba de Cupons -->
+<div class="admin-tab-content" id="couponsTab">
+  <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
+  
+  <div style="margin-top: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
+    <div id="activeCouponsList" class="coupons-list"></div>
+  </div>
+  
+  <div style="margin-top: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
+    <div id="inactiveCouponsList" class="coupons-list"></div>
+  </div>
+</div>
 
-  <div class="admin-modal" id="productModal">
-    <div class="admin-modal-content">
-      <div class="admin-modal-header">
-        <h3 id="modalTitle">Adicionar Produto</h3>
-        <button class="admin-close" onclick="closeProductModal()">✕</button>
-      </div>
-      <form id="productForm" onsubmit="saveProduct(event)">
-        <div class="admin-form-group">
-          <label for="productName">Nome do Produto *</label>
-          <input type="text" id="productName" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="productCategory">Categoria *</label>
-          <select id="productCategory" required>
-            <option value="blusas">Blusas</option>
-            <option value="conjunto calca">Conjunto Calça</option>
-            <option value="peca unica">Peça Única</option>
-            <option value="conjunto short saia">Conjunto Short Saia</option>
-            <option value="conjunto short">Conjunto Short</option>
-          </select>
-        </div>
-        <div class="admin-form-group">
-          <label for="productPrice">Preço Atual (R$) *</label>
-          <input type="number" id="productPrice" step="0.01" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="productOldPrice">Preço Antigo (R$) - Opcional</label>
-          <input type="number" id="productOldPrice" step="0.01">
-        </div>
-        <div class="admin-form-group">
-          <label for="productBadge">Badge - Opcional</label>
-          <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
-        </div>
-        <div class="admin-form-group">
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="checkbox" id="productBlackFriday" style="width: auto; cursor: pointer;">
-            <span>Black Versátil</span>
-          </label>
-          <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">Produtos marcados exibirão o adesivo "BLACK VERSÁTIL" em destaque</small>
-        </div>
+<div class="admin-modal" id="productModal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h3 id="modalTitle">Adicionar Produto</h3>
+        <button class="admin-close" onclick="closeProductModal()">✕</button>
+      </div>
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <div class="admin-form-group">
+          <label for="productName">Nome do Produto *</label>
+          <input type="text" id="productName" required>
+        </div>
+        <div class="admin-form-group">
+          <label for="productCategory">Categoria *</label>
+          <select id="productCategory" required>
+            <option value="blusas">Blusas</option>
+            <option value="conjunto calca">Conjunto Calça</option>
+            <option value="peca unica">Peça Única</option>
+            <option value="conjunto short saia">Conjunto Short Saia</option>
+            <option value="conjunto short">Conjunto Short</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label for="productPrice">Preço Atual (R$) *</label>
+          <input type="number" id="productPrice" step="0.01" required>
+        </div>
+        <div class="admin-form-group">
+          <label for="productOldPrice">Preço Antigo (R$) - Opcional</label>
+          <input type="number" id="productOldPrice" step="0.01">
+        </div>
+        <div class="admin-form-group">
+          <label for="productBadge">Badge - Opcional</label>
+          <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
+        </div>
+        <div class="admin-form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="productBlackFriday" style="width: auto; cursor: pointer;">
+            <span>Black Versátil</span>
+          </label>
+          <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">Produtos marcados exibirão o adesivo "BLACK VERSÁTIL" em destaque</small>
+        </div>
 
         <div class="admin-form-group">
           <label style="display: block; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">🎨 Cores do Produto</label>
