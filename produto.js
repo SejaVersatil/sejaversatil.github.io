@@ -14,7 +14,9 @@ const state = {
     cart: [],
     productVariants: {},
     countdownInterval: null,
-    galleryExpanded: false // ✅ ADICIONE ESTA LINHA
+    galleryExpanded: false,
+    appliedCoupon: null,        // ← ADICIONE ESTA LINHA
+    couponDiscount: 0            // ← ADICIONE ESTA LINHA
 };
 window.productState = state;
 
@@ -1830,6 +1832,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
