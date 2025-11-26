@@ -565,7 +565,7 @@ nav {
 
 .cart-item-title {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-weight: 600;
     color: #1a1a1a;
     line-height: 1.25;
@@ -578,14 +578,14 @@ nav {
 }
 
 .cart-item-meta {
-    font-size: 0.68rem;  /* ← REDUZIDO de 0.75rem */
+    font-size: 0.55rem;  /* ← REDUZIDO de 0.75rem */
     color: #999;
     line-height: 1.15;  /* ← AJUSTADO */
 }
 
 .cart-item-price {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.85rem;  /* ← REDUZIDO de 1rem */
+    font-size: 0.65rem;  /* ← REDUZIDO de 1rem */
     font-weight: 700;
     color: #000;
     margin: 0.15rem 0;  /* ← AJUSTADO */
@@ -2096,7 +2096,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
     
     .cart-item {
-        gap: 0.8rem !important;
+        gap: 0.7rem !important;
         padding-bottom: 1rem !important;
         margin-bottom: 1rem !important;
         flex-direction: row !important; /* ← MANTÉM HORIZONTAL */
@@ -2117,16 +2117,16 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
     
     .cart-item-title {
-        font-size: 0.7rem !important;
+        font-size: 0.6rem !important;
         line-height: 1.25 !important;
     }
     
     .cart-item-meta {
-        font-size: 0.65rem !important;
+        font-size: 0.6rem !important;
     }
     
     .cart-item-price {
-        font-size: 0.8rem !important;
+        font-size: 0.6rem !important;
     }
     
     .cart-item-qty {
@@ -2333,11 +2333,11 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
     
     .cart-item-title {
-        font-size: 0.75rem !important;
+        font-size: 0.65rem !important;
     }
     
     .cart-item-price {
-        font-size: 0.9rem !important;
+        font-size: 0.75rem !important;
     }
     
     .qty-btn {
@@ -2654,6 +2654,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
