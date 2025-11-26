@@ -1151,6 +1151,9 @@ function openProductModal(productId = null) {
     editingProductId = productId;
     const modal = document.getElementById('productModal');
     const title = document.getElementById('modalTitle');
+    const modalContent = modal.querySelector('.admin-modal-content');
+    if (modalContent) modalContent.scrollTop = 0;
+    modal.scrollTop = 0;
 
     if (productId) {
         const product = productsData.find(p => p.id === productId);
@@ -5084,6 +5087,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
