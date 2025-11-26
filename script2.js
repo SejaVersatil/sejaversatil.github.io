@@ -1090,6 +1090,9 @@ function switchAdminTab(tab) {
         document.getElementById('productsTab').classList.add('active');
     } else if (tab === 'settings') {
         document.getElementById('settingsTab').classList.add('active');
+    } else if (tab === 'coupons') {  // ← ADICIONAR ESTA CONDIÇÃO
+        document.getElementById('couponsTab').classList.add('active');
+        loadCoupons(); // Carrega cupons ao abrir a aba
     }
 }
 
@@ -5083,3 +5086,4 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
