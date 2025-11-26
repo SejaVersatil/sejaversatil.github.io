@@ -2792,7 +2792,7 @@ function updateCartUI() {
 const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
 
 // Aplicar desconto do cupom
-const discount = couponDiscount || 0;
+const discount = Math.min(couponDiscount || 0, subtotal);
 const total = Math.max(0, subtotal - discount);
 
 // Atualizar UI de valores
@@ -2871,6 +2871,15 @@ function removeFromCart(identifier) {
         const itemId = item.cartItemId || item.id;
         return itemId !== identifier;
     });
+
+     if (cart.length === 0) {
+        if (appliedCoupon) {
+            removeCoupon();
+        }
+        updateCartUI();
+        showToast('Carrinho vazio', 'info');
+        return; // ✅ Sair antes de recalcular cupom
+    }
     
     // ✅ RECALCULAR CUPOM APÓS REMOÇÃO
     if (appliedCoupon && couponDiscount > 0) {
@@ -3035,24 +3044,37 @@ async function applyCoupon() {
     
     if (!input || !btn) return;
     
-    const code = input.value.trim().toUpperCase();
-    
-    if (!code) {
-        showCouponMessage('Digite um código de cupom', 'error');
-        return;
-    }
+    const code = input.value
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '') // ✅ Remove caracteres especiais
+    .slice(0, 20); // ✅ Limita tamanho
+
+if (!code || code.length < 3) {
+    showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
+    return;
+}
     
     // Desabilita botão durante verificação
     btn.disabled = true;
-    btn.textContent = '...';
+btn.innerHTML = '⏳ Validando...';
+btn.style.opacity = '0.6';
     
     try {
         // 1. Buscar cupom no Firestore
-        const couponQuery = await db.collection('coupons')
-            .where('code', '==', code)
-            .where('active', '==', true)
-            .limit(1)
-            .get();
+        const couponDoc = await db.collection('coupons').doc(code).get();
+
+if (!couponDoc.exists) {
+    showCouponMessage('❌ Cupom não encontrado', 'error');
+    return;
+}
+
+const coupon = { id: couponDoc.id, ...couponDoc.data() };
+
+if (!coupon.active) {
+    showCouponMessage('❌ Cupom inativo', 'error');
+    return;
+}
         
         if (couponQuery.empty) {
             showCouponMessage('❌ Cupom inválido ou expirado', 'error');
@@ -3149,9 +3171,10 @@ if (coupon.usagePerUser) {
         console.error('Erro ao aplicar cupom:', error);
         showCouponMessage('❌ Erro ao validar cupom', 'error');
     } finally {
-        btn.disabled = false;
-        btn.textContent = 'APLICAR';
-    }
+    btn.disabled = false;
+    btn.textContent = 'APLICAR';
+    btn.style.opacity = '1';
+  }
 }
 
 // Remover cupom
@@ -3215,35 +3238,46 @@ function showCouponMessage(text, type) {
 async function registerCouponUsage(couponId, orderValue, discountApplied) {
     if (!auth.currentUser) return;
     
-    try {
-        // 1. Registrar uso
-        await db.collection('coupon_usage').add({
-            couponId: couponId,
-            userId: auth.currentUser.uid,
-            userEmail: auth.currentUser.email,
-            usedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            orderValue: orderValue,
-            discountApplied: discountApplied
-        });
-        
-        // 2. Incrementar contador de usos
-        await db.collection('coupons').doc(couponId).update({
-            usedCount: firebase.firestore.FieldValue.increment(1)
-        });
-        
-        console.log('✅ Uso do cupom registrado');
-    } catch (error) {
-        console.error('❌ Erro ao registrar uso do cupom:', error);
-    }
-}
-
-function checkout() {
-    if (cart.length === 0) {
-        showToast('Seu carrinho está vazio!', 'error');
-        return;
-    }
+    const couponRef = db.collection('coupons').doc(couponId);
     
-    openPaymentModal();
+    try {
+        await db.runTransaction(async (transaction) => {
+            const couponDoc = await transaction.get(couponRef);
+            
+            if (!couponDoc.exists) {
+                throw new Error('Cupom não existe');
+            }
+            
+            const coupon = couponDoc.data();
+            const newCount = (coupon.usedCount || 0) + 1;
+            
+            // ✅ Validação atômica
+            if (coupon.usageLimit && newCount > coupon.usageLimit) {
+                throw new Error('Limite atingido');
+            }
+            
+            // ✅ Incremento seguro
+            transaction.update(couponRef, {
+                usedCount: firebase.firestore.FieldValue.increment(1)
+            });
+            
+            // ✅ Registro de uso
+            transaction.set(db.collection('coupon_usage').doc(), {
+                couponId: couponId,
+                userId: auth.currentUser.uid,
+                userEmail: auth.currentUser.email,
+                usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                orderValue: orderValue,
+                discountApplied: discountApplied
+            });
+        });
+        
+        console.log('✅ Uso registrado');
+        
+    } catch (error) {
+        console.error('❌ Transação falhou:', error);
+        throw error;
+    }
 }
 
 // ==================== BUSCA ====================
@@ -4853,6 +4887,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
