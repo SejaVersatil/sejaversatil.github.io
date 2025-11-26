@@ -4999,24 +4999,3 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
