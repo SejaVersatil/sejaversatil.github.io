@@ -2788,9 +2788,30 @@ function updateCartUI() {
             cartItems.appendChild(fragment);
             
             // Atualizar total
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartTotal.textContent = `R$ ${total.toFixed(2)}`;
-            cartFooter.style.display = 'block';
+            // Calcular subtotal
+const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+
+// Aplicar desconto do cupom
+const discount = couponDiscount || 0;
+const total = Math.max(0, subtotal - discount);
+
+// Atualizar UI de valores
+const cartSubtotalEl = document.getElementById('cartSubtotal');
+const discountBreakdownEl = document.getElementById('discountBreakdown');
+const discountValueEl = document.getElementById('discountValue');
+const cartTotalEl = document.getElementById('cartTotal');
+
+if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
+if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
+
+if (discount > 0 && discountBreakdownEl && discountValueEl) {
+    discountBreakdownEl.style.display = 'flex';
+    discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
+} else if (discountBreakdownEl) {
+    discountBreakdownEl.style.display = 'none';
+}
+
+cartFooter.style.display = 'block';
         }
     });
 }
@@ -4696,6 +4717,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
