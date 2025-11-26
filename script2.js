@@ -4297,102 +4297,7 @@ function openProductDetails(productId) {
     // Redirecionar para página de produto
     window.location.href = `produto.html?id=${productId}`;
 }
-function closeProductDetails() {
-    const modal = document.getElementById('productDetailsModal');
-    if (modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-        currentProductDetails = null;
-    }
-}
 
-function renderProductDetailsContent(product) {
-    const container = document.querySelector('.product-details-container');
-    if (!container) return;
-    
-    const images = getProductImages(product);
-    
-    container.innerHTML = `
-        <button class="product-details-close" onclick="closeProductDetails()">✕</button>
-        <div class="product-details-content">
-            <div class="product-details-gallery">
-                <div class="main-image" style="background-image: url('${images[0]}')"></div>
-                <div class="thumbnail-list">
-                    ${images.map((img, i) => `
-                        <div class="thumbnail ${i === 0 ? 'active' : ''}" 
-                             style="background-image: url('${img}')"
-                             onclick="changeMainImage('${img}')"></div>
-                    `).join('')}
-                </div>
-            </div>
-            <div class="product-info-section">
-                <h1 class="product-title">${sanitizeInput(product.name)}</h1>
-                <div class="product-pricing">
-                    ${product.oldPrice ? `<span class="price-old-text">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
-                    <div class="price-main-row">
-                        <span class="price-current">R$ ${product.price.toFixed(2)}</span>
-                        ${product.oldPrice ? `<span class="price-discount-badge">-${Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%</span>` : ''}
-                    </div>
-                    <span class="price-installments">ou 3x de R$ ${(product.price / 3).toFixed(2)} sem juros</span>
-                </div>
-                
-                <div class="product-selector-group">
-                    <label class="selector-label">Cor: <span class="selected-value" id="selectedColorDisplay">${selectedColor}</span></label>
-                    <div class="color-options-grid" id="colorSelector"></div>
-                </div>
-                
-                <div class="product-selector-group">
-                    <label class="selector-label">Tamanho: <span class="selected-value" id="selectedSizeDisplay">${selectedSize}</span></label>
-                    <div class="size-options-grid" id="sizeSelector"></div>
-                </div>
-                
-                <div class="product-selector-group">
-                    <label class="selector-label">Quantidade:</label>
-                    <div class="quantity-controls">
-                        <button class="qty-control-btn" onclick="updateDetailsQuantity(-1)">-</button>
-                        <input type="number" value="1" min="1" max="10" id="detailsQuantity" readonly>
-                        <button class="qty-control-btn" onclick="updateDetailsQuantity(1)">+</button>
-                    </div>
-                </div>
-                
-                <div class="product-action-buttons">
-                    <button class="btn-add-to-cart-new btn-add-cart-large" onclick="addToCartFromDetails()">
-                        🛒 Adicionar ao Carrinho
-                    </button>
-                    <button class="btn-buy-now-new" onclick="buyNow()">
-                        ⚡ Comprar Agora
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function changeMainImage(imageUrl) {
-    const mainImage = document.querySelector('.main-image');
-    if (mainImage) {
-        mainImage.style.backgroundImage = `url('${imageUrl}')`;
-    }
-    
-    document.querySelectorAll('.thumbnail').forEach(thumb => {
-        thumb.classList.remove('active');
-        if (thumb.style.backgroundImage.includes(imageUrl)) {
-            thumb.classList.add('active');
-        }
-    });
-}
-
-function updateDetailsQuantity(change) {
-    const input = document.getElementById('detailsQuantity');
-    if (!input) return;
-    
-    let newValue = parseInt(input.value) + change;
-    if (newValue < 1) newValue = 1;
-    if (newValue > 10) newValue = 10;
-    
-    input.value = newValue;
-    selectedQuantity = newValue;
-}
 // Renderizar cores disponíveis COM IMAGENS do Firebase
 async function renderAvailableColors(productId) {
     const product = productsData.find(p => p.id === productId);
@@ -4976,4 +4881,5 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
