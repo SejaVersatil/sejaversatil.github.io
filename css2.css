@@ -1040,9 +1040,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     overflow-y: auto;
 }
 
-.image-list {
-    max-height: 300px;
-    overflow-y: auto;
+.image-list { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    gap: 1rem; 
+    margin-bottom: 1.5rem;
+    max-height: 400px; /* ← ADICIONAR */
+    overflow-y: auto; /* ← ADICIONAR */
+    padding-right: 0.5rem; /* ← ADICIONAR */
 }
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray); }
 .admin-modal-header h3 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -1077,17 +1082,6 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 .image-url-actions { display: flex; gap: 0.5rem; }
 .image-url-actions button { flex: 1; padding: 0.6rem; border: none; cursor: pointer; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
 .image-helper { font-size: 0.75rem; color: #666; margin-top: 0.5rem; line-height: 1.6; }
-
-/* Grid de Fotos */
-.image-list { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
-    gap: 1rem; 
-    margin-bottom: 1.5rem;
-    max-height: 400px; /* ← ADICIONAR */
-    overflow-y: auto; /* ← ADICIONAR */
-    padding-right: 0.5rem; /* ← ADICIONAR */
-}
 
 /* Scrollbar customizada para lista de imagens - ADICIONAR */
 .image-list::-webkit-scrollbar {
@@ -2660,6 +2654,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
