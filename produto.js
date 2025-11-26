@@ -53,6 +53,14 @@ function loadCartFromStorage() {
                 price: safeNumber(item.price, 0)
             })) : [];
         if (window.cart) window.cart = state.cart;
+
+// Restaurar cupom aplicado (se existir)
+if (parsed.appliedCoupon) {
+    state.appliedCoupon = parsed.appliedCoupon;
+    state.couponDiscount = parsed.couponDiscount || 0;
+    showAppliedCouponBadge(state.appliedCoupon, state.couponDiscount);
+}
+       
     } catch (err) {
         console.warn('Erro ao carregar carrinho:', err);
         state.cart = [];
@@ -72,26 +80,6 @@ function saveCartToStorage() {
     }
 }
 
-
-function saveCart() {
-    const cartData = {
-        items: state.cart.map(item => ({
-            id: item.id,
-            quantity: item.quantity,
-            selectedSize: item.selectedSize,
-            selectedColor: item.selectedColor,
-            cartItemId: item.cartItemId
-        })),
-        appliedCoupon: appliedCoupon ? {
-            id: appliedCoupon.id,
-            code: appliedCoupon.code,
-            type: appliedCoupon.type,
-            value: appliedCoupon.value
-        } : null,
-        couponDiscount: couponDiscount || 0
-    };
-    localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-}
 /* =========================
    Inicialização da página
    ========================= */
@@ -1040,8 +1028,10 @@ function openPaymentModal() {
         itemsContainer.appendChild(row);
     });
 
-    const total = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-    if (totalContainer) totalContainer.textContent = `R$ ${total.toFixed(2)}`;
+    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
+const discount = state.couponDiscount || 0;
+const total = Math.max(0, subtotal - discount);
+if (totalContainer) totalContainer.textContent = `R$ ${total.toFixed(2)}`;
 
     modal.classList.add('active');
     setupPaymentListeners();
@@ -1078,9 +1068,11 @@ function sendToWhatsApp() {
         'credito-parcelado': `Cartão Parcelado (${inst}x)`
     };
 
-    const total = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
+    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
+const discount = state.couponDiscount || 0;
+const total = Math.max(0, subtotal - discount);
 
-    let msg = `*🛍️ PEDIDO - SEJA VERSÁTIL*\n\n`;
+let msg = `*🛍️ PEDIDO - SEJA VERSÁTIL*\n\n`;
     state.cart.forEach((item, i) => {
         msg += `${i+1}. *${item.name}*\n`;
         msg += `   TAM: ${item.selectedSize} | COR: ${item.selectedColor}\n`;
@@ -1088,6 +1080,11 @@ function sendToWhatsApp() {
     });
 
     msg += `*TOTAL: R$ ${total.toFixed(2)}*\n`;
+if (state.appliedCoupon) {
+    msg += `Cupom aplicado: ${state.appliedCoupon.code} (-R$ ${discount.toFixed(2)})\n`;
+}
+msg += `Pagamento: ${mapMethod[method] || method}\n`;
+   
     msg += `Pagamento: ${mapMethod[method] || method}\n`;
     msg += `\n_Enviado pelo site_`;
 
@@ -1302,58 +1299,6 @@ function resetCouponButton() {
         btn.disabled = false;
         btn.textContent = 'APLICAR';
         btn.style.opacity = '1';
-    }
-}
-
-function loadCart() {
-    const saved = localStorage.getItem('sejaVersatilCart');
-    if (saved) {
-        try {
-            const cartData = JSON.parse(saved);
-            
-            if (Array.isArray(cartData)) {
-                const validItems = [];
-                cartData.forEach(item => {
-                    const product = productsData.find(p => p.id === item.id);
-                    if (product) {
-                        validItems.push({ 
-                            ...product, 
-                            quantity: item.quantity,
-                            selectedSize: item.selectedSize,
-                            selectedColor: item.selectedColor,
-                            cartItemId: item.cartItemId,
-                            image: getProductImage(product)
-                        });
-                    }
-                });
-                state.cart = validItems;
-            } else if (cartData.items) {
-                const validItems = [];
-                cartData.items.forEach(item => {
-                    const product = productsData.find(p => p.id === item.id);
-                    if (product) {
-                        validItems.push({ 
-                            ...product, 
-                            quantity: item.quantity,
-                            selectedSize: item.selectedSize,
-                            selectedColor: item.selectedColor,
-                            cartItemId: item.cartItemId,
-                            image: getProductImage(product)
-                        });
-                    }
-                });
-                state.cart = validItems;
-                
-                if (cartData.appliedCoupon) {
-                    appliedCoupon = cartData.appliedCoupon;
-                    couponDiscount = cartData.couponDiscount || 0;
-                }
-            }
-            
-        } catch (error) {
-            console.error('❌ Erro ao carregar carrinho:', error);
-            state.cart = [];
-        }
     }
 }
 
@@ -1832,6 +1777,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
