@@ -1062,9 +1062,10 @@ async function openAdminPanel() {
         }
         
         // Tudo OK - abrir painel
-        document.getElementById('adminPanel').classList.add('active');
-        renderAdminProducts();
-        updateAdminStats();
+       document.getElementById('adminPanel').classList.add('active');
+renderAdminProducts();
+updateAdminStats();
+loadCoupons();
         //console.log('✅ Painel admin aberto com sucesso');
         
     } catch (error) {
@@ -5086,4 +5087,5 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
