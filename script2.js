@@ -3040,110 +3040,6 @@ async function applyCoupon() {
     const input = document.getElementById('couponInput');
     const btn = document.getElementById('applyCouponBtn');
     const message = document.getElementById('couponMessage');
-    
-    if (!input || !btn) return;
-    
-    const code = input.value
-    .trim()
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '') // ✅ Remove caracteres especiais
-    .slice(0, 20); // ✅ Limita tamanho
-
-    if (!code || code.length < 3) {
-        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
-        return;
-    }
-    
-    // Desabilita botão durante verificação
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Validando...';
-    btn.style.opacity = '0.6';
-    
-    try {
-        // 1. Buscar cupom no Firestore
-        const couponDoc = await db.collection('coupons').doc(code).get();
-
-        if (!couponDoc.exists) {
-            showCouponMessage('❌ Cupom não encontrado', 'error');
-            return;
-        }
-
-        const coupon = { id: couponDoc.id, ...couponDoc.data() };
-
-        if (!coupon.active) {
-            showCouponMessage('❌ Cupom inativo', 'error');
-            return;
-        }
-        
-        // [BLOCO DE CÓDIGO DUPLICADO/ERRADO REMOVIDO AQUI]
-        
-        // 2. Validar data de validade
-        const now = new Date();
-        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
-        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
-        
-        if (validFrom && now < validFrom) {
-            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
-            return;
-        }
-        
-        if (validUntil && now > validUntil) {
-            showCouponMessage('❌ Este cupom expirou', 'error');
-            return;
-        }
-        
-        // 3. Verificar limite total de usos
-        if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
-            showCouponMessage('❌ Este cupom atingiu o limite de usos', 'error');
-            return;
-        }
-        
-        // 4. Verificar valor mínimo do carrinho
-        const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        if (coupon.minValue && cartValue < coupon.minValue) {
-            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
-            return;
-        }
-        
-        // 5. Verificar uso por usuário (se logado)
-        if (coupon.usagePerUser) {
-            if (!auth.currentUser) {
-                showCouponMessage('❌ Faça login para usar este cupom', 'error');
-                return;
-            }
-            
-            const usageQuery = await db.collection('coupon_usage')
-                .where('couponId', '==', coupon.id)
-                .where('userId', '==', auth.currentUser.uid)
-                .get();
-            
-            if (usageQuery.size >= coupon.usagePerUser) {
-                showCouponMessage('❌ Você já usou este cupom', 'error');
-                return;
-            }
-        }
-
-        // Código para aplicar o desconto deve vir aqui...
-
-    } catch (error) {
-        console.error(error);
-        showCouponMessage('❌ Erro ao processar cupom', 'error');
-    } finally {
-        // Reabilita o botão
-        if(btn) {
-            btn.disabled = false;
-            btn.innerHTML = 'APLICAR';
-            btn.style.opacity = '1';
-        }
-    }
-}
-        
-        // 6. Calcular desconto
-async function applyCoupon() {
-    const input = document.getElementById('couponInput');
-    const btn = document.getElementById('applyCouponBtn');
-    const message = document.getElementById('couponMessage');
 
     if (!input || !btn) return;
 
@@ -3923,6 +3819,24 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+function checkout() {
+    if (cart.length === 0) {
+        showToast('Seu carrinho está vazio!', 'error');
+        return;
+    }
+    
+    // Fechar carrinho
+    toggleCart();
+    
+    // Abrir modal de pagamento
+    setTimeout(() => {
+        openPaymentModal();
+    }, 300);
+    
+    // Tracking
+    trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
+}
 
 // ==================== CHECKOUT VIA WHATSAPP ====================
 
@@ -4985,6 +4899,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
