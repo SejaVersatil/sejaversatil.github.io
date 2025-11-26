@@ -3786,7 +3786,8 @@ function sendToWhatsApp() {
     const paymentText = paymentMethods[paymentMethod];
     
     // Calcular total
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+const total = Math.max(0, subtotal - (couponDiscount || 0));
     
     // Montar mensagem
     let message = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
@@ -3794,21 +3795,35 @@ function sendToWhatsApp() {
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     
     cart.forEach((item, index) => {
-    message += `${index + 1}. *${item.name}*\n`;
-    
-    // ← ADICIONAR TAMANHO E COR
+    msg += `${index+1}. *${item.name}*\n`;
     if (item.selectedSize || item.selectedColor) {
-        message += `   📏 Tamanho: ${item.selectedSize || 'Não selecionado'}\n`;
-        message += `   🎨 Cor: ${item.selectedColor || 'Não selecionada'}\n`;
+        msg += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`;
     }
-    
-    message += `   Qtd: ${item.quantity}\n`;
-    message += `   Valor Unit.: R$ ${item.price.toFixed(2)}\n`;
-    message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+    msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
+    msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
 });
-    
-    message += `━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
+
+// ✅ ADICIONAR AQUI
+// Cupom aplicado
+if (appliedCoupon && couponDiscount > 0) {
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `🎟️ *CUPOM APLICADO:* ${appliedCoupon.code}\n`;
+    msg += `💰 *Desconto:* R$ ${couponDiscount.toFixed(2)}\n\n`;
+}
+
+msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+
+// ✅ MODIFICAR CÁLCULO
+const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+const total = Math.max(0, subtotal - (couponDiscount || 0));
+
+// ✅ ADICIONAR BREAKDOWN
+if (couponDiscount > 0) {
+    msg += `*SUBTOTAL: R$ ${subtotal.toFixed(2)}*\n`;
+    msg += `*DESCONTO: -R$ ${couponDiscount.toFixed(2)}*\n`;
+}
+
+     msg += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
     message += `*💳 FORMA DE PAGAMENTO:*\n`;
     message += `${paymentText}\n\n`;
     
@@ -4717,6 +4732,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
