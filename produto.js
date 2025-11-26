@@ -1083,7 +1083,6 @@ let msg = `*🛍️ PEDIDO - SEJA VERSÁTIL*\n\n`;
 if (state.appliedCoupon) {
     msg += `Cupom aplicado: ${state.appliedCoupon.code} (-R$ ${discount.toFixed(2)})\n`;
 }
-msg += `Pagamento: ${mapMethod[method] || method}\n`;
    
     msg += `Pagamento: ${mapMethod[method] || method}\n`;
     msg += `\n_Enviado pelo site_`;
@@ -1777,6 +1776,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
