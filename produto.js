@@ -1277,7 +1277,7 @@ state.couponDiscount = discount;
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
         updateCartUI();
-        saveCart();
+        saveCartToStorage();
 
         showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
 
@@ -1325,7 +1325,7 @@ function removeCoupon() {
     if (message) message.classList.remove('active');
     
     updateCartUI();
-    saveCart();
+    saveCartToStorage();
     showToast('Cupom removido', 'info');
 }
 
@@ -1776,6 +1776,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
