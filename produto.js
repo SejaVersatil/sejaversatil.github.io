@@ -973,9 +973,15 @@ function updateCartUI() {
         cartItems.appendChild(row);
     });
 
-    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
+const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
 const discount = state.couponDiscount || 0;
 const total = Math.max(0, subtotal - discount);
+
+// ✅ ADICIONA ATUALIZAÇÃO DO SUBTOTAL
+const cartSubtotal = document.getElementById('cartSubtotal');
+if (cartSubtotal) {
+    cartSubtotal.textContent = `R$ ${subtotal.toFixed(2)}`;
+}
 
 if (cartTotal) cartTotal.textContent = `R$ ${total.toFixed(2)}`;
 if (cartFooter) cartFooter.style.display = 'block';
@@ -1782,4 +1788,5 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
