@@ -1353,10 +1353,8 @@ function loadCart() {
 }
 
 function removeCoupon() {
-    window.appliedCoupon = null;
-window.couponDiscount = 0;
-appliedCoupon = null;
-couponDiscount = 0;
+    state.appliedCoupon = null;
+    state.couponDiscount = 0;
     
     const badge = document.getElementById('appliedCouponBadge');
     const input = document.getElementById('couponInput');
@@ -1829,6 +1827,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
