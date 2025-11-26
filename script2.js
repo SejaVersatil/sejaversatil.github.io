@@ -3939,7 +3939,7 @@ async function sendToWhatsApp() {
         }
     }
     
-    // Obter forma de pagamento selecionada
+// Obter forma de pagamento selecionada
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
     const installments = document.getElementById('installments').value;
     
@@ -3953,58 +3953,54 @@ async function sendToWhatsApp() {
     
     const paymentText = paymentMethods[paymentMethod];
     
-    // Calcular total
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = Math.max(0, subtotal - (couponDiscount || 0));
-    
     // Montar mensagem
     let msg = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
-msg += `*📦 PRODUTOS:*\n`;
-msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    msg += `*📦 PRODUTOS:*\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     
     cart.forEach((item, index) => {
-        message += `${index+1}. *${item.name}*\n`;
+        msg += `${index+1}. *${item.name}*\n`; // Corrigido de message para msg
         if (item.selectedSize || item.selectedColor) {
-            message += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`;
+            msg += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`; // Corrigido de message para msg
         }
-        message += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
-        message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`; // Corrigido de message para msg
+        msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`; // Corrigido de message para msg
     });
-}
-// ✅ ADICIONAR AQUI
-// Cupom aplicado
-if (appliedCoupon && couponDiscount > 0) {
+
+    // ✅ MODIFICAR CÁLCULO (Movido para cá para evitar redeclaração e erro de acesso)
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = Math.max(0, subtotal - (couponDiscount || 0));
+
+    // ✅ ADICIONAR AQUI
+    // Cupom aplicado
+    if (appliedCoupon && couponDiscount > 0) {
+        msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+        msg += `🎟️ *CUPOM APLICADO:* ${appliedCoupon.code}\n`;
+        msg += `💰 *Desconto:* R$ ${couponDiscount.toFixed(2)}\n\n`;
+    }
+
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-    msg += `🎟️ *CUPOM APLICADO:* ${appliedCoupon.code}\n`;
-    msg += `💰 *Desconto:* R$ ${couponDiscount.toFixed(2)}\n\n`;
-}
 
-msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-
-// ✅ MODIFICAR CÁLCULO
-const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-const total = Math.max(0, subtotal - (couponDiscount || 0));
-
-// ✅ ADICIONAR BREAKDOWN
-if (couponDiscount > 0) {
-    msg += `*SUBTOTAL: R$ ${subtotal.toFixed(2)}*\n`;
-    msg += `*DESCONTO: -R$ ${couponDiscount.toFixed(2)}*\n`;
-}
+    // ✅ ADICIONAR BREAKDOWN
+    if (couponDiscount > 0) {
+        msg += `*SUBTOTAL: R$ ${subtotal.toFixed(2)}*\n`;
+        msg += `*DESCONTO: -R$ ${couponDiscount.toFixed(2)}*\n`;
+    }
 
     msg += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
-    msg += `*💳 FORMA DE PAGAMENTO:*\n`; // Corrigido de message para msg
-    msg += `${paymentText}\n\n`;        // Corrigido de message para msg
+    msg += `*💳 FORMA DE PAGAMENTO:*\n`; 
+    msg += `${paymentText}\n\n`;        
     
     if (paymentMethod === 'credito-parcelado') {
         const installmentValue = (total / installments).toFixed(2);
-        msg += `📊 *${installments}x de R$ ${installmentValue}*\n\n`; // Corrigido de message para msg
+        msg += `📊 *${installments}x de R$ ${installmentValue}*\n\n`; 
     }
     
-    msg += `━━━━━━━━━━━━━━━━━━━━\n`; // Corrigido de message para msg
-    msg += `_Pedido gerado automaticamente via site_`; // Corrigido de message para msg
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`; 
+    msg += `_Pedido gerado automaticamente via site_`; 
     
     // Codificar mensagem para URL
-    const encodedMessage = encodeURIComponent(msg); // Corrigido de message para msg
+    const encodedMessage = encodeURIComponent(msg); 
     
     // Montar URL do WhatsApp
     const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
@@ -4028,7 +4024,7 @@ if (couponDiscount > 0) {
     
     // Tracking
     trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
-}
+} // Fechamento da função sendToWhatsApp
 
 // Fechar modal ao clicar fora
 document.addEventListener('click', function(e) {
@@ -5008,6 +5004,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
