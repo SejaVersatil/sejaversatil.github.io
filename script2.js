@@ -3160,13 +3160,10 @@ async function applyCoupon() {
         console.error('Erro ao aplicar cupom:', error);
         showCouponMessage('❌ Erro ao validar cupom', 'error');
     } finally {
-        // Verifica se btn existe antes de acessar propriedades para evitar erro
-        if (typeof btn !== 'undefined' && btn) {
-            if (!appliedCoupon) { // Só reativa se falhou (se appliedCoupon existe, o btn some no sucesso)
-                btn.disabled = false;
-                btn.textContent = 'APLICAR';
-                btn.style.opacity = '1';
-            }
+        if (typeof btn !== 'undefined' && btn && !appliedCoupon) {
+            btn.disabled = false;
+            btn.textContent = 'APLICAR';
+            btn.style.opacity = '1';
         }
     }
 }
@@ -3187,11 +3184,16 @@ function removeCoupon() {
         input.value = '';
         input.classList.remove('success');
     }
-    if (btn) btn.style.display = 'block';
+    if (btn) {
+        btn.style.display = 'block';
+        btn.disabled = false; // ← ADICIONE ESTA LINHA
+        btn.textContent = 'APLICAR'; // ← ADICIONE ESTA LINHA
+        btn.style.opacity = '1'; // ← ADICIONE ESTA LINHA
+    }
     if (message) message.classList.remove('active');
     
     updateCartUI();
-    saveCart(); // ✅ Salvar estado sem cupom
+    saveCart();
     showToast('Cupom removido', 'info');
 }
 
@@ -5082,6 +5084,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
