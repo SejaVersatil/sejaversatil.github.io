@@ -1632,11 +1632,6 @@ async function saveProduct(event) {
         return;
     }
 
-    if (!currentUser.permissions?.includes('manage_products')) {
-        showToast('❌ Você não tem permissão para gerenciar produtos', 'error');
-        return;
-    }
-
     document.getElementById('loadingOverlay').classList.add('active');
 
     // ===== CAPTURA DE DADOS =====
@@ -5087,5 +5082,6 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
