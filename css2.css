@@ -995,7 +995,21 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 .stat-card p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
 
 /* Admin Modal */
-.admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3600; align-items: center; justify-content: center; padding: 2rem; }
+.admin-modal { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.7); 
+    z-index: 3600; 
+    align-items: flex-start; /* ← MUDAR de center para flex-start */
+    justify-content: center; 
+    padding: 2rem;
+    padding-top: 3rem; /* ← ADICIONAR para afastar do topo */
+    overflow-y: auto; /* ← ADICIONAR para scroll do próprio modal */
+}
 .admin-modal.active { display: flex; }
 .admin-modal-content {
     background: white;
@@ -1061,7 +1075,40 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 .image-helper { font-size: 0.75rem; color: #666; margin-top: 0.5rem; line-height: 1.6; }
 
 /* Grid de Fotos */
-.image-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.image-list { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    gap: 1rem; 
+    margin-bottom: 1.5rem;
+    max-height: 400px; /* ← ADICIONAR */
+    overflow-y: auto; /* ← ADICIONAR */
+    padding-right: 0.5rem; /* ← ADICIONAR */
+}
+
+/* Scrollbar customizada para lista de imagens - ADICIONAR */
+.image-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.image-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+/* Container do gerenciador de cores - ADICIONAR */
+#productColorsManager {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+#productColorsManager::-webkit-scrollbar {
+    width: 6px;
+}
+
+#productColorsManager::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
 
 /* Cartão da Foto Individual */
 .image-item { position: relative; aspect-ratio: 3/4; border: 2px solid #e5e5e5; background: white; border-radius: 8px; overflow: hidden; transition: all 0.3s ease; }
@@ -2606,6 +2653,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
