@@ -997,10 +997,44 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 /* Admin Modal */
 .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3600; align-items: center; justify-content: center; padding: 2rem; }
 .admin-modal.active { display: flex; }
-.admin-modal-content { background: white; padding: 2rem; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+.admin-modal-content {
+    background: white;
+    padding: 2rem;
+    width: 100%;
+    max-width: 800px; /* ← AUMENTAR DE 600px PARA 800px */
+    max-height: 95vh; /* ← AUMENTAR DE 90vh PARA 95vh */
+    overflow-y: auto;
+    overflow-x: hidden; /* ← ADICIONAR ESTA LINHA */
+}
+/* Ajuste do modal de produto - ADICIONAR ESTA SEÇÃO COMPLETA */
+#productModal .admin-modal-content {
+    max-width: 900px;
+    padding: 1.5rem;
+}
+
+#productModal .admin-form-group {
+    margin-bottom: 1rem;
+}
+
+#productModal .admin-form-group label {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.image-manager {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.image-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray); }
 .admin-modal-header h3 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
-.admin-form-group { margin-bottom: 0.6rem !important; }
+.admin-form-group {
+    margin-bottom: 1.2rem; /* ← REMOVER !important E AUMENTAR ESPAÇO */
+}
 .admin-form-group label { display: block; margin-bottom: 0.2rem !important; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
 .admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--gray); font-size: 0.9rem; font-family: inherit; }
 .admin-form-group textarea { resize: vertical; min-height: 100px; }
@@ -2572,6 +2606,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
