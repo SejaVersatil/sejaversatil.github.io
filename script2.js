@@ -3844,10 +3844,53 @@ function setupPaymentListeners() {
     });
 }
 
-function sendToWhatsApp() {
+async function sendToWhatsApp() {
     if (cart.length === 0) {
-        showToast('Carrinho vazio!', 'error');
+        showToast('Seu carrinho está vazio!', 'error');
         return;
+    }
+    
+    // ✅ REVALIDAR CUPOM NO SERVIDOR
+    if (appliedCoupon) {
+        try {
+            const couponDoc = await db.collection('coupons').doc(appliedCoupon.id).get();
+            
+            if (!couponDoc.exists || !couponDoc.data().active) {
+                showToast('❌ Cupom inválido', 'error');
+                removeCoupon();
+                return;
+            }
+            
+            const serverCoupon = couponDoc.data();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Revalidar valor mínimo
+            if (serverCoupon.minValue && subtotal < serverCoupon.minValue) {
+                showToast(`❌ Valor mínimo: R$ ${serverCoupon.minValue.toFixed(2)}`, 'error');
+                removeCoupon();
+                return;
+            }
+            
+            // Recalcular desconto
+            let recalculatedDiscount = 0;
+            if (serverCoupon.type === 'percentage') {
+                recalculatedDiscount = (subtotal * serverCoupon.value) / 100;
+                if (serverCoupon.maxDiscount && recalculatedDiscount > serverCoupon.maxDiscount) {
+                    recalculatedDiscount = serverCoupon.maxDiscount;
+                }
+            } else {
+                recalculatedDiscount = serverCoupon.value;
+            }
+            
+            // ✅ USAR DESCONTO RECALCULADO
+            couponDiscount = Math.min(recalculatedDiscount, subtotal);
+            
+        } catch (error) {
+            console.error('Erro ao validar cupom:', error);
+            showToast('Erro ao validar cupom', 'error');
+            removeCoupon();
+            return;
+        }
     }
     
     // Obter forma de pagamento selecionada
@@ -3866,7 +3909,7 @@ function sendToWhatsApp() {
     
     // Calcular total
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-const total = Math.max(0, subtotal - (couponDiscount || 0));
+    const total = Math.max(0, subtotal - (couponDiscount || 0));
     
     // Montar mensagem
     let message = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
@@ -3874,14 +3917,14 @@ const total = Math.max(0, subtotal - (couponDiscount || 0));
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     
     cart.forEach((item, index) => {
-    msg += `${index+1}. *${item.name}*\n`;
-    if (item.selectedSize || item.selectedColor) {
-        msg += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`;
-    }
-    msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
-    msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
-});
-
+        message += `${index+1}. *${item.name}*\n`;
+        if (item.selectedSize || item.selectedColor) {
+            message += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`;
+        }
+        message += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
+        message += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+    });
+}
 // ✅ ADICIONAR AQUI
 // Cupom aplicado
 if (appliedCoupon && couponDiscount > 0) {
@@ -4810,6 +4853,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
