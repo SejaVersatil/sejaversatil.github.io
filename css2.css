@@ -1980,12 +1980,121 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     
     .search-bar, .search-bar input, .nav-menu { display: none !important; }
 
-    /* Cart Sidebar */
-    .cart-sidebar { width: 100%; right: -100%; }
-    .cart-sidebar.active { right: 0; }
-    .cart-items { padding: 1rem; }
-    .cart-item { flex-direction: column; align-items: flex-start; }
-    .cart-item-img { width: 100%; height: 200px; margin-bottom: 1rem; }
+   /* ===== CARRINHO MOBILE PROFISSIONAL ===== */
+    .cart-sidebar {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        right: -100vw;
+    }
+    
+    .cart-sidebar.active {
+        right: 0 !important;
+    }
+    
+    .cart-header {
+        padding: 1rem !important;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .cart-header h3 {
+        font-size: 0.85rem !important;
+    }
+    
+    .close-cart {
+        width: 30px;
+        height: 30px;
+        font-size: 1.2rem;
+    }
+    
+    .cart-items {
+        padding: 1rem !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .cart-item {
+        gap: 0.8rem !important;
+        padding-bottom: 1rem !important;
+        margin-bottom: 1rem !important;
+        flex-direction: row !important; /* ← MANTÉM HORIZONTAL */
+        align-items: flex-start !important;
+    }
+    
+    .cart-item-img {
+        width: 60px !important; /* ← COMPACTO */
+        height: 80px !important;
+        min-width: 60px !important;
+        border-radius: 6px !important;
+        margin-bottom: 0 !important; /* ← REMOVE MARGEM */
+    }
+    
+    .cart-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .cart-item-title {
+        font-size: 0.8rem !important;
+        line-height: 1.25 !important;
+    }
+    
+    .cart-item-meta {
+        font-size: 0.7rem !important;
+    }
+    
+    .cart-item-price {
+        font-size: 0.95rem !important;
+    }
+    
+    .cart-item-qty {
+        gap: 0.5rem !important;
+    }
+    
+    .qty-btn {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .cart-item-qty span {
+        font-size: 0.85rem !important;
+    }
+    
+    .remove-item {
+        font-size: 0.7rem !important;
+    }
+    
+    .cart-footer {
+        padding: 1rem !important;
+        position: sticky;
+        bottom: 0;
+        box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.08);
+    }
+    
+    .cart-total {
+        margin-bottom: 1rem !important;
+        padding-bottom: 0.8rem !important;
+    }
+    
+    .cart-total span:first-child {
+        font-size: 0.8rem !important;
+    }
+    
+    .cart-total span:last-child {
+        font-size: 1.3rem !important;
+    }
+    
+    .checkout-btn {
+        padding: 1rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px !important;
+    }
+    
+    .empty-cart {
+        padding: 2rem 1.5rem !important;
+        min-height: 150px !important;
+    }
 
    /* Promo Cards */
 .promo-cards-grid { 
@@ -2127,6 +2236,54 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     margin: 0 2px !important;
     color: #FFD700 !important;
     flex-shrink: 0 !important;
+}
+
+   /* Mobile Pequeno */
+@media (max-width: 374px) {
+    .cart-header h3 {
+        font-size: 0.75rem !important;
+    }
+    
+    .cart-item-img {
+        width: 55px !important;
+        height: 72px !important;
+        min-width: 55px !important;
+    }
+    
+    .cart-item-title {
+        font-size: 0.75rem !important;
+    }
+    
+    .cart-item-price {
+        font-size: 0.9rem !important;
+    }
+    
+    .qty-btn {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    
+    .cart-total span:last-child {
+        font-size: 1.2rem !important;
+    }
+    
+    .checkout-btn {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .cart-sidebar {
+        width: 50vw !important;
+        max-width: 450px !important;
+    }
+    
+    .cart-header,
+    .cart-items,
+    .cart-footer {
+        padding: 0.8rem 1rem !important;
+    }
 }
    
 /* Black Friday Mobile Pequeno */
@@ -2415,3 +2572,4 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
