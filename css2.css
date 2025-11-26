@@ -1027,7 +1027,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 }
 
 #productModal .admin-form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 #productModal .admin-form-group label {
@@ -1046,9 +1046,6 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 }
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray); }
 .admin-modal-header h3 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
-.admin-form-group {
-    margin-bottom: 1.2rem; /* ← REMOVER !important E AUMENTAR ESPAÇO */
-}
 .admin-form-group label { display: block; margin-bottom: 0.2rem !important; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
 .admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--gray); font-size: 0.9rem; font-family: inherit; }
 .admin-form-group textarea { resize: vertical; min-height: 100px; }
@@ -1061,7 +1058,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 
 /* ==================== GERENCIADOR DE FOTOS (ATUALIZADO) ==================== */
 /* Container Geral */
-.image-manager { margin-bottom: 1.5rem; padding: 1.5rem; border: 2px dashed #e0e0e0; background: #fafafa; border-radius: 8px; }
+.image-manager { 
+    margin-bottom: 1.2rem; 
+    margin-top: 0.5rem;
+    padding: 1rem; 
+    border: 2px dashed #e0e0e0; 
+    background: #fafafa; 
+    border-radius: 8px; 
+}
 .image-manager-title { font-weight: 700; margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; color: #333; }
 .image-upload-options { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
 .image-add-btn { flex: 1; padding: 0.8rem; background: white; border: 2px solid var(--primary); color: var(--primary); cursor: pointer; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; transition: all 0.3s; position: relative; }
@@ -2656,6 +2660,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
