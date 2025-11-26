@@ -3140,12 +3140,96 @@ async function applyCoupon() {
 }
         
         // 6. Calcular desconto
-// ✅ CORREÇÃO: Definir cartValue antes de usar
+async function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyCouponBtn');
+    const message = document.getElementById('couponMessage');
+
+    if (!input || !btn) return;
+
+    const code = input.value
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+        .slice(0, 20);
+
+    if (!code || code.length < 3) {
+        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
+        return;
+    }
+
+    // Desabilita botão durante verificação
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Validando...';
+    btn.style.opacity = '0.6';
+
+    try { // ✅ ABERTURA DO BLOCO TRY
+        // 1. Buscar cupom no Firestore
+        const couponDoc = await db.collection('coupons').doc(code).get();
+
+        if (!couponDoc.exists) {
+            showCouponMessage('❌ Cupom não encontrado', 'error');
+            return;
+        }
+
+        const coupon = { id: couponDoc.id, ...couponDoc.data() };
+
+        if (!coupon.active) {
+            showCouponMessage('❌ Cupom inativo', 'error');
+            return;
+        }
+
+        // 2. Validar data de validade
+        const now = new Date();
+        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
+        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
+
+        if (validFrom && now < validFrom) {
+            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
+            return;
+        }
+
+        if (validUntil && now > validUntil) {
+            showCouponMessage('❌ Este cupom expirou', 'error');
+            return;
+        }
+
+        // 3. Verificar limite total de usos
+        if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+            showCouponMessage('❌ Este cupom atingiu o limite de usos', 'error');
+            return;
+        }
+
+        // ✅ CORREÇÃO: Definir cartValue antes de usar
         const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        // 4. Verificar valor mínimo do carrinho (usando cartValue definido)
+        if (coupon.minValue && cartValue < coupon.minValue) {
+            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
+            return;
+        }
+
+        // 5. Verificar uso por usuário (se logado)
+        if (coupon.usagePerUser) {
+            if (!auth.currentUser) {
+                showCouponMessage('❌ Faça login para usar este cupom', 'error');
+                return;
+            }
+
+            const usageQuery = await db.collection('coupon_usage')
+                .where('couponId', '==', coupon.id)
+                .where('userId', '==', auth.currentUser.uid)
+                .get();
+
+            if (usageQuery.size >= coupon.usagePerUser) {
+                showCouponMessage('❌ Você já usou este cupom', 'error');
+                return;
+            }
+        }
 
         // 6. Calcular desconto
         let discount = 0;
-        
+
         if (coupon.type === 'percentage') {
             discount = (cartValue * coupon.value) / 100;
             if (coupon.maxDiscount && discount > coupon.maxDiscount) {
@@ -3154,42 +3238,43 @@ async function applyCoupon() {
         } else if (coupon.type === 'fixed') {
             discount = coupon.value;
         }
-        
+
         // Desconto não pode ser maior que o valor do carrinho
         if (discount > cartValue) {
             discount = cartValue;
         }
-        
+
         // 7. Aplicar cupom
         appliedCoupon = coupon;
         couponDiscount = discount;
-        
+
         // 8. Atualizar UI
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
         updateCartUI();
         saveCart(); // ✅ Salvar cupom
-        
+
         showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
-        
+
         // Limpar input
         input.value = '';
         input.disabled = true;
         btn.style.display = 'none';
-        
+
     } catch (error) {
         console.error('Erro ao aplicar cupom:', error);
         showCouponMessage('❌ Erro ao validar cupom', 'error');
     } finally {
         // Verifica se btn existe antes de acessar propriedades para evitar erro
         if (typeof btn !== 'undefined' && btn) {
-            btn.disabled = false;
-            btn.textContent = 'APLICAR';
-            btn.style.opacity = '1';
+            if (!appliedCoupon) { // Só reativa se falhou (se appliedCoupon existe, o btn some no sucesso)
+                btn.disabled = false;
+                btn.textContent = 'APLICAR';
+                btn.style.opacity = '1';
+            }
         }
     }
 }
-
 // Remover cupom
 function removeCoupon() {
     appliedCoupon = null;
@@ -4900,6 +4985,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
