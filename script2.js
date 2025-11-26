@@ -2831,13 +2831,22 @@ function toggleCart() {
 }
 
 function saveCart() {
-    const cartData = cart.map(item => ({
-        id: item.id,
-        quantity: item.quantity,
-        selectedSize: item.selectedSize,
-        selectedColor: item.selectedColor,
-        cartItemId: item.cartItemId
-    }));
+    const cartData = {
+        items: cart.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            selectedSize: item.selectedSize,
+            selectedColor: item.selectedColor,
+            cartItemId: item.cartItemId
+        })),
+        appliedCoupon: appliedCoupon ? {
+            id: appliedCoupon.id,
+            code: appliedCoupon.code,
+            type: appliedCoupon.type,
+            value: appliedCoupon.value
+        } : null,
+        couponDiscount: couponDiscount || 0
+    };
     localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
 }
 
@@ -4447,3 +4456,4 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
