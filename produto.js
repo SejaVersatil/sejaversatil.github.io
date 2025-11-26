@@ -1242,7 +1242,7 @@ async function applyCoupon() {
             return;
         }
 
-        const cartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const cartValue = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         if (coupon.minValue && cartValue < coupon.minValue) {
             showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
@@ -1265,8 +1265,14 @@ async function applyCoupon() {
             discount = cartValue;
         }
 
-        appliedCoupon = coupon;
-        couponDiscount = discount;
+if (typeof window.appliedCoupon === 'undefined') window.appliedCoupon = null;
+if (typeof window.couponDiscount === 'undefined') window.couponDiscount = 0;
+
+window.appliedCoupon = coupon;
+window.couponDiscount = discount;
+       
+        appliedCoupon = window.appliedCoupon;
+couponDiscount = window.couponDiscount;
 
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
@@ -1348,8 +1354,10 @@ function loadCart() {
 }
 
 function removeCoupon() {
-    appliedCoupon = null;
-    couponDiscount = 0;
+    window.appliedCoupon = null;
+window.couponDiscount = 0;
+appliedCoupon = null;
+couponDiscount = 0;
     
     const badge = document.getElementById('appliedCouponBadge');
     const input = document.getElementById('couponInput');
@@ -1822,6 +1830,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
