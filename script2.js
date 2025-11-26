@@ -4882,4 +4882,204 @@ function renderDropdownResults(products) {
     dropdown.classList.add('active');
 }
 
+// ==================== FUNÇÕES DE CUPONS (ADMIN) ====================
 
+function openCouponModal(couponId = null) {
+    const modal = document.getElementById('couponModal');
+    const form = document.getElementById('couponForm');
+    
+    if (couponId) {
+        // Modo edição
+        loadCouponData(couponId);
+    } else {
+        // Modo criação
+        form.reset();
+        document.getElementById('couponId').value = '';
+        document.getElementById('couponActive').checked = true;
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeCouponModal() {
+    document.getElementById('couponModal').classList.remove('active');
+    document.getElementById('couponForm').reset();
+}
+
+function toggleMaxDiscount() {
+    const type = document.getElementById('couponType').value;
+    const maxDiscountGroup = document.getElementById('maxDiscountGroup');
+    
+    if (type === 'percentage') {
+        maxDiscountGroup.style.display = 'block';
+    } else {
+        maxDiscountGroup.style.display = 'none';
+        document.getElementById('couponMaxDiscount').value = '';
+    }
+}
+
+async function saveCoupon(event) {
+    event.preventDefault();
+    
+    if (!auth.currentUser || !currentUser.isAdmin) {
+        showToast('❌ Apenas admins podem gerenciar cupons', 'error');
+        return;
+    }
+    
+    const code = document.getElementById('couponCode').value.trim().toUpperCase();
+    const type = document.getElementById('couponType').value;
+    const value = parseFloat(document.getElementById('couponValue').value);
+    const maxDiscount = document.getElementById('couponMaxDiscount').value ? 
+        parseFloat(document.getElementById('couponMaxDiscount').value) : null;
+    const minValue = document.getElementById('couponMinValue').value ? 
+        parseFloat(document.getElementById('couponMinValue').value) : null;
+    const usageLimit = document.getElementById('couponUsageLimit').value ? 
+        parseInt(document.getElementById('couponUsageLimit').value) : null;
+    const usagePerUser = document.getElementById('couponUsagePerUser').value ? 
+        parseInt(document.getElementById('couponUsagePerUser').value) : null;
+    const active = document.getElementById('couponActive').checked;
+    
+    const validFromInput = document.getElementById('couponValidFrom').value;
+    const validUntilInput = document.getElementById('couponValidUntil').value;
+    
+    const couponData = {
+        code,
+        type,
+        value,
+        maxDiscount,
+        minValue,
+        usageLimit,
+        usagePerUser,
+        active,
+        usedCount: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdBy: auth.currentUser.uid
+    };
+    
+    if (validFromInput) {
+        couponData.validFrom = firebase.firestore.Timestamp.fromDate(new Date(validFromInput));
+    }
+    if (validUntilInput) {
+        couponData.validUntil = firebase.firestore.Timestamp.fromDate(new Date(validUntilInput));
+    }
+    
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        await db.collection('coupons').doc(code).set(couponData);
+        
+        showToast('✅ Cupom criado com sucesso!', 'success');
+        closeCouponModal();
+        loadCoupons();
+        
+    } catch (error) {
+        console.error('❌ Erro ao salvar cupom:', error);
+        showToast('Erro ao salvar cupom: ' + error.message, 'error');
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
+
+async function loadCoupons() {
+    try {
+        const snapshot = await db.collection('coupons').get();
+        
+        const activeCoupons = [];
+        const inactiveCoupons = [];
+        
+        snapshot.forEach(doc => {
+            const coupon = { id: doc.id, ...doc.data() };
+            
+            if (coupon.active) {
+                activeCoupons.push(coupon);
+            } else {
+                inactiveCoupons.push(coupon);
+            }
+        });
+        
+        renderCouponsList('activeCouponsList', activeCoupons);
+        renderCouponsList('inactiveCouponsList', inactiveCoupons);
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar cupons:', error);
+    }
+}
+
+function renderCouponsList(containerId, coupons) {
+    const container = document.getElementById(containerId);
+    
+    if (coupons.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Nenhum cupom encontrado</p>';
+        return;
+    }
+    
+    container.innerHTML = coupons.map(coupon => `
+        <div class="coupon-admin-card ${!coupon.active ? 'inactive' : ''}">
+            <div class="coupon-admin-info">
+                <h4>${coupon.code}</h4>
+                <div class="coupon-admin-details">
+                    <div class="coupon-detail-item">
+                        <span class="coupon-detail-label">Tipo</span>
+                        <span class="coupon-detail-value">${coupon.type === 'percentage' ? 'Porcentagem' : 'Fixo'}</span>
+                    </div>
+                    <div class="coupon-detail-item">
+                        <span class="coupon-detail-label">Valor</span>
+                        <span class="coupon-detail-value">${coupon.type === 'percentage' ? coupon.value + '%' : 'R$ ' + coupon.value.toFixed(2)}</span>
+                    </div>
+                    ${coupon.minValue ? `
+                    <div class="coupon-detail-item">
+                        <span class="coupon-detail-label">Valor Mínimo</span>
+                        <span class="coupon-detail-value">R$ ${coupon.minValue.toFixed(2)}</span>
+                    </div>
+                    ` : ''}
+                    ${coupon.usageLimit ? `
+                    <div class="coupon-detail-item">
+                        <span class="coupon-detail-label">Usos</span>
+                        <span class="coupon-detail-value">${coupon.usedCount || 0} / ${coupon.usageLimit}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="coupon-admin-actions">
+                <button class="coupon-toggle-btn ${coupon.active ? 'deactivate' : 'activate'}" 
+                        onclick="toggleCouponStatus('${coupon.id}', ${!coupon.active})">
+                    ${coupon.active ? '⏸️ Desativar' : '▶️ Ativar'}
+                </button>
+                <button class="coupon-delete-btn" onclick="deleteCouponPrompt('${coupon.id}')">
+                    🗑️ Deletar
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function toggleCouponStatus(couponId, newStatus) {
+    try {
+        await db.collection('coupons').doc(couponId).update({
+            active: newStatus
+        });
+        
+        showToast(newStatus ? '✅ Cupom ativado' : '⏸️ Cupom desativado', 'success');
+        loadCoupons();
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        showToast('Erro ao alterar status', 'error');
+    }
+}
+
+async function deleteCouponPrompt(couponId) {
+    if (!confirm(`🗑️ Deletar cupom "${couponId}"?\n\nEsta ação não pode ser desfeita.`)) {
+        return;
+    }
+    
+    try {
+        await db.collection('coupons').doc(couponId).delete();
+        showToast('🗑️ Cupom deletado', 'info');
+        loadCoupons();
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        showToast('Erro ao deletar cupom', 'error');
+    }
+}
