@@ -1000,8 +1000,8 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 .admin-modal-content { background: white; padding: 2rem; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray); }
 .admin-modal-header h3 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
-.admin-form-group { margin-bottom: 0.8rem; }
-.admin-form-group label { display: block; margin-bottom: 0.2rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+.admin-form-group { margin-bottom: 0.6rem !important; }
+.admin-form-group label { display: block; margin-bottom: 0.2rem !important; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
 .admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--gray); font-size: 0.9rem; font-family: inherit; }
 .admin-form-group textarea { resize: vertical; min-height: 100px; }
 .admin-form-actions { display: flex; gap: 1rem; margin-top: 2rem; }
@@ -2572,6 +2572,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
