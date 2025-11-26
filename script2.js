@@ -2838,7 +2838,44 @@ function removeFromCart(identifier) {
         const itemId = item.cartItemId || item.id;
         return itemId !== identifier;
     });
-    saveCart();
+    
+    // ✅ RECALCULAR CUPOM APÓS REMOÇÃO
+    if (appliedCoupon && couponDiscount > 0) {
+        const newSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Se carrinho ficou vazio, remove o cupom
+        if (cart.length === 0) {
+            removeCoupon();
+        } 
+        // Se tem valor mínimo e não atinge mais, remove o cupom
+        else if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
+            removeCoupon();
+            showToast(`❌ Cupom removido: valor mínimo R$ ${appliedCoupon.minValue.toFixed(2)}`, 'error');
+        }
+        // Recalcula o desconto com o novo subtotal
+        else {
+            let newDiscount = 0;
+            
+            if (appliedCoupon.type === 'percentage') {
+                newDiscount = (newSubtotal * appliedCoupon.value) / 100;
+                if (appliedCoupon.maxDiscount && newDiscount > appliedCoupon.maxDiscount) {
+                    newDiscount = appliedCoupon.maxDiscount;
+                }
+            } else if (appliedCoupon.type === 'fixed') {
+                newDiscount = appliedCoupon.value;
+            }
+            
+            // Desconto não pode ser maior que o subtotal
+            if (newDiscount > newSubtotal) {
+                newDiscount = newSubtotal;
+            }
+            
+            couponDiscount = newDiscount;
+            showAppliedCouponBadge(appliedCoupon, newDiscount);
+            saveCart();
+        }
+    }
+    
     updateCartUI();
     showToast('Item removido do carrinho', 'info');
 }
@@ -2922,15 +2959,19 @@ function loadCart() {
                     
                     // Atualizar UI do cupom
                     requestAnimationFrame(() => {
-                        const input = document.getElementById('couponInput');
-                        const btn = document.getElementById('applyCouponBtn');
-                        if (input) {
-                            input.disabled = true;
-                            input.classList.add('success');
-                        }
-                        if (btn) btn.style.display = 'none';
-                        showAppliedCouponBadge(appliedCoupon, couponDiscount);
-                    });
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyCouponBtn');
+    if (input) {
+        input.disabled = true;
+        input.classList.add('success');
+    }
+    if (btn) btn.style.display = 'none';
+    
+    // Só chama se a função já existir (evita erro na inicialização)
+    if (typeof showAppliedCouponBadge === 'function') {
+        showAppliedCouponBadge(appliedCoupon, couponDiscount);
+    }
+});
                 }
             }
             
@@ -3020,17 +3061,22 @@ async function applyCoupon() {
         }
         
         // 5. Verificar uso por usuário (se logado)
-        if (auth.currentUser && coupon.usagePerUser) {
-            const usageQuery = await db.collection('coupon_usage')
-                .where('couponId', '==', coupon.id)
-                .where('userId', '==', auth.currentUser.uid)
-                .get();
-            
-            if (usageQuery.size >= coupon.usagePerUser) {
-                showCouponMessage('❌ Você já usou este cupom', 'error');
-                return;
-            }
-        }
+if (coupon.usagePerUser) {
+    if (!auth.currentUser) {
+        showCouponMessage('❌ Faça login para usar este cupom', 'error');
+        return;
+    }
+    
+    const usageQuery = await db.collection('coupon_usage')
+        .where('couponId', '==', coupon.id)
+        .where('userId', '==', auth.currentUser.uid)
+        .get();
+    
+    if (usageQuery.size >= coupon.usagePerUser) {
+        showCouponMessage('❌ Você já usou este cupom', 'error');
+        return;
+    }
+}
         
         // 6. Calcular desconto
         let discount = 0;
@@ -4731,6 +4777,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
