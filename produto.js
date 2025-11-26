@@ -631,6 +631,12 @@ function renderSizes() {
 }
 
 function selectSize(size) {
+    // Verifica se já selecionou uma cor
+    if (!state.selectedColor) {
+        showToast('👉 Selecione uma cor primeiro', 'error');
+        return; // Impede a seleção do tamanho
+    }
+    
     state.selectedSize = size;
     // Atualiza visual dos botões
     document.querySelectorAll('.size-option').forEach(opt => {
@@ -1776,6 +1782,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
