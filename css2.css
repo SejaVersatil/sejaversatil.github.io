@@ -518,13 +518,13 @@ nav {
 /* === ITEM INDIVIDUAL === */
 .cart-item {
     display: flex;
-    gap: 1rem;
-    padding-bottom: 1.2rem;
-    margin-bottom: 1.2rem;
+    gap: 0.8rem;  /* ← REDUZIDO para aproveitar espaço */
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
     border-bottom: 1px solid #f5f5f5;
     animation: slideInRight 0.3s ease;
+    align-items: flex-start;  /* ← ADICIONAR esta linha */
 }
-
 .cart-item:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -543,14 +543,14 @@ nav {
 
 /* Imagem do Produto */
 .cart-item-img {
-    width: 70px !important;
-    height: 90px !important;
-    min-width: 70px;
+    width: 80px !important;  /* ← AUMENTADO de 70px */
+    height: 106px !important;  /* ← AUMENTADO (mantém proporção 3:4) */
+    min-width: 80px;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
-    border-radius: 8px;
-    border: 1px solid #f0f0f0;
+    border-radius: 6px;  /* ← REDUZIDO para parecer mais clean */
+    border: 1px solid #e5e5e5;  /* ← COR AJUSTADA */
     flex-shrink: 0;
 }
 
@@ -565,7 +565,7 @@ nav {
 
 .cart-item-title {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.75rem;  /* ← JÁ ESTÁ REDUZIDO */
     font-weight: 600;
     color: #1a1a1a;
     line-height: 1.25;
@@ -585,10 +585,12 @@ nav {
 
 .cart-item-price {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.1rem;  /* ← REDUZIDO de 1rem */
+    font-size: 0.9rem;  /* ← AUMENTAR um pouco */
     font-weight: 700;
     color: #000;
-    margin: 0.15rem 0;  /* ← AJUSTADO */
+    margin: 0.2rem 0;
+    display: block;  /* ← ADICIONAR esta linha */
+    line-height: 1.2;  /* ← ADICIONAR esta linha */
 }
 
 /* Controles de Quantidade */
@@ -2104,8 +2106,8 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
     
     .cart-item-img {
-        width: 60px !important; /* ← COMPACTO */
-        height: 80px !important;
+        width: 70px !important; /* ← COMPACTO */
+        height: 93px !important;
         min-width: 60px !important;
         border-radius: 6px !important;
         margin-bottom: 0 !important; /* ← REMOVE MARGEM */
@@ -2122,11 +2124,12 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     }
     
     .cart-item-meta {
-        font-size: 0.7rem !important;
+        font-size: 0.75rem !important;
     }
     
     .cart-item-price {
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;
+        display: block !important;
     }
     
     .cart-item-qty {
@@ -2654,6 +2657,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
 
 
 
