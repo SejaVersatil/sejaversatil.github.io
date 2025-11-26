@@ -2864,7 +2864,6 @@ function updateQuantity(cartItemId, change) {
         updateCartUI();
     }
 }
-}
 
 function removeFromCart(identifier) {
     cart = cart.filter(item => {
@@ -4887,6 +4886,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
