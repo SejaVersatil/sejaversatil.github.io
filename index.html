@@ -798,7 +798,7 @@
   }
   </script>
 
-  <script>
+   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -811,14 +811,5 @@
       });
     }
   </script>
-
-  <!-- MODAL DE DETALHES DO PRODUTO -->
-<div class="product-details-modal" id="productDetailsModal">
-    <div class="product-details-overlay" onclick="closeProductDetails()"></div>
-    <div class="product-details-container">
-        <!-- Conteúdo será preenchido pelo JS -->
-    </div>
-</div>
-  
 </body>
 </html>
