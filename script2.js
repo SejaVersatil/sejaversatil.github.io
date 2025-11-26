@@ -2816,21 +2816,54 @@ cartFooter.style.display = 'block';
     });
 }
 
-function updateQuantity(identifier, change) {
+function updateQuantity(cartItemId, change) {
     const item = cart.find(i => {
         const itemId = i.cartItemId || i.id;
-        return itemId === identifier;
+        return itemId === cartItemId;
     });
     
-    if (item) {
-        item.quantity += change;
-        if (item.quantity <= 0) {
-            removeFromCart(identifier);
-        } else {
-            saveCart();
-            updateCartUI();
+    if (!item) return;
+    item.quantity = (item.quantity || 1) + change;
+    
+    if (item.quantity <= 0) {
+        removeFromCart(cartItemId);
+    } else {
+        // ✅ RECALCULAR CUPOM APÓS MUDANÇA DE QUANTIDADE
+        if (appliedCoupon && couponDiscount > 0) {
+            const newSubtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            
+            // Se tem valor mínimo e não atinge mais, remove o cupom
+            if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
+                removeCoupon();
+                showToast(`❌ Cupom removido: valor mínimo R$ ${appliedCoupon.minValue.toFixed(2)}`, 'error');
+            }
+            // Recalcula o desconto com o novo subtotal
+            else {
+                let newDiscount = 0;
+                
+                if (appliedCoupon.type === 'percentage') {
+                    newDiscount = (newSubtotal * appliedCoupon.value) / 100;
+                    if (appliedCoupon.maxDiscount && newDiscount > appliedCoupon.maxDiscount) {
+                        newDiscount = appliedCoupon.maxDiscount;
+                    }
+                } else if (appliedCoupon.type === 'fixed') {
+                    newDiscount = appliedCoupon.value;
+                }
+                
+                // Desconto não pode ser maior que o subtotal
+                if (newDiscount > newSubtotal) {
+                    newDiscount = newSubtotal;
+                }
+                
+                couponDiscount = newDiscount;
+                showAppliedCouponBadge(appliedCoupon, newDiscount);
+            }
         }
+        
+        saveCart();
+        updateCartUI();
     }
+}
 }
 
 function removeFromCart(identifier) {
@@ -4777,6 +4810,7 @@ function renderDropdownResults(products) {
 
     dropdown.classList.add('active');
 }
+
 
 
 
