@@ -2908,3 +2908,155 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
   font-weight: 600;
   cursor: pointer;
 }
+
+.my-orders-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 4000;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2rem;
+  overflow-y: auto;
+}
+
+.my-orders-modal.active {
+  display: flex;
+}
+
+.my-orders-content {
+  background: white;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.my-orders-header {
+  background: var(--primary);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px 12px 0 0;
+}
+
+.close-orders {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.orders-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.orders-tab {
+  flex: 1;
+  padding: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #999;
+  border-bottom: 3px solid transparent;
+}
+
+.orders-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.orders-tab-content {
+  display: none;
+  padding: 1.5rem;
+}
+
+.orders-tab-content.active {
+  display: block;
+}
+
+.order-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.order-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pendente { background: #fff3cd; color: #856404; }
+.status-confirmado { background: #d1ecf1; color: #0c5460; }
+.status-enviado { background: #d4edda; color: #155724; }
+.status-entregue { background: #d4edda; color: #155724; }
+.status-cancelado { background: #f8d7da; color: #721c24; }
+
+.order-items {
+  margin-bottom: 1rem;
+}
+
+.order-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+}
+
+.order-item-img {
+  width: 50px;
+  height: 65px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.order-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
