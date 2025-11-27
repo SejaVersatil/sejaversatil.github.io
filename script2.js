@@ -4390,11 +4390,26 @@ function openPaymentModal() {
     const modal = document.getElementById('paymentModal');
     const cartItemsContainer = document.getElementById('paymentCartItems');
     const totalContainer = document.getElementById('paymentTotal');
+    
+    // ✅ VALIDAÇÃO: Verificar se elementos existem
+    if (!modal) {
+        console.error('❌ Modal de pagamento não encontrado no HTML!');
+        alert('Erro: Modal de pagamento não encontrado. Verifique o HTML da página.');
+        return;
+    }
+    
+    if (!cartItemsContainer || !totalContainer) {
+        console.error('❌ Containers do modal não encontrados!');
+        alert('Erro: Elementos do modal estão faltando no HTML.');
+        return;
+    }
+    
     console.log('📦 Dados no modal:', {
-    appliedCoupon,
-    couponDiscount,
-    subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-});
+        appliedCoupon,
+        couponDiscount,
+        subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    });
+    
     // Renderizar itens do carrinho
     cartItemsContainer.innerHTML = cart.map(item => `
         <div class="payment-cart-item">
@@ -4407,7 +4422,6 @@ function openPaymentModal() {
             </div>
         </div>
     `).join('');
-    window.openPaymentModal = openPaymentModal;
     
     // Mostrar cupom aplicado (se houver)
     if (appliedCoupon && couponDiscount > 0) {
@@ -4435,6 +4449,30 @@ function openPaymentModal() {
     
     // Mostrar modal
     modal.classList.add('active');
+
+function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+    
+    // Configurar listeners para opções de pagamento
+    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+    const installmentsBox = document.getElementById('installmentsBox');
+    
+    if (paymentOptions.length > 0 && installmentsBox) {
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', function() {
+                if (this.value === 'credito-parcelado') {
+                    installmentsBox.style.display = 'block';
+                } else {
+                    installmentsBox.style.display = 'none';
+                }
+            });
+        });
+    }
+}
     
     // Configurar listeners para opções de pagamento
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
@@ -5955,3 +5993,4 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
