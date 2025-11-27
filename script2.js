@@ -188,6 +188,160 @@ function scrollToProducts() {
     }
 }
 
+
+// ==================== VIDEO GRID LOADER ====================
+
+let videoGridData = [];
+
+async function loadVideoGrid() {
+  const container = document.getElementById('videoGridContainer');
+  
+  if (!container) {
+    console.warn('Container de vídeos não encontrado');
+    return;
+  }
+  
+  try {
+    // Tentar carregar configuração do Firestore
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    
+    if (configDoc.exists && configDoc.data().videos) {
+      videoGridData = configDoc.data().videos.sort((a, b) => a.order - b.order);
+    } else {
+      // Usar vídeos padrão se não houver configuração
+      videoGridData = getDefaultVideos();
+    }
+    
+    renderVideoGrid();
+    
+  } catch (error) {
+    console.error('Erro ao carregar vídeos:', error);
+    // Fallback para vídeos padrão
+    videoGridData = getDefaultVideos();
+    renderVideoGrid();
+  }
+}
+
+function getDefaultVideos() {
+  // Vídeos placeholder (você pode usar vídeos de demonstração do Pexels)
+  return [
+    {
+      url: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=165',
+      title: 'COLEÇÃO FITNESS',
+      subtitle: 'Versatilidade no treino',
+      order: 1
+    },
+    {
+      url: 'https://player.vimeo.com/external/390228561.sd.mp4?s=7f9a9b0b6d1a3c7e8f0e1d2c3b4a5f6g7h8i9j0k&profile_id=165',
+      title: 'CONFORTO',
+      subtitle: 'Alta performance',
+      order: 2
+    },
+    {
+      url: 'https://player.vimeo.com/external/395934987.sd.mp4?s=8e0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s&profile_id=165',
+      title: 'ESTILO',
+      subtitle: 'Do treino ao dia a dia',
+      order: 3
+    },
+    {
+      url: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=165',
+      title: 'QUALIDADE',
+      subtitle: 'Tecidos premium',
+      order: 4
+    },
+    {
+      url: 'https://player.vimeo.com/external/390228561.sd.mp4?s=7f9a9b0b6d1a3c7e8f0e1d2c3b4a5f6g7h8i9j0k&profile_id=165',
+      title: 'VOCÊ',
+      subtitle: 'Seja versátil',
+      order: 5
+    }
+  ];
+}
+
+function renderVideoGrid() {
+  const container = document.getElementById('videoGridContainer');
+  
+  container.innerHTML = videoGridData.map((video, index) => `
+    <div class="video-card" data-video-index="${index}">
+      <video 
+        src="${video.url}" 
+        loop 
+        muted 
+        playsinline
+        preload="metadata"
+        onloadeddata="this.style.opacity='1'"
+        style="opacity: 0; transition: opacity 0.3s;"
+      ></video>
+      
+      <div class="video-overlay">
+        <div class="video-title">${video.title}</div>
+        <div class="video-subtitle">${video.subtitle}</div>
+      </div>
+      
+      <div class="video-play-indicator">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </div>
+  `).join('');
+  
+  // Adicionar event listeners após renderizar
+  setupVideoInteractions();
+}
+
+function setupVideoInteractions() {
+  const videoCards = document.querySelectorAll('.video-card');
+  
+  videoCards.forEach(card => {
+    const video = card.querySelector('video');
+    const playIndicator = card.querySelector('.video-play-indicator');
+    
+    if (!video) return;
+    
+    // Intersection Observer para autoplay quando visível
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(err => console.log('Autoplay bloqueado:', err));
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    observer.observe(card);
+    
+    // Click para play/pause manual
+    card.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playIndicator.innerHTML = `
+          <svg viewBox="0 0 24 24" style="fill: #000;">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+          </svg>
+        `;
+      } else {
+        video.pause();
+        playIndicator.innerHTML = `
+          <svg viewBox="0 0 24 24" style="fill: #000;">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        `;
+      }
+    });
+    
+    // Hover para play
+    card.addEventListener('mouseenter', () => {
+      video.play().catch(err => console.log('Play bloqueado:', err));
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      // Não pausa no mouseleave para manter fluido
+      // video.pause();
+    });
+  });
+}
 // ==================== NAVEGAÇÃO POR CATEGORIA ====================
 
 function navigateToCategory(category) {
@@ -523,6 +677,7 @@ renderBestSellers();
 updateCartUI();
 updateFavoritesCount();
 initHeroCarousel();
+loadVideoGrid();
 initBlackFridayCountdown();
 setupConnectionMonitor();
 setupCartAbandonmentTracking();
@@ -5087,6 +5242,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
