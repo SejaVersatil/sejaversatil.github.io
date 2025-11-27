@@ -702,54 +702,51 @@ async function inicializarProdutosPadrao() {
 // ==================== INICIALIZAÇÃO ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // console.log('🚀 Iniciando carregamento do site...');
-    
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
         loadingOverlay.classList.add('active');
     }
     
     try {
-        // console.log('📋 Carregando configurações...');
+        console.log('🚀 Iniciando carregamento do site...');
+        
+        // ✅ CORREÇÃO 1: Carrega settings ANTES
         loadSettings();
         
-        // console.log('🛒 Carregando carrinho...');
-        loadCart();
-        
-        // console.log('📦 Carregando produtos...');
+        // ✅ CORREÇÃO 2: Carrega produtos ANTES do carrinho
         await loadProducts();
         
-    
-        // console.log('🎨 Renderizando skeleton...');
+        // ✅ CORREÇÃO 3: SÓ AGORA carrega o carrinho (productsData já existe)
+        loadCart();
+        
+        // ✅ Verifica URL para favoritos
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('ver_favoritos') === 'true') {
-            // Espera um pouco para garantir que tudo carregou e aplica o filtro
             setTimeout(() => {
-                showFavorites(); // Chama a função que já existe
-                // Limpa a URL para não ficar travado nos favoritos se der F5
+                showFavorites();
                 window.history.replaceState({}, document.title, "index.html");
             }, 500);
         }
         
-        // console.log('✅ Renderizando produtos...');
-renderProducts();
-renderBestSellers();
-updateCartUI();
-updateFavoritesCount();
-initHeroCarousel();
-await loadVideoGrid();
-initBlackFridayCountdown();
-setupConnectionMonitor();
-setupCartAbandonmentTracking();
-setupPushNotifications();
-// console.log('✅ Site carregado com sucesso!');
+        // ✅ Renderiza tudo
+        renderProducts();
+        renderBestSellers();
+        updateCartUI();
+        updateFavoritesCount();
+        initHeroCarousel();
+        await loadVideoGrid();
+        initBlackFridayCountdown();
+        setupConnectionMonitor();
+        setupCartAbandonmentTracking();
+        setupPushNotifications();
+        
+        console.log('✅ Site carregado com sucesso!');
         
     } catch (error) {
         console.error('❌ ERRO CRÍTICO ao inicializar:', error);
         console.error('Stack trace:', error.stack);
         showToast('Erro ao carregar o site. Recarregue a página.', 'error');
         
-        // Mostrar erro na tela
         const grid = document.getElementById('productsGrid');
         if (grid) {
             grid.innerHTML = `
@@ -5988,6 +5985,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
