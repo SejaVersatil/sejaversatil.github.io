@@ -3004,10 +3004,12 @@ function addToCart(productId) {
         existingItem.quantity++;
     } else {
         const productWithImage = {
-            ...product,
-            quantity: 1,
-            image: product.images ? product.images[0] : (product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)')
-        };
+    ...product,
+    quantity: 1,
+    selectedSize: 'M',                        // ✅ Padrão fixo (index.html não tem seletor)
+    selectedColor: null,                      // ✅ Null (index.html não tem seletor de cor)
+    image: getImageForColor(product, null)    // ✅ Pega primeira imagem geral
+};
         cart.push(productWithImage);
     }
     
@@ -5461,7 +5463,7 @@ function addToCartFromDetails() {
             quantity: selectedQuantity,
             selectedSize: selectedSize,
             selectedColor: selectedColor,
-            image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            image: getImageForColor(product, selectedColor)
         });
     }
     
@@ -5973,6 +5975,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
