@@ -188,9 +188,6 @@ function scrollToProducts() {
     }
 }
 
-
-// ==================== VIDEO GRID LOADER ====================
-
 // ==================== VIDEO GRID LOADER ====================
 
 let videoGridData = [];
@@ -251,34 +248,28 @@ function getDefaultVideos() {
   // URLs de vídeos gratuitos do Pexels (reais e funcionais)
   return [
     {
-      url: 'https://videos.pexels.com/video-files/5319371/5319371-sd_640_360_24fps.mp4',
-      title: 'VERSATILIDADE',
-      subtitle: 'Do treino ao dia a dia',
-      order: 1
-    },
-    {
-      url: 'https://videos.pexels.com/video-files/6456267/6456267-sd_640_360_25fps.mp4',
+      url: 'gs://seja-versatil.firebasestorage.app/Sem Marca Convertido.mp4',
       title: 'CONFORTO',
       subtitle: 'Alta performance',
-      order: 2
+      order: 1
     },
     {
       url: 'https://videos.pexels.com/video-files/6456331/6456331-sd_640_360_25fps.mp4',
       title: 'ESTILO',
       subtitle: 'Looks incríveis',
-      order: 3
+      order: 2
     },
     {
       url: 'https://videos.pexels.com/video-files/6456293/6456293-sd_640_360_25fps.mp4',
       title: 'QUALIDADE',
       subtitle: 'Tecidos premium',
-      order: 4
+      order: 3
     },
     {
       url: 'https://videos.pexels.com/video-files/6456268/6456268-sd_640_360_25fps.mp4',
       title: 'VOCÊ',
       subtitle: 'Seja versátil',
-      order: 5
+      order: 4
     }
   ];
 }
@@ -5536,6 +5527,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
