@@ -901,13 +901,14 @@ async function checkUserSession() {
                 userLogout();
             }
        } else {
-    // ✅ Sessão expirou - limpar SILENCIOSAMENTE (sem confirm)
-    console.log('⚠️ Sessão expirou, limpando dados locais');
-    currentUser = null;
-    isAdminLoggedIn = false;
-    localStorage.removeItem('sejaVersatilCurrentUser');
-}
+       // ✅ Sessão expirou - limpar SILENCIOSAMENTE (sem confirm)
+       console.log('⚠️ Sessão expirou, limpando dados locais');
+       currentUser = null;
+       isAdminLoggedIn = false;
+       localStorage.removeItem('sejaVersatilCurrentUser');
+   }
     }
+}
 
 // Tratar retorno do redirect (caso popup seja bloqueado)
 auth.getRedirectResult().then((result) => {
@@ -5648,3 +5649,4 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
