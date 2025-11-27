@@ -4477,31 +4477,35 @@ async function sendToWhatsApp() {
         return;
     }
 
-    // 1. COLETA DE DADOS DO CLIENTE (Trazido para dentro da função para funcionar o fluxo)
+    // 1. COLETA DE DADOS DO CLIENTE
     const isLoggedIn = auth.currentUser !== null;
     let customerData = {};
    
     if (!isLoggedIn) {
-      // Modal para coletar CPF + Email de visitantes
-      if (typeof collectGuestCustomerData === 'function') {
-          customerData = await collectGuestCustomerData();
-          if (!customerData) return; // Se cancelou o modal
-      } else {
-          // Fallback se a função não existir (embora esteja definida abaixo)
-          customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
-      }
+        // ✅ CORREÇÃO: Fechar modal de pagamento ANTES de abrir modal de dados
+        closePaymentModal(); // ← ADICIONAR ESTA LINHA
+        
+        // Aguardar animação de fechamento
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Agora sim abrir modal de dados
+        if (typeof collectGuestCustomerData === 'function') {
+            customerData = await collectGuestCustomerData();
+            if (!customerData) return;
+        } else {
+            customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
+        }
     } else {
-      // Dados do usuário logado
-      customerData = {
-        name: currentUser.name,
-        email: currentUser.email,
-        phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
-        cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
-        userId: currentUser.uid
-      };
-      
-      // Se o usuário cancelar a entrada de dados obrigatórios
-      if (!customerData.phone || !customerData.cpf) return;
+        // Dados do usuário logado
+        customerData = {
+            name: currentUser.name,
+            email: currentUser.email,
+            phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
+            cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
+            userId: currentUser.uid
+        };
+        
+        if (!customerData.phone || !customerData.cpf) return;
     }
     
     // 2. REVALIDAR CUPOM NO SERVIDOR
@@ -5962,6 +5966,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
