@@ -5018,7 +5018,8 @@ function addToCartFromDetails() {
     const existingItem = cart.find(item => item.cartItemId === cartItemId);
     
     if (existingItem) {
-        existingItem.quantity += selectedQuantity;
+    existingItem.quantity += selectedQuantity;
+    existingItem.image = getImageForColor(product, selectedColor);
     } else {
         cart.push({
             ...product,
@@ -5975,6 +5976,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
