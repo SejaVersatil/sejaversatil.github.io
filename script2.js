@@ -3297,114 +3297,34 @@ function loadCart() {
     }
     
     try {
-        const cartData = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
         
-        // ✅ PRIORIZA o formato novo
-        if (cartData.items && Array.isArray(cartData.items)) {
-            const validItems = [];
-            
-            cartData.items.forEach(item => {
-                // ✅ CORREÇÃO: Verifica se productsData existe E tem itens
-                if (!productsData || productsData.length === 0) {
-                    console.warn('⚠️ productsData ainda está vazio, recriando item do cache');
-                    // Adiciona item direto do localStorage (sem validação)
-                    validItems.push({
-                        id: item.id,
-                        name: item.name || 'Produto',
-                        price: item.price || 0,
-                        quantity: item.quantity || 1,
-                        selectedSize: item.selectedSize,
-                        selectedColor: item.selectedColor,
-                        cartItemId: item.cartItemId,
-                        image: item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                    });
-                    return;
-                }
-                
-                // Valida contra productsData
-                const product = productsData.find(p => p.id === item.id);
-                if (product) {
-                    validItems.push({ 
-                        ...product, 
-                        quantity: item.quantity,
-                        selectedSize: item.selectedSize,
-                        selectedColor: item.selectedColor,
-                        cartItemId: item.cartItemId,
-                        image: getProductImage(product)
-                    });
-                } else {
-                    console.warn(`Produto ${item.id} não encontrado em productsData`);
-                }
-            });
-            
-            cart = validItems;
-            
-            // ✅ Restaura cupom
-            if (cartData.appliedCoupon) {
-                appliedCoupon = cartData.appliedCoupon;
-                couponDiscount = cartData.couponDiscount || 0;
-                
-                requestAnimationFrame(() => {
-                    const input = document.getElementById('couponInput');
-                    const btn = document.getElementById('applyCouponBtn');
-                    if (input) {
-                        input.disabled = true;
-                        input.classList.add('success');
-                    }
-                    if (btn) btn.style.display = 'none';
-                    
-                    if (typeof showAppliedCouponBadge === 'function') {
-                        showAppliedCouponBadge(appliedCoupon, couponDiscount);
-                    }
-                });
-            }
-        } 
-        // ✅ Aceita formato antigo APENAS uma vez (para migração)
-        else if (Array.isArray(cartData)) {
-            const validItems = [];
-            cartData.forEach(item => {
-                if (!productsData || productsData.length === 0) {
-                    validItems.push({
-                        id: item.id,
-                        name: item.name || 'Produto',
-                        price: item.price || 0,
-                        quantity: item.quantity || 1,
-                        selectedSize: item.selectedSize,
-                        selectedColor: item.selectedColor,
-                        cartItemId: item.cartItemId,
-                        image: item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                    });
-                    return;
-                }
-                
-                const product = productsData.find(p => p.id === item.id);
-                if (product) {
-                    validItems.push({ 
-                        ...product, 
-                        quantity: item.quantity,
-                        selectedSize: item.selectedSize,
-                        selectedColor: item.selectedColor,
-                        cartItemId: item.cartItemId,
-                        image: getProductImage(product)
-                    });
-                }
-            });
-            cart = validItems;
+        // ✅ ACEITA AMBOS OS FORMATOS
+        if (parsed.items && Array.isArray(parsed.items)) {
+            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            cart = parsed.items.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0
+            }));
+            appliedCoupon = parsed.appliedCoupon || null;
+            couponDiscount = parsed.couponDiscount || 0;
+        } else if (Array.isArray(parsed)) {
+            // Formato antigo: [{item1}, {item2}]
+            cart = parsed.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0
+            }));
             appliedCoupon = null;
             couponDiscount = 0;
-            
-            // ✅ MIGRA para formato novo
-            saveCart();
         } else {
             cart = [];
             appliedCoupon = null;
             couponDiscount = 0;
         }
         
-        if (cart.length === 0) {
-            console.warn('⚠️ Carrinho ficou vazio após loadCart()');
-            // NÃO remove do localStorage aqui (pode ser problema temporário)
-        }
+        console.log('✅ Carrinho carregado:', cart.length, 'itens');
         
     } catch (error) {
         console.error('❌ Erro ao carregar carrinho:', error);
@@ -6025,6 +5945,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
