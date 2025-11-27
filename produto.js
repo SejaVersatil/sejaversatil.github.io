@@ -1047,6 +1047,13 @@ function checkout() {
     openPaymentModal();
 }
 
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
+        console.log('🔄 Carrinho atualizado em outra aba');
+        loadCartFromStorage();
+        updateCartUI();
+    }
+});
 /* =========================
    Modal Pagamento / WhatsApp
    ========================= */
@@ -1826,6 +1833,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
