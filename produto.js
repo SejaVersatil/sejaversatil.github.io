@@ -245,9 +245,7 @@ function renderPrices() {
         installments.textContent = `ou ${maxParcelas}x de R$ ${parcelaValue.toFixed(2)} sem juros`;
     }
 }
-/* =========================
-   Galeria Mosaico com "Mostrar Mais / Menos"
-   ========================= */
+
 /* =========================
    Galeria: Lógica "Hero + Thumbnails" (Novo Layout)
    ========================= */
@@ -277,30 +275,8 @@ function updateGalleryDisplay(images) {
 
     const isMobile = window.innerWidth <= 768;
 
-    // ========================================
-    // MOBILE: TODAS AS FOTOS NO SWIPE
-    // ========================================
     if (isMobile) {
-        // 6. RESET: Volta para a primeira foto (Desktop e Mobile)
-const galleryContainer = document.getElementById('galleryContainer');
-if (galleryContainer) {
-    // Force scroll to start (funciona em ambos os layouts)
-    galleryContainer.scrollLeft = 0;
-    galleryContainer.scrollTop = 0;
-    
-    // Smooth scroll para garantir que voltou ao topo
-    galleryContainer.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-    });
-}
-
-// 7. Atualiza a Galeria (SEMPRE)
-updateGalleryDisplay(newImages);
-
-// 8. Atualiza disponibilidade de tamanhos
-renderSizes();
+    const galleryContainer = document.getElementById('galleryContainer');
         
         // Esconde botão e thumbnails no mobile
         const thumbnailContainer = document.getElementById('thumbnailList');
@@ -541,7 +517,6 @@ function selectColor(colorName) {
         newImages = ['https://via.placeholder.com/600x800/cccccc/666666?text=Sem+Foto'];
     }
 
-    console.log('📸 Atualizando galeria com:', newImages);
    setTimeout(() => {
     const galleryContainer = document.getElementById('galleryContainer');
     if (galleryContainer) {
@@ -1791,6 +1766,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
