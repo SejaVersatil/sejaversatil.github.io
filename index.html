@@ -585,6 +585,16 @@
           <button class="admin-btn admin-btn-delete" onclick="limparTodosProdutos()" style="width: 100%;">🗑️ Limpar TODOS os Produtos do Firestore</button>
           <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Esta ação não pode ser desfeita! Use apenas para testes.</p>
         </div>
+        <!-- GERENCIAMENTO DE VÍDEOS -->
+<div class="admin-form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e5e5;">
+  <label style="color: #667eea;">🎬 Gerenciar Grid de Vídeos</label>
+  <button class="admin-btn admin-btn-add" onclick="openVideoManager()" style="width: 100%;">
+    📹 Abrir Gerenciador de Vídeos
+  </button>
+  <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
+    Adicione até 5 vídeos de 5-10 segundos (máx 2MB cada)
+  </p>
+</div>
         <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
       </div>
               <!-- Nova Aba de Cupons -->
@@ -685,6 +695,35 @@
       </form>
     </div>
   </div>
+
+<!-- VIDEO MANAGER MODAL -->
+<div class="admin-modal" id="videoManagerModal">
+  <div class="admin-modal-content" style="max-width: 800px;">
+    <div class="admin-modal-header">
+      <h3>🎬 Gerenciar Vídeos da Home</h3>
+      <button class="admin-close" onclick="closeVideoManager()">✕</button>
+    </div>
+    
+    <div style="padding: 1.5rem;">
+      <div class="video-manager-list" id="videoManagerList">
+        <!-- Vídeos serão renderizados aqui -->
+      </div>
+      
+      <button class="admin-btn admin-btn-add" onclick="addVideoSlot()" style="width: 100%; margin-top: 1rem;">
+        ➕ Adicionar Vídeo (máx 5)
+      </button>
+      
+      <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f8f8; border-radius: 8px; font-size: 0.85rem; color: #666;">
+        <strong>📋 Especificações:</strong><br>
+        • Formato: MP4 (H.264)<br>
+        • Tamanho máximo: 2MB por vídeo<br>
+        • Resolução recomendada: 720p ou 1080p<br>
+        • Duração: 5-10 segundos<br>
+        • FPS: 30fps
+      </div>
+    </div>
+  </div>
+</div>
       
 <div class="admin-modal" id="productModal">
   
