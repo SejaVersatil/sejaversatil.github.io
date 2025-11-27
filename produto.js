@@ -902,7 +902,9 @@ function addToCartFromDetails() {
         selectedColor: state.selectedColor,
         image: imgUrl // Usa a URL tratada
     };
-
+   
+console.log('🛒 Adicionando ao carrinho:', itemPayload);
+   
     if (existing) {
         existing.quantity = safeNumber(existing.quantity, 1) + itemPayload.quantity;
     } else {
@@ -1833,6 +1835,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
