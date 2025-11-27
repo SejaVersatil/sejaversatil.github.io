@@ -862,11 +862,13 @@ async function checkUserSession() {
                 console.error('❌ Erro ao verificar permissões:', error);
                 userLogout();
             }
-        } else {
-            // Sessão expirou - limpar
-            console.log('⚠️ Sessão expirou, fazendo logout');
-            userLogout();
-        }
+       } else {
+    // ✅ Sessão expirou - limpar SILENCIOSAMENTE (sem confirm)
+    console.log('⚠️ Sessão expirou, limpando dados locais');
+    currentUser = null;
+    isAdminLoggedIn = false;
+    localStorage.removeItem('sejaVersatilCurrentUser');
+}
     }
     
     // ✅ LISTENER DE MUDANÇA DE AUTENTICAÇÃO
@@ -5655,6 +5657,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
