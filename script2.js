@@ -38,7 +38,7 @@ let cart = [];
 let currentFilter = 'all';
 let currentSort = '';
 let currentPage = 1;
-const itemsPerPage = 12;
+const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
 let tempProductImages = [];
 let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
 let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
@@ -5545,6 +5545,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
