@@ -4387,7 +4387,11 @@ function openPaymentModal() {
     const modal = document.getElementById('paymentModal');
     const cartItemsContainer = document.getElementById('paymentCartItems');
     const totalContainer = document.getElementById('paymentTotal');
-    
+    console.log('📦 Dados no modal:', {
+    appliedCoupon,
+    couponDiscount,
+    subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+});
     // Renderizar itens do carrinho
     cartItemsContainer.innerHTML = cart.map(item => `
         <div class="payment-cart-item">
@@ -5947,6 +5951,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
