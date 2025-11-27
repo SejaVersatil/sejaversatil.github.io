@@ -4169,20 +4169,21 @@ function setupCartAbandonmentTracking() {
     };
     
     // ✅ MODIFICADO: Só avisa se for realmente sair (fechar aba/janela)
-    window.addEventListener('beforeunload', (e) => {
-        if (cart.length > 0) {
-            // Detecta se é navegação interna (produtos da mesma origem)
-            const isInternalNavigation = 
-                e.target.activeElement?.tagName === 'A' && 
-                e.target.activeElement?.hostname === window.location.hostname;
-            
-            // Só mostra aviso se NÃO for navegação interna
-            if (!isInternalNavigation) {
-                e.preventDefault();
-                e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
-            }
+   window.addEventListener('beforeunload', (e) => {
+    // ✅ CORREÇÃO: Só avisa ao FECHAR aba/janela (não ao navegar internamente)
+    if (cart.length > 0) {
+        // Detecta se está fechando ou saindo do domínio
+        const isClosing = e.currentTarget.performance.navigation.type === 1; // reload
+        const isLeavingSite = document.activeElement?.hostname !== window.location.hostname;
+        
+        // Só mostra aviso se estiver FECHANDO ou SAINDO DO SITE
+        if (isClosing || isLeavingSite) {
+            e.preventDefault();
+            e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
         }
-    });
+        // Se for navegação interna (index.html → produto.html), NÃO avisa
+    }
+});
     
     setInterval(startCartTimer, 60000);
 }
@@ -5920,6 +5921,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
