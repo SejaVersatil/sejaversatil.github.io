@@ -894,12 +894,16 @@ async function checkUserSession() {
                 // console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
             }
         } else {
-            // console.log('🔄 Estado de auth mudou: usuário deslogado');
-            
-            if (currentUser) {
-                userLogout();
-            }
-        }
+    console.log('🔄 Estado de auth mudou: usuário deslogado');
+    
+    
+    if (currentUser) {
+        currentUser = null;
+        isAdminLoggedIn = false;
+        localStorage.removeItem('sejaVersatilCurrentUser');
+        hideLoggedInView();
+    }
+}
     });
 }
 
@@ -1155,13 +1159,9 @@ if (!/(?=.*[a-zA-Z])/.test(password)) {
 async function userLogout() {
     if (confirm('Deseja realmente sair da sua conta?')) {
         try {
-            await auth.signOut();
-            currentUser = null;
-            isAdminLoggedIn = false;
-            localStorage.removeItem('sejaVersatilCurrentUser');
-            hideLoggedInView();
+            await auth.signOut(); // ← Isso dispara onAuthStateChanged
+            // O resto é feito pelo listener, NÃO precisa repetir aqui
             showToast('Logout realizado com sucesso', 'info');
-           // console.log('✅ Logout completo');
         } catch (error) {
             console.error('❌ Erro ao fazer logout:', error);
             showToast('Erro ao fazer logout', 'error');
@@ -5655,6 +5655,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
