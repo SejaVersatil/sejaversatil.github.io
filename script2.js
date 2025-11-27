@@ -2960,6 +2960,38 @@ function changePage(page) {
     }, 300);
 }
 
+
+// ==================== HELPER: PEGAR IMAGEM DA COR SELECIONADA ====================
+function getImageForColor(product, colorName) {
+    // Se não tem cor selecionada, retorna a primeira imagem geral
+    if (!colorName) {
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            return product.images[0];
+        }
+        return product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    }
+    
+    // Busca a cor específica no array de cores do produto
+    if (Array.isArray(product.colors) && product.colors.length > 0) {
+        const colorObj = product.colors.find(c => {
+            const cName = typeof c === 'object' ? String(c.name).trim() : String(c).trim();
+            return cName === String(colorName).trim();
+        });
+        
+        // Se encontrou a cor E ela tem imagens
+        if (colorObj && colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
+            return colorObj.images[0]; // ← Primeira imagem DA COR
+        }
+    }
+    
+    // Fallback: se não encontrou imagens da cor, usa a primeira geral
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        return product.images[0];
+    }
+    
+    return product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+}
+
 // ==================== CARRINHO ====================
 
 function addToCart(productId) {
@@ -4992,7 +5024,7 @@ function addToCartFromDetails() {
             quantity: selectedQuantity,
             selectedSize: selectedSize,
             selectedColor: selectedColor,
-            image: product.images ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            image: getImageForColor(product, selectedColor) // ← USA A NOVA FUNÇÃO
         });
     }
     
@@ -5941,6 +5973,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
