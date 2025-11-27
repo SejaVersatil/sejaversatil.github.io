@@ -2573,7 +2573,7 @@ const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
 const lowStockWarning = totalStock > 0 && totalStock <= 10;
     
     return `
-        <div class="product-card" data-product-id="${product.id}" onclick="openProductDetails('${product.id}')">
+        <div class="product-card" data-product-id="${product.id}" onclick="isInternalNavigation = true; openProductDetails('${product.id}')">
             <div class="product-image">
                 <!-- Favorite Button -->
                 <button class="favorite-btn ${isFav ? 'active' : ''}" 
@@ -5921,4 +5921,5 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
