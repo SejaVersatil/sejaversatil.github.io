@@ -3230,35 +3230,45 @@ function updateQuantity(cartItemId, change) {
 }
 
 function removeFromCart(identifier) {
+    console.log('🗑️ Removendo item:', identifier);
+    
+    const lengthBefore = cart.length;
+    
     cart = cart.filter(item => {
         const itemId = item.cartItemId || item.id;
         return itemId !== identifier;
     });
-
-     if (cart.length === 0) {
+    
+    const lengthAfter = cart.length;
+    
+    // ✅ VERIFICAÇÃO: Realmente removeu?
+    if (lengthBefore === lengthAfter) {
+        console.warn('⚠️ Item não encontrado para remover:', identifier);
+        showToast('Item não encontrado', 'error');
+        return;
+    }
+    
+    console.log('✅ Item removido. Carrinho agora:', cart.length, 'itens');
+    
+    if (cart.length === 0) {
         if (appliedCoupon) {
             removeCoupon();
         }
+        // ✅ SALVA EXPLICITAMENTE O CARRINHO VAZIO
+        saveCart();
         updateCartUI();
         showToast('Carrinho vazio', 'info');
-        return; // ✅ Sair antes de recalcular cupom
+        return;
     }
     
-    // ✅ RECALCULAR CUPOM APÓS REMOÇÃO
+    // ✅ RECALCULAR CUPOM
     if (appliedCoupon && couponDiscount > 0) {
         const newSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         
-        // Se carrinho ficou vazio, remove o cupom
-        if (cart.length === 0) {
-            removeCoupon();
-        } 
-        // Se tem valor mínimo e não atinge mais, remove o cupom
-        else if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
+        if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
             removeCoupon();
             showToast(`❌ Cupom removido: valor mínimo R$ ${appliedCoupon.minValue.toFixed(2)}`, 'error');
-        }
-        // Recalcula o desconto com o novo subtotal
-        else {
+        } else {
             let newDiscount = 0;
             
             if (appliedCoupon.type === 'percentage') {
@@ -3270,17 +3280,17 @@ function removeFromCart(identifier) {
                 newDiscount = appliedCoupon.value;
             }
             
-            // Desconto não pode ser maior que o subtotal
             if (newDiscount > newSubtotal) {
                 newDiscount = newSubtotal;
             }
             
             couponDiscount = newDiscount;
             showAppliedCouponBadge(appliedCoupon, newDiscount);
-            saveCart();
         }
     }
     
+    // ✅ SALVA OBRIGATORIAMENTE
+    saveCart();
     updateCartUI();
     showToast('Item removido do carrinho', 'info');
 }
@@ -6028,6 +6038,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
