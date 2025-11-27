@@ -1184,6 +1184,85 @@ async function resetPassword() {
     }
 }
 
+// ==================== LOGIN COM GOOGLE ====================
+async function loginWithGoogle() {
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        console.log('✅ Login Google bem-sucedido:', user.email);
+        
+        // Verificar se é admin
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || user.displayName || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid,
+                permissions: adminData.permissions || []
+            };
+            
+            isAdminLoggedIn = true;
+        } else {
+            // Usuário comum - criar/atualizar documento
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                photoURL: user.photoURL || null,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                isAdmin: false
+            }, { merge: true });
+            
+            currentUser = {
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                isAdmin: false,
+                uid: user.uid,
+                permissions: []
+            };
+        }
+        
+        // Salvar sessão
+        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+        
+        // Atualizar UI
+        showLoggedInView();
+        showToast('Login realizado com sucesso!', 'success');
+        
+        // Fechar painel após 1 segundo
+        setTimeout(() => {
+            closeUserPanel();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('❌ Erro no login Google:', error);
+        
+        let errorMessage = 'Erro ao fazer login com Google';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Login cancelado pelo usuário';
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'Este email já está cadastrado com outro método';
+        }
+        
+        showToast(errorMessage, 'error');
+        
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
+
 // ==================== FIRESTORE ====================
 
 async function carregarProdutosDoFirestore() {
@@ -5194,14 +5273,13 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-// INDICADOR DE FORÇA DE SENHA
+// ==================== INDICADOR DE FORÇA DE SENHA (LIGHT VERSION) ====================
 document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('registerPassword');
     const strengthDiv = document.getElementById('passwordStrength');
     const strengthBar = document.getElementById('strengthBar');
     const strengthText = document.getElementById('strengthText');
 
-    // Verificação crítica de existência dos elementos
     if (!passwordInput || !strengthDiv || !strengthBar || !strengthText) {
         console.warn('⚠️ Elementos de força de senha não encontrados.');
         return;
@@ -5219,27 +5297,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         strengthDiv.style.display = 'block';
 
-        // Regras de pontuação
+        // Regras simplificadas
         const rules = [
+            password.length >= 6,
             password.length >= 8,
-            password.length >= 12,
             /[a-z]/.test(password) && /[A-Z]/.test(password),
-            /\d/.test(password),
-            /[^a-zA-Z0-9]/.test(password)
+            /\d/.test(password)
         ];
 
         const score = rules.filter(Boolean).length;
 
         const levels = [
-            { text: '🔴 Senha muito fraca', color: '#e74c3c', width: '20%' },
-            { text: '🟠 Senha fraca',       color: '#e67e22', width: '40%' },
-            { text: '🟡 Senha média',       color: '#f39c12', width: '60%' },
-            { text: '🟢 Senha boa',         color: '#27ae60', width: '80%' },
-            { text: '✅ Senha muito forte', color: '#2ecc71', width: '100%' }
+            { text: '🔴 Senha fraca', color: '#e74c3c', width: '25%' },
+            { text: '🟠 Senha razoável', color: '#e67e22', width: '50%' },
+            { text: '🟡 Senha boa', color: '#f39c12', width: '75%' },
+            { text: '🟢 Senha forte', color: '#27ae60', width: '100%' }
         ];
 
-        // Limita o índice máximo para evitar erros
-        const level = levels[Math.min(score - 1, levels.length - 1)];
+        const level = levels[Math.min(score - 1, levels.length - 1)] || levels[0];
 
         strengthBar.style.width = level.width;
         strengthBar.style.backgroundColor = level.color;
@@ -5545,6 +5620,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
