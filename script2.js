@@ -4436,20 +4436,15 @@ async function sendToWhatsApp() {
     const isLoggedIn = auth.currentUser !== null;
     let customerData = {};
    
-    if (!isLoggedIn) {
-        // ✅ CORREÇÃO: Fechar modal de pagamento ANTES de abrir modal de dados
-        closePaymentModal(); // ← ADICIONAR ESTA LINHA
-        
-        // Aguardar animação de fechamento
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Agora sim abrir modal de dados
+      if (!isLoggedIn) {
+        // Apenas coletar os dados do cliente
         if (typeof collectGuestCustomerData === 'function') {
             customerData = await collectGuestCustomerData();
             if (!customerData) return;
         } else {
             customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
         }
+    } else {
     } else {
         // Dados do usuário logado
         customerData = {
@@ -5934,4 +5929,5 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
