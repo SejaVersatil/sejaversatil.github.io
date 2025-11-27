@@ -260,7 +260,7 @@ function getDefaultVideos() {
       order: 2
     },
     {
-      url: 'https://videos.pexels.com/video-files/6456293/6456293-sd_640_360_25fps.mp4',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%203%20Video.mp4?alt=media&token=f4c54258-a40d-40c5-b7b4-38c6a7cb7f72',
       title: 'QUALIDADE',
       subtitle: 'Tecidos premium',
       order: 3
@@ -5545,6 +5545,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
