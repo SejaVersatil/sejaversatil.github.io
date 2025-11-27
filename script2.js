@@ -442,6 +442,7 @@ function navigateToCategory(category) {
     trackEvent('Promo Cards', 'Navigate to Category', category);
     
     // Feedback visual
+    isInternalNavigation = true;
     showToast(` ${getCategoryName(category)}`, 'info');
 }
 
@@ -5921,5 +5922,6 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
