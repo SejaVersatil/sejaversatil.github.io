@@ -715,6 +715,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // ✅ CORREÇÃO 2: Carrega produtos ANTES do carrinho
         await loadProducts();
+        loadCart();
         
         // ✅ CORREÇÃO 3: SÓ AGORA carrega o carrinho (productsData já existe)
         loadCart();
@@ -2993,6 +2994,7 @@ function getImageForColor(product, colorName) {
 function addToCart(productId) {
     // ✅ REDIRECIONA PARA A PÁGINA DO PRODUTO
     window.location.href = `produto.html?id=${productId}`;
+    saveCart();
     return;
 }
 
@@ -3244,9 +3246,9 @@ function saveCart() {
             couponDiscount: couponDiscount || 0
         };
         localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-        console.log('💾 Carrinho salvo:', cart.length, 'itens');
+        console.log(' Carrinho salvo:', cart.length, 'itens');
     } catch (err) {
-        console.warn('Erro ao salvar carrinho', err);
+        console.warn(' Erro ao salvar carrinho:', err);
     }
 }
 
@@ -5918,6 +5920,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
