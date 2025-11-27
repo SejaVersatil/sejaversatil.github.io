@@ -280,6 +280,8 @@ async function renderVideoGrid() {
   
   if (!container || !videoGridData || videoGridData.length === 0) {
     console.warn('Sem dados para renderizar vídeos');
+    console.log('Container:', container); // ← DEBUG
+    console.log('videoGridData:', videoGridData); // ← DEBUG
     return;
   }
   
@@ -331,6 +333,10 @@ function setupVideoInteractions() {
     if (!video) return;
     
     // Intersection Observer para autoplay quando visível
+      video.muted = true; // ← CRÍTICO para autoplay funcionar
+video.setAttribute('playsinline', ''); // ← iOS
+video.setAttribute('webkit-playsinline', ''); // ← iOS antigo
+      
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -719,7 +725,7 @@ renderBestSellers();
 updateCartUI();
 updateFavoritesCount();
 initHeroCarousel();
-loadVideoGrid();
+await loadVideoGrid();
 initBlackFridayCountdown();
 setupConnectionMonitor();
 setupCartAbandonmentTracking();
@@ -5527,6 +5533,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
