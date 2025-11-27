@@ -3264,10 +3264,13 @@ function saveCart() {
         const cartData = {
             items: cart.map(item => ({
                 id: item.id,
+                name: item.name,           // ✅ ADICIONA nome
+                price: item.price,         // ✅ ADICIONA preço
                 quantity: item.quantity,
                 selectedSize: item.selectedSize,
                 selectedColor: item.selectedColor,
-                cartItemId: item.cartItemId
+                cartItemId: item.cartItemId,
+                image: item.image          // ✅ ADICIONA imagem
             })),
             appliedCoupon: appliedCoupon ? {
                 id: appliedCoupon.id,
@@ -3278,6 +3281,7 @@ function saveCart() {
             couponDiscount: couponDiscount || 0
         };
         localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        console.log('💾 Carrinho salvo:', cart.length, 'itens');
     } catch (err) {
         console.warn('Erro ao salvar carrinho:', err);
     }
@@ -6021,6 +6025,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
