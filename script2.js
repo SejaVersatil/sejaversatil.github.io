@@ -4445,7 +4445,6 @@ async function sendToWhatsApp() {
             customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
         }
     } else {
-    } else {
         // Dados do usuário logado
         customerData = {
             name: currentUser.name,
@@ -5929,5 +5928,6 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
