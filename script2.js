@@ -332,15 +332,21 @@ function setupVideoInteractions() {
     
     if (!video) return;
     
-    // Intersection Observer para autoplay quando visível
-      video.muted = true; // ← CRÍTICO para autoplay funcionar
-video.setAttribute('playsinline', ''); // ← iOS
-video.setAttribute('webkit-playsinline', ''); // ← iOS antigo
-      
+    // ✅ CONFIGURAÇÕES CRÍTICAS PARA AUTOPLAY
+    video.muted = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.load(); // ← FORÇA CARREGAMENTO
+    
+    // Intersection Observer (autoplay quando visível)
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          video.play().catch(err => console.log('Autoplay bloqueado:', err));
+          video.play().catch(err => {
+            console.warn('⚠️ Autoplay bloqueado:', err);
+            // Fallback: mostrar botão play
+            if (playIndicator) playIndicator.style.opacity = '1';
+          });
         } else {
           video.pause();
         }
@@ -349,28 +355,34 @@ video.setAttribute('webkit-playsinline', ''); // ← iOS antigo
     
     observer.observe(card);
     
-    // Click para play/pause manual
+    // Click manual
     card.addEventListener('click', () => {
       if (video.paused) {
         video.play();
-        playIndicator.innerHTML = `
-          <svg viewBox="0 0 24 24" style="fill: #000;">
-            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-          </svg>
-        `;
+        if (playIndicator) {
+          playIndicator.innerHTML = `
+            <svg viewBox="0 0 24 24" style="fill: #000;">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+            </svg>
+          `;
+        }
       } else {
         video.pause();
-        playIndicator.innerHTML = `
-          <svg viewBox="0 0 24 24" style="fill: #000;">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        `;
+        if (playIndicator) {
+          playIndicator.innerHTML = `
+            <svg viewBox="0 0 24 24" style="fill: #000;">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          `;
+        }
       }
     });
     
-    // Hover para play
+    // Hover (desktop)
     card.addEventListener('mouseenter', () => {
-      video.play().catch(err => console.log('Play bloqueado:', err));
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
     });
   });
 }
@@ -5533,6 +5545,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
