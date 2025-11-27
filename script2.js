@@ -5957,9 +5957,38 @@ document.addEventListener('click', (e) => {
 });
 
 
-
-
-
-
-
-
+// ==================== GARANTIR FUNÇÃO GLOBAL ====================
+if (typeof openPaymentModal !== 'function') {
+    window.openPaymentModal = function() {
+        const modal = document.getElementById('paymentModal');
+        if (!modal) {
+            console.error('Modal de pagamento não encontrado no DOM');
+            return;
+        }
+        modal.classList.add('active');
+        
+        // Atualizar conteúdo do modal
+        const cartItemsContainer = document.getElementById('paymentCartItems');
+        const totalContainer = document.getElementById('paymentTotal');
+        
+        if (cartItemsContainer) {
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="payment-cart-item">
+                    <div>
+                        <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
+                        <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+                    </div>
+                    <div style="font-weight: 700;">
+                        R$ ${(item.price * item.quantity).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const discount = Math.min(couponDiscount || 0, subtotal);
+        const total = Math.max(0, subtotal - discount);
+        
+        if (totalContainer) totalContainer.textContent = `R$ ${total.toFixed(2)}`;
+    };
+}
