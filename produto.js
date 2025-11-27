@@ -94,12 +94,18 @@ function loadCartFromStorage() {
 
 function saveCartToStorage() {
     try {
+        // ✅ SEMPRE salva no formato novo
         const cartData = {
-            items: state.cart,
-            appliedCoupon: state.appliedCoupon,
-            couponDiscount: state.couponDiscount
+            items: state.cart || [],
+            appliedCoupon: state.appliedCoupon || null,
+            couponDiscount: safeNumber(state.couponDiscount, 0)
         };
         localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        
+        // ✅ Sincroniza com variável global (se existir)
+        if (typeof window.cart !== 'undefined') {
+            window.cart = state.cart;
+        }
     } catch (err) {
         console.warn('Erro ao salvar carrinho', err);
     }
@@ -1820,6 +1826,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
