@@ -3141,6 +3141,14 @@ cartFooter.style.display = 'block';
     });
 }
 
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
+        console.log('🔄 Carrinho atualizado em outra aba');
+        loadCart();
+        updateCartUI();
+    }
+});
+
 function updateQuantity(cartItemId, change) {
     const item = cart.find(i => {
         const itemId = i.cartItemId || i.id;
@@ -3255,103 +3263,117 @@ function toggleCart() {
 }
 
 function saveCart() {
-    const cartData = {
-        items: cart.map(item => ({
-            id: item.id,
-            quantity: item.quantity,
-            selectedSize: item.selectedSize,
-            selectedColor: item.selectedColor,
-            cartItemId: item.cartItemId
-        })),
-        appliedCoupon: appliedCoupon ? {
-            id: appliedCoupon.id,
-            code: appliedCoupon.code,
-            type: appliedCoupon.type,
-            value: appliedCoupon.value
-        } : null,
-        couponDiscount: couponDiscount || 0
-    };
-    localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+    try {
+        const cartData = {
+            items: cart.map(item => ({
+                id: item.id,
+                quantity: item.quantity,
+                selectedSize: item.selectedSize,
+                selectedColor: item.selectedColor,
+                cartItemId: item.cartItemId
+            })),
+            appliedCoupon: appliedCoupon ? {
+                id: appliedCoupon.id,
+                code: appliedCoupon.code,
+                type: appliedCoupon.type,
+                value: appliedCoupon.value
+            } : null,
+            couponDiscount: couponDiscount || 0
+        };
+        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+    } catch (err) {
+        console.warn('Erro ao salvar carrinho:', err);
+    }
 }
 
 function loadCart() {
     const saved = localStorage.getItem('sejaVersatilCart');
-    if (saved) {
-        try {
-            const cartData = JSON.parse(saved);
-            
-            // Compatibilidade com versão antiga (array direto)
-            if (Array.isArray(cartData)) {
-                const validItems = [];
-                cartData.forEach(item => {
-                    const product = productsData.find(p => p.id === item.id);
-                    if (product) {
-                        validItems.push({ 
-                            ...product, 
-                            quantity: item.quantity,
-                            selectedSize: item.selectedSize,
-                            selectedColor: item.selectedColor,
-                            cartItemId: item.cartItemId,
-                            image: getProductImage(product)
-                        });
-                    }
-                });
-                cart = validItems;
-                appliedCoupon = null;
-                couponDiscount = 0;
-            } 
-            // Nova versão com cupom
-            else if (cartData.items) {
-                const validItems = [];
-                cartData.items.forEach(item => {
-                    const product = productsData.find(p => p.id === item.id);
-                    if (product) {
-                        validItems.push({ 
-                            ...product, 
-                            quantity: item.quantity,
-                            selectedSize: item.selectedSize,
-                            selectedColor: item.selectedColor,
-                            cartItemId: item.cartItemId,
-                            image: getProductImage(product)
-                        });
-                    }
-                });
-                cart = validItems;
-                
-                // Restaurar cupom
-                if (cartData.appliedCoupon) {
-                    appliedCoupon = cartData.appliedCoupon;
-                    couponDiscount = cartData.couponDiscount || 0;
-                    
-                    // Atualizar UI do cupom
-                    requestAnimationFrame(() => {
-    const input = document.getElementById('couponInput');
-    const btn = document.getElementById('applyCouponBtn');
-    if (input) {
-        input.disabled = true;
-        input.classList.add('success');
+    if (!saved) {
+        cart = [];
+        appliedCoupon = null;
+        couponDiscount = 0;
+        return;
     }
-    if (btn) btn.style.display = 'none';
     
-    // Só chama se a função já existir (evita erro na inicialização)
-    if (typeof showAppliedCouponBadge === 'function') {
-        showAppliedCouponBadge(appliedCoupon, couponDiscount);
-    }
-});
+    try {
+        const cartData = JSON.parse(saved);
+        
+        // ✅ PRIORIZA o formato novo
+        if (cartData.items && Array.isArray(cartData.items)) {
+            const validItems = [];
+            cartData.items.forEach(item => {
+                const product = productsData.find(p => p.id === item.id);
+                if (product) {
+                    validItems.push({ 
+                        ...product, 
+                        quantity: item.quantity,
+                        selectedSize: item.selectedSize,
+                        selectedColor: item.selectedColor,
+                        cartItemId: item.cartItemId,
+                        image: getProductImage(product)
+                    });
                 }
-            }
+            });
+            cart = validItems;
             
-            if (cart.length === 0) {
-                localStorage.removeItem('sejaVersatilCart');
+            // ✅ Restaura cupom
+            if (cartData.appliedCoupon) {
+                appliedCoupon = cartData.appliedCoupon;
+                couponDiscount = cartData.couponDiscount || 0;
+                
+                requestAnimationFrame(() => {
+                    const input = document.getElementById('couponInput');
+                    const btn = document.getElementById('applyCouponBtn');
+                    if (input) {
+                        input.disabled = true;
+                        input.classList.add('success');
+                    }
+                    if (btn) btn.style.display = 'none';
+                    
+                    if (typeof showAppliedCouponBadge === 'function') {
+                        showAppliedCouponBadge(appliedCoupon, couponDiscount);
+                    }
+                });
             }
+        } 
+        // ✅ Aceita formato antigo APENAS uma vez (para migração)
+        else if (Array.isArray(cartData)) {
+            const validItems = [];
+            cartData.forEach(item => {
+                const product = productsData.find(p => p.id === item.id);
+                if (product) {
+                    validItems.push({ 
+                        ...product, 
+                        quantity: item.quantity,
+                        selectedSize: item.selectedSize,
+                        selectedColor: item.selectedColor,
+                        cartItemId: item.cartItemId,
+                        image: getProductImage(product)
+                    });
+                }
+            });
+            cart = validItems;
+            appliedCoupon = null;
+            couponDiscount = 0;
             
-        } catch (error) {
-            console.error('❌ Erro ao carregar carrinho:', error);
+            // ✅ MIGRA para formato novo
+            saveCart();
+        } else {
             cart = [];
             appliedCoupon = null;
             couponDiscount = 0;
+        }
+        
+        if (cart.length === 0) {
             localStorage.removeItem('sejaVersatilCart');
         }
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar carrinho:', error);
+        cart = [];
+        appliedCoupon = null;
+        couponDiscount = 0;
+        localStorage.removeItem('sejaVersatilCart');
     }
 }
 
@@ -5966,6 +5988,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
