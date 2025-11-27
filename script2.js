@@ -3621,7 +3621,16 @@ function closeVideoManager() {
 async function renderVideoManager() {
   const container = document.getElementById('videoManagerList');
   
-  container.innerHTML = '<p style="text-align: center; padding: 2rem;">⏳ Carregando...</p>';
+  container.innerHTML = `
+  <div style="display: flex; flex-direction: column; align-items: center; padding: 3rem; gap: 1rem;">
+    <div class="loading-spinner">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+    <p style="color: #666;">Carregando seus pedidos...</p>
+  </div>
+`;
   
   try {
     const configDoc = await db.collection('site_config').doc('video_grid').get();
@@ -4508,6 +4517,427 @@ async function sendToWhatsApp() {
             return;
         }
     }
+
+// ==================== COLETA DE DADOS DE CLIENTES NÃO CADASTRADOS ====================
+
+// ==================== COLETA DE DADOS DE CLIENTES NÃO CADASTRADOS ====================
+
+function collectGuestCustomerData() {
+  return new Promise((resolve, reject) => {
+    const modal = document.getElementById('customerDataModal');
+    const form = document.getElementById('customerDataForm');
+    
+    // Abrir modal
+    modal.classList.add('active');
+    
+    // Limpar campos
+    form.reset();
+    
+    // Handler do formulário
+    const submitHandler = async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('guestName').value.trim();
+      const email = document.getElementById('guestEmail').value.trim().toLowerCase();
+      const phone = document.getElementById('guestPhone').value.replace(/\D/g, '');
+      const cpf = document.getElementById('guestCPF').value.replace(/\D/g, '');
+      
+      // Validações
+      if (name.length < 3) {
+        showToast('Nome deve ter pelo menos 3 caracteres', 'error');
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        showToast('Email inválido', 'error');
+        return;
+      }
+      
+      if (phone.length < 10 || phone.length > 11) {
+        showToast('Telefone inválido', 'error');
+        return;
+      }
+      
+      if (cpf.length !== 11) {
+        showToast('CPF inválido', 'error');
+        return;
+      }
+      
+      // Validar CPF (algoritmo simplificado)
+      if (!isValidCPF(cpf)) {
+        showToast('CPF inválido', 'error');
+        return;
+      }
+      
+      // Fechar modal
+      modal.classList.remove('active');
+      
+      // Remover listener
+      form.removeEventListener('submit', submitHandler);
+      
+      // Resolver promise com dados
+      resolve({
+        name,
+        email,
+        phone,
+        cpf,
+        userId: null
+      });
+    };
+    
+    // Adicionar listener
+    form.addEventListener('submit', submitHandler);
+    
+    // Cancelar
+    window.closeCustomerDataModal = () => {
+      modal.classList.remove('active');
+      form.removeEventListener('submit', submitHandler);
+      resolve(null); // Retorna null se cancelar
+    };
+  });
+}
+
+// Validação de CPF (algoritmo simplificado)
+function isValidCPF(cpf) {
+  // Remove caracteres não numéricos
+  cpf = cpf.replace(/\D/g, '');
+  
+  // Verifica se tem 11 dígitos
+  if (cpf.length !== 11) return false;
+  
+  // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+  if (/^(\d)\1+$/.test(cpf)) return false;
+  
+  // Validação dos dígitos verificadores
+  let soma = 0;
+  let resto;
+  
+  // Primeiro dígito verificador
+  for (let i = 1; i <= 9; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+  
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(9, 10))) return false;
+  
+  // Segundo dígito verificador
+  soma = 0;
+  for (let i = 1; i <= 10; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+  
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(10, 11))) return false;
+  
+  return true;
+}
+
+function closeCustomerDataModal() {
+  const modal = document.getElementById('customerDataModal');
+  modal.classList.remove('active');
+}
+
+// Validação de CPF (algoritmo simplificado)
+function isValidCPF(cpf) {
+  // Remove caracteres não numéricos
+  cpf = cpf.replace(/\D/g, '');
+  
+  // Verifica se tem 11 dígitos
+  if (cpf.length !== 11) return false;
+  
+  // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+  if (/^(\d)\1+$/.test(cpf)) return false;
+  
+  // Validação dos dígitos verificadores
+  let soma = 0;
+  let resto;
+  
+  // Primeiro dígito verificador
+  for (let i = 1; i <= 9; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+  
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(9, 10))) return false;
+  
+  // Segundo dígito verificador
+  soma = 0;
+  for (let i = 1; i <= 10; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+  
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(10, 11))) return false;
+  
+  return true;
+}
+
+function closeCustomerDataModal() {
+  const modal = document.getElementById('customerDataModal');
+  modal.classList.remove('active');
+}
+
+
+// ==================== COLETA DE DADOS COMPLEMENTARES DE USUÁRIOS LOGADOS ====================
+
+async function getUserPhone() {
+  try {
+    const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+    
+    if (userDoc.exists && userDoc.data().phone) {
+      return userDoc.data().phone;
+    }
+    
+    // Se não tiver salvo, pedir
+    const phone = prompt('Digite seu WhatsApp com DDD:\n(Ex: 71991234567)');
+    
+    if (!phone) return null;
+    
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+      showToast('Telefone inválido', 'error');
+      return await getUserPhone(); // Tentar novamente
+    }
+    
+    // Salvar no Firestore
+    await db.collection('users').doc(auth.currentUser.uid).update({
+      phone: cleanPhone
+    });
+    
+    return cleanPhone;
+    
+  } catch (error) {
+    console.error('Erro ao obter telefone:', error);
+    return null;
+  }
+}
+
+async function getUserCPF() {
+  try {
+    const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+    
+    if (userDoc.exists && userDoc.data().cpf) {
+      return userDoc.data().cpf;
+    }
+    
+    // Se não tiver salvo, pedir
+    let cpf = prompt('Digite seu CPF (para rastreamento de pedidos):\n(Ex: 000.000.000-00)');
+    
+    if (!cpf) return null;
+    
+    cpf = cpf.replace(/\D/g, '');
+    
+    if (!isValidCPF(cpf)) {
+      showToast('CPF inválido', 'error');
+      return await getUserCPF(); // Tentar novamente
+    }
+    
+    // Salvar no Firestore
+    await db.collection('users').doc(auth.currentUser.uid).update({
+      cpf: cpf
+    });
+    
+    return cpf;
+    
+  } catch (error) {
+    console.error('Erro ao obter CPF:', error);
+    return null;
+  }
+}
+
+// ADICIONAR APÓS A FUNÇÃO sendToWhatsApp()
+
+async function saveOrderToFirestore(customerData, cartItems, paymentMethod, installments) {
+  try {
+    // Gerar ID único
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const orderId = `PEDIDO-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${random}`;
+    
+    // Calcular valores
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
+    
+    // Estrutura do pedido
+    const orderData = {
+      orderId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'pendente',
+      
+      customer: {
+        name: customerData.name,
+        email: customerData.email.toLowerCase(),
+        phone: customerData.phone,
+        cpf: customerData.cpf.replace(/\D/g, ''), // Remove formatação
+        userId: customerData.userId || null
+      },
+      
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        selectedSize: item.selectedSize || null,
+        selectedColor: item.selectedColor || null,
+        image: item.image
+      })),
+      
+      subtotal,
+      couponDiscount: discount,
+      total,
+      appliedCoupon: appliedCoupon ? {
+        code: appliedCoupon.code,
+        type: appliedCoupon.type,
+        value: appliedCoupon.value
+      } : null,
+      
+      paymentMethod,
+      installments: installments || null,
+      
+      trackingCode: null,
+      estimatedDelivery: null,
+      
+      statusHistory: [{
+        status: 'pendente',
+        date: firebase.firestore.FieldValue.serverTimestamp(),
+        note: 'Pedido criado e enviado via WhatsApp'
+      }]
+    };
+    
+    // Salvar no Firestore
+    await db.collection('orders').doc(orderId).set(orderData);
+    
+    console.log('✅ Pedido salvo:', orderId);
+    return orderId;
+    
+  } catch (error) {
+    console.error('❌ Erro ao salvar pedido:', error);
+    throw error;
+  }
+}
+
+// ==================== MÁSCARAS DE INPUT ====================
+
+function maskCPF(input) {
+  let value = input.value.replace(/\D/g, '');
+  
+  if (value.length <= 11) {
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  }
+  
+  input.value = value;
+}
+
+function maskPhone(input) {
+  let value = input.value.replace(/\D/g, '');
+  
+  if (value.length <= 11) {
+    value = value.replace(/(\d{2})(\d)/, '($1) $2');
+    value = value.replace(/(\d{5})(\d)/, '$1-$2');
+  }
+  
+  input.value = value;
+}
+
+// Aplicar máscaras automaticamente quando os modais abrirem
+document.addEventListener('DOMContentLoaded', () => {
+  // CPF no modal de busca de pedidos
+  const searchCPF = document.getElementById('searchCPF');
+  if (searchCPF) {
+    searchCPF.addEventListener('input', function() { maskCPF(this); });
+  }
+  
+  // CPF e telefone no modal de dados do cliente
+  const guestCPF = document.getElementById('guestCPF');
+  if (guestCPF) {
+    guestCPF.addEventListener('input', function() { maskCPF(this); });
+  }
+  
+  const guestPhone = document.getElementById('guestPhone');
+  if (guestPhone) {
+    guestPhone.addEventListener('input', function() { maskPhone(this); });
+  }
+});
+    
+// ADICIONAR APÓS A FUNÇÃO sendToWhatsApp()
+
+async function saveOrderToFirestore(customerData, cartItems, paymentMethod, installments) {
+  try {
+    // Gerar ID único
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const orderId = `PEDIDO-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${random}`;
+    
+    // Calcular valores
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
+    
+    // Estrutura do pedido
+    const orderData = {
+      orderId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'pendente',
+      
+      customer: {
+        name: customerData.name,
+        email: customerData.email.toLowerCase(),
+        phone: customerData.phone,
+        cpf: customerData.cpf.replace(/\D/g, ''), // Remove formatação
+        userId: customerData.userId || null
+      },
+      
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        selectedSize: item.selectedSize || null,
+        selectedColor: item.selectedColor || null,
+        image: item.image
+      })),
+      
+      subtotal,
+      couponDiscount: discount,
+      total,
+      appliedCoupon: appliedCoupon ? {
+        code: appliedCoupon.code,
+        type: appliedCoupon.type,
+        value: appliedCoupon.value
+      } : null,
+      
+      paymentMethod,
+      installments: installments || null,
+      
+      trackingCode: null,
+      estimatedDelivery: null,
+      
+      statusHistory: [{
+        status: 'pendente',
+        date: firebase.firestore.FieldValue.serverTimestamp(),
+        note: 'Pedido criado e enviado via WhatsApp'
+      }]
+    };
+    
+    // Salvar no Firestore
+    await db.collection('orders').doc(orderId).set(orderData);
+    
+    console.log('✅ Pedido salvo:', orderId);
+    return orderId;
+    
+  } catch (error) {
+    console.error('❌ Erro ao salvar pedido:', error);
+    throw error;
+  }
+}
     
 // Obter forma de pagamento selecionada
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
@@ -4613,6 +5043,8 @@ async function sendToWhatsApp() {
        userId: currentUser.uid
      };
    }
+
+
 
 // Fechar modal ao clicar fora
 document.addEventListener('click', function(e) {
@@ -5667,5 +6099,6 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
