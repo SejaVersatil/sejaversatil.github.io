@@ -3264,79 +3264,27 @@ function loadCart() {
         
         // ✅ ACEITA AMBOS OS FORMATOS
         if (parsed.items && Array.isArray(parsed.items)) {
-            // ✅ CORREÇÃO CRÍTICA: Validar contra productsData
-            const validItems = [];
-            
-            parsed.items.forEach(item => {
-                // ✅ Se productsData está vazio, AGUARDA carregamento
-                if (!productsData || productsData.length === 0) {
-                    console.warn('⚠️ productsData vazio, item mantido temporariamente:', item.id);
-                    validItems.push({
-                        ...item,
-                        quantity: item.quantity || 1,
-                        price: item.price || 0
-                    });
-                    return;
-                }
-                
-                // ✅ VALIDAÇÃO REAL: Produto ainda existe?
-                const productExists = productsData.find(p => p.id === item.id);
-                
-                if (productExists) {
-                    validItems.push({
-                        ...item,
-                        quantity: item.quantity || 1,
-                        price: item.price || 0,
-                        // ✅ ATUALIZA IMAGEM SE HOUVER COR
-                        image: item.selectedColor ? 
-                            getImageForColor(productExists, item.selectedColor) : 
-                            item.image
-                    });
-                } else {
-                    console.warn('❌ Produto removido do catálogo:', item.id, item.name);
-                }
-            });
-            
-            cart = validItems;
+            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            cart = parsed.items.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0
+            }));
             appliedCoupon = parsed.appliedCoupon || null;
             couponDiscount = parsed.couponDiscount || 0;
-            
         } else if (Array.isArray(parsed)) {
-            // Formato antigo
-            const validItems = [];
-            
-            parsed.forEach(item => {
-                if (!productsData || productsData.length === 0) {
-                    validItems.push({
-                        ...item,
-                        quantity: item.quantity || 1,
-                        price: item.price || 0
-                    });
-                    return;
-                }
-                
-                const productExists = productsData.find(p => p.id === item.id);
-                if (productExists) {
-                    validItems.push({
-                        ...item,
-                        quantity: item.quantity || 1,
-                        price: item.price || 0
-                    });
-                }
-            });
-            
-            cart = validItems;
+            // Formato antigo: [{item1}, {item2}]
+            cart = parsed.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0
+            }));
             appliedCoupon = null;
             couponDiscount = 0;
         } else {
             cart = [];
             appliedCoupon = null;
             couponDiscount = 0;
-        }
-        
-        // ✅ SALVA DE VOLTA (limpa itens inválidos permanentemente)
-        if (productsData && productsData.length > 0) {
-            saveCart();
         }
         
         console.log('✅ Carrinho carregado:', cart.length, 'itens');
@@ -5970,6 +5918,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
