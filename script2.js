@@ -1194,12 +1194,24 @@ async function loginWithGoogle() {
             prompt: 'select_account'
         });
         
-        const result = await auth.signInWithPopup(provider);
+        // ✅ CORREÇÃO 1: Detectar bloqueio de popup
+        let result;
+        try {
+            result = await auth.signInWithPopup(provider);
+        } catch (popupError) {
+            if (popupError.code === 'auth/popup-blocked') {
+                // Tentar com redirect como fallback
+                await auth.signInWithRedirect(provider);
+                return; // Sai aqui, o redirect vai recarregar a página
+            }
+            throw popupError; // Repassa outros erros
+        }
+        
         const user = result.user;
         
         console.log('✅ Login Google bem-sucedido:', user.email);
         
-        // Verificar se é admin
+        // ✅ CORREÇÃO 2: Verificar se é admin ANTES de criar documento
         const adminDoc = await db.collection('admins').doc(user.uid).get();
         
         if (adminDoc.exists && adminDoc.data().role === 'admin') {
@@ -1215,14 +1227,15 @@ async function loginWithGoogle() {
             
             isAdminLoggedIn = true;
         } else {
-            // Usuário comum - criar/atualizar documento
+            // ✅ CORREÇÃO 3: Usar merge para não sobrescrever dados existentes
             await db.collection('users').doc(user.uid).set({
                 name: user.displayName || 'Usuário',
                 email: user.email,
                 photoURL: user.photoURL || null,
                 lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                isAdmin: false
-            }, { merge: true });
+                isAdmin: false,
+                provider: 'google' // ← Adiciona identificador
+            }, { merge: true }); // ← IMPORTANTE: merge true
             
             currentUser = {
                 name: user.displayName || 'Usuário',
@@ -1250,10 +1263,20 @@ async function loginWithGoogle() {
         
         let errorMessage = 'Erro ao fazer login com Google';
         
+        // ✅ CORREÇÃO 4: Mensagens de erro mais específicas
         if (error.code === 'auth/popup-closed-by-user') {
-            errorMessage = 'Login cancelado pelo usuário';
+            errorMessage = 'Você fechou a janela de login';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Login cancelado';
         } else if (error.code === 'auth/account-exists-with-different-credential') {
-            errorMessage = 'Este email já está cadastrado com outro método';
+            errorMessage = 'Este email já está cadastrado com outro método de login';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (error.code === 'auth/internal-error') {
+            errorMessage = 'Erro interno. Tente novamente em alguns segundos';
+        } else if (error.message) {
+            // Mostrar mensagem técnica se for outro erro
+            errorMessage = error.message;
         }
         
         showToast(errorMessage, 'error');
@@ -1262,7 +1285,6 @@ async function loginWithGoogle() {
         document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
-
 // ==================== FIRESTORE ====================
 
 async function carregarProdutosDoFirestore() {
@@ -5620,6 +5642,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
