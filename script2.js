@@ -4469,13 +4469,42 @@ function setupPaymentListeners() {
     });
 }
 
+// ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
+
 async function sendToWhatsApp() {
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
+
+    // 1. COLETA DE DADOS DO CLIENTE (Trazido para dentro da função para funcionar o fluxo)
+    const isLoggedIn = auth.currentUser !== null;
+    let customerData = {};
+   
+    if (!isLoggedIn) {
+      // Modal para coletar CPF + Email de visitantes
+      if (typeof collectGuestCustomerData === 'function') {
+          customerData = await collectGuestCustomerData();
+          if (!customerData) return; // Se cancelou o modal
+      } else {
+          // Fallback se a função não existir (embora esteja definida abaixo)
+          customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
+      }
+    } else {
+      // Dados do usuário logado
+      customerData = {
+        name: currentUser.name,
+        email: currentUser.email,
+        phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
+        cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
+        userId: currentUser.uid
+      };
+      
+      // Se o usuário cancelar a entrada de dados obrigatórios
+      if (!customerData.phone || !customerData.cpf) return;
+    }
     
-    // ✅ REVALIDAR CUPOM NO SERVIDOR
+    // 2. REVALIDAR CUPOM NO SERVIDOR
     if (appliedCoupon) {
         try {
             const couponDoc = await db.collection('coupons').doc(appliedCoupon.id).get();
@@ -4487,10 +4516,10 @@ async function sendToWhatsApp() {
             }
             
             const serverCoupon = couponDoc.data();
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
             // Revalidar valor mínimo
-            if (serverCoupon.minValue && subtotal < serverCoupon.minValue) {
+            if (serverCoupon.minValue && subtotalCheck < serverCoupon.minValue) {
                 showToast(`❌ Valor mínimo: R$ ${serverCoupon.minValue.toFixed(2)}`, 'error');
                 removeCoupon();
                 return;
@@ -4499,7 +4528,7 @@ async function sendToWhatsApp() {
             // Recalcular desconto
             let recalculatedDiscount = 0;
             if (serverCoupon.type === 'percentage') {
-                recalculatedDiscount = (subtotal * serverCoupon.value) / 100;
+                recalculatedDiscount = (subtotalCheck * serverCoupon.value) / 100;
                 if (serverCoupon.maxDiscount && recalculatedDiscount > serverCoupon.maxDiscount) {
                     recalculatedDiscount = serverCoupon.maxDiscount;
                 }
@@ -4507,8 +4536,8 @@ async function sendToWhatsApp() {
                 recalculatedDiscount = serverCoupon.value;
             }
             
-            // ✅ USAR DESCONTO RECALCULADO
-            couponDiscount = Math.min(recalculatedDiscount, subtotal);
+            // Atualizar desconto global
+            couponDiscount = Math.min(recalculatedDiscount, subtotalCheck);
             
         } catch (error) {
             console.error('Erro ao validar cupom:', error);
@@ -4517,15 +4546,116 @@ async function sendToWhatsApp() {
             return;
         }
     }
+    
+    // 3. PREPARAÇÃO DOS DADOS DO PEDIDO
+    const paymentInput = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!paymentInput) {
+        showToast('Selecione uma forma de pagamento', 'error');
+        return;
+    }
+    
+    const paymentMethod = paymentInput.value;
+    const installmentsEl = document.getElementById('installments');
+    const installments = installmentsEl ? installmentsEl.value : '1';
+    
+    const paymentMethodsMap = {
+        'pix': 'PIX',
+        'boleto': 'Boleto Bancário',
+        'credito-avista': 'Cartão de Crédito à Vista',
+        'credito-parcelado': `Cartão de Crédito Parcelado em ${installments}x sem juros`
+    };
+    
+    const paymentText = paymentMethodsMap[paymentMethod] || paymentMethod;
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = Math.max(0, subtotal - (couponDiscount || 0));
 
-// ==================== COLETA DE DADOS DE CLIENTES NÃO CADASTRADOS ====================
+    // 4. SALVAR NO FIRESTORE
+    try {
+        await saveOrderToFirestore(customerData, cart, paymentMethod, installments);
+        
+        if (appliedCoupon) {
+            await registerCouponUsage(appliedCoupon.id, total, couponDiscount);
+        }
+        
+    } catch (error) {
+        console.error(error);
+        showToast('Erro ao salvar pedido. Tente novamente.', 'error');
+        return;
+    }
 
-// ==================== COLETA DE DADOS DE CLIENTES NÃO CADASTRADOS ====================
+    // 5. MONTAGEM DA MENSAGEM
+    let msg = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n`;
+    msg += `*Cliente:* ${customerData.name}\n`;
+    if (customerData.cpf) msg += `*CPF:* ${customerData.cpf}\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    msg += `*📦 PRODUTOS:*\n`;
+    
+    cart.forEach((item, index) => {
+        msg += `${index+1}. *${item.name}*\n`;
+        if (item.selectedSize || item.selectedColor) {
+            msg += `   📏 Tam: ${item.selectedSize || '-'} | 🎨 Cor: ${item.selectedColor || '-'}\n`;
+        }
+        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
+        msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
+    });
+
+    if (appliedCoupon && couponDiscount > 0) {
+        msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+        msg += `🎟️ *CUPOM:* ${appliedCoupon.code}\n`;
+        msg += `💰 *Desconto:* -R$ ${couponDiscount.toFixed(2)}\n`;
+    }
+
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    if (couponDiscount > 0) {
+        msg += `*Subtotal: R$ ${subtotal.toFixed(2)}*\n`;
+    }
+    msg += `*💰 TOTAL: R$ ${total.toFixed(2)}*\n\n`;
+    msg += `*💳 PAGAMENTO:* ${paymentText}\n`;
+    
+    if (paymentMethod === 'credito-parcelado') {
+        const installmentValue = (total / parseInt(installments)).toFixed(2);
+        msg += `📊 ${installments}x de R$ ${installmentValue}\n`;
+    }
+
+    msg += `\n_Pedido salvo no sistema_`;
+
+    // 6. ENVIO E LIMPEZA
+    const encodedMessage = encodeURIComponent(msg);
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    
+    window.open(whatsappURL, '_blank');
+    
+    closePaymentModal();
+    showToast('Pedido realizado com sucesso!', 'success');
+    
+    setTimeout(() => {
+        if (confirm('Pedido enviado! Deseja limpar o carrinho?')) {
+            cart = [];
+            appliedCoupon = null;
+            couponDiscount = 0;
+            saveCart();
+            updateCartUI();
+            toggleCart();
+        }
+    }, 2000);
+    
+    if (typeof trackEvent === 'function') {
+        trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
+    }
+}
+
+// ==================== FUNÇÕES AUXILIARES (TRAZIDAS DO SEU CÓDIGO) ====================
 
 function collectGuestCustomerData() {
   return new Promise((resolve, reject) => {
     const modal = document.getElementById('customerDataModal');
     const form = document.getElementById('customerDataForm');
+    
+    if (!modal || !form) {
+        console.error('Modal de dados do cliente não encontrado');
+        resolve(null);
+        return;
+    }
     
     // Abrir modal
     modal.classList.add('active');
@@ -4597,7 +4727,6 @@ function collectGuestCustomerData() {
   });
 }
 
-// Validação de CPF (algoritmo simplificado)
 function isValidCPF(cpf) {
   // Remove caracteres não numéricos
   cpf = cpf.replace(/\D/g, '');
@@ -4605,28 +4734,19 @@ function isValidCPF(cpf) {
   // Verifica se tem 11 dígitos
   if (cpf.length !== 11) return false;
   
-  // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+  // Verifica se todos os dígitos são iguais
   if (/^(\d)\1+$/.test(cpf)) return false;
   
-  // Validação dos dígitos verificadores
   let soma = 0;
   let resto;
   
-  // Primeiro dígito verificador
-  for (let i = 1; i <= 9; i++) {
-    soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-  }
-  
+  for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
   resto = (soma * 10) % 11;
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(cpf.substring(9, 10))) return false;
   
-  // Segundo dígito verificador
   soma = 0;
-  for (let i = 1; i <= 10; i++) {
-    soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-  }
-  
+  for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
   resto = (soma * 10) % 11;
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(cpf.substring(10, 11))) return false;
@@ -4636,79 +4756,29 @@ function isValidCPF(cpf) {
 
 function closeCustomerDataModal() {
   const modal = document.getElementById('customerDataModal');
-  modal.classList.remove('active');
+  if (modal) modal.classList.remove('active');
 }
-
-// Validação de CPF (algoritmo simplificado)
-function isValidCPF(cpf) {
-  // Remove caracteres não numéricos
-  cpf = cpf.replace(/\D/g, '');
-  
-  // Verifica se tem 11 dígitos
-  if (cpf.length !== 11) return false;
-  
-  // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
-  if (/^(\d)\1+$/.test(cpf)) return false;
-  
-  // Validação dos dígitos verificadores
-  let soma = 0;
-  let resto;
-  
-  // Primeiro dígito verificador
-  for (let i = 1; i <= 9; i++) {
-    soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-  }
-  
-  resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
-  if (resto !== parseInt(cpf.substring(9, 10))) return false;
-  
-  // Segundo dígito verificador
-  soma = 0;
-  for (let i = 1; i <= 10; i++) {
-    soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-  }
-  
-  resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
-  if (resto !== parseInt(cpf.substring(10, 11))) return false;
-  
-  return true;
-}
-
-function closeCustomerDataModal() {
-  const modal = document.getElementById('customerDataModal');
-  modal.classList.remove('active');
-}
-
-
-// ==================== COLETA DE DADOS COMPLEMENTARES DE USUÁRIOS LOGADOS ====================
 
 async function getUserPhone() {
   try {
+    if (!auth.currentUser) return null;
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     
     if (userDoc.exists && userDoc.data().phone) {
       return userDoc.data().phone;
     }
     
-    // Se não tiver salvo, pedir
     const phone = prompt('Digite seu WhatsApp com DDD:\n(Ex: 71991234567)');
-    
     if (!phone) return null;
     
     const cleanPhone = phone.replace(/\D/g, '');
     
     if (cleanPhone.length < 10 || cleanPhone.length > 11) {
       showToast('Telefone inválido', 'error');
-      return await getUserPhone(); // Tentar novamente
+      return await getUserPhone(); 
     }
     
-    // Salvar no Firestore
-    await db.collection('users').doc(auth.currentUser.uid).update({
-      phone: cleanPhone
-    });
-    
+    await db.collection('users').doc(auth.currentUser.uid).update({ phone: cleanPhone });
     return cleanPhone;
     
   } catch (error) {
@@ -4719,29 +4789,24 @@ async function getUserPhone() {
 
 async function getUserCPF() {
   try {
+    if (!auth.currentUser) return null;
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     
     if (userDoc.exists && userDoc.data().cpf) {
       return userDoc.data().cpf;
     }
     
-    // Se não tiver salvo, pedir
-    let cpf = prompt('Digite seu CPF (para rastreamento de pedidos):\n(Ex: 000.000.000-00)');
-    
+    let cpf = prompt('Digite seu CPF (para rastreamento):\n(Ex: 000.000.000-00)');
     if (!cpf) return null;
     
     cpf = cpf.replace(/\D/g, '');
     
     if (!isValidCPF(cpf)) {
       showToast('CPF inválido', 'error');
-      return await getUserCPF(); // Tentar novamente
+      return await getUserCPF();
     }
     
-    // Salvar no Firestore
-    await db.collection('users').doc(auth.currentUser.uid).update({
-      cpf: cpf
-    });
-    
+    await db.collection('users').doc(auth.currentUser.uid).update({ cpf: cpf });
     return cpf;
     
   } catch (error) {
@@ -4750,21 +4815,16 @@ async function getUserCPF() {
   }
 }
 
-// ADICIONAR APÓS A FUNÇÃO sendToWhatsApp()
-
 async function saveOrderToFirestore(customerData, cartItems, paymentMethod, installments) {
   try {
-    // Gerar ID único
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
     const orderId = `PEDIDO-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${random}`;
     
-    // Calcular valores
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = couponDiscount || 0;
     const total = Math.max(0, subtotal - discount);
     
-    // Estrutura do pedido
     const orderData = {
       orderId,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -4772,9 +4832,9 @@ async function saveOrderToFirestore(customerData, cartItems, paymentMethod, inst
       
       customer: {
         name: customerData.name,
-        email: customerData.email.toLowerCase(),
+        email: customerData.email ? customerData.email.toLowerCase() : '',
         phone: customerData.phone,
-        cpf: customerData.cpf.replace(/\D/g, ''), // Remove formatação
+        cpf: customerData.cpf ? customerData.cpf.replace(/\D/g, '') : '',
         userId: customerData.userId || null
       },
       
@@ -4799,7 +4859,6 @@ async function saveOrderToFirestore(customerData, cartItems, paymentMethod, inst
       
       paymentMethod,
       installments: installments || null,
-      
       trackingCode: null,
       estimatedDelivery: null,
       
@@ -4810,9 +4869,7 @@ async function saveOrderToFirestore(customerData, cartItems, paymentMethod, inst
       }]
     };
     
-    // Salvar no Firestore
     await db.collection('orders').doc(orderId).set(orderData);
-    
     console.log('✅ Pedido salvo:', orderId);
     return orderId;
     
@@ -4822,235 +4879,41 @@ async function saveOrderToFirestore(customerData, cartItems, paymentMethod, inst
   }
 }
 
-// ==================== MÁSCARAS DE INPUT ====================
-
 function maskCPF(input) {
   let value = input.value.replace(/\D/g, '');
-  
   if (value.length <= 11) {
     value = value.replace(/(\d{3})(\d)/, '$1.$2');
     value = value.replace(/(\d{3})(\d)/, '$1.$2');
     value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   }
-  
   input.value = value;
 }
 
 function maskPhone(input) {
   let value = input.value.replace(/\D/g, '');
-  
   if (value.length <= 11) {
     value = value.replace(/(\d{2})(\d)/, '($1) $2');
     value = value.replace(/(\d{5})(\d)/, '$1-$2');
   }
-  
   input.value = value;
 }
 
-// Aplicar máscaras automaticamente quando os modais abrirem
+// Listeners de Máscara e Fechamento
 document.addEventListener('DOMContentLoaded', () => {
-  // CPF no modal de busca de pedidos
   const searchCPF = document.getElementById('searchCPF');
-  if (searchCPF) {
-    searchCPF.addEventListener('input', function() { maskCPF(this); });
-  }
+  if (searchCPF) searchCPF.addEventListener('input', function() { maskCPF(this); });
   
-  // CPF e telefone no modal de dados do cliente
   const guestCPF = document.getElementById('guestCPF');
-  if (guestCPF) {
-    guestCPF.addEventListener('input', function() { maskCPF(this); });
-  }
+  if (guestCPF) guestCPF.addEventListener('input', function() { maskCPF(this); });
   
   const guestPhone = document.getElementById('guestPhone');
-  if (guestPhone) {
-    guestPhone.addEventListener('input', function() { maskPhone(this); });
-  }
+  if (guestPhone) guestPhone.addEventListener('input', function() { maskPhone(this); });
 });
-    
-// ADICIONAR APÓS A FUNÇÃO sendToWhatsApp()
 
-async function saveOrderToFirestore(customerData, cartItems, paymentMethod, installments) {
-  try {
-    // Gerar ID único
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const orderId = `PEDIDO-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${random}`;
-    
-    // Calcular valores
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = couponDiscount || 0;
-    const total = Math.max(0, subtotal - discount);
-    
-    // Estrutura do pedido
-    const orderData = {
-      orderId,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      status: 'pendente',
-      
-      customer: {
-        name: customerData.name,
-        email: customerData.email.toLowerCase(),
-        phone: customerData.phone,
-        cpf: customerData.cpf.replace(/\D/g, ''), // Remove formatação
-        userId: customerData.userId || null
-      },
-      
-      items: cartItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        selectedSize: item.selectedSize || null,
-        selectedColor: item.selectedColor || null,
-        image: item.image
-      })),
-      
-      subtotal,
-      couponDiscount: discount,
-      total,
-      appliedCoupon: appliedCoupon ? {
-        code: appliedCoupon.code,
-        type: appliedCoupon.type,
-        value: appliedCoupon.value
-      } : null,
-      
-      paymentMethod,
-      installments: installments || null,
-      
-      trackingCode: null,
-      estimatedDelivery: null,
-      
-      statusHistory: [{
-        status: 'pendente',
-        date: firebase.firestore.FieldValue.serverTimestamp(),
-        note: 'Pedido criado e enviado via WhatsApp'
-      }]
-    };
-    
-    // Salvar no Firestore
-    await db.collection('orders').doc(orderId).set(orderData);
-    
-    console.log('✅ Pedido salvo:', orderId);
-    return orderId;
-    
-  } catch (error) {
-    console.error('❌ Erro ao salvar pedido:', error);
-    throw error;
-  }
-}
-    
-// Obter forma de pagamento selecionada
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-    const installments = document.getElementById('installments').value;
-    
-    // Mapear forma de pagamento para texto legível
-    const paymentMethods = {
-        'pix': 'PIX',
-        'boleto': 'Boleto Bancário',
-        'credito-avista': 'Cartão de Crédito à Vista',
-        'credito-parcelado': `Cartão de Crédito Parcelado em ${installments}x sem juros`
-    };
-    
-    const paymentText = paymentMethods[paymentMethod];
-    
-    // Montar mensagem
-    let msg = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n\n`;
-    msg += `*📦 PRODUTOS:*\n`;
-    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    
-    cart.forEach((item, index) => {
-        msg += `${index+1}. *${item.name}*\n`; // Corrigido de message para msg
-        if (item.selectedSize || item.selectedColor) {
-            msg += `   TAM: ${item.selectedSize || '-'} | COR: ${item.selectedColor || '-'}\n`; // Corrigido de message para msg
-        }
-        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`; // Corrigido de message para msg
-        msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`; // Corrigido de message para msg
-    });
-
-    // ✅ MODIFICAR CÁLCULO (Movido para cá para evitar redeclaração e erro de acesso)
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = Math.max(0, subtotal - (couponDiscount || 0));
-
-    // ✅ ADICIONAR AQUI
-    // Cupom aplicado
-    if (appliedCoupon && couponDiscount > 0) {
-        msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-        msg += `🎟️ *CUPOM APLICADO:* ${appliedCoupon.code}\n`;
-        msg += `💰 *Desconto:* R$ ${couponDiscount.toFixed(2)}\n\n`;
-    }
-
-    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-
-    // ✅ ADICIONAR BREAKDOWN
-    if (couponDiscount > 0) {
-        msg += `*SUBTOTAL: R$ ${subtotal.toFixed(2)}*\n`;
-        msg += `*DESCONTO: -R$ ${couponDiscount.toFixed(2)}*\n`;
-    }
-
-    msg += `*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*\n\n`;
-    msg += `*💳 FORMA DE PAGAMENTO:*\n`; 
-    msg += `${paymentText}\n\n`;        
-    
-    if (paymentMethod === 'credito-parcelado') {
-        const installmentValue = (total / installments).toFixed(2);
-        msg += `📊 *${installments}x de R$ ${installmentValue}*\n\n`; 
-    }
-    
-    msg += `━━━━━━━━━━━━━━━━━━━━\n`; 
-    msg += `_Pedido gerado automaticamente via site_`; 
-    
-    // Codificar mensagem para URL
-    const encodedMessage = encodeURIComponent(msg); 
-    
-    // Montar URL do WhatsApp
-    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-    
-    // Abrir WhatsApp
-    window.open(whatsappURL, '_blank');
-    
-    // Fechar modal e limpar carrinho
-    closePaymentModal();
-    showToast('Redirecionando para WhatsApp...', 'success');
-    
-    // Opcional: Limpar carrinho após envio
-    setTimeout(() => {
-        if (confirm('Pedido enviado! Deseja limpar o carrinho?')) {
-            cart = [];
-            saveCart();
-            updateCartUI();
-            toggleCart();
-        }
-    }, 2000);
-    
-    // Tracking
-    trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
-} // Fechamento da função sendToWhatsApp
-   
-   // Verificar se cliente está logado
-   const isLoggedIn = auth.currentUser !== null;
-   let customerData = {};
-   
-   if (!isLoggedIn) {
-     // Modal para coletar CPF + Email
-     customerData = await collectGuestCustomerData();
-     if (!customerData) return; // Se cancelou
-   } else {
-     customerData = {
-       name: currentUser.name,
-       email: currentUser.email,
-       phone: await getUserPhone(),
-       cpf: await getUserCPF(),
-       userId: currentUser.uid
-     };
-   }
-
-
-
-// Fechar modal ao clicar fora
 document.addEventListener('click', function(e) {
     const modal = document.getElementById('paymentModal');
     if (e.target === modal) {
-        closePaymentModal();
+        if (typeof closePaymentModal === 'function') closePaymentModal();
     }
 });
 // ==================== ANIMAÇÃO DE PRODUTO PARA CARRINHO ====================
@@ -6099,6 +5962,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
