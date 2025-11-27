@@ -882,26 +882,45 @@ function addToCartFromDetails() {
     const existing = state.cart.find(i => i.cartItemId === cartItemId);
 
     // --- LÓGICA ROBUSTA DE IMAGEM ---
-    let imgUrl = '';
-    // 1. Tenta pegar do array de imagens
-    if (Array.isArray(p.images) && p.images.length > 0) {
-        imgUrl = p.images[0];
-    }
-    // 2. Se falhar, tenta pegar da string única 'image'
-    else if (p.image) {
-        imgUrl = p.image;
-    }
+let imgUrl = '';
 
-    const itemPayload = {
-        cartItemId,
-        productId: p.id,
-        name: p.name,
-        price: safeNumber(p.price, 0),
-        quantity: state.selectedQuantity,
-        selectedSize: state.selectedSize,
-        selectedColor: state.selectedColor,
-        image: imgUrl // Usa a URL tratada
-    };
+// Verifica se existe a função global getImageForColor
+if (typeof getImageForColor === 'function') {
+    imgUrl = getImageForColor(p, state.selectedColor);
+} else {
+    // Fallback: lógica inline
+    if (state.selectedColor && Array.isArray(p.colors)) {
+        const colorObj = p.colors.find(c => {
+            const cName = typeof c === 'object' ? c.name : c;
+            return String(cName).trim() === String(state.selectedColor).trim();
+        });
+        
+        if (colorObj && colorObj.images && colorObj.images.length > 0) {
+            imgUrl = colorObj.images[0];
+        } else if (Array.isArray(p.images) && p.images.length > 0) {
+            imgUrl = p.images[0];
+        } else if (p.image) {
+            imgUrl = p.image;
+        }
+    } else {
+        if (Array.isArray(p.images) && p.images.length > 0) {
+            imgUrl = p.images[0];
+        } else if (p.image) {
+            imgUrl = p.image;
+        }
+    }
+}
+
+const itemPayload = {
+    cartItemId,
+    productId: p.id,
+    name: p.name,
+    price: safeNumber(p.price, 0),
+    quantity: state.selectedQuantity,
+    selectedSize: state.selectedSize,
+    selectedColor: state.selectedColor,
+    image: imgUrl // ✅ Agora usa a imagem da cor correta
+};
    
 console.log('🛒 Adicionando ao carrinho:', itemPayload);
    
@@ -1835,6 +1854,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
