@@ -1054,18 +1054,18 @@ async function userRegister(event) {
         return;
     }
     
-    if (password.length < 8) {
-        errorMsg.textContent = 'Senha deve ter no mínimo 8 caracteres';
+    if (password.length < 6) {
+    errorMsg.textContent = 'Senha deve ter no mínimo 6 caracteres';
         errorMsg.classList.add('active');
         return;
     }
-    
-    // ✅ Validação de força de senha
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        errorMsg.textContent = 'Senha deve conter maiúsculas, minúsculas e números';
-        errorMsg.classList.add('active');
-        return;
-    }
+
+    // ✅ Validação de força de senha (VERSÃO LIGHT)
+if (!/(?=.*[a-zA-Z])/.test(password)) {
+    errorMsg.textContent = 'Senha deve conter pelo menos uma letra';
+    errorMsg.classList.add('active');
+    return;
+}
     
     if (password !== confirmPassword) {
         errorMsg.textContent = 'As senhas não coincidem';
@@ -5545,6 +5545,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
