@@ -996,40 +996,5 @@
       });
     }
   </script>
-<!-- Modal de Dados do Cliente -->
-<div id="customerDataModal" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <h2 style="margin-bottom: 1.5rem;">📝 Dados para Entrega</h2>
-        <form id="customerDataForm">
-            <div class="form-group">
-                <label>Nome Completo *</label>
-                <input type="text" id="guestName" required minlength="3">
-            </div>
-            <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="guestEmail" required>
-            </div>
-            <div class="form-group">
-                <label>WhatsApp (com DDD) *</label>
-                <input type="tel" id="guestPhone" required placeholder="(71) 99999-9999">
-            </div>
-            <div class="form-group">
-                <label>CPF *</label>
-                <input type="text" id="guestCPF" required placeholder="000.000.000-00">
-            </div>
-            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                <button type="button" onclick="closeCustomerDataModal()" 
-                        style="flex: 1; padding: 1rem; background: #e5e5e5; border: none; border-radius: 8px; cursor: pointer;">
-                    Cancelar
-                </button>
-                <button type="submit" 
-                        style="flex: 1; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
-                    Continuar
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-      
 </body>
 </html>
