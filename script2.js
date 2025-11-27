@@ -5545,18 +5545,3 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
