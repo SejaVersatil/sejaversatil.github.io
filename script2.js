@@ -5923,5 +5923,14 @@ async function deleteCouponPrompt(couponId) {
     }
 }
 
-
-
+// ✅ Marcar cliques no logo/navbar como navegação interna
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (link) {
+        const href = link.getAttribute('href');
+        // Se for link interno do mesmo domínio
+        if (href && (href.startsWith('/') || href.startsWith('index.html') || href.startsWith('produto.html'))) {
+            isInternalNavigation = true;
+        }
+    }
+});
