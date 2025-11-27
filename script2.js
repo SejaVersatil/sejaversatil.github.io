@@ -820,6 +820,44 @@ function switchUserTab(tab) {
     }
 }
 
+// ✅ LISTENER DE MUDANÇA DE AUTENTICAÇÃO
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
+        
+        // Verificar se é admin
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid,
+                permissions: adminData.permissions || []
+            };
+            
+            isAdminLoggedIn = true;
+            localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+            
+            console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
+        }
+    } else {
+        console.log('🔄 Estado de auth mudou: usuário deslogado');
+        
+        // ✅ CORRIGIDO: Apenas limpar, sem confirm()
+        if (currentUser) {
+            currentUser = null;
+            isAdminLoggedIn = false;
+            localStorage.removeItem('sejaVersatilCurrentUser');
+            hideLoggedInView();
+        }
+    }
+});
+
+
 async function checkUserSession() {
     // Verificar se há usuário salvo no localStorage
     const savedUser = localStorage.getItem('sejaVersatilCurrentUser');
@@ -870,44 +908,6 @@ async function checkUserSession() {
     localStorage.removeItem('sejaVersatilCurrentUser');
 }
     }
-    
-    // ✅ LISTENER DE MUDANÇA DE AUTENTICAÇÃO
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            // console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
-            
-            // Verificar se é admin
-            const adminDoc = await db.collection('admins').doc(user.uid).get();
-            
-            if (adminDoc.exists && adminDoc.data().role === 'admin') {
-                const adminData = adminDoc.data();
-                
-                currentUser = {
-                    name: adminData.name || 'Administrador',
-                    email: user.email,
-                    isAdmin: true,
-                    uid: user.uid,
-                    permissions: adminData.permissions || [] // ← CORREÇÃO PRINCIPAL
-                };
-                
-                isAdminLoggedIn = true;
-                localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-                
-                // console.log('✅ Admin autenticado com permissões:', currentUser.permissions);
-            }
-        } else {
-    console.log('🔄 Estado de auth mudou: usuário deslogado');
-    
-    
-    if (currentUser) {
-        currentUser = null;
-        isAdminLoggedIn = false;
-        localStorage.removeItem('sejaVersatilCurrentUser');
-        hideLoggedInView();
-    }
-}
-    });
-}
 
 // Tratar retorno do redirect (caso popup seja bloqueado)
 auth.getRedirectResult().then((result) => {
@@ -5657,6 +5657,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
