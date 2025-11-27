@@ -2292,7 +2292,7 @@ function linkImageToColor(imageIndex) {
     });
     
     colorList += '\n0. 🔓 Desvincular de todas\n';
-    colorList += '\n💡 Digite o número da cor:';
+    colorList += '\n Digite o número da cor:';
 
     const choice = prompt(colorList);
     
@@ -2340,10 +2340,10 @@ function linkImageToColor(imageIndex) {
 
 function removeProductColor(index) {
     const color = productColors[index];
-    if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
+    if (confirm(` Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
         productColors.splice(index, 1);
         renderProductColorsManager();
-        showToast(`🗑️ Cor "${color.name}" removida`, 'info');
+        showToast(` Cor "${color.name}" removida`, 'info');
     }
 }
 
@@ -2437,8 +2437,8 @@ function sortProducts(sortType) {
 function getFilteredProducts() {
     let filtered = productsData;
     
-   // console.log('🔍 Filtro atual:', currentFilter);
-    // console.log('📦 Total de produtos:', productsData.length);
+   // console.log(' Filtro atual:', currentFilter);
+    // console.log(' Total de produtos:', productsData.length);
     
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
@@ -2460,7 +2460,7 @@ function getFilteredProducts() {
     
     // Se não encontrar produtos, mostrar aviso
     if (filtered.length === 0 && currentFilter !== 'all') {
-        console.warn('⚠️ Nenhum produto encontrado para a categoria:', currentFilter);
+        console.warn(' Nenhum produto encontrado para a categoria:', currentFilter);
     }
     
     if (currentSort === 'price-asc') {
@@ -2501,7 +2501,7 @@ function renderProducts() {
         if (currentFilter === 'favorites') {
             label = '❤️ Meus Favoritos';
         } else if (currentFilter === 'sale') {
-            label = '🔥 Promoções';
+            label = ' Promoções';
         } else {
             // Tenta pegar o nome bonito da categoria, ou usa o próprio ID formatado
             label = typeof getCategoryName === 'function' ? getCategoryName(currentFilter) : currentFilter;
@@ -2532,7 +2532,7 @@ function renderProducts() {
     if (paginatedProducts.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
                 <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #666;">
                     Nenhum produto encontrado
                 </h3>
@@ -3175,7 +3175,7 @@ function removeFromCart(identifier) {
     
     // ✅ VERIFICAÇÃO: Realmente removeu?
     if (lengthBefore === lengthAfter) {
-        console.warn('⚠️ Item não encontrado para remover:', identifier);
+        console.warn(' Item não encontrado para remover:', identifier);
         showToast('Item não encontrado', 'error');
         return;
     }
@@ -5970,6 +5970,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
