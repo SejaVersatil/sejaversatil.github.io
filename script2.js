@@ -4407,6 +4407,7 @@ function openPaymentModal() {
             </div>
         </div>
     `).join('');
+    window.openPaymentModal = openPaymentModal;
     
     // Mostrar cupom aplicado (se houver)
     if (appliedCoupon && couponDiscount > 0) {
@@ -5954,6 +5955,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
