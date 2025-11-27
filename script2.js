@@ -903,6 +903,19 @@ async function checkUserSession() {
     });
 }
 
+// Tratar retorno do redirect (caso popup seja bloqueado)
+auth.getRedirectResult().then((result) => {
+    if (result.user) {
+        console.log('✅ Retorno do redirect:', result.user.email);
+        // O listener onAuthStateChanged vai cuidar do resto
+    }
+}).catch((error) => {
+    if (error.code !== 'auth/popup-closed-by-user') {
+        console.error('❌ Erro no redirect:', error);
+        showToast('Erro no login: ' + error.message, 'error');
+    }
+});
+
 function showLoggedInView() {
     document.getElementById('userPanelTabs').style.display = 'none';
     document.getElementById('loginTab').classList.remove('active');
@@ -5642,6 +5655,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
