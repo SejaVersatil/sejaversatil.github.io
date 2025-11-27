@@ -3298,7 +3298,26 @@ function loadCart() {
         // ✅ PRIORIZA o formato novo
         if (cartData.items && Array.isArray(cartData.items)) {
             const validItems = [];
+            
             cartData.items.forEach(item => {
+                // ✅ CORREÇÃO: Verifica se productsData existe E tem itens
+                if (!productsData || productsData.length === 0) {
+                    console.warn('⚠️ productsData ainda está vazio, recriando item do cache');
+                    // Adiciona item direto do localStorage (sem validação)
+                    validItems.push({
+                        id: item.id,
+                        name: item.name || 'Produto',
+                        price: item.price || 0,
+                        quantity: item.quantity || 1,
+                        selectedSize: item.selectedSize,
+                        selectedColor: item.selectedColor,
+                        cartItemId: item.cartItemId,
+                        image: item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    });
+                    return;
+                }
+                
+                // Valida contra productsData
                 const product = productsData.find(p => p.id === item.id);
                 if (product) {
                     validItems.push({ 
@@ -3309,8 +3328,11 @@ function loadCart() {
                         cartItemId: item.cartItemId,
                         image: getProductImage(product)
                     });
+                } else {
+                    console.warn(`Produto ${item.id} não encontrado em productsData`);
                 }
             });
+            
             cart = validItems;
             
             // ✅ Restaura cupom
@@ -3337,6 +3359,20 @@ function loadCart() {
         else if (Array.isArray(cartData)) {
             const validItems = [];
             cartData.forEach(item => {
+                if (!productsData || productsData.length === 0) {
+                    validItems.push({
+                        id: item.id,
+                        name: item.name || 'Produto',
+                        price: item.price || 0,
+                        quantity: item.quantity || 1,
+                        selectedSize: item.selectedSize,
+                        selectedColor: item.selectedColor,
+                        cartItemId: item.cartItemId,
+                        image: item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    });
+                    return;
+                }
+                
                 const product = productsData.find(p => p.id === item.id);
                 if (product) {
                     validItems.push({ 
@@ -3362,7 +3398,8 @@ function loadCart() {
         }
         
         if (cart.length === 0) {
-            localStorage.removeItem('sejaVersatilCart');
+            console.warn('⚠️ Carrinho ficou vazio após loadCart()');
+            // NÃO remove do localStorage aqui (pode ser problema temporário)
         }
         
     } catch (error) {
@@ -3370,7 +3407,6 @@ function loadCart() {
         cart = [];
         appliedCoupon = null;
         couponDiscount = 0;
-        localStorage.removeItem('sejaVersatilCart');
     }
 }
 
@@ -5985,6 +6021,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
