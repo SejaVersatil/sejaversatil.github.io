@@ -248,7 +248,7 @@ function getDefaultVideos() {
   // URLs de vídeos gratuitos do Pexels (reais e funcionais)
   return [
     {
-      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Sem%20Marca%20Convertido.mp4?alt=media&token=70827749-3cc8-4586-95b8-accda319d9f9',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%201.mp4?alt=media&token=f04963d6-8348-49fe-912b-9dc321b42691',
       title: 'CONFORTO',
       subtitle: 'Alta performance',
       order: 1
@@ -5545,4 +5545,5 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
