@@ -248,7 +248,7 @@ function getDefaultVideos() {
   // URLs de vídeos gratuitos do Pexels (reais e funcionais)
   return [
     {
-      url: 'gs://seja-versatil.firebasestorage.app/Sem Marca Convertido.mp4',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Sem%20Marca%20Convertido.mp4?alt=media&token=70827749-3cc8-4586-95b8-accda319d9f9',
       title: 'CONFORTO',
       subtitle: 'Alta performance',
       order: 1
@@ -5527,6 +5527,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
