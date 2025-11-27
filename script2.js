@@ -2349,15 +2349,6 @@ function removeProductColor(index) {
     }
 }
 
-function removeProductColor(index) {
-    const color = productColors[index];
-    if (confirm(`🗑️ Remover a cor "${color.name}"?\n\nEsta ação não pode ser desfeita.`)) {
-        productColors.splice(index, 1);
-        renderProductColorsManager();
-        showToast(`🗑️ Cor "${color.name}" removida`, 'info');
-    }
-}
-
 function loadSettings() {
     const saved = localStorage.getItem('sejaVersatilSettings');
     if (saved) {
@@ -5657,13 +5648,3 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
-
-
-
-
-
-
-
-
-
-
