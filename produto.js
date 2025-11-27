@@ -275,8 +275,37 @@ function updateGalleryDisplay(images) {
 
     const isMobile = window.innerWidth <= 768;
 
+    // ========================================
+    // MOBILE: TODAS AS FOTOS NO SWIPE
+    // ========================================
     if (isMobile) {
-    const galleryContainer = document.getElementById('galleryContainer');
+        const galleryContainer = document.getElementById('galleryContainer');
+        
+        if (galleryContainer) {
+            // Limpa container
+            galleryContainer.innerHTML = '';
+            
+            // Injeta TODAS as fotos no swipe
+            images.forEach((img, index) => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'gallery-photo-full';
+                photoDiv.style.backgroundImage = `url('${img}')`;
+                photoDiv.style.backgroundSize = 'cover';
+                photoDiv.style.backgroundPosition = 'center';
+                photoDiv.style.backgroundRepeat = 'no-repeat';
+                
+                const imgTag = document.createElement('img');
+                imgTag.src = img;
+                imgTag.alt = `Foto ${index + 1}`;
+                imgTag.style.width = '100%';
+                imgTag.style.height = '100%';
+                imgTag.style.objectFit = 'cover';
+                imgTag.style.opacity = '0'; // Invisível, só para SEO
+                
+                photoDiv.appendChild(imgTag);
+                galleryContainer.appendChild(photoDiv);
+            });
+        }
         
         // Esconde botão e thumbnails no mobile
         const thumbnailContainer = document.getElementById('thumbnailList');
@@ -1766,6 +1795,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
