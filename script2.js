@@ -4190,10 +4190,19 @@ function setupCartAbandonmentTracking() {
         }
     };
     
+    // ✅ MODIFICADO: Só avisa se for realmente sair (fechar aba/janela)
     window.addEventListener('beforeunload', (e) => {
         if (cart.length > 0) {
-            e.preventDefault();
-            e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
+            // Detecta se é navegação interna (produtos da mesma origem)
+            const isInternalNavigation = 
+                e.target.activeElement?.tagName === 'A' && 
+                e.target.activeElement?.hostname === window.location.hostname;
+            
+            // Só mostra aviso se NÃO for navegação interna
+            if (!isInternalNavigation) {
+                e.preventDefault();
+                e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
+            }
         }
     });
     
@@ -5932,6 +5941,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
