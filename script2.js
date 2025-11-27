@@ -45,6 +45,7 @@ let viewHistory = JSON.parse(localStorage.getItem('viewHistory') || '[]');
 let carouselIntervals = {};
 const carouselEventsRegistered = new Set();
 let carouselsPaused = false;
+let isInternalNavigation = false;
 let selectedSize = 'M';
 let selectedColor = null;
 let selectedQuantity = 1;
@@ -441,7 +442,7 @@ function navigateToCategory(category) {
     trackEvent('Promo Cards', 'Navigate to Category', category);
     
     // Feedback visual
-    showToast(`📦 ${getCategoryName(category)}`, 'info');
+    showToast(` ${getCategoryName(category)}`, 'info');
 }
 
 // Função para limpar filtro
@@ -681,7 +682,7 @@ const DEFAULT_PRODUCTS = [
 
 async function inicializarProdutosPadrao() {
     if (productsData.length === 0) {
-        console.log('📦 Nenhum produto no Firestore, adicionando produtos padrão...');
+        console.log(' Nenhum produto no Firestore, adicionando produtos padrão...');
         
         for (const produto of DEFAULT_PRODUCTS) {
             try {
@@ -4170,18 +4171,17 @@ function setupCartAbandonmentTracking() {
     
     // ✅ MODIFICADO: Só avisa se for realmente sair (fechar aba/janela)
    window.addEventListener('beforeunload', (e) => {
-    // ✅ CORREÇÃO: Só avisa ao FECHAR aba/janela (não ao navegar internamente)
+    // ✅ Se for navegação interna marcada, não avisa
+    if (isInternalNavigation) {
+        isInternalNavigation = false; // Reset
+        return undefined;
+    }
+    
+    // ✅ Se tem carrinho, avisa apenas ao FECHAR/SAIR
     if (cart.length > 0) {
-        // Detecta se está fechando ou saindo do domínio
-        const isClosing = e.currentTarget.performance.navigation.type === 1; // reload
-        const isLeavingSite = document.activeElement?.hostname !== window.location.hostname;
-        
-        // Só mostra aviso se estiver FECHANDO ou SAINDO DO SITE
-        if (isClosing || isLeavingSite) {
-            e.preventDefault();
-            e.returnValue = 'Você tem itens no carrinho. Deseja realmente sair?';
-        }
-        // Se for navegação interna (index.html → produto.html), NÃO avisa
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
     }
 });
     
@@ -4546,7 +4546,7 @@ async function sendToWhatsApp() {
     msg += `*Cliente:* ${customerData.name}\n`;
     if (customerData.cpf) msg += `*CPF:* ${customerData.cpf}\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    msg += `*📦 PRODUTOS:*\n`;
+    msg += `* PRODUTOS:*\n`;
     
     cart.forEach((item, index) => {
         msg += `${index+1}. *${item.name}*\n`;
@@ -5921,3 +5921,4 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
