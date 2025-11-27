@@ -191,6 +191,8 @@ function scrollToProducts() {
 
 // ==================== VIDEO GRID LOADER ====================
 
+// ==================== VIDEO GRID LOADER ====================
+
 let videoGridData = [];
 
 async function loadVideoGrid() {
@@ -205,52 +207,75 @@ async function loadVideoGrid() {
     // Tentar carregar configuração do Firestore
     const configDoc = await db.collection('site_config').doc('video_grid').get();
     
-    if (configDoc.exists && configDoc.data().videos) {
+    if (configDoc.exists && configDoc.data().videos && configDoc.data().videos.length > 0) {
       videoGridData = configDoc.data().videos.sort((a, b) => a.order - b.order);
+      
+      // Validar URLs dos vídeos
+      videoGridData = videoGridData.filter(video => {
+        if (!video.url || !video.url.startsWith('http')) {
+          console.warn('URL de vídeo inválida:', video);
+          return false;
+        }
+        return true;
+      });
+      
+      if (videoGridData.length === 0) {
+        throw new Error('Nenhum vídeo válido encontrado');
+      }
     } else {
       // Usar vídeos padrão se não houver configuração
+      console.log('Usando vídeos padrão');
       videoGridData = getDefaultVideos();
     }
     
-    renderVideoGrid();
+    // ✅ AGUARDAR RENDERIZAÇÃO COMPLETA
+    await renderVideoGrid();
     
   } catch (error) {
     console.error('Erro ao carregar vídeos:', error);
-    // Fallback para vídeos padrão
-    videoGridData = getDefaultVideos();
-    renderVideoGrid();
+    
+    // Mostrar mensagem amigável
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: #f8f8f8;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🎬</div>
+        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #666;">
+          Vídeos em breve
+        </h3>
+        <p style="color: #999;">Estamos preparando conteúdos incríveis para você</p>
+      </div>
+    `;
   }
 }
 
 function getDefaultVideos() {
-  // Vídeos placeholder (você pode usar vídeos de demonstração do Pexels)
+  // URLs de vídeos gratuitos do Pexels (reais e funcionais)
   return [
     {
-      url: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=165',
-      title: 'COLEÇÃO FITNESS',
-      subtitle: 'Versatilidade no treino',
+      url: 'https://videos.pexels.com/video-files/5319371/5319371-sd_640_360_24fps.mp4',
+      title: 'VERSATILIDADE',
+      subtitle: 'Do treino ao dia a dia',
       order: 1
     },
     {
-      url: 'https://player.vimeo.com/external/390228561.sd.mp4?s=7f9a9b0b6d1a3c7e8f0e1d2c3b4a5f6g7h8i9j0k&profile_id=165',
+      url: 'https://videos.pexels.com/video-files/6456267/6456267-sd_640_360_25fps.mp4',
       title: 'CONFORTO',
       subtitle: 'Alta performance',
       order: 2
     },
     {
-      url: 'https://player.vimeo.com/external/395934987.sd.mp4?s=8e0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s&profile_id=165',
+      url: 'https://videos.pexels.com/video-files/6456331/6456331-sd_640_360_25fps.mp4',
       title: 'ESTILO',
-      subtitle: 'Do treino ao dia a dia',
+      subtitle: 'Looks incríveis',
       order: 3
     },
     {
-      url: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c0fd273d2c6d9a064f3ae35579b2bbdf&profile_id=165',
+      url: 'https://videos.pexels.com/video-files/6456293/6456293-sd_640_360_25fps.mp4',
       title: 'QUALIDADE',
       subtitle: 'Tecidos premium',
       order: 4
     },
     {
-      url: 'https://player.vimeo.com/external/390228561.sd.mp4?s=7f9a9b0b6d1a3c7e8f0e1d2c3b4a5f6g7h8i9j0k&profile_id=165',
+      url: 'https://videos.pexels.com/video-files/6456268/6456268-sd_640_360_25fps.mp4',
       title: 'VOCÊ',
       subtitle: 'Seja versátil',
       order: 5
@@ -258,8 +283,14 @@ function getDefaultVideos() {
   ];
 }
 
-function renderVideoGrid() {
+// ✅ TORNAR RENDERIZAÇÃO ASSÍNCRONA
+async function renderVideoGrid() {
   const container = document.getElementById('videoGridContainer');
+  
+  if (!container || !videoGridData || videoGridData.length === 0) {
+    console.warn('Sem dados para renderizar vídeos');
+    return;
+  }
   
   container.innerHTML = videoGridData.map((video, index) => `
     <div class="video-card" data-video-index="${index}">
@@ -268,10 +299,16 @@ function renderVideoGrid() {
         loop 
         muted 
         playsinline
-        preload="metadata"
+        preload="none"
+        loading="lazy"
         onloadeddata="this.style.opacity='1'"
+        onerror="handleVideoError(this)"
         style="opacity: 0; transition: opacity 0.3s;"
-      ></video>
+      >
+        <p style="color: white; padding: 2rem; text-align: center;">
+          Seu navegador não suporta reprodução de vídeos
+        </p>
+      </video>
       
       <div class="video-overlay">
         <div class="video-title">${video.title}</div>
@@ -286,7 +323,10 @@ function renderVideoGrid() {
     </div>
   `).join('');
   
-  // Adicionar event listeners após renderizar
+  // ✅ AGUARDAR DOM ATUALIZAR
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Adicionar event listeners
   setupVideoInteractions();
 }
 
@@ -335,12 +375,23 @@ function setupVideoInteractions() {
     card.addEventListener('mouseenter', () => {
       video.play().catch(err => console.log('Play bloqueado:', err));
     });
-    
-    card.addEventListener('mouseleave', () => {
-      // Não pausa no mouseleave para manter fluido
-      // video.pause();
-    });
   });
+}
+
+function handleVideoError(videoElement) {
+  console.error('Erro ao carregar vídeo:', videoElement.src);
+  
+  const card = videoElement.closest('.video-card');
+  if (card) {
+    card.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f0f0f0; color: #666;">
+        <div style="text-align: center; padding: 2rem;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🎬</div>
+          <div style="font-size: 0.9rem;">Erro ao carregar vídeo</div>
+        </div>
+      </div>
+    `;
+  }
 }
 // ==================== NAVEGAÇÃO POR CATEGORIA ====================
 
@@ -3433,6 +3484,249 @@ async function registerCouponUsage(couponId, orderValue, discountApplied) {
     }
 }
 
+
+// ==================== GERENCIADOR DE VÍDEOS ====================
+
+function openVideoManager() {
+  if (!auth.currentUser || !currentUser.isAdmin) {
+    showToast('❌ Apenas admins podem gerenciar vídeos', 'error');
+    return;
+  }
+  
+  document.getElementById('videoManagerModal').classList.add('active');
+  renderVideoManager();
+}
+
+function closeVideoManager() {
+  document.getElementById('videoManagerModal').classList.remove('active');
+}
+
+async function renderVideoManager() {
+  const container = document.getElementById('videoManagerList');
+  
+  container.innerHTML = '<p style="text-align: center; padding: 2rem;">⏳ Carregando...</p>';
+  
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    
+    let videos = [];
+    if (configDoc.exists && configDoc.data().videos) {
+      videos = configDoc.data().videos.sort((a, b) => a.order - b.order);
+    }
+    
+    if (videos.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Nenhum vídeo configurado ainda</p>';
+      return;
+    }
+    
+    container.innerHTML = videos.map((video, index) => `
+      <div class="video-manager-item" style="display: flex; gap: 1rem; align-items: center; padding: 1rem; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 1rem;">
+        <div style="font-weight: 700; font-size: 1.5rem; color: #999; min-width: 30px;">
+          ${index + 1}
+        </div>
+        
+        <div style="width: 120px; height: 160px; background: #000; border-radius: 4px; overflow: hidden;">
+          <video src="${video.url}" style="width: 100%; height: 100%; object-fit: cover;" muted loop></video>
+        </div>
+        
+        <div style="flex: 1;">
+          <input type="text" value="${video.title}" 
+                 onchange="updateVideoTitle(${index}, this.value)"
+                 style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #e5e5e5; border-radius: 4px; font-weight: 600;">
+          
+          <input type="text" value="${video.subtitle}" 
+                 onchange="updateVideoSubtitle(${index}, this.value)"
+                 style="width: 100%; padding: 0.5rem; border: 1px solid #e5e5e5; border-radius: 4px; font-size: 0.9rem;">
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          ${index > 0 ? `<button onclick="moveVideo(${index}, ${index - 1})" style="padding: 0.5rem; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">↑</button>` : ''}
+          ${index < videos.length - 1 ? `<button onclick="moveVideo(${index}, ${index + 1})" style="padding: 0.5rem; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">↓</button>` : ''}
+          <button onclick="removeVideo(${index})" style="padding: 0.5rem; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+    
+  } catch (error) {
+    console.error('Erro ao carregar vídeos:', error);
+    container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 2rem;">Erro ao carregar vídeos</p>';
+  }
+}
+
+async function addVideoSlot() {
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    
+    let videos = [];
+    if (configDoc.exists && configDoc.data().videos) {
+      videos = configDoc.data().videos;
+    }
+    
+    if (videos.length >= 5) {
+      showToast('❌ Máximo de 5 vídeos permitidos', 'error');
+      return;
+    }
+    
+    // Input de arquivo
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'video/mp4';
+    
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      
+      if (!file) return;
+      
+      // Validar tamanho
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('❌ Vídeo muito grande! Máximo 2MB', 'error');
+        return;
+      }
+      
+      // Validar formato
+      if (!file.type.includes('mp4')) {
+        showToast('❌ Apenas arquivos MP4 são permitidos', 'error');
+        return;
+      }
+      
+      document.getElementById('loadingOverlay').classList.add('active');
+      
+      try {
+        // Upload para Firebase Storage
+        const timestamp = Date.now();
+        const filename = `video_${timestamp}_${Math.random().toString(36).substring(7)}.mp4`;
+        const storageRef = storage.ref().child(`videos/${filename}`);
+        
+        await storageRef.put(file);
+        const downloadURL = await storageRef.getDownloadURL();
+        
+        // Adicionar ao array
+        videos.push({
+          url: downloadURL,
+          title: 'NOVO VÍDEO',
+          subtitle: 'Edite o texto',
+          order: videos.length + 1
+        });
+        
+        // Salvar no Firestore
+        await db.collection('site_config').doc('video_grid').set({ videos });
+        
+        showToast('✅ Vídeo adicionado com sucesso!', 'success');
+        
+        // Recarregar grid
+        await loadVideoGrid();
+        renderVideoManager();
+        
+      } catch (error) {
+        console.error('Erro ao fazer upload:', error);
+        showToast('❌ Erro ao fazer upload: ' + error.message, 'error');
+      } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+      }
+    };
+    
+    input.click();
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    showToast('❌ Erro ao adicionar vídeo', 'error');
+  }
+}
+
+async function updateVideoTitle(index, newTitle) {
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    const videos = configDoc.data().videos;
+    
+    videos[index].title = newTitle;
+    
+    await db.collection('site_config').doc('video_grid').update({ videos });
+    await loadVideoGrid();
+    
+    showToast('✅ Título atualizado', 'success');
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    showToast('❌ Erro ao atualizar título', 'error');
+  }
+}
+
+async function updateVideoSubtitle(index, newSubtitle) {
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    const videos = configDoc.data().videos;
+    
+    videos[index].subtitle = newSubtitle;
+    
+    await db.collection('site_config').doc('video_grid').update({ videos });
+    await loadVideoGrid();
+    
+    showToast('✅ Subtítulo atualizado', 'success');
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    showToast('❌ Erro ao atualizar subtítulo', 'error');
+  }
+}
+
+async function moveVideo(fromIndex, toIndex) {
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    const videos = configDoc.data().videos;
+    
+    // Trocar posições
+    [videos[fromIndex], videos[toIndex]] = [videos[toIndex], videos[fromIndex]];
+    
+    // Atualizar order
+    videos.forEach((v, i) => v.order = i + 1);
+    
+    await db.collection('site_config').doc('video_grid').update({ videos });
+    
+    await loadVideoGrid();
+    renderVideoManager();
+    
+    showToast('✅ Ordem alterada', 'success');
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    showToast('❌ Erro ao alterar ordem', 'error');
+  }
+}
+
+async function removeVideo(index) {
+  if (!confirm('🗑️ Remover este vídeo?')) return;
+  
+  try {
+    const configDoc = await db.collection('site_config').doc('video_grid').get();
+    const videos = configDoc.data().videos;
+    
+    // Tentar deletar do Storage
+    try {
+      const videoUrl = videos[index].url;
+      const storageRef = storage.refFromURL(videoUrl);
+      await storageRef.delete();
+    } catch (err) {
+      console.warn('Não foi possível deletar do storage:', err);
+    }
+    
+    // Remover do array
+    videos.splice(index, 1);
+    
+    // Atualizar order
+    videos.forEach((v, i) => v.order = i + 1);
+    
+    await db.collection('site_config').doc('video_grid').update({ videos });
+    
+    await loadVideoGrid();
+    renderVideoManager();
+    
+    showToast('🗑️ Vídeo removido', 'info');
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    showToast('❌ Erro ao remover vídeo', 'error');
+  }
+}
 // ==================== BUSCA ====================
 
 function openSearch() {
@@ -5242,6 +5536,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
