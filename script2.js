@@ -2632,10 +2632,6 @@ ${discountPercent > 0 && !product.isBlackFriday ? `<div class="discount-badge">-
                     </div>
                 ` : ''}
                 
-                <!-- Add to Cart Button -->
-                <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
-                    Adicionar ao Carrinho
-                </button>
             </div>
             
             <!-- Product Info -->
@@ -5974,6 +5970,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
