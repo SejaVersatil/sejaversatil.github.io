@@ -2855,58 +2855,93 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     transform: translateY(-2px);
 }
 
-/* ADICIONAR NO FINAL DO ARQUIVO CSS */
+/* Modal de Dados do Cliente */
 .customer-data-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 5000;
-  align-items: center;
-  justify-content: center;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 5500; /* ← CRÍTICO: Maior que payment-modal */
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
 }
 
 .customer-data-modal.active {
-  display: flex;
+    display: flex !important;
 }
 
 .customer-data-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 450px;
-  width: 90%;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: slideInUp 0.3s ease;
+}
+
+.customer-data-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e5e5;
 }
 
 .customer-data-header h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.customer-data-header p {
+    font-size: 0.85rem;
+    color: #666;
 }
 
 .customer-data-submit {
-  width: 100%;
-  padding: 1rem;
-  background: #25D366;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 1.2rem;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Century Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 0.8rem;
+}
+
+.customer-data-submit:hover {
+    background: #1fb855;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
 }
 
 .customer-data-cancel {
-  width: 100%;
-  padding: 1rem;
-  background: #e5e5e5;
-  color: #666;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+    width: 100%;
+    padding: 1rem;
+    background: #e5e5e5;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.customer-data-cancel:hover {
+    background: #ccc;
 }
 
 .my-orders-modal {
@@ -3086,3 +3121,4 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
