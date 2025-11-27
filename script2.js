@@ -4360,22 +4360,25 @@ function checkout() {
         return;
     }
     
-    // ✅ DEBUG: Verificar estado do cupom
-    console.log('🎟️ Estado do cupom ao finalizar:', {
-        appliedCoupon,
-        couponDiscount,
-        cart: cart.length
-    });
-    
     // Fechar carrinho
     toggleCart();
     
-    // Abrir modal de pagamento
+    // Abrir modal de pagamento COM VERIFICAÇÃO
     setTimeout(() => {
-        openPaymentModal();
+        if (typeof openPaymentModal === 'function') {
+            openPaymentModal();
+        } else {
+            console.error('❌ openPaymentModal não encontrada!');
+            // Fallback: tentar abrir o modal diretamente
+            const modal = document.getElementById('paymentModal');
+            if (modal) {
+                modal.classList.add('active');
+            } else {
+                alert('Erro ao abrir modal de pagamento. Tente novamente.');
+            }
+        }
     }, 300);
     
-    // Tracking
     trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
 }
 
@@ -5951,6 +5954,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
