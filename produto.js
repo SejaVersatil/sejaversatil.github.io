@@ -45,25 +45,50 @@ const nowMs = () => (new Date()).getTime();
 function loadCartFromStorage() {
     try {
         const raw = localStorage.getItem('sejaVersatilCart');
-        const parsed = raw ? JSON.parse(raw) : [];
-        state.cart = Array.isArray(parsed) ?
-            parsed.map(item => ({
+        if (!raw) {
+            state.cart = [];
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+            return;
+        }
+        
+        const parsed = JSON.parse(raw);
+        
+        // ✅ CORREÇÃO: Aceita AMBOS os formatos
+        if (parsed.items && Array.isArray(parsed.items)) {
+            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            state.cart = parsed.items.map(item => ({
                 ...item,
                 quantity: safeNumber(item.quantity, 1),
                 price: safeNumber(item.price, 0)
-            })) : [];
-        if (window.cart) window.cart = state.cart;
-
-// Restaurar cupom aplicado (se existir)
-if (parsed.appliedCoupon) {
-    state.appliedCoupon = parsed.appliedCoupon;
-    state.couponDiscount = parsed.couponDiscount || 0;
-    showAppliedCouponBadge(state.appliedCoupon, state.couponDiscount);
-}
-       
+            }));
+            state.appliedCoupon = parsed.appliedCoupon || null;
+            state.couponDiscount = safeNumber(parsed.couponDiscount, 0);
+        } else if (Array.isArray(parsed)) {
+            // Formato antigo: [{item1}, {item2}]
+            state.cart = parsed.map(item => ({
+                ...item,
+                quantity: safeNumber(item.quantity, 1),
+                price: safeNumber(item.price, 0)
+            }));
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+        } else {
+            state.cart = [];
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+        }
+        
+        // ✅ Sincroniza com variável global (se existir)
+        if (typeof window.cart !== 'undefined') {
+            window.cart = state.cart;
+        }
+        
     } catch (err) {
         console.warn('Erro ao carregar carrinho:', err);
         state.cart = [];
+        state.appliedCoupon = null;
+        state.couponDiscount = 0;
     }
 }
 
@@ -1795,6 +1820,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
