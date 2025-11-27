@@ -3108,9 +3108,9 @@ function updateCartUI() {
             // ✅ Atualizar DOM de uma vez
             cartItems.innerHTML = '';
             cartItems.appendChild(fragment);
+
             
-            // Atualizar total
-            // Calcular subtotal
+// Calcular subtotal
 const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
 
 // Aplicar desconto do cupom
@@ -5932,6 +5932,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
