@@ -4595,6 +4595,24 @@ async function sendToWhatsApp() {
     // Tracking
     trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
 } // Fechamento da função sendToWhatsApp
+   
+   // Verificar se cliente está logado
+   const isLoggedIn = auth.currentUser !== null;
+   let customerData = {};
+   
+   if (!isLoggedIn) {
+     // Modal para coletar CPF + Email
+     customerData = await collectGuestCustomerData();
+     if (!customerData) return; // Se cancelou
+   } else {
+     customerData = {
+       name: currentUser.name,
+       email: currentUser.email,
+       phone: await getUserPhone(),
+       cpf: await getUserCPF(),
+       userId: currentUser.uid
+     };
+   }
 
 // Fechar modal ao clicar fora
 document.addEventListener('click', function(e) {
@@ -5649,4 +5667,5 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
