@@ -4360,6 +4360,13 @@ function checkout() {
         return;
     }
     
+    // ✅ DEBUG: Verificar estado do cupom
+    console.log('🎟️ Estado do cupom ao finalizar:', {
+        appliedCoupon,
+        couponDiscount,
+        cart: cart.length
+    });
+    
     // Fechar carrinho
     toggleCart();
     
@@ -5940,6 +5947,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
