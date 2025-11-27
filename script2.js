@@ -4394,22 +4394,34 @@ function openPaymentModal() {
         </div>
     `).join('');
     
-    // Calcular e mostrar total
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Mostrar cupom aplicado (se houver)
+    if (appliedCoupon && couponDiscount > 0) {
+        cartItemsContainer.innerHTML += `
+            <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #155724; font-size: 0.9rem;">🎟️ ${appliedCoupon.code}</strong>
+                        <div style="font-size: 0.75rem; color: #155724; margin-top: 0.2rem;">
+                            ${appliedCoupon.type === 'percentage' ? appliedCoupon.value + '%' : 'R$ ' + appliedCoupon.value.toFixed(2)} de desconto
+                        </div>
+                    </div>
+                    <strong style="color: #155724;">-R$ ${couponDiscount.toFixed(2)}</strong>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Calcular valores com desconto do cupom
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = Math.min(couponDiscount || 0, subtotal);
+    const total = Math.max(0, subtotal - discount);
+    
     totalContainer.textContent = `R$ ${total.toFixed(2)}`;
     
     // Mostrar modal
     modal.classList.add('active');
     
-    // Setup listeners para opções de pagamento
-    setupPaymentListeners();
-}
-
-function closePaymentModal() {
-    document.getElementById('paymentModal').classList.remove('active');
-}
-
-function setupPaymentListeners() {
+    // Configurar listeners para opções de pagamento
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
     const installmentsBox = document.getElementById('installmentsBox');
     
@@ -5928,6 +5940,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
