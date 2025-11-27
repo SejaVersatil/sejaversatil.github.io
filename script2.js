@@ -2995,73 +2995,9 @@ function getImageForColor(product, colorName) {
 // ==================== CARRINHO ====================
 
 function addToCart(productId) {
-    const product = productsData.find(p => p.id === productId);
-    if (!product) return;
-    
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        const productWithImage = {
-    ...product,
-    quantity: 1,
-    selectedSize: 'M',                        // ✅ Padrão fixo (index.html não tem seletor)
-    selectedColor: null,                      // ✅ Null (index.html não tem seletor de cor)
-    image: getImageForColor(product, null)    // ✅ Pega primeira imagem geral
-};
-        cart.push(productWithImage);
-    }
-    
-    saveCart();
-    updateCartUI();
-    trackEvent('E-commerce', 'Add to Cart', product.name);
-    
-    // 🎬 ANIMAÇÃO DO CARD PARA O CARRINHO
-    const clickedButton = event.target;
-    if (clickedButton) {
-        animateProductToCart(clickedButton, product);
-    }
-    
-    // Feedback visual no botão
-    const btn = clickedButton;
-    const originalText = btn.textContent;
-    const originalBg = btn.style.background;
-    
-    btn.textContent = '✓ Adicionado!';
-    btn.style.background = '#27ae60';
-    btn.style.transform = 'scale(1.05)';
-    
-    setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = originalBg;
-        btn.style.transform = 'scale(1)';
-    }, 2000);
-    
-    // Toast com delay
-    setTimeout(() => {
-        showToast(`${product.name} adicionado ao carrinho!`, 'success');
-    }, 300);
-    
-    // Pequena animação no ícone do carrinho
-    const cartIcon = document.querySelector('.nav-icon:last-child');
-    if (cartIcon) {
-        cartIcon.style.animation = 'none';
-        setTimeout(() => {
-            cartIcon.style.animation = 'heartBeat 0.5s';
-        }, 10);
-    }
-}
-
-// Quickbuy - FUNÇÃO SEPARADA
-function quickBuy(productId) {
-    addToCart(productId);
-    setTimeout(() => {
-        toggleCart();
-        setTimeout(() => {
-            checkout();
-        }, 500);
-    }, 600);
+    // ✅ REDIRECIONA PARA A PÁGINA DO PRODUTO
+    window.location.href = `produto.html?id=${productId}`;
+    return;
 }
 
 function addLookToCart() {
@@ -6038,6 +5974,7 @@ async function deleteCouponPrompt(couponId) {
         showToast('Erro ao deletar cupom', 'error');
     }
 }
+
 
 
 
