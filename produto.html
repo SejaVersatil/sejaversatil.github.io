@@ -1,28 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-  <link rel="dns-prefetch" href="https://www.gstatic.com">
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Compre moda fitness feminina com estilo e qualidade na Seja Versátil.">
   <title id="productPageTitle">Produto - Seja Versátil</title>
-  
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="produto.css">
   <link rel="stylesheet" href="css2.css">
-
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
@@ -31,251 +21,52 @@
       storageBucket: "seja-versatil.firebasestorage.app",
       messagingSenderId: "102339207381",
       appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-      measurementId: "G-86E5CX4S3T"
     };
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig );
     const db = firebase.firestore();
-    const auth = firebase.auth();
   </script>
 </head>
-
 <body class="product-page">
+
+  <!-- Header e outros componentes (carrinho, menu) devem ser incluídos aqui -->
   
-  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
-  <aside id="sidebarMenu" class="sidebar-menu" aria-labelledby="sidebarTitle" role="navigation">
-    <h3 id="sidebarTitle" class="visually-hidden">Menu</h3>
-    <section class="sidebar-section">
-      <h4>Explore</h4>
-      <ul>
-        <li><a href="index.html">Início</a></li>
-        <li><a href="index.html#produtos">Produtos</a></li>
-      </ul>
-    </section>
-    <section class="sidebar-section">
-      <h4>Categorias</h4>
-      <ul>
-        <li><a href="index.html?categoria=blusas">Blusas</a></li>
-        <li><a href="index.html?categoria=conjunto calca">Conjunto Calça</a></li>
-        <li><a href="index.html?categoria=peca unica">Peça Única</a></li>
-        <li><a href="index.html?categoria=conjunto short saia">Conjunto Short Saia</a></li>
-        <li><a href="index.html?categoria=conjunto short">Conjunto Short</a></li>
-      </ul>
-    </section>
-  </aside>
-
-  <div class="top-banner black-friday-banner">
-      <div class="bf-content">
-          <span class="bf-label">BLACK VERSÁTIL | ATÉ 50% OFF</span>
-          <span class="bf-separator">|</span>
-          <span class="bf-countdown-label">termina em</span>
-          <div class="bf-countdown">
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfDays">00</span>
-                  <span class="bf-time-label">Dias</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfHours">00</span>
-                  <span class="bf-time-label">Horas</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfMinutes">00</span>
-                  <span class="bf-time-label">Minutos</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfSeconds">00</span>
-                  <span class="bf-time-label">Segundos</span>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <header class="site-header">
-    <nav class="nav">
-      <div class="nav-left">
-        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" type="button" style="position: relative; top: auto; left: auto; display: none;">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-        <div class="logo" onclick="window.location.href='index.html'">SEJA VERSÁTIL</div>
-      </div>
-      
-      <div class="nav-center">
-        <div class="search-bar" style="position: relative;">
-          <img src="favicon.ico" alt="Logo" class="search-logo" width="24" height="24" style="margin-right: 8px;">
-          <input type="text" id="headerSearchInput" placeholder="Encontre aqui seu próximo look" autocomplete="off">
-          <button class="search-btn" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </button>
-          <div id="headerDropdown" class="search-dropdown"></div>
-        </div>
-      </div>
-      
-      <div class="nav-icons">
-        <div class="nav-icon" onclick="openUserPanel()" title="Minha Conta" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
-
-        <div class="nav-icon" onclick="goToFavoritesPage()" title="Meus favoritos" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-            <span class="cart-count" id="favoritesCount" style="display: none;">0</span>
-        </div>
-        
-        <div class="nav-icon" onclick="toggleCart()" title="Carrinho" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span id="cartCount" class="cart-count">0</span>
-        </div>
-      </div>
-    </nav>
-  </header>
-
-  <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()" aria-hidden="true"></div>
-  <aside id="cartSidebar" class="cart-sidebar" role="dialog" aria-label="Meu carrinho" aria-hidden="true">
-    <div class="cart-header">
-      <h3>Meu Carrinho</h3>
-      <button class="close-cart" aria-label="Fechar carrinho" onclick="toggleCart()" type="button">✕</button>
-    </div>
-    <div id="cartItems" class="cart-items" aria-live="polite">
-      <div class="empty-cart">Seu carrinho está vazio</div>
-    </div>
-    <div id="cartFooter" class="cart-footer" style="display:none;">
-  
-  <!-- Sistema de Cupons -->
-  <div class="coupon-section">
-    <h4>🎟️ Cupom de Desconto</h4>
-    <div class="coupon-input-row">
-      <input type="text" 
-             class="coupon-input" 
-             id="couponInput" 
-             placeholder="Digite o código" 
-             maxlength="20"
-             autocomplete="off">
-      <button class="coupon-apply-btn" 
-              id="applyCouponBtn" 
-              type="button"
-              onclick="applyCoupon()">
-        APLICAR
-      </button>
-    </div>
-    <div class="coupon-message" id="couponMessage"></div>
-    <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
-      <div class="applied-coupon-info">
-        <span class="applied-coupon-code" id="appliedCouponCode"></span>
-        <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
-      </div>
-      <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
-    </div>
-  </div>
-  
-  <!-- Total com Desconto -->
-  <div class="cart-total">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
-      <span>Subtotal:</span>
-      <span id="cartSubtotal">R$ 0,00</span>
-    </div>
-    <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
-      <span>Desconto:</span>
-      <span id="discountValue">- R$ 0,00</span>
-    </div>
-    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
-      <span>Total:</span>
-      <span id="cartTotal">R$ 0,00</span>
-    </div>
-  </div>
-  
-  <button class="checkout-btn" onclick="checkout()" type="button">Finalizar Compra</button>
-</div>
-  </aside>
-
   <main class="product-page-container" role="main">
     <div class="product-main-grid">
 
       <div class="product-gallery-section">
-    <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-    </button>
+        <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        </button>
 
-    <div id="galleryContainer" class="gallery-container">
-        <div class="gallery-photo-full" id="heroWrapper1">
-            <img id="mainImg1" src="" alt="Imagem Principal 1" style="width:100%;height:100%;object-fit:cover;">
+        <div id="galleryContainer" class="gallery-container">
+            <div class="gallery-photo-full" id="heroWrapper1"></div>
+            <div class="gallery-photo-full" id="heroWrapper2"></div>
         </div>
 
-        <div class="gallery-photo-full" id="heroWrapper2">
-            <img id="mainImg2" src="" alt="Imagem Principal 2" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-    </div>
+        <div id="thumbnailList" class="thumbnail-grid"></div>
 
-    <!-- ⚠️ CRÍTICO: thumbnailList FORA do galleryContainer -->
-    <div id="thumbnailList" class="thumbnail-grid"></div>
-
-    <button id="btnShowMore" class="btn-show-more" style="display: none;" onclick="toggleGalleryExpansion()" type="button">
-        MOSTRAR MAIS 
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor">
-            <path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </button>
-</div>
+        <button id="btnShowMore" class="btn-show-more" style="display: none;" onclick="toggleGalleryExpansion()" type="button">
+            MOSTRAR MAIS 
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     
       <div class="product-info-section">
         <nav class="breadcrumb">
             <a href="index.html">Início</a> › <span id="breadcrumbCategory">Categoria</span> › <span id="breadcrumbProduct">Produto</span>
         </nav>
         
-        <div class="product-header-wrapper">
-            <div class="header-left">
-                <h1 class="product-title" id="detailsProductName">Carregando...</h1>
-                <div class="share-widget">
-                    <div class="share-options">
-                        <button class="share-btn instagram" onclick="shareToInstagram()" title="Copiar Link para Instagram" type="button">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                            </svg>
-                        </button>
-                        <button class="share-btn whatsapp" onclick="shareToWhatsApp()" title="Compartilhar no WhatsApp" type="button">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="share-trigger">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                    </div>
-                </div>
+        <h1 class="product-title" id="detailsProductName">Carregando...</h1>
+        
+        <div class="product-pricing">
+            <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
+            <div class="price-main-row">
+                <span class="price-current" id="detailsPriceNew">R$ --,--</span>
+                <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
             </div>
-
-            <div class="product-pricing">
-                <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
-                <div class="price-main-row">
-                    <span class="price-current" id="detailsPriceNew">R$ --,--</span>
-                    <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
-                </div>
-                <div class="price-installments" id="detailsInstallments">Em até 10x sem juros</div>
-            </div>
+            <div class="price-installments" id="detailsInstallments">Em até 3x sem juros</div>
         </div>
 
         <div class="product-selector-group">
@@ -300,59 +91,10 @@
 
         <div class="product-action-buttons">
             <button class="btn btn-primary" onclick="addToCartFromDetails()" type="button">COMPRAR</button>
-            <button class="btn btn-whatsapp-main" onclick="buyViaWhatsApp()" type="button">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                COMPRE PELO WHATSAPP
-            </button>
         </div>
         
-        <div class="product-selector-group">
-            <label class="selector-label">Frete e Entrega</label>
-            <div class="shipping-input-row">
-                <input type="text" id="zipCodeInput" class="shipping-input" placeholder="Digite seu CEP" maxlength="9">
-                <button class="shipping-calc-btn" onclick="calculateShipping()" type="button">CALCULAR</button>
-            </div>
-            <div class="shipping-results" id="shippingResults"></div>
-        </div>
-
-        <div class="trust-badges-list">
-            <div class="trust-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                <div class="badge-text">
-                    <strong>Primeira troca é fácil e gratuita.</strong>
-                    <a href="#">Confira as opções de troca aqui.</a>
-                </div>
-            </div>
-            <div class="trust-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                <div class="badge-text">
-                    <strong>Cuidar do produto o torna mais durável.</strong>
-                    <a href="#">Confira os cuidados com o produto.</a>
-                </div>
-            </div>
-        </div>
-      
-      <div class="secondary-actions">
-        <button class="action-link" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-            Tabela de medidas
-        </button>
-        <button class="action-link" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            Descubra seu tamanho
-        </button>
+        <div id="productDescription" class="product-description-section"></div>
       </div>
-          
-      <div class="short-description-container">
-        <p class="short-desc-text">
-           O Shorts possui aplicação de estampa tecnológica, acompanhando os recortes estratégicos para melhor performance.
-        </p>
-        <a href="#productDescription" class="view-full-desc">Veja descrição completa ↓</a>
-      </div>
-
-      <div class="product-description-section" id="productDescription"></div>
     </div>
 
     <div class="related-products-section">
@@ -361,182 +103,11 @@
     </div>
   </main>
 
-  <a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
-     class="whatsapp-float" 
-     target="_blank" 
-     rel="noopener noreferrer" 
-     aria-label="Falar no WhatsApp">
-    <svg viewBox="0 0 48 48" fill="white">
-        <path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524-.001 0 .001 0 0 0h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/>
-        <path d="M32.992 27.157c-.488-.244-2.888-1.424-3.336-1.587-.448-.162-.774-.244-1.1.245-.326.488-1.263 1.588-1.548 1.913-.285.326-.57.366-1.059.122-.488-.244-2.06-.759-3.922-2.419-1.45-1.292-2.428-2.889-2.713-3.377-.285-.489-.03-.753.214-.996.22-.22.488-.57.732-.855.244-.285.326-.489.489-.814.162-.326.081-.611-.041-.855-.122-.244-1.1-2.651-1.507-3.628-.396-.952-.798-.823-1.1-.838-.285-.014-.611-.017-.937-.017-.326 0-.855.122-1.303.611-.448.488-1.711 1.672-1.711 4.078s1.752 4.729 1.996 5.055c.244.326 3.445 5.262 8.346 7.379 1.166.504 2.077.805 2.787.031.709.259 2.069.635 3.328.348 1.259-.287 2.888-1.18 3.295-2.318.407-1.139.407-2.114.285-2.318-.122-.203-.448-.326-.937-.57z"/>
-    </svg>
-  </a>
-
-  
-  <!-- ==================== MODALS SECTION ==================== -->
-  <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="payment-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="payment-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
-        <h3>Escolha a Forma de Pagamento</h3>
-        <button class="payment-modal-close" onclick="closePaymentModal()" type="button" aria-label="Fechar">✕</button>
-      </div>
-      <div class="payment-summary">
-        <h4>Resumo do Pedido</h4>
-        <div id="paymentCartItems" class="payment-cart-items"></div>
-        <div class="payment-total"><span>Total:</span><strong id="paymentTotal">R$ 0,00</strong></div>
-      </div>
-      <div class="payment-options">
-        <h4>Forma de Pagamento</h4>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="pix" checked>
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>PIX</strong><small>Aprovação imediata</small></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="boleto">
-          <div class="payment-option-content">
-            <span class="payment-icon">📄</span>
-            <div class="payment-info"><strong>Boleto</strong><small>Vencimento em 3 dias</small></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="credito-avista">
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>Cartão à vista</strong></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="credito-parcelado">
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>Cartão Parcelado</strong></div>
-          </div>
-        </label>
-        <div id="installmentsBox" class="installments-box" style="display:none;">
-          <label for="installments">Número de Parcelas:</label>
-          <select id="installments">
-              <option value="2">2x sem juros</option>
-              <option value="3">3x sem juros</option>
-          </select>
-        </div>
-      </div>
-      <button class="payment-confirm-btn" onclick="sendToWhatsApp()" type="button">📱 Finalizar Pedido via WhatsApp</button>
-    </div>
+  <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
   </div>
 
-  <div class="user-panel" id="userPanel">
-    <div class="user-panel-content">
-        <div class="user-panel-header">
-            <h3>Minha Conta</h3>
-            <button class="user-panel-close" onclick="closeUserPanel()" type="button" aria-label="Fechar">✕</button>
-        </div>
-        
-        <div class="user-panel-tabs" id="userPanelTabs">
-            <button class="user-panel-tab active" onclick="switchUserTab('login')" type="button">Entrar</button>
-            <button class="user-panel-tab" onclick="switchUserTab('register')" type="button">Cadastrar</button>
-        </div>
-
-        <div class="user-panel-body">
-            <div class="user-tab-content active" id="loginTab">
-                <form onsubmit="userLogin(event)">
-                    <div class="form-group">
-                        <label for="loginEmail">E-mail</label>
-                        <input type="email" id="loginEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" required autocomplete="current-password">
-                    </div>
-                    <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
-                        <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
-                    </div>
-                    <button type="submit" class="form-btn">Entrar</button>
-                    <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
-                </form>
-                <div class="form-link">
-                    Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
-                </div>
-            </div>
-
-            <div class="user-tab-content" id="registerTab">
-                <form onsubmit="userRegister(event)">
-                    <div class="form-group">
-                        <label for="registerName">Nome Completo</label>
-                        <input type="text" id="registerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">E-mail</label>
-                        <input type="email" id="registerEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Senha</label>
-                        <input type="password" id="registerPassword" required>
-                    </div>
-                    <button type="submit" class="form-btn">Criar Conta</button>
-                    <div class="form-error" id="registerError">Erro ao criar conta</div>
-                    <div class="form-success" id="registerSuccess">Conta criada com sucesso!</div>
-                </form>
-                <div class="form-link">
-                    Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-                </div>
-            </div>
-
-            <div class="user-tab-content" id="userLoggedTab">
-                <div class="user-logged-in">
-                    <h4>Bem-vindo(a), <span id="userNameDisplay"></span>!</h4>
-                    <div class="user-info">
-                        <p><strong>E-mail:</strong> <span id="userEmailDisplay"></span></p>
-                    </div>
-                    <div class="user-actions">
-                        <button class="user-action-btn" onclick="alert('Em breve: Meus Pedidos')" type="button">📦 Meus Pedidos</button>
-                        <button class="user-action-btn logout" onclick="userLogout()" type="button">Sair da Conta</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
-
-  <footer class="site-footer" role="contentinfo">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h4>Seja Versátil</h4>
-        <p>Moda fitness feminina com estilo e qualidade.</p>
-        <div class="social-icons">
-          <a href="https://instagram.com/_sejaversatil" target="_blank" rel="noopener noreferrer" aria-label="Instagram">📷</a>
-          <a href="https://wa.me/5571991427103" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">💬</a>
-        </div>
-      </div>
-      <div class="footer-section">
-        <h4>Links Rápidos</h4>
-        <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="index.html#produtos">Produtos</a></li>
-            <li><a href="#">Sobre Nós</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Seja Versátil. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-
-  <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
-      <div class="loading-spinner">⏳</div>
-      <div class="loading-text">Carregando...</div>
-  </div>
-
-  <script src="js/script2.js" defer></script>\n  <script src="js/produto.js" defer></script>
-  </div>
+  <script src="js/script2.js" defer></script>
+  <script src="js/produto.js" defer></script>
 </body>
 </html>
-
-
-
-
-
-
-
