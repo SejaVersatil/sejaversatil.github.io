@@ -1,3 +1,8 @@
+/* Smooth scrolling global */
+html {
+  scroll-behavior: smooth;
+}
+
 /* PRODUTO.CSS - APENAS CONTEÚDO ESPECÍFICO DO PRODUTO */
 /* Header, Footer, Menu e Banners são herdados do CSS Principal */
 
@@ -143,6 +148,7 @@ body.product-page {
     transition: all 0.2s ease;
     padding: 0 !important;
     box-sizing: border-box !important;
+  transition: all 0.3s ease;
 }
 
 .color-option:hover {
@@ -182,6 +188,7 @@ body.product-page {
     cursor: pointer;
     border-radius: 8px !important;
     transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .size-option:hover {
@@ -217,7 +224,8 @@ body.product-page {
 /* RELACIONADOS */
 .related-products-section { margin-top: 4rem; border-top: 1px solid #f5f5f5; padding-top: 3rem; }
 .related-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-.product-card { cursor: pointer; border: 1px solid #f5f5f5; }
+.product-card { cursor: pointer; border: 1px solid #f5f5f5;   will-change: transform, opacity;
+}
 .product-card .product-image { aspect-ratio: 3/4; background-size: cover; background-position: center; }
 .product-card .product-info { padding: 1rem; }
 
@@ -242,6 +250,7 @@ body.product-page {
     cursor: pointer;
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
     text-decoration: underline;
+  transition: all 0.3s ease;
 }
 
 .action-link:hover {
@@ -297,6 +306,7 @@ body.product-page {
     text-decoration: underline;
     font-weight: 500 !important;
     transition: color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .badge-text a:hover {
@@ -439,6 +449,8 @@ body, .short-desc-text, .model-info-text {
     cursor: pointer !important;
     transition: all 0.2s ease;
     border: 2px solid transparent;
+  transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .gallery-photo-extra:hover {
@@ -464,6 +476,7 @@ body, .short-desc-text, .model-info-text {
     transition: all 0.2s ease;
     border: 2px solid transparent;
     background-color: #f5f5f5;
+  transition: all 0.3s ease;
 }
 
 .thumbnail-item:hover {
@@ -594,6 +607,7 @@ body, .short-desc-text, .model-info-text {
     text-underline-offset: 3px;
     cursor: pointer;
     transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-show-more:hover {
@@ -673,6 +687,7 @@ body, .short-desc-text, .model-info-text {
     transition: all 0.3s ease;
     padding: 0;
     outline: none;
+  transition: all 0.3s ease;
 }
 
 .btn-favorite-floating svg {
@@ -748,6 +763,7 @@ body, .short-desc-text, .model-info-text {
     border-radius: 30px !important;       
     font-weight: 800 !important;          
     font-size: 16px !important;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
