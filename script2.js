@@ -4355,28 +4355,70 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
+    console.log('🛒 Checkout iniciado');
+    
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
+    console.log('📦 Itens no carrinho:', cart.length);
+    
     // Fechar carrinho
     toggleCart();
     
-    // Abrir modal de pagamento COM VERIFICAÇÃO
+    // Aguardar animação de fechamento e abrir modal
     setTimeout(() => {
-        if (typeof openPaymentModal === 'function') {
-            openPaymentModal();
-        } else {
-            console.error('❌ openPaymentModal não encontrada!');
-            // Fallback: tentar abrir o modal diretamente
+        console.log('⏰ Timeout executado, abrindo modal...');
+        
+        // Verificar se a função existe
+        if (typeof openPaymentModal !== 'function') {
+            console.error('❌ openPaymentModal não é uma função!');
+            console.log('typeof openPaymentModal:', typeof openPaymentModal);
+            
+            // Tentar abrir modal manualmente
             const modal = document.getElementById('paymentModal');
             if (modal) {
+                console.log('✅ Modal encontrado, tentando abrir manualmente...');
                 modal.classList.add('active');
+                
+                // Chamar manualmente o preenchimento
+                const cartItemsContainer = document.getElementById('paymentCartItems');
+                const totalContainer = document.getElementById('paymentTotal');
+                
+                if (cartItemsContainer && totalContainer) {
+                    // Renderizar itens
+                    cartItemsContainer.innerHTML = cart.map(item => `
+                        <div class="payment-cart-item">
+                            <div>
+                                <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
+                                <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+                            </div>
+                            <div style="font-weight: 700;">
+                                R$ ${(item.price * item.quantity).toFixed(2)}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    // Calcular total
+                    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const discount = Math.min(couponDiscount || 0, subtotal);
+                    const total = Math.max(0, subtotal - discount);
+                    
+                    totalContainer.textContent = `R$ ${total.toFixed(2)}`;
+                    console.log('✅ Modal preenchido manualmente');
+                }
             } else {
-                alert('Erro ao abrir modal de pagamento. Tente novamente.');
+                console.error('❌ Modal não encontrado no DOM!');
+                alert('Erro: Modal de pagamento não encontrado no HTML.');
             }
+            return;
         }
+        
+        // Chamar a função normalmente
+        console.log('✅ Chamando openPaymentModal()...');
+        openPaymentModal();
+        
     }, 300);
     
     trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
@@ -5978,6 +6020,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
 
