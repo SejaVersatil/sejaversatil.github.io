@@ -156,7 +156,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
         console.error('Erro na inicialização do produto:', err);
     } finally {
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
+        // Garantir que o overlay desapareça, mesmo em caso de erro.
+        // O ideal é que o loadProduct() trate o erro e mostre uma mensagem.
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+            loadingOverlay.classList.add('hidden'); // Adiciona uma classe para garantir que não interfira no layout
+        }
     }
 });
 
