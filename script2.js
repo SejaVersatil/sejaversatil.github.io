@@ -4371,8 +4371,6 @@ function checkout() {
     trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
 }
 
-function sendToWhatsApp()
-
 // ==================== CHECKOUT VIA WHATSAPP ====================
 
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
@@ -5987,5 +5985,6 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
