@@ -246,7 +246,7 @@ async function loadVideoGrid() {
 }
 
 function getDefaultVideos() {
-  // URLs de vídeos gratuitos do Pexels (reais e funcionais)
+    
   return [
     {
       url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%201.mp4?alt=media&token=f04963d6-8348-49fe-912b-9dc321b42691',
@@ -255,7 +255,7 @@ function getDefaultVideos() {
       order: 1
     },
     {
-      url: 'https://videos.pexels.com/video-files/6456331/6456331-sd_640_360_25fps.mp4',
+      url: '',
       title: 'ESTILO',
       subtitle: 'Looks incríveis',
       order: 2
@@ -267,7 +267,7 @@ function getDefaultVideos() {
       order: 3
     },
     {
-      url: 'https://videos.pexels.com/video-files/6456268/6456268-sd_640_360_25fps.mp4',
+      url: '',
       title: 'VOCÊ',
       subtitle: 'Seja versátil',
       order: 4
@@ -5978,5 +5978,6 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
 
