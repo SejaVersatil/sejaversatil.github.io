@@ -43,6 +43,23 @@ const nowMs = () => (new Date()).getTime();
    LocalStorage (carrinho)
    ========================= */
 function loadCartFromStorage() {
+
+
+// Helper para animações suaves com requestAnimationFrame
+function smoothAnimate(element, className, action = 'add') {
+    if (!element) return;
+    
+    requestAnimationFrame(() => {
+        if (action === 'add') {
+            element.classList.add(className);
+        } else if (action === 'remove') {
+            element.classList.remove(className);
+        } else if (action === 'toggle') {
+            element.classList.toggle(className);
+        }
+    });
+}
+
     try {
         const raw = localStorage.getItem('sejaVersatilCart');
         if (!raw) {
@@ -1170,3 +1187,81 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
+
+// Validação de CPF com feedback visual
+function validateCPF(cpf) {
+    cpf = cpf.replace(/[^\d]/g, '');
+    
+    if (cpf.length !== 11) return false;
+    
+    // Validação de CPF real
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+        sum += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cpf.charAt(9))) return false;
+    
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+        sum += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cpf.charAt(10))) return false;
+    
+    return true;
+}
+
+// Validação de Email com feedback visual
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Aplicar validação visual a inputs
+function applyVisualValidation(inputElement, validationFn) {
+    if (!inputElement) return;
+    
+    inputElement.addEventListener('blur', () => {
+        const isValid = validationFn(inputElement.value);
+        
+        if (inputElement.value.length > 0) {
+            if (isValid) {
+                inputElement.style.borderColor = '#27ae60';
+                inputElement.style.boxShadow = '0 0 0 2px rgba(39, 174, 96, 0.1)';
+            } else {
+                inputElement.style.borderColor = '#e74c3c';
+                inputElement.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.1)';
+            }
+        }
+    });
+    
+    inputElement.addEventListener('input', () => {
+        inputElement.style.borderColor = '';
+        inputElement.style.boxShadow = '';
+    });
+}
+
+
+// Monitoramento de Performance (apenas em desenvolvimento)
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    window.addEventListener('load', () => {
+        if (window.performance && window.performance.timing) {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            const connectTime = perfData.responseEnd - perfData.requestStart;
+            const renderTime = perfData.domComplete - perfData.domLoading;
+            
+            console.log('%c⚡ Performance Metrics', 'color: #667eea; font-weight: bold; font-size: 14px;');
+            console.log(`Page Load Time: ${pageLoadTime}ms`);
+            console.log(`Server Response: ${connectTime}ms`);
+            console.log(`DOM Render: ${renderTime}ms`);
+        }
+    });
+}
+
