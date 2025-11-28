@@ -4500,10 +4500,10 @@ function closePaymentModal() {
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
 async function sendToWhatsApp() {
-    if (cart.length === 0) {
-        showToast('Seu carrinho está vazio!', 'error');
-        return;
-    }
+    if (!cart.length) {
+    showToast('Carrinho vazio!', 'error');
+    return;
+}
 
     // 1. COLETA DE DADOS DO CLIENTE
     const isLoggedIn = auth.currentUser !== null;
@@ -4592,7 +4592,7 @@ async function sendToWhatsApp() {
     };
     
     const paymentText = paymentMethodsMap[paymentMethod] || paymentMethod;
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((s, it) => s + ((it.price || 0) * (it.quantity || 0)), 0);
     const total = Math.max(0, subtotal - (couponDiscount || 0));
 
     // 4. SALVAR NO FIRESTORE
