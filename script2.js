@@ -255,7 +255,7 @@ function getDefaultVideos() {
       order: 1
     },
     {
-      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%202.mp4?alt=media&token=2970f736-f208-4330-8cf4-174728624812',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%202.mp4?alt=media&token=2b74bf78-6d27-42e6-bad1-ae923d1e714a',
       title: 'ESTILO',
       subtitle: 'Looks incríveis',
       order: 2
@@ -5985,6 +5985,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
