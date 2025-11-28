@@ -6021,6 +6021,11 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// ==================== EXPOR FUNÇÕES GLOBAIS PARA O HTML ====================
+// ✅ CRITICAL: O HTML precisa acessar essas funções via onclick
+window.openPaymentModal = openPaymentModal;
+window.closePaymentModal = closePaymentModal;
+window.sendToWhatsApp = sendToWhatsApp;
+window.closeCustomerDataModal = closeCustomerDataModal;
 
-
-
+console.log('✅ Funções de pagamento expostas globalmente');
