@@ -4438,13 +4438,6 @@ function openPaymentModal() {
     
     // Mostrar modal
     modal.classList.add('active');
-
-function closePaymentModal() {
-    const modal = document.getElementById('paymentModal');
-    if (modal) {
-        modal.classList.remove('active');
-    }
-}
     
     // Configurar listeners para opções de pagamento
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
@@ -4462,7 +4455,14 @@ function closePaymentModal() {
         });
     }
 }
-    
+
+function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
 async function sendToWhatsApp() {
@@ -5985,6 +5985,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
