@@ -4424,7 +4424,7 @@ function openPaymentModal() {
     });
     
     // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
-    cartItemsContainer.innerHTML = cart.map(item => {
+    itemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
         
@@ -4450,7 +4450,7 @@ function openPaymentModal() {
     
     // ✅ CORREÇÃO 3: Mostrar cupom aplicado (NOVO BLOCO)
     if (appliedCoupon && couponDiscount > 0) {
-        cartItemsContainer.innerHTML += `
+        itemsContainer.innerHTML += `
             <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -6019,3 +6019,4 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
