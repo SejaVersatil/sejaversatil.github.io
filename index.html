@@ -843,53 +843,16 @@
     </div>
   </div>
 
-  <div class="payment-modal" id="paymentModal">
+ <div class="payment-modal" id="paymentModal">
     <div class="payment-modal-content">
       <div class="payment-modal-header">
         <h3>Escolha a Forma de Pagamento</h3>
         <button class="payment-modal-close" onclick="closePaymentModal()">✕</button>
       </div>
-
-  <div class="customer-data-modal" id="customerDataModal">
-    <div class="customer-data-content">
-      <div class="customer-data-header">
-        <h3>📝 Complete seus dados</h3>
-        <p style="font-size: 0.85rem; color: #666;">Para rastrear seu pedido</p>
-      </div>
-      
-      <form id="customerDataForm">
-        <div class="form-group">
-          <label>Nome Completo *</label>
-          <input type="text" id="guestName" required minlength="3">
-        </div>
-        
-        <div class="form-group">
-          <label>Email *</label>
-          <input type="email" id="guestEmail" required>
-        </div>
-        
-        <div class="form-group">
-          <label>WhatsApp (com DDD) *</label>
-          <input type="tel" id="guestPhone" placeholder="71991234567" required>
-        </div>
-        
-        <div class="form-group">
-          <label>CPF * <small>(para rastreamento)</small></label>
-          <input type="text" id="guestCPF" placeholder="000.000.000-00" required maxlength="14">
-        </div>
-        
-        <button type="submit" class="customer-data-submit">Continuar para WhatsApp</button>
-        <button type="button" class="customer-data-cancel" onclick="closeCustomerDataModal()">Cancelar</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="loading-overlay" id="loadingOverlay">
       
       <div class="payment-summary">
         <h4>Resumo do Pedido</h4>
-        <div id="paymentCartItems"></div>
-        <div class="payment-total">
+        <div id="paymentCartItems"></div> <div class="payment-total">
           <span>Total:</span>
           <span id="paymentTotal">R$ 0,00</span>
         </div>
@@ -897,10 +860,11 @@
       
       <div class="payment-options">
         <h4>Forma de Pagamento</h4>
+        
         <label class="payment-option">
           <input type="radio" name="paymentMethod" value="pix" checked>
           <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
+            <span class="payment-icon">💠</span>
             <div class="payment-info">
               <strong>PIX</strong>
               <small>Aprovação imediata</small>
@@ -935,7 +899,7 @@
           <div class="payment-option-content">
             <span class="payment-icon">💳</span>
             <div class="payment-info">
-              <strong>Cartão de Crédito Parcelado</strong>
+              <strong>Cartão Parcelado</strong>
               <small>Até 3x sem juros</small>
             </div>
           </div>
@@ -951,6 +915,37 @@
       </div>
       
       <button class="payment-confirm-btn" onclick="sendToWhatsApp()">📱 Finalizar Pedido via WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="customer-data-modal" id="customerDataModal">
+    <div class="customer-data-content">
+      <div class="customer-data-header">
+        <h3>📝 Complete seus dados</h3>
+        <p style="font-size: 0.85rem; color: #666;">Para rastrear seu pedido</p>
+      </div>
+      
+      <form id="customerDataForm">
+        <div class="form-group">
+          <label>Nome Completo *</label>
+          <input type="text" id="guestName" required minlength="3">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="guestEmail" required>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp (com DDD) *</label>
+          <input type="tel" id="guestPhone" placeholder="71991234567" required>
+        </div>
+        <div class="form-group">
+          <label>CPF * <small>(para rastreamento)</small></label>
+          <input type="text" id="guestCPF" placeholder="000.000.000-00" required maxlength="14">
+        </div>
+        
+        <button type="submit" class="customer-data-submit">Continuar para WhatsApp</button>
+        <button type="button" class="customer-data-cancel" onclick="closeCustomerDataModal()">Cancelar</button>
+      </form>
     </div>
   </div>
 
