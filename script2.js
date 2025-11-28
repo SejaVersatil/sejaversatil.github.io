@@ -4389,11 +4389,6 @@ function openPaymentModal() {
     
     console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
     
-    if (!cartItemsContainer || !totalContainer) {
-        console.error('❌ Containers do modal ausentes!');
-        return;
-    }
-    
     // ✅ CORREÇÃO 1: Revalidar cupom ANTES de abrir modal
     if (appliedCoupon) {
         const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -6019,4 +6014,5 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
