@@ -1518,7 +1518,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 
 /* Payment Modal */
 .payment-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3500; align-items: center; justify-content: center; overflow-y: auto; padding: 2rem; }
-.payment-modal.active { display: flex; }
+.payment-modal.active { display: flex !important; }
 .payment-modal-content { background: white; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; border-radius: 8px; }
 .payment-modal-header { background: var(--primary); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
 .payment-modal-header h3 { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
@@ -3122,3 +3122,26 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     overflow-y: auto;
 }
 
+
+/* ==========================================================================
+   CORREÇÃO DE EMERGÊNCIA PARA O MODAL DE PAGAMENTO
+   ========================================================================== */
+
+.payment-modal.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+#paymentModal {
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+#paymentModal:not(.active) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0.95) !important;
+}
