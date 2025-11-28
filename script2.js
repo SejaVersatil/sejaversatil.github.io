@@ -6005,8 +6005,6 @@ document.addEventListener('click', (e) => {
 });
 
 // ==================== EXPOR FUNÇÕES GLOBAIS ====================
-// ✅ CRITICAL: Permite que o HTML chame essas funções via onclick
-
 window.openPaymentModal = openPaymentModal;
 window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
@@ -6021,14 +6019,3 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
-
-
-
-
-
-
-
-
-
-
-
