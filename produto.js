@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🚀 Inicializando produto...');
 
         loadCartFromStorage();
-        updateCartUI();
+        if (typeof updateCartUI === 'function') updateCartUI();
 
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
@@ -688,7 +688,7 @@ window.addEventListener('storage', (e) => {
     if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
         console.log('🔄 Carrinho atualizado em outra aba');
         loadCartFromStorage();
-        updateCartUI();
+        if (typeof updateCartUI === 'function') updateCartUI();
     }
 });
 /* =========================
@@ -740,7 +740,7 @@ document.addEventListener('input', (e) => {
 /* =========================
    Expor Globalmente (Para HTML onclick)
    ========================= */
-window.toggleCart = toggleCart;
+window.toggleCart = function() { if (typeof toggleCart === 'function') toggleCart(); };
 window.checkout = checkout;
 window.changeQuantity = changeQuantity;
 window.calculateShipping = calculateShipping;
@@ -836,7 +836,7 @@ state.couponDiscount = discount;
 
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
-        updateCartUI();
+        if (typeof updateCartUI === 'function') updateCartUI();
         saveCartToStorage();
 
         showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
@@ -1264,3 +1264,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
+
+// Garante que a inicialização ocorra após o carregamento de todos os scripts
+window.addEventListener('DOMContentLoaded', initializeProductPage);
