@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Loja de moda fitness feminina premium. Leggings, tops e conjuntos versáteis. Frete grátis acima de R$ 299.">
@@ -182,7 +185,9 @@
     </nav>
   </header>
 
-  <div class="search-modal" id="searchModal">
+  
+  <!-- ==================== MODALS SECTION ==================== -->
+  <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="search-content">
       <input type="text" class="search-input" id="searchInput" placeholder="Buscar produtos..." oninput="performSearch()">
       <div class="search-results" id="searchResults"></div>
@@ -447,7 +452,7 @@
     <div class="user-panel-content">
       <div class="user-panel-header">
         <h3>Minha Conta</h3>
-        <button class="user-panel-close" onclick="closeUserPanel()">✕</button>
+        <button class="user-panel-close" onclick="closeUserPanel()" aria-label="Fechar">✕</button>
       </div>
       
       <div class="user-panel-tabs" id="userPanelTabs">
@@ -464,7 +469,7 @@
             </div>
             <div class="form-group">
               <label for="loginPassword">Senha</label>
-              <input type="password" id="loginPassword" required>
+              <input type="password" id="loginPassword" required autocomplete="current-password">
             </div>
             <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
               <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
@@ -500,7 +505,7 @@
             </div>
             <div class="form-group">
               <label for="registerEmail">E-mail</label>
-              <input type="email" id="registerEmail" required>
+              <input type="email" id="registerEmail" required autocomplete="email">
             </div>
             <div class="form-group">
               <label for="registerPassword">Senha</label>
@@ -547,7 +552,7 @@
   <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
       <h2>🔧 Painel Administrativo - Seja Versátil</h2>
-      <button class="admin-close" onclick="closeAdminPanel()">Sair do Painel</button>
+      <button class="admin-close" onclick="closeAdminPanel()" aria-label="Fechar">Sair do Painel</button>
     </div>
     <div class="admin-content">
       <div class="admin-stats">
@@ -628,14 +633,14 @@
 </div>
 
 <!-- Modal de Cupom -->
-  <div class="coupon-modal" id="couponModal">
-    <div class="coupon-modal-content">
-      <div class="coupon-modal-header">
+  <div class="coupon-modal" id="couponModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="coupon-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="coupon-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
         <h3>Criar Novo Cupom</h3>
         <button onclick="closeCouponModal()">✕</button>
       </div>
       
-      <form id="couponForm" onsubmit="saveCoupon(event)">
+      <form id="couponForm" onsubmit="saveCoupon(event)" novalidate>
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponCode">Código do Cupom *</label>
@@ -712,11 +717,11 @@
   </div>
 
 <!-- VIDEO MANAGER MODAL -->
-<div class="admin-modal" id="videoManagerModal">
-  <div class="admin-modal-content" style="max-width: 800px;">
-    <div class="admin-modal-header">
+<div class="admin-modal" id="videoManagerModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="admin-modal-content" style="max-width: 800px;" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
       <h3>🎬 Gerenciar Vídeos da Home</h3>
-      <button class="admin-close" onclick="closeVideoManager()">✕</button>
+      <button class="admin-close" onclick="closeVideoManager()" aria-label="Fechar">✕</button>
     </div>
     
     <div style="padding: 1.5rem;">
@@ -740,12 +745,12 @@
   </div>
 </div>
       
-<div class="admin-modal" id="productModal">
+<div class="admin-modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true">
   
-    <div class="admin-modal-content">
-      <div class="admin-modal-header">
+    <div class="admin-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="admin-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
         <h3 id="modalTitle">Adicionar Produto</h3>
-        <button class="admin-close" onclick="closeProductModal()">✕</button>
+        <button class="admin-close" onclick="closeProductModal()" aria-label="Fechar">✕</button>
       </div>
       <form id="productForm" onsubmit="saveProduct(event)">
         <div class="admin-form-group">
@@ -843,14 +848,14 @@
     </div>
   </div>
 
-  <div class="payment-modal" id="paymentModal">
-    <div class="payment-modal-content">
-      <div class="payment-modal-header">
+  <div class="payment-modal" id="paymentModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="payment-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="payment-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
         <h3>Escolha a Forma de Pagamento</h3>
-        <button class="payment-modal-close" onclick="closePaymentModal()">✕</button>
+        <button class="payment-modal-close" onclick="closePaymentModal()" aria-label="Fechar">✕</button>
       </div>
 
-  <div class="customer-data-modal" id="customerDataModal">
+  <div class="customer-data-modal" id="customerDataModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="customer-data-content">
       <div class="customer-data-header">
         <h3>📝 Complete seus dados</h3>
@@ -865,7 +870,7 @@
         
         <div class="form-group">
           <label>Email *</label>
-          <input type="email" id="guestEmail" required>
+          <input type="email" id="guestEmail" required autocomplete="email">
         </div>
         
         <div class="form-group">
