@@ -52,6 +52,8 @@ let selectedSize = 'M';
 let selectedColor = null;
 let selectedQuantity = 1;
 let currentProductDetails = null;
+let appliedCoupon = null;
+let couponDiscount = 0;
 // ==================== FUNÇÕES UTILITÁRIAS DE IMAGEM ====================
 function getProductImage(product) {
     if (Array.isArray(product.images) && product.images.length > 0) {
@@ -3305,9 +3307,6 @@ function loadCart() {
 
 // ==================== SISTEMA DE CUPONS ====================
 
-let appliedCoupon = null;
-let couponDiscount = 0;
-
 // Aplicar cupom
 async function applyCoupon() {
     const input = document.getElementById('couponInput');
@@ -4357,16 +4356,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
+    console.log('🔵 [DEBUG] checkout() chamada');
+    console.log('🔵 [DEBUG] cart.length:', cart.length);
+    
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
+    console.log('🔵 [DEBUG] Fechando carrinho...');
     // Fechar carrinho
     toggleCart();
     
     // Aguardar animação de fechamento (300ms) e abrir modal de pagamento
+    console.log('🔵 [DEBUG] Aguardando 300ms antes de abrir modal...');
     setTimeout(() => {
+        console.log('🔵 [DEBUG] Timeout concluído, chamando openPaymentModal()...');
         openPaymentModal();
     }, 300);
     
@@ -4378,21 +4383,28 @@ function checkout() {
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
 
 function openPaymentModal() {
+    console.log('🔵 [DEBUG] openPaymentModal() chamada');
+    console.log('🔵 [DEBUG] cart:', cart);
+    console.log('🔵 [DEBUG] appliedCoupon:', appliedCoupon);
+    console.log('🔵 [DEBUG] couponDiscount:', couponDiscount);
+    
     const modal = $('paymentModal');
     const itemsContainer = $('paymentCartItems');
     const totalContainer = $('paymentTotal');
     
+    console.log('🔵 [DEBUG] modal:', modal);
+    console.log('🔵 [DEBUG] itemsContainer:', itemsContainer);
+    console.log('🔵 [DEBUG] totalContainer:', totalContainer);
+    
     if (!modal || !itemsContainer || !totalContainer) {
         console.error('❌ Modal de pagamento não encontrado!');
+        console.error('❌ modal existe:', !!modal);
+        console.error('❌ itemsContainer existe:', !!itemsContainer);
+        console.error('❌ totalContainer existe:', !!totalContainer);
         return;
     }
     
     console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
-    
-    if (!cartItemsContainer || !totalContainer) {
-        console.error('❌ Containers do modal ausentes!');
-        return;
-    }
     
     // ✅ CORREÇÃO 1: Revalidar cupom ANTES de abrir modal
     if (appliedCoupon) {
@@ -4424,7 +4436,7 @@ function openPaymentModal() {
     });
     
     // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
-    cartItemsContainer.innerHTML = cart.map(item => {
+    itemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
         
@@ -4450,7 +4462,7 @@ function openPaymentModal() {
     
     // ✅ CORREÇÃO 3: Mostrar cupom aplicado (NOVO BLOCO)
     if (appliedCoupon && couponDiscount > 0) {
-        cartItemsContainer.innerHTML += `
+        itemsContainer.innerHTML += `
             <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -4473,7 +4485,10 @@ function openPaymentModal() {
     totalContainer.textContent = `R$ ${total.toFixed(2)}`;
     
     // Mostrar modal
+    console.log('🔵 [DEBUG] Adicionando classe active ao modal');
     modal.classList.add('active');
+    console.log('🔵 [DEBUG] Modal classes:', modal.className);
+    console.log('✅ [DEBUG] Modal deveria estar visível agora');
     
     // Configurar listeners para opções de pagamento
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
