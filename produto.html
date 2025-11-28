@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Compre moda fitness feminina com estilo e qualidade na Seja Versátil.">
@@ -369,11 +372,13 @@
     </svg>
   </a>
 
+  
+  <!-- ==================== MODALS SECTION ==================== -->
   <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="payment-modal-content">
-      <div class="payment-modal-header">
+    <div class="payment-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="payment-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
         <h3>Escolha a Forma de Pagamento</h3>
-        <button class="payment-modal-close" onclick="closePaymentModal()" type="button">✕</button>
+        <button class="payment-modal-close" onclick="closePaymentModal()" type="button" aria-label="Fechar">✕</button>
       </div>
       <div class="payment-summary">
         <h4>Resumo do Pedido</h4>
@@ -426,7 +431,7 @@
     <div class="user-panel-content">
         <div class="user-panel-header">
             <h3>Minha Conta</h3>
-            <button class="user-panel-close" onclick="closeUserPanel()" type="button">✕</button>
+            <button class="user-panel-close" onclick="closeUserPanel()" type="button" aria-label="Fechar">✕</button>
         </div>
         
         <div class="user-panel-tabs" id="userPanelTabs">
@@ -439,11 +444,11 @@
                 <form onsubmit="userLogin(event)">
                     <div class="form-group">
                         <label for="loginEmail">E-mail</label>
-                        <input type="email" id="loginEmail" required>
+                        <input type="email" id="loginEmail" required autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" required>
+                        <input type="password" id="loginPassword" required autocomplete="current-password">
                     </div>
                     <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
                         <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
@@ -464,7 +469,7 @@
                     </div>
                     <div class="form-group">
                         <label for="registerEmail">E-mail</label>
-                        <input type="email" id="registerEmail" required>
+                        <input type="email" id="registerEmail" required autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label for="registerPassword">Senha</label>
