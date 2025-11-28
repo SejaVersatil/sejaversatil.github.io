@@ -1,538 +1,1001 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-  <link rel="dns-prefetch" href="https://www.gstatic.com">
+// produto.js - Versão Final "Mosaico Live!" 
+// Compatível com HTML atualizado e CSS Grid
 
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Compre moda fitness feminina com estilo e qualidade na Seja Versátil.">
-  <title id="productPageTitle">Produto - Seja Versátil</title>
-  
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+'use strict';
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+/* =========================
+   Estado global
+   ========================= */
+const state = {
+    currentProduct: null,
+    selectedColor: null,
+    selectedSize: null,
+    selectedQuantity: 1,
+    cart: [],
+    productVariants: {},
+    countdownInterval: null,
+    galleryExpanded: false,
+    appliedCoupon: null,        // ← ADICIONE ESTA LINHA
+    couponDiscount: 0            // ← ADICIONE ESTA LINHA
+};
+window.productState = state;
 
-  <link rel="stylesheet" href="produto.css">
-  <link rel="stylesheet" href="css2.css">
+/* =========================
+   Utilitários DOM e helpers
+   ========================= */
+const $ = (id) => document.getElementById(id);
+const elExists = (id) => !!$(id);
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+const safeNumber = (v, fallback = 0) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+};
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-      authDomain: "seja-versatil.firebaseapp.com",
-      projectId: "seja-versatil",
-      storageBucket: "seja-versatil.firebasestorage.app",
-      messagingSenderId: "102339207381",
-      appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-      measurementId: "G-86E5CX4S3T"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-  </script>
-</head>
+const isImageUrl = (s) => typeof s === 'string' && (s.startsWith('http') || s.startsWith('data:image'));
+const isGradient = (s) => typeof s === 'string' && s.includes('gradient(');
 
-<body class="product-page">
-  
-  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
-  <aside id="sidebarMenu" class="sidebar-menu" aria-labelledby="sidebarTitle" role="navigation">
-    <h3 id="sidebarTitle" class="visually-hidden">Menu</h3>
-    <section class="sidebar-section">
-      <h4>Explore</h4>
-      <ul>
-        <li><a href="index.html">Início</a></li>
-        <li><a href="index.html#produtos">Produtos</a></li>
-      </ul>
-    </section>
-    <section class="sidebar-section">
-      <h4>Categorias</h4>
-      <ul>
-        <li><a href="index.html?categoria=blusas">Blusas</a></li>
-        <li><a href="index.html?categoria=conjunto calca">Conjunto Calça</a></li>
-        <li><a href="index.html?categoria=peca unica">Peça Única</a></li>
-        <li><a href="index.html?categoria=conjunto short saia">Conjunto Short Saia</a></li>
-        <li><a href="index.html?categoria=conjunto short">Conjunto Short</a></li>
-      </ul>
-    </section>
-  </aside>
+const normalizeIdPart = (str = '') =>
+    String(str).replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 
-  <div class="top-banner black-friday-banner">
-      <div class="bf-content">
-          <span class="bf-label">BLACK VERSÁTIL | ATÉ 50% OFF</span>
-          <span class="bf-separator">|</span>
-          <span class="bf-countdown-label">termina em</span>
-          <div class="bf-countdown">
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfDays">00</span>
-                  <span class="bf-time-label">Dias</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfHours">00</span>
-                  <span class="bf-time-label">Horas</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfMinutes">00</span>
-                  <span class="bf-time-label">Minutos</span>
-              </div>
-              <span class="bf-colon">:</span>
-              <div class="bf-time-unit">
-                  <span class="bf-time-value" id="bfSeconds">00</span>
-                  <span class="bf-time-label">Segundos</span>
-              </div>
-          </div>
-      </div>
-  </div>
+const nowMs = () => (new Date()).getTime();
 
-  <header class="site-header">
-    <nav class="nav">
-      <div class="nav-left">
-        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" type="button" style="position: relative; top: auto; left: auto; display: none;">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-        <div class="logo" onclick="window.location.href='index.html'">SEJA VERSÁTIL</div>
-      </div>
-      
-      <div class="nav-center">
-        <div class="search-bar" style="position: relative;">
-          <img src="favicon.ico" alt="Logo" class="search-logo" width="24" height="24" style="margin-right: 8px;">
-          <input type="text" id="headerSearchInput" placeholder="Encontre aqui seu próximo look" autocomplete="off">
-          <button class="search-btn" type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </button>
-          <div id="headerDropdown" class="search-dropdown"></div>
-        </div>
-      </div>
-      
-      <div class="nav-icons">
-        <div class="nav-icon" onclick="openUserPanel()" title="Minha Conta" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
+/* =========================
+   LocalStorage (carrinho)
+   ========================= */
+function loadCartFromStorage() {
 
-        <div class="nav-icon" onclick="goToFavoritesPage()" title="Meus favoritos" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-            <span class="cart-count" id="favoritesCount" style="display: none;">0</span>
-        </div>
-        
-        <div class="nav-icon" onclick="toggleCart()" title="Carrinho" role="button" tabindex="0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a 2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span id="cartCount" class="cart-count">0</span>
-        </div>
-      </div>
-    </nav>
-  </header>
 
-  <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()" aria-hidden="true"></div>
-  <aside id="cartSidebar" class="cart-sidebar" role="dialog" aria-label="Meu carrinho" aria-hidden="true">
-    <div class="cart-header">
-      <h3>Meu Carrinho</h3>
-      <button class="close-cart" aria-label="Fechar carrinho" onclick="toggleCart()" type="button">✕</button>
-    </div>
-    <div id="cartItems" class="cart-items" aria-live="polite">
-      <div class="empty-cart">Seu carrinho está vazio</div>
-    </div>
-    <div id="cartFooter" class="cart-footer" style="display:none;">
-  
-  <!-- Sistema de Cupons -->
-  <div class="coupon-section">
-    <h4>🎟️ Cupom de Desconto</h4>
-    <div class="coupon-input-row">
-      <input type="text" 
-             class="coupon-input" 
-             id="couponInput" 
-             placeholder="Digite o código" 
-             maxlength="20"
-             autocomplete="off">
-      <button class="coupon-apply-btn" 
-              id="applyCouponBtn" 
-              type="button"
-              onclick="applyCoupon()">
-        APLICAR
-      </button>
-    </div>
-    <div class="coupon-message" id="couponMessage"></div>
-    <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
-      <div class="applied-coupon-info">
-        <span class="applied-coupon-code" id="appliedCouponCode"></span>
-        <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
-      </div>
-      <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
-    </div>
-  </div>
-  
-  <!-- Total com Desconto -->
-  <div class="cart-total">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
-      <span>Subtotal:</span>
-      <span id="cartSubtotal">R$ 0,00</span>
-    </div>
-    <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
-      <span>Desconto:</span>
-      <span id="discountValue">- R$ 0,00</span>
-    </div>
-    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
-      <span>Total:</span>
-      <span id="cartTotal">R$ 0,00</span>
-    </div>
-  </div>
-  
-  <button class="checkout-btn" onclick="checkout()" type="button">Finalizar Compra</button>
-</div>
-  </aside>
-
-  <main class="product-page-container" role="main">
-    <div class="product-main-grid">
-
-      <div class="product-gallery-section">
-    <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-    </button>
-
-    <div id="galleryContainer" class="gallery-container">
-        <div class="gallery-photo-full" id="heroWrapper1">
-            <img id="mainImg1" src="" alt="Imagem Principal 1" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-
-        <div class="gallery-photo-full" id="heroWrapper2">
-            <img id="mainImg2" src="" alt="Imagem Principal 2" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-    </div>
-
-    <!-- ⚠️ CRÍTICO: thumbnailList FORA do galleryContainer -->
-    <div id="thumbnailList" class="thumbnail-grid"></div>
-
-    <button id="btnShowMore" class="btn-show-more" style="display: none;" onclick="toggleGalleryExpansion()" type="button">
-        MOSTRAR MAIS 
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor">
-            <path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </button>
-</div>
+// Helper para animações suaves com requestAnimationFrame
+function smoothAnimate(element, className, action = 'add') {
+    if (!element) return;
     
-      <div class="product-info-section">
-        <nav class="breadcrumb">
-            <a href="index.html">Início</a> › <span id="breadcrumbCategory">Categoria</span> › <span id="breadcrumbProduct">Produto</span>
-        </nav>
+    requestAnimationFrame(() => {
+        if (action === 'add') {
+            element.classList.add(className);
+        } else if (action === 'remove') {
+            element.classList.remove(className);
+        } else if (action === 'toggle') {
+            element.classList.toggle(className);
+        }
+    });
+}
+
+    try {
+        const raw = localStorage.getItem('sejaVersatilCart');
+        if (!raw) {
+            state.cart = [];
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+            return;
+        }
         
-        <div class="product-header-wrapper">
-            <div class="header-left">
-                <h1 class="product-title" id="detailsProductName">Carregando...</h1>
-                <div class="share-widget">
-                    <div class="share-options">
-                        <button class="share-btn instagram" onclick="shareToInstagram()" title="Copiar Link para Instagram" type="button">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                            </svg>
-                        </button>
-                        <button class="share-btn whatsapp" onclick="shareToWhatsApp()" title="Compartilhar no WhatsApp" type="button">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="share-trigger">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-pricing">
-                <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
-                <div class="price-main-row">
-                    <span class="price-current" id="detailsPriceNew">R$ --,--</span>
-                    <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
-                </div>
-                <div class="price-installments" id="detailsInstallments">Em até 10x sem juros</div>
-            </div>
-        </div>
-
-        <div class="product-selector-group">
-            <label class="selector-label">Cor: <span id="selectedColorName">Selecione</span></label>
-            <div class="color-options-grid" id="colorSelector"></div>
-        </div>
+        const parsed = JSON.parse(raw);
         
-        <div class="product-selector-group">
-            <label class="selector-label">Tamanho</label>
-            <div class="size-options-grid" id="sizeSelector"></div>
-            <span id="selectedSizeName" style="display:none;"></span>
-        </div>
-
-        <div class="product-selector-group">
-            <label class="selector-label">Quantidade</label>
-            <div class="quantity-controls">
-                <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)">−</button>
-                <input type="number" id="productQuantity" value="1" min="1" max="10" readonly>
-                <button class="qty-control-btn" type="button" onclick="changeQuantity(1)">+</button>
-            </div>
-        </div>
-
-        <div class="product-action-buttons">
-            <button class="btn btn-primary" onclick="addToCartFromDetails()" type="button">COMPRAR</button>
-            <button class="btn btn-whatsapp-main" onclick="buyViaWhatsApp()" type="button">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                COMPRE PELO WHATSAPP
-            </button>
-        </div>
+        // ✅ CORREÇÃO: Aceita AMBOS os formatos
+        if (parsed.items && Array.isArray(parsed.items)) {
+            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            state.cart = parsed.items.map(item => ({
+                ...item,
+                quantity: safeNumber(item.quantity, 1),
+                price: safeNumber(item.price, 0)
+            }));
+            state.appliedCoupon = parsed.appliedCoupon || null;
+            state.couponDiscount = safeNumber(parsed.couponDiscount, 0);
+        } else if (Array.isArray(parsed)) {
+            // Formato antigo: [{item1}, {item2}]
+            state.cart = parsed.map(item => ({
+                ...item,
+                quantity: safeNumber(item.quantity, 1),
+                price: safeNumber(item.price, 0)
+            }));
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+        } else {
+            state.cart = [];
+            state.appliedCoupon = null;
+            state.couponDiscount = 0;
+        }
         
-        <div class="product-selector-group">
-            <label class="selector-label">Frete e Entrega</label>
-            <div class="shipping-input-row">
-                <input type="text" id="zipCodeInput" class="shipping-input" placeholder="Digite seu CEP" maxlength="9">
-                <button class="shipping-calc-btn" onclick="calculateShipping()" type="button">CALCULAR</button>
-            </div>
-            <div class="shipping-results" id="shippingResults"></div>
-        </div>
-
-        <div class="trust-badges-list">
-            <div class="trust-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                <div class="badge-text">
-                    <strong>Primeira troca é fácil e gratuita.</strong>
-                    <a href="#">Confira as opções de troca aqui.</a>
-                </div>
-            </div>
-            <div class="trust-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                <div class="badge-text">
-                    <strong>Cuidar do produto o torna mais durável.</strong>
-                    <a href="#">Confira os cuidados com o produto.</a>
-                </div>
-            </div>
-        </div>
-      
-      <div class="secondary-actions">
-        <button class="action-link" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-            Tabela de medidas
-        </button>
-        <button class="action-link" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            Descubra seu tamanho
-        </button>
-      </div>
-          
-      <div class="short-description-container">
-        <p class="short-desc-text">
-           O Shorts possui aplicação de estampa tecnológica, acompanhando os recortes estratégicos para melhor performance.
-        </p>
-        <a href="#productDescription" class="view-full-desc">Veja descrição completa ↓</a>
-      </div>
-
-      <div class="product-description-section" id="productDescription"></div>
-    </div>
-
-    <div class="related-products-section">
-        <h3>Você Também Pode Gostar</h3>
-        <div class="related-products-grid" id="relatedProductsGrid"></div>
-    </div>
-  </main>
-
-  <a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
-     class="whatsapp-float" 
-     target="_blank" 
-     rel="noopener noreferrer" 
-     aria-label="Falar no WhatsApp">
-    <svg viewBox="0 0 48 48" fill="white">
-        <path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524-.001 0 .001 0 0 0h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/>
-        <path d="M32.992 27.157c-.488-.244-2.888-1.424-3.336-1.587-.448-.162-.774-.244-1.1.245-.326.488-1.263 1.588-1.548 1.913-.285.326-.57.366-1.059.122-.488-.244-2.06-.759-3.922-2.419-1.45-1.292-2.428-2.889-2.713-3.377-.285-.489-.03-.753.214-.996.22-.22.488-.57.732-.855.244-.285.326-.489.489-.814.162-.326.081-.611-.041-.855-.122-.244-1.1-2.651-1.507-3.628-.396-.952-.798-.823-1.1-.838-.285-.014-.611-.017-.937-.017-.326 0-.855.122-1.303.611-.448.488-1.711 1.672-1.711 4.078s1.752 4.729 1.996 5.055c.244.326 3.445 5.262 8.346 7.379 1.166.504 2.077.805 2.787.031.709.259 2.069.635 3.328.348 1.259-.287 2.888-1.18 3.295-2.318.407-1.139.407-2.114.285-2.318-.122-.203-.448-.326-.937-.57z"/>
-    </svg>
-  </a>
-
-  
-  <!-- ==================== MODALS SECTION ==================== -->
-  <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="payment-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="payment-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
-        <h3>Escolha a Forma de Pagamento</h3>
-        <button class="payment-modal-close" onclick="closePaymentModal()" type="button" aria-label="Fechar">✕</button>
-      </div>
-      <div class="payment-summary">
-        <h4>Resumo do Pedido</h4>
-        <div id="paymentCartItems" class="payment-cart-items"></div>
-        <div class="payment-total"><span>Total:</span><strong id="paymentTotal">R$ 0,00</strong></div>
-      </div>
-      <div class="payment-options">
-        <h4>Forma de Pagamento</h4>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="pix" checked>
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>PIX</strong><small>Aprovação imediata</small></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="boleto">
-          <div class="payment-option-content">
-            <span class="payment-icon">📄</span>
-            <div class="payment-info"><strong>Boleto</strong><small>Vencimento em 3 dias</small></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="credito-avista">
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>Cartão à vista</strong></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="credito-parcelado">
-          <div class="payment-option-content">
-            <span class="payment-icon">💳</span>
-            <div class="payment-info"><strong>Cartão Parcelado</strong></div>
-          </div>
-        </label>
-        <div id="installmentsBox" class="installments-box" style="display:none;">
-          <label for="installments">Número de Parcelas:</label>
-          <select id="installments">
-              <option value="2">2x sem juros</option>
-              <option value="3">3x sem juros</option>
-          </select>
-        </div>
-      </div>
-      <button class="payment-confirm-btn" onclick="sendToWhatsApp()" type="button">📱 Finalizar Pedido via WhatsApp</button>
-    </div>
-  </div>
-
-  <div class="user-panel" id="userPanel">
-    <div class="user-panel-content">
-        <div class="user-panel-header">
-            <h3>Minha Conta</h3>
-            <button class="user-panel-close" onclick="closeUserPanel()" type="button" aria-label="Fechar">✕</button>
-        </div>
+        // ✅ Sincroniza com variável global (se existir)
+        if (typeof window.cart !== 'undefined') {
+            window.cart = state.cart;
+        }
         
-        <div class="user-panel-tabs" id="userPanelTabs">
-            <button class="user-panel-tab active" onclick="switchUserTab('login')" type="button">Entrar</button>
-            <button class="user-panel-tab" onclick="switchUserTab('register')" type="button">Cadastrar</button>
-        </div>
+    } catch (err) {
+        console.warn('Erro ao carregar carrinho:', err);
+        state.cart = [];
+        state.appliedCoupon = null;
+        state.couponDiscount = 0;
+    }
+}
 
-        <div class="user-panel-body">
-            <div class="user-tab-content active" id="loginTab">
-                <form onsubmit="userLogin(event)">
-                    <div class="form-group">
-                        <label for="loginEmail">E-mail</label>
-                        <input type="email" id="loginEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" required autocomplete="current-password">
-                    </div>
-                    <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
-                        <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
-                    </div>
-                    <button type="submit" class="form-btn">Entrar</button>
-                    <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
-                </form>
-                <div class="form-link">
-                    Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
+function saveCartToStorage() {
+    try {
+        // ✅ SEMPRE salva no formato novo
+        const cartData = {
+            items: state.cart || [],
+            appliedCoupon: state.appliedCoupon || null,
+            couponDiscount: safeNumber(state.couponDiscount, 0)
+        };
+        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        
+        // ✅ Sincroniza com variável global (se existir)
+        if (typeof window.cart !== 'undefined') {
+            window.cart = state.cart;
+        }
+    } catch (err) {
+        console.warn('Erro ao salvar carrinho', err);
+    }
+}
+
+/* =========================
+   Inicialização da página
+   ========================= */
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingOverlay = $('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+
+    try {
+        console.log('🚀 Inicializando produto...');
+
+        loadCartFromStorage();
+        if (typeof updateCartUI === 'function') updateCartUI();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (!productId) {
+            console.warn('Parametro id ausente');
+            // window.location.href = 'index.html'; // Descomentar em produção
+        } else {
+            await waitForDbReady(3000);
+            await loadProduct(productId);
+        }
+
+        if (typeof initBlackFridayCountdown === 'function') initBlackFridayCountdown();
+    } catch (err) {
+        console.error('Erro na inicialização do produto:', err);
+    } finally {
+        // Garantir que o overlay desapareça, mesmo em caso de erro.
+        // O ideal é que o loadProduct() trate o erro e mostre uma mensagem.
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+            loadingOverlay.classList.add('hidden'); // Adiciona uma classe para garantir que não interfira no layout
+        }
+    }
+});
+
+async function waitForDbReady(msTimeout = 3000) {
+    const start = nowMs();
+    while ((typeof db === 'undefined' || !db) && (nowMs() - start < msTimeout)) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    if (typeof db === 'undefined' || !db) {
+        throw new Error('Firebase DB não disponível');
+    }
+}
+
+/* =========================
+   Firestore: Carregar Dados
+   ========================= */
+async function loadProduct(productId) {
+    try {
+        const doc = await db.collection('produtos').doc(productId).get();
+        if (!doc.exists) throw new Error('Produto não encontrado');
+
+        const data = doc.data() || {};
+
+        // Normalização de dados
+        data.price = safeNumber(data.price, 0);
+        data.oldPrice = data.oldPrice !== undefined ? safeNumber(data.oldPrice, 0) : null;
+
+        data.images = Array.isArray(data.images) && data.images.length ?
+            data.images.filter(Boolean) :
+            (data.image ? [data.image] : []);
+
+        data.colors = Array.isArray(data.colors) && data.colors.length ?
+            data.colors :
+            (data.colors ? [data.colors] : []);
+
+        data.sizes = Array.isArray(data.sizes) && data.sizes.length ?
+            data.sizes : ['P', 'M', 'G', 'GG'];
+
+        state.currentProduct = Object.freeze({
+            id: doc.id,
+            ...data
+        });
+
+        await loadProductVariants(productId);
+
+        // Renderizar UI
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        renderProduct();
+
+    } catch (err) {
+        console.error('Erro loadProduct', err);
+        throw err;
+    }
+}
+
+async function loadProductVariants(productId) {
+    try {
+        const snapshot = await db.collection('produtos').doc(productId).collection('variants').get();
+        const variants = [];
+        snapshot.forEach(d => {
+            const dv = d.data() || {};
+            variants.push({
+                id: d.id,
+                size: dv.size || null,
+                color: dv.color || null,
+                stock: safeNumber(dv.stock, 0),
+                price: dv.price !== undefined ? safeNumber(dv.price, null) : null
+            });
+        });
+        state.productVariants[productId] = variants;
+    } catch (err) {
+        console.warn('Erro variantes:', err);
+        state.productVariants[productId] = [];
+    }
+}
+
+/* =========================
+   Renderização Principal
+   ========================= */
+function renderProduct() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    // Títulos e Breadcrumbs
+    document.title = `${p.name || 'Produto'} - Seja Versátil`;
+    if (elExists('productPageTitle')) $('productPageTitle').textContent = `${p.name} - Seja Versátil`;
+    if (elExists('breadcrumbCategory')) $('breadcrumbCategory').textContent = getCategoryName(p.category);
+    if (elExists('breadcrumbProduct')) $('breadcrumbProduct').textContent = p.name || '';
+    if (elExists('detailsProductName')) $('detailsProductName').textContent = p.name || '';
+
+    renderPrices();
+    renderColors();
+    renderGallery(); // Chama a nova galeria mosaico
+    renderSizes();
+    renderDescription();
+    renderRelatedProducts();
+}
+
+/* =========================
+   Preços
+   ========================= */
+function renderPrices() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    const priceOldEl = $('detailsPriceOld');
+    const priceNewEl = $('detailsPriceNew');
+    const discountBadge = $('discountBadge');
+    const installments = $('detailsInstallments');
+
+    const price = safeNumber(p.price, null);
+
+    if (priceNewEl) priceNewEl.textContent = price !== null ? `R$ ${price.toFixed(2)}` : '---';
+
+    if (p.oldPrice && price && p.oldPrice > price) {
+        if (priceOldEl) {
+            priceOldEl.textContent = `De R$ ${safeNumber(p.oldPrice).toFixed(2)}`;
+            priceOldEl.style.display = 'block';
+        }
+        const discount = Math.round(((p.oldPrice - price) / p.oldPrice) * 100);
+        if (discountBadge) {
+            discountBadge.textContent = `-${discount}%`;
+            discountBadge.style.display = 'inline-flex'; // inline-flex para centralizar
+        }
+    } else {
+        if (priceOldEl) priceOldEl.style.display = 'none';
+        if (discountBadge) discountBadge.style.display = 'none';
+    }
+
+    // Lógica de Parcelamento (Atualizado para 3x)
+    if (installments && price) {
+        const maxParcelas = 3; // Máximo de parcelas
+        const parcelaValue = price / maxParcelas;
+        installments.textContent = `ou ${maxParcelas}x de R$ ${parcelaValue.toFixed(2)} sem juros`;
+    }
+}
+
+/* =========================
+   Galeria: Lógica "Hero + Thumbnails" (Novo Layout)
+   ========================= */
+function renderGallery(specificImages = null) {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    // 1. Determina quais imagens usar
+    let imagesToRender = specificImages;
+    if (!imagesToRender) {
+        if (Array.isArray(p.images) && p.images.length > 0) {
+            imagesToRender = p.images;
+        } else if (p.image) {
+            imagesToRender = [p.image];
+        } else {
+            imagesToRender = [];
+        }
+    }
+
+    // 2. Chama a função que atualiza o DOM sem apagar a estrutura
+    updateGalleryDisplay(imagesToRender);
+}
+
+// Função que distribui as fotos nos lugares certos (Hero 1, Hero 2 e Grid)
+// Função para clicar na miniatura e jogar ela para a principal
+
+/* =========================
+   Cores (Renderização Blindada)
+   ========================= */
+function renderColors() {
+    const colorSelector = $('colorSelector');
+    if (!colorSelector) return;
+    const p = state.currentProduct;
+
+    let availableColors = [];
+
+    // 1. Extração Inteligente de Cores do Firebase
+    if (Array.isArray(p.colors) && p.colors.length > 0) {
+        availableColors = p.colors.map(c => {
+            if (typeof c === 'object' && c !== null) {
+                return {
+                    name: c.name || 'Cor',
+                    hex: c.hex || getColorHex(c.name),
+                    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || [])
+                };
+            } else {
+                return {
+                    name: String(c),
+                    hex: getColorHex(c),
+                    images: p.images || []
+                };
+            }
+        });
+    } else {
+        const variants = state.productVariants[p.id] || [];
+        const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
+        availableColors = unique.map(name => ({
+            name,
+            hex: getColorHex(name),
+            images: p.images || []
+        }));
+    }
+
+    if (!availableColors.length) {
+        const group = colorSelector.closest('.product-selector-group');
+        if (group) group.style.display = 'none';
+        return;
+    }
+
+    colorSelector.innerHTML = '';
+
+    // 2. Criar as Bolinhas
+    availableColors.forEach((colorObj) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = state.selectedColor === colorObj.name;
+        btn.className = `color-option ${isActive ? 'active' : ''}`;
+        btn.title = colorObj.name;
+        btn.dataset.color = colorObj.name;
+
+        const rawHex = colorObj.hex || getColorHex(colorObj.name);
+        const colors = rawHex.split(',').map(c => c.trim());
+
+        if (colors.length === 1) {
+            btn.style.background = colors[0];
+            if (['#ffffff', '#fff', 'white'].includes(colors[0].toLowerCase())) {
+                btn.style.border = '1px solid #ccc';
+            }
+        } else {
+            const gradient = colors.length === 2 
+                ? `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`
+                : `linear-gradient(135deg, ${colors[0]} 33%, ${colors[1]} 33% 66%, ${colors[2]} 66%)`;
+            btn.style.background = gradient;
+        }
+
+        // 3. O Clique que muda a foto e o estado
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectColor(colorObj.name); // Chama a nova função selectColor abaixo
+        });
+
+        colorSelector.appendChild(btn);
+    });
+
+    // Se nenhuma cor estiver selecionada, seleciona a primeira visualmente (opcional) ou mantém estado
+    if (!state.selectedColor && availableColors.length > 0) {
+       if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
+       // Renderiza as imagens padrão do produto ao iniciar
+       renderGallery(p.images);
+    }
+
+    // Se houver cores, mas nenhuma selecionada, seleciona a primeira para iniciar a galeria
+    if (!state.selectedColor && availableColors.length > 0) {
+        selectColor(availableColors[0].name);
+    } else if (!state.selectedColor && availableColors.length === 0) {
+        // Se não houver cores, renderiza a galeria com as imagens padrão
+        renderGallery(p.images);
+    }
+}
+
+/* Função Unificada de Seleção de Cor */
+/* =========================
+   Tamanhos (Corrigido: Clique + Sem Pré-seleção)
+   ========================= */
+function renderSizes() {
+    const sizeSelector = $('sizeSelector');
+    if (!sizeSelector) return;
+
+    const p = state.currentProduct;
+    const variants = state.productVariants[p.id] || [];
+    const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ['P', 'M', 'G', 'GG'];
+
+    sizeSelector.innerHTML = '';
+
+    sizes.forEach((size) => {
+        let hasStock = false;
+        let stock = 0;
+
+        // Se TEM cor selecionada, verifica estoque real da variante
+        if (state.selectedColor) {
+            const variant = variants.find(v =>
+                String(v.size) === String(size) &&
+                String(v.color) === String(state.selectedColor)
+            );
+            if (variant) {
+                stock = safeNumber(variant.stock, 0);
+                hasStock = stock > 0;
+            }
+        } else {
+            // Se NÃO TEM cor selecionada, mostra como disponível (ou neutro)
+            hasStock = true;
+        }
+
+        // Cria Wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'size-wrapper';
+
+        // Cria Botão
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `size-option ${state.selectedSize === size ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}`;
+        btn.textContent = size;
+
+        // Desabilita apenas se já escolheu cor e não tem estoque
+        btn.disabled = state.selectedColor && !hasStock;
+
+        // CLICK HANDLER (Importante!)
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            selectSize(size);
+        };
+
+        wrapper.appendChild(btn);
+
+        // Mensagens de Estoque (Só mostra se já tiver cor selecionada)
+        if (state.selectedColor) {
+            if (!hasStock) {
+                const msg = document.createElement('span');
+                msg.className = 'stock-msg error';
+                msg.textContent = 'Esgotado';
+                wrapper.appendChild(msg);
+            } else if (stock > 0 && stock <= 3) {
+                const msg = document.createElement('span');
+                msg.className = 'stock-msg warning';
+                msg.textContent = 'Últimas';
+                wrapper.appendChild(msg);
+            }
+        }
+
+        sizeSelector.appendChild(wrapper);
+    });
+
+    if (elExists('selectedSizeName')) $('selectedSizeName').textContent = state.selectedSize || '-';
+}
+
+function selectSize(size) {
+    // Verifica se já selecionou uma cor
+    if (!state.selectedColor) {
+        showToast(' Selecione uma cor primeiro', 'error');
+        return; // Impede a seleção do tamanho
+    }
+    
+    state.selectedSize = size;
+    // Atualiza visual dos botões
+    document.querySelectorAll('.size-option').forEach(opt => {
+        opt.classList.toggle('active', opt.textContent === size);
+    });
+    if (elExists('selectedSizeName')) $('selectedSizeName').textContent = size;
+}
+
+/* =========================
+   Descrição do Produto (Estava faltando)
+   ========================= */
+function renderDescription() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    const descEl = document.getElementById('productDescription');
+    if (!descEl) return;
+
+    // Se não tiver descrição no banco, usa um texto padrão
+    const content = p.description ||
+        `<p><strong>${p.name}</strong></p>
+      <p>Desenvolvido com tecnologia de alta performance, oferecendo conforto e estilo para seus treinos e dia a dia. 
+      Modelagem que valoriza o corpo e tecido de toque suave.</p>`;
+
+    descEl.innerHTML = content;
+}
+/* =========================
+   Produtos relacionados (CORRIGIDO E ROBUSTO)
+   ========================= */
+async function renderRelatedProducts() {
+    try {
+        const p = state.currentProduct;
+        if (!p) return;
+
+        const relatedGrid = $('relatedProductsGrid');
+        if (!relatedGrid) return;
+
+        // Busca produtos da mesma categoria
+        const relatedSnapshot = await db.collection('produtos')
+            .where('category', '==', p.category)
+            .limit(5)
+            .get();
+
+        const related = [];
+        relatedSnapshot.forEach(doc => {
+            // Exclui o produto atual da lista
+            if (doc.id !== p.id) {
+                related.push({
+                    id: doc.id,
+                    ...(doc.data() || {})
+                });
+            }
+        });
+
+        if (!related.length) {
+            relatedGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;">Nenhum produto similar no momento.</p>';
+            return;
+        }
+
+        relatedGrid.innerHTML = '';
+
+        // Pega até 4 produtos para exibir
+        related.slice(0, 4).forEach(prod => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
+            card.style.cursor = 'pointer';
+
+            // --- LÓGICA DE IMAGEM CORRIGIDA ---
+            let imgUrl = '';
+            // 1. Prioridade: Array de imagens
+            if (Array.isArray(prod.images) && prod.images.length > 0) {
+                imgUrl = prod.images[0];
+            }
+            // 2. Fallback: String única 'image'
+            else if (prod.image) {
+                imgUrl = prod.image;
+            }
+            // 3. Fallback final: String 'img' (caso exista legado)
+            else if (prod.img) {
+                imgUrl = prod.img;
+            }
+
+            // Container da Imagem
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'product-image';
+            imgWrap.style.width = '100%';
+            imgWrap.style.aspectRatio = '3/4';
+            imgWrap.style.position = 'relative';
+            imgWrap.style.backgroundColor = '#f5f5f5'; // Fundo cinza enquanto carrega
+
+            // Elemento de Imagem (TAG IMG para maior compatibilidade)
+            const imgElem = document.createElement('img');
+            imgElem.style.width = '100%';
+            imgElem.style.height = '100%';
+            imgElem.style.objectFit = 'cover';
+            imgElem.style.display = 'block';
+
+            if (imgUrl && imgUrl.trim() !== '') {
+                imgElem.src = imgUrl;
+                imgElem.alt = prod.name || 'Produto';
+
+                // Se der erro ao carregar a URL (quebrada), mostra ícone
+                imgElem.onerror = function() {
+                    this.style.display = 'none';
+                    imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:24px;">📷</div>';
+                };
+            } else {
+                // Se não tiver URL nenhuma
+                imgElem.style.display = 'none';
+                imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:12px;">Sem Foto</div>';
+            }
+
+            imgWrap.appendChild(imgElem);
+
+            // Informações
+            const info = document.createElement('div');
+            info.className = 'product-info';
+            info.style.padding = '1rem';
+
+            const h4 = document.createElement('h4');
+            h4.textContent = prod.name || 'Produto';
+            h4.style.fontSize = '0.9rem';
+            h4.style.fontWeight = '600';
+            h4.style.margin = '0 0 5px 0';
+            h4.style.color = '#000';
+
+            const priceDiv = document.createElement('div');
+            priceDiv.className = 'product-price';
+
+            const priceSpan = document.createElement('span');
+            priceSpan.className = 'price-new';
+            priceSpan.style.fontWeight = '700';
+            priceSpan.style.color = '#000';
+
+            const priceVal = safeNumber(prod.price, 0);
+            priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
+
+            priceDiv.appendChild(priceSpan);
+            info.appendChild(h4);
+            info.appendChild(priceDiv);
+
+            card.appendChild(imgWrap);
+            card.appendChild(info);
+            relatedGrid.appendChild(card);
+        });
+    } catch (err) {
+        console.error('Erro relacionados', err);
+    }
+}
+/* =========================
+   Carrinho & Checkout
+   ========================= */
+function changeQuantity(delta) {
+    const input = $('productQuantity');
+    if (!input) {
+        state.selectedQuantity = Math.max(1, Math.min(10, state.selectedQuantity + delta));
+        return;
+    }
+    let newValue = parseInt(input.value || '0', 10) + delta;
+    if (Number.isNaN(newValue)) newValue = state.selectedQuantity;
+    newValue = Math.max(1, Math.min(10, newValue));
+    input.value = newValue;
+    state.selectedQuantity = newValue;
+}
+
+function calculateShipping() {
+    const zipInput = $('zipCodeInput');
+    const resultsDiv = $('shippingResults');
+    if (!zipInput || !resultsDiv) return;
+
+    const zipCode = zipInput.value.replace(/\D/g, '');
+    if (zipCode.length !== 8) {
+        alert('Digite um CEP válido (8 dígitos).');
+        return;
+    }
+    // Mock results
+    resultsDiv.innerHTML = `
+    <div class="shipping-option">
+      <div><strong>PAC</strong><br><small>Entrega em 5-10 dias úteis</small></div>
+      <strong>R$ 15,90</strong>
+    </div>
+    <div class="shipping-option">
+      <div><strong>SEDEX</strong><br><small>Entrega em 2-4 dias úteis</small></div>
+      <strong>R$ 25,90</strong>
+    </div>
+  `;
+    resultsDiv.classList.add('active');
+}
+
+
+
+
+
+
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
+        console.log('🔄 Carrinho atualizado em outra aba');
+        loadCartFromStorage();
+        if (typeof updateCartUI === 'function') updateCartUI();
+    }
+});
+/* =========================
+   Modal Pagamento / WhatsApp
+   ========================= */
+
+
+function setupPaymentListeners() {
+    const opts = document.querySelectorAll('input[name="paymentMethod"]');
+    const box = $('installmentsBox');
+    if (!opts.length || !box) return;
+    opts.forEach(opt => {
+        opt.addEventListener('change', function() {
+            box.style.display = this.value === 'credito-parcelado' ? 'block' : 'none';
+        });
+    });
+}
+
+
+/* =========================
+   Compra Direta (Botão WhatsApp abaixo de comprar)
+   ========================= */
+function buyViaWhatsApp() {
+    const p = state.currentProduct;
+    if (!p) return;
+    const msg = `Olá! Gostaria de comprar o produto: *${p.name}*\n` +
+        `Preço: R$ ${p.price.toFixed(2)}\n` +
+        `Link: ${window.location.href}`;
+
+    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* =========================
+   Helpers & Countdown
+   ========================= */
+
+
+
+
+/* Máscara CEP */
+document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'zipCodeInput') {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5, 8);
+        e.target.value = v;
+    }
+});
+
+/* =========================
+   Expor Globalmente (Para HTML onclick)
+   ========================= */
+window.toggleCart = function() { if (typeof toggleCart === 'function') toggleCart(); };
+window.checkout = checkout;
+window.changeQuantity = changeQuantity;
+window.calculateShipping = calculateShipping;
+window.addToCartFromDetails = addToCartFromDetails;
+window.buyViaWhatsApp = buyViaWhatsApp;
+window.toggleSidebar = toggleSidebar;
+window.closePaymentModal = closePaymentModal;
+window.sendToWhatsApp = sendToWhatsApp;
+
+console.log('✅ Produto.js (Mosaico) carregado.');
+
+// ==================== SISTEMA DE CUPONS NA PÁGINA DE PRODUTO ====================
+
+async function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyCouponBtn');
+
+    if (!input || !btn) return;
+
+    const code = input.value
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+        .slice(0, 20);
+
+    if (!code || code.length < 3) {
+        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Validando...';
+    btn.style.opacity = '0.6';
+
+    try {
+        const couponDoc = await db.collection('coupons').doc(code).get();
+
+        if (!couponDoc.exists) {
+            showCouponMessage('❌ Cupom não encontrado', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const coupon = { id: couponDoc.id, ...couponDoc.data() };
+
+        if (!coupon.active) {
+            showCouponMessage('❌ Cupom inativo', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const now = new Date();
+        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
+        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
+
+        if (validFrom && now < validFrom) {
+            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        if (validUntil && now > validUntil) {
+            showCouponMessage('❌ Este cupom expirou', 'error');
+            resetCouponButton();
+            return;
+        }
+
+        const cartValue = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        if (coupon.minValue && cartValue < coupon.minValue) {
+            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
+            resetCouponButton();
+            return;
+        }
+
+        let discount = 0;
+
+        if (coupon.type === 'percentage') {
+            discount = (cartValue * coupon.value) / 100;
+            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+                discount = coupon.maxDiscount;
+            }
+        } else if (coupon.type === 'fixed') {
+            discount = coupon.value;
+        }
+
+        if (discount > cartValue) {
+            discount = cartValue;
+        }
+
+state.appliedCoupon = coupon;
+state.couponDiscount = discount;
+
+        input.classList.add('success');
+        showAppliedCouponBadge(coupon, discount);
+        if (typeof updateCartUI === 'function') updateCartUI();
+        saveCartToStorage();
+
+        showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
+
+        input.value = '';
+        input.disabled = true;
+        btn.style.display = 'none';
+
+    } catch (error) {
+        console.error('Erro ao aplicar cupom:', error);
+        showCouponMessage('❌ Erro ao validar cupom', 'error');
+        resetCouponButton();
+    }
+}
+
+function resetCouponButton() {
+    const btn = document.getElementById('applyCouponBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'APLICAR';
+        btn.style.opacity = '1';
+    }
+}
+
+
+
+
+/* =================================================================== */
+/* BUSCA INTELIGENTE COMPLETA (LIVE SEARCH) - PÁGINA DE PRODUTO        */
+/* =================================================================== */
+
+let globalSearchCache = []; // Armazena os produtos para a busca
+
+// Função para carregar dados básicos de todos os produtos (Executa em background)
+async function loadGlobalSearchData() {
+    if (globalSearchCache.length > 0) return; // Já carregado
+
+    try {
+        // Pega apenas os campos necessários para economizar dados
+        const snapshot = await db.collection('produtos').get();
+        globalSearchCache = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        console.log('🔍 Dados da busca carregados:', globalSearchCache.length);
+    } catch (error) {
+        console.warn('Erro ao carregar dados da busca:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Carrega os dados da busca 1.5 segundos após abrir a página (para não travar o carregamento principal)
+    setTimeout(loadGlobalSearchData, 1500);
+
+    const searchInput = document.getElementById('headerSearchInput');
+    const dropdown = document.getElementById('headerDropdown');
+
+    if (!searchInput || !dropdown) return;
+
+    let timeout = null;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        // Se o usuário começar a digitar e os dados ainda não chegaram, tenta carregar agora
+        if (globalSearchCache.length === 0) loadGlobalSearchData();
+
+        clearTimeout(timeout);
+
+        if (query.length < 2) {
+            dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
+            return;
+        }
+
+        timeout = setTimeout(() => {
+            // Filtra no cache local
+            const filtered = globalSearchCache.filter(p =>
+                (p.name && p.name.toLowerCase().includes(query)) ||
+                (p.category && p.category.toLowerCase().includes(query))
+            );
+
+            renderSearchDropdown(filtered, query);
+        }, 300);
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+});
+
+// Renderiza as miniaturas (Igual à Home)
+function renderSearchDropdown(products, query) {
+    const dropdown = document.getElementById('headerDropdown');
+
+    if (products.length === 0) {
+        dropdown.innerHTML = `
+            <div style="padding: 1rem; text-align: center; color: #999; font-size: 0.85rem;">
+                Nenhum produto encontrado para "<strong>${query}</strong>"
+            </div>`;
+        dropdown.classList.add('active');
+        return;
+    }
+
+    // Limita a 5 resultados
+    const topProducts = products.slice(0, 5);
+
+    dropdown.innerHTML = topProducts.map(product => {
+        // Lógica de Imagem Otimizada (Usa o helper existente isImageUrl)
+        let img = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            img = product.images[0];
+        } else if (product.image) {
+            img = product.image;
+        }
+
+        const isRealImg = isImageUrl(img); // Usando helper global
+        const style = isRealImg ?
+            `background-image: url('${img}'); background-size: cover; background-position: center;` :
+            `background: ${img};`;
+
+        const price = product.price ? Number(product.price).toFixed(2) : '0.00';
+
+        return `
+            <div class="search-dropdown-item" onclick="window.location.href='produto.html?id=${product.id}'">
+                <div class="search-dropdown-thumb" style="${style}"></div>
+                <div class="search-dropdown-info">
+                    <div class="search-dropdown-title">${product.name || 'Produto'}</div>
+                    <div class="search-dropdown-price">R$ ${price}</div>
                 </div>
             </div>
+        `;
+    }).join('');
 
-            <div class="user-tab-content" id="registerTab">
-                <form onsubmit="userRegister(event)">
-                    <div class="form-group">
-                        <label for="registerName">Nome Completo</label>
-                        <input type="text" id="registerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">E-mail</label>
-                        <input type="email" id="registerEmail" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Senha</label>
-                        <input type="password" id="registerPassword" required>
-                    </div>
-                    <button type="submit" class="form-btn">Criar Conta</button>
-                    <div class="form-error" id="registerError">Erro ao criar conta</div>
-                    <div class="form-success" id="registerSuccess">Conta criada com sucesso!</div>
-                </form>
-                <div class="form-link">
-                    Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-                </div>
-            </div>
+    dropdown.classList.add('active');
+}
 
-            <div class="user-tab-content" id="userLoggedTab">
-                <div class="user-logged-in">
-                    <h4>Bem-vindo(a), <span id="userNameDisplay"></span>!</h4>
-                    <div class="user-info">
-                        <p><strong>E-mail:</strong> <span id="userEmailDisplay"></span></p>
-                    </div>
-                    <div class="user-actions">
-                        <button class="user-action-btn" onclick="alert('Em breve: Meus Pedidos')" type="button">📦 Meus Pedidos</button>
-                        <button class="user-action-btn logout" onclick="userLogout()" type="button">Sair da Conta</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
+/* =================================================================== */
+/* SISTEMA DE LOGIN / USUÁRIO (ADICIONADO PARA PÁGINA DE PRODUTO)       */
+/* =================================================================== */
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h4>Seja Versátil</h4>
-        <p>Moda fitness feminina com estilo e qualidade.</p>
-        <div class="social-icons">
-          <a href="https://instagram.com/_sejaversatil" target="_blank" rel="noopener noreferrer" aria-label="Instagram">📷</a>
-          <a href="https://wa.me/5571991427103" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">💬</a>
-        </div>
-      </div>
-      <div class="footer-section">
-        <h4>Links Rápidos</h4>
-        <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="index.html#produtos">Produtos</a></li>
-            <li><a href="#">Sobre Nós</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Seja Versátil. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-
-  <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
-      <div class="loading-spinner">⏳</div>
-      <div class="loading-text">Carregando...</div>
-  </div>
-
-  <script src="script2.js"></script>\n  <script src="produto.js"></script>
-  </div>
-</body>
-</html>
+let currentUser = null;
 
 
 
@@ -540,3 +1003,281 @@
 
 
 
+async function userLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorMsg = document.getElementById('loginError');
+
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+        // O onAuthStateChanged vai lidar com a UI
+    } catch (error) {
+        console.error(error);
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = 'E-mail ou senha incorretos';
+    }
+}
+
+async function userRegister(event) {
+    event.preventDefault();
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const errorMsg = document.getElementById('registerError');
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.updateProfile({
+            displayName: name
+        });
+
+        // Salvar no Firestore (Opcional para manter padrão)
+        await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: new Date()
+        });
+
+        document.getElementById('registerSuccess').classList.add('active');
+        setTimeout(() => switchUserTab('login'), 1500);
+    } catch (error) {
+        console.error(error);
+        errorMsg.style.display = 'block';
+        if (error.code === 'auth/email-already-in-use') errorMsg.textContent = 'E-mail já cadastrado';
+        else if (error.code === 'auth/weak-password') errorMsg.textContent = 'Senha muito fraca (min 6 caracteres)';
+        else errorMsg.textContent = 'Erro ao criar conta';
+    }
+}
+
+async function userLogout() {
+    try {
+        await auth.signOut();
+        hideLoggedInView();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function resetPassword() {
+    const email = prompt("Digite seu e-mail para redefinir a senha:");
+    if (email) {
+        try {
+            await auth.sendPasswordResetEmail(email);
+            alert("E-mail de redefinição enviado!");
+        } catch (error) {
+            alert("Erro: " + error.message);
+        }
+    }
+}
+
+/* =================================================================== */
+/* SISTEMA DE FAVORITOS (PÁGINA DE PRODUTO)                            */
+/* =================================================================== */
+
+// 1. Carregar Estado Inicial (Ao abrir a página)
+document.addEventListener('DOMContentLoaded', () => {
+    updateFavoriteStatus();
+    updateFavoritesCount();
+});
+
+// 2. Alternar Favorito (Adicionar/Remover)
+function toggleProductFavorite() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    const index = favorites.indexOf(p.id);
+
+    if (index > -1) {
+        // Remover
+        favorites.splice(index, 1);
+        showToast('💔 Removido dos favoritos', 'info');
+    } else {
+        // Adicionar
+        favorites.push(p.id);
+        showToast('❤️ Adicionado aos favoritos', 'success');
+    }
+
+    localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+    updateFavoriteStatus();
+    updateFavoritesCount();
+}
+
+// 3. Atualizar Visual dos Botões (Header e Mobile/Desktop Flutuante)
+function updateFavoriteStatus() {
+    const p = state.currentProduct;
+    if (!p) return; // Aguarda carregar produto
+
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    const isFav = favorites.includes(p.id);
+
+    // --- LÓGICA NOVA DO BOTÃO FLUTUANTE ---
+    const btnFloating = document.querySelector('.btn-favorite-floating');
+    if (btnFloating) {
+        if (isFav) {
+            // Se é favorito: Adiciona classe active (fica vermelho pelo CSS)
+            btnFloating.classList.add('active');
+        } else {
+            // Se não é favorito: Remove classe active (volta a ser contorno preto)
+            btnFloating.classList.remove('active');
+        }
+    }
+
+    // Ícone do Header (Coração do menu superior)
+    const headerIcon = document.querySelector('.nav-icon[title="Meus favoritos"] svg');
+    if (headerIcon) {
+        if (isFav) {
+            headerIcon.setAttribute('fill', '#ff4444');
+            headerIcon.setAttribute('stroke', '#ff4444');
+        } else {
+            headerIcon.setAttribute('fill', 'none');
+            headerIcon.setAttribute('stroke', 'currentColor');
+        }
+    }
+}
+
+// 4. Atualizar Contador do Header
+
+// 5. Redirecionar Fav
+function goToFavoritesPage() {
+    // Redireciona para a Home com o parâmetro especial
+    window.location.href = 'index.html?ver_favoritos=true';
+}
+
+/* =========================
+   Funções de Compartilhamento
+   ========================= */
+
+function shareToWhatsApp() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    const text = `Olha esse produto que encontrei na Seja Versátil: *${p.name}*\n${window.location.href}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+function shareToInstagram() {
+    // Como não existe API direta para postar no IG via Web, copiamos o link
+    const url = window.location.href;
+
+    navigator.clipboard.writeText(url).then(() => {
+        // Feedback visual simples (Toast)
+        showToast('📋 Link copiado! Cole no seu Instagram.', 'success');
+    }).catch(err => {
+        console.error('Erro ao copiar', err);
+        showToast('Erro ao copiar link', 'error');
+    });
+}
+
+// Função auxiliar de Toast (caso você ainda não tenha no código, adicione esta também)
+
+// Função que o botão "MOSTRAR MAIS" chama no onclick
+window.toggleGalleryExpansion = function() {
+    const container = document.getElementById('thumbnailList');
+    const btn = document.getElementById('btnShowMore');
+    
+    if (!container || !btn) return;
+
+    state.galleryExpanded = !state.galleryExpanded;
+
+    if (state.galleryExpanded) {
+        // Expande
+        container.style.maxHeight = '2000px';
+        container.classList.add('expanded');
+        btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+        // Recolhe
+        container.style.maxHeight = '0';
+        container.classList.remove('expanded');
+        btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        
+        // Rola suavemente para o topo
+        const galleryTop = document.getElementById('galleryContainer');
+        if (galleryTop) {
+            galleryTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+};
+
+
+// Validação de CPF com feedback visual
+function validateCPF(cpf) {
+    cpf = cpf.replace(/[^\d]/g, '');
+    
+    if (cpf.length !== 11) return false;
+    
+    // Validação de CPF real
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+        sum += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cpf.charAt(9))) return false;
+    
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+        sum += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cpf.charAt(10))) return false;
+    
+    return true;
+}
+
+// Validação de Email com feedback visual
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Aplicar validação visual a inputs
+function applyVisualValidation(inputElement, validationFn) {
+    if (!inputElement) return;
+    
+    inputElement.addEventListener('blur', () => {
+        const isValid = validationFn(inputElement.value);
+        
+        if (inputElement.value.length > 0) {
+            if (isValid) {
+                inputElement.style.borderColor = '#27ae60';
+                inputElement.style.boxShadow = '0 0 0 2px rgba(39, 174, 96, 0.1)';
+            } else {
+                inputElement.style.borderColor = '#e74c3c';
+                inputElement.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.1)';
+            }
+        }
+    });
+    
+    inputElement.addEventListener('input', () => {
+        inputElement.style.borderColor = '';
+        inputElement.style.boxShadow = '';
+    });
+}
+
+
+// Monitoramento de Performance (apenas em desenvolvimento)
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    window.addEventListener('load', () => {
+        if (window.performance && window.performance.timing) {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            const connectTime = perfData.responseEnd - perfData.requestStart;
+            const renderTime = perfData.domComplete - perfData.domLoading;
+            
+            console.log('%c⚡ Performance Metrics', 'color: #667eea; font-weight: bold; font-size: 14px;');
+            console.log(`Page Load Time: ${pageLoadTime}ms`);
+            console.log(`Server Response: ${connectTime}ms`);
+            console.log(`DOM Render: ${renderTime}ms`);
+        }
+    });
+}
+
+
+// Garante que a inicialização ocorra após o carregamento de todos os scripts
+window.addEventListener('DOMContentLoaded', initializeProductPage);
