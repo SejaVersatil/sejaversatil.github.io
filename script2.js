@@ -4378,32 +4378,25 @@ function checkout() {
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
 
 function openPaymentModal() {
-    const modal = $('paymentModal');
-    const itemsContainer = $('paymentCartItems');
-    const totalContainer = $('paymentTotal');
+    const modal = document.getElementById('paymentModal');
+    // CORREÇÃO 1: Mantemos o nome 'itemsContainer' consistente
+    const itemsContainer = document.getElementById('paymentCartItems'); 
+    const totalContainer = document.getElementById('paymentTotal');
     
+    // Verificação de segurança
     if (!modal || !itemsContainer || !totalContainer) {
-        console.error('❌ Modal de pagamento não encontrado!');
+        console.error('❌ Elementos do modal não encontrados (Verifique o HTML)');
         return;
     }
     
-    console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
+    console.log('✅ Abrindo modal com', cart.length, 'itens');
     
-    if (!cartItemsContainer || !totalContainer) {
-        console.error('❌ Containers do modal ausentes!');
-        return;
-    }
-    
-    // ✅ CORREÇÃO 1: Revalidar cupom ANTES de abrir modal
+    // Lógica de Cupom (Mantida)
     if (appliedCoupon) {
         const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        // Se valor mínimo não for atingido, remove cupom
         if (appliedCoupon.minValue && subtotalCheck < appliedCoupon.minValue) {
-            console.warn('⚠️ Valor mínimo do cupom não atingido');
             removeCoupon();
         } else {
-            // Recalcula desconto com valor atualizado
             let recalcDiscount = 0;
             if (appliedCoupon.type === 'percentage') {
                 recalcDiscount = (subtotalCheck * appliedCoupon.value) / 100;
@@ -4417,15 +4410,12 @@ function openPaymentModal() {
         }
     }
     
-    console.log('📦 Dados atualizados:', {
-        appliedCoupon,
-        couponDiscount,
-        cartLength: cart.length
-    });
-    
-    // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
-    cartItemsContainer.innerHTML = cart.map(item => {
-        const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    // CORREÇÃO 2: Usamos 'itemsContainer' corretamente aqui
+    itemsContainer.innerHTML = cart.map(item => {
+        let itemImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        if (item.image) itemImage = item.image;
+        else if (item.images && item.images.length > 0) itemImage = item.images[0];
+
         const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
         
         return `
@@ -4435,7 +4425,7 @@ function openPaymentModal() {
                     <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
                     ${item.selectedSize || item.selectedColor ? `
                         <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
-                            ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
+                            ${item.selectedSize ? `Tam: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
                             ${item.selectedSize && item.selectedColor ? ' | ' : ''}
                             ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''}
                         </div>
@@ -4448,15 +4438,15 @@ function openPaymentModal() {
         `;
     }).join('');
     
-    // ✅ CORREÇÃO 3: Mostrar cupom aplicado (NOVO BLOCO)
+    // Renderizar badge de cupom (se existir)
     if (appliedCoupon && couponDiscount > 0) {
-        cartItemsContainer.innerHTML += `
+        itemsContainer.innerHTML += `
             <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong style="color: #155724; font-size: 0.9rem;">🎟️ ${appliedCoupon.code}</strong>
                         <div style="font-size: 0.75rem; color: #155724; margin-top: 0.2rem;">
-                            ${appliedCoupon.type === 'percentage' ? appliedCoupon.value + '%' : 'R$ ' + appliedCoupon.value.toFixed(2)} de desconto
+                            ${appliedCoupon.type === 'percentage' ? appliedCoupon.value + '%' : 'R$ ' + appliedCoupon.value.toFixed(2)} OFF
                         </div>
                     </div>
                     <strong style="color: #155724;">-R$ ${couponDiscount.toFixed(2)}</strong>
@@ -4465,28 +4455,23 @@ function openPaymentModal() {
         `;
     }
     
-    // ✅ CORREÇÃO 4: Calcular total com desconto
+    // Atualizar totais
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = Math.min(couponDiscount || 0, subtotal);
-    const total = Math.max(0, subtotal - discount);
+    const total = Math.max(0, subtotal - (couponDiscount || 0));
     
     totalContainer.textContent = `R$ ${total.toFixed(2)}`;
     
-    // Mostrar modal
+    // Abrir Modal
     modal.classList.add('active');
     
-    // Configurar listeners para opções de pagamento
+    // Configurar listeners de parcelamento
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
     const installmentsBox = document.getElementById('installmentsBox');
     
     if (paymentOptions.length > 0 && installmentsBox) {
         paymentOptions.forEach(option => {
             option.addEventListener('change', function() {
-                if (this.value === 'credito-parcelado') {
-                    installmentsBox.style.display = 'block';
-                } else {
-                    installmentsBox.style.display = 'none';
-                }
+                installmentsBox.style.display = (this.value === 'credito-parcelado') ? 'block' : 'none';
             });
         });
     }
@@ -6019,3 +6004,4 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
