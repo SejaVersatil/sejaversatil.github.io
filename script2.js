@@ -4380,39 +4380,73 @@ function openPaymentModal() {
     const cartItemsContainer = document.getElementById('paymentCartItems');
     const totalContainer = document.getElementById('paymentTotal');
     
-    // ✅ VALIDAÇÃO: Verificar se elementos existem
+    // ✅ VALIDAÇÃO CRÍTICA
     if (!modal) {
-        console.error('❌ Modal de pagamento não encontrado no HTML!');
-        alert('Erro: Modal de pagamento não encontrado. Verifique o HTML da página.');
+        console.error('❌ Modal de pagamento não encontrado!');
+        alert('Erro: Modal não encontrado no HTML.');
         return;
     }
     
     if (!cartItemsContainer || !totalContainer) {
-        console.error('❌ Containers do modal não encontrados!');
-        alert('Erro: Elementos do modal estão faltando no HTML.');
+        console.error('❌ Containers do modal ausentes!');
         return;
     }
     
-    console.log('📦 Dados no modal:', {
+    // ✅ CORREÇÃO 1: Revalidar cupom ANTES de abrir modal
+    if (appliedCoupon) {
+        const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Se valor mínimo não for atingido, remove cupom
+        if (appliedCoupon.minValue && subtotalCheck < appliedCoupon.minValue) {
+            console.warn('⚠️ Valor mínimo do cupom não atingido');
+            removeCoupon();
+        } else {
+            // Recalcula desconto com valor atualizado
+            let recalcDiscount = 0;
+            if (appliedCoupon.type === 'percentage') {
+                recalcDiscount = (subtotalCheck * appliedCoupon.value) / 100;
+                if (appliedCoupon.maxDiscount && recalcDiscount > appliedCoupon.maxDiscount) {
+                    recalcDiscount = appliedCoupon.maxDiscount;
+                }
+            } else {
+                recalcDiscount = appliedCoupon.value;
+            }
+            couponDiscount = Math.min(recalcDiscount, subtotalCheck);
+        }
+    }
+    
+    console.log('📦 Dados atualizados:', {
         appliedCoupon,
         couponDiscount,
-        subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        cartLength: cart.length
     });
     
-    // Renderizar itens do carrinho
-    cartItemsContainer.innerHTML = cart.map(item => `
-        <div class="payment-cart-item">
-            <div>
-                <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
-                <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+    // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
+    cartItemsContainer.innerHTML = cart.map(item => {
+        const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
+        
+        return `
+            <div class="payment-cart-item">
+                <div>
+                    <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
+                    <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+                    ${item.selectedSize || item.selectedColor ? `
+                        <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
+                            ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
+                            ${item.selectedSize && item.selectedColor ? ' | ' : ''}
+                            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+                <div style="font-weight: 700;">
+                    R$ ${(item.price * item.quantity).toFixed(2)}
+                </div>
             </div>
-            <div style="font-weight: 700;">
-                R$ ${(item.price * item.quantity).toFixed(2)}
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
     
-    // Mostrar cupom aplicado (se houver)
+    // ✅ CORREÇÃO 3: Mostrar cupom aplicado (NOVO BLOCO)
     if (appliedCoupon && couponDiscount > 0) {
         cartItemsContainer.innerHTML += `
             <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
@@ -4429,7 +4463,7 @@ function openPaymentModal() {
         `;
     }
     
-    // Calcular valores com desconto do cupom
+    // ✅ CORREÇÃO 4: Calcular total com desconto
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = Math.min(couponDiscount || 0, subtotal);
     const total = Math.max(0, subtotal - discount);
@@ -5985,6 +6019,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
