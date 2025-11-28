@@ -793,7 +793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Aguardar 100ms para garantir que o DOM está pronto
 setTimeout(() => {
-    const headerSearchInput = document.getElementById('headerSearchInput');
+    const searchInput = document.getElementById('headerSearchInput');
     if (headerSearchInput) {
         headerSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -5673,7 +5673,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    passwordInput.addEventListener('input', (e) => {
+    if (passwordInput) passwordInput.addEventListener('input', (e) => {
         const password = e.target.value.trim();
 
         if (!password) {
@@ -5722,7 +5722,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função de delay para não buscar a cada milissegundo (Debounce)
     let timeout = null;
 
-    searchInput.addEventListener('input', function(e) {
+    if (searchInput) searchInput.addEventListener('input', function(e) {
         const query = e.target.value.toLowerCase().trim();
         
         clearTimeout(timeout);
