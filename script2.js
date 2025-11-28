@@ -4377,15 +4377,15 @@ const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
 
 function openPaymentModal() {
     const modal = document.getElementById('paymentModal');
-    const cartItemsContainer = document.getElementById('paymentCartItems');
+    const itemsContainer = document.getElementById('paymentCartItems');
     const totalContainer = document.getElementById('paymentTotal');
     
-    // ✅ VALIDAÇÃO CRÍTICA
-    if (!modal) {
+    if (!modal || !itemsContainer) {
         console.error('❌ Modal de pagamento não encontrado!');
-        alert('Erro: Modal não encontrado no HTML.');
         return;
     }
+    
+    console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
     
     if (!cartItemsContainer || !totalContainer) {
         console.error('❌ Containers do modal ausentes!');
@@ -6019,6 +6019,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
