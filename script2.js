@@ -1,3 +1,5 @@
+const $ = (id) => document.getElementById(id);
+
 class SecureStorage {
     constructor(key) {
         this.key = key;
@@ -6019,6 +6021,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
