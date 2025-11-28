@@ -4355,74 +4355,41 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    console.log('🛒 Checkout iniciado');
-    
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
-    console.log('📦 Itens no carrinho:', cart.length);
-    
     // Fechar carrinho
     toggleCart();
     
-    // Aguardar animação de fechamento e abrir modal
+    // Aguardar animação de fechamento (300ms) e abrir modal de pagamento
     setTimeout(() => {
-        console.log('⏰ Timeout executado, abrindo modal...');
-        
-        // Verificar se a função existe
-        if (typeof openPaymentModal !== 'function') {
-            console.error('❌ openPaymentModal não é uma função!');
-            console.log('typeof openPaymentModal:', typeof openPaymentModal);
-            
-            // Tentar abrir modal manualmente
-            const modal = document.getElementById('paymentModal');
-            if (modal) {
-                console.log('✅ Modal encontrado, tentando abrir manualmente...');
-                modal.classList.add('active');
-                
-                // Chamar manualmente o preenchimento
-                const cartItemsContainer = document.getElementById('paymentCartItems');
-                const totalContainer = document.getElementById('paymentTotal');
-                
-                if (cartItemsContainer && totalContainer) {
-                    // Renderizar itens
-                    cartItemsContainer.innerHTML = cart.map(item => `
-                        <div class="payment-cart-item">
-                            <div>
-                                <div class="payment-cart-item-name">${sanitizeInput(item.name)}</div>
-                                <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
-                            </div>
-                            <div style="font-weight: 700;">
-                                R$ ${(item.price * item.quantity).toFixed(2)}
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    // Calcular total
-                    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                    const discount = Math.min(couponDiscount || 0, subtotal);
-                    const total = Math.max(0, subtotal - discount);
-                    
-                    totalContainer.textContent = `R$ ${total.toFixed(2)}`;
-                    console.log('✅ Modal preenchido manualmente');
-                }
-            } else {
-                console.error('❌ Modal não encontrado no DOM!');
-                alert('Erro: Modal de pagamento não encontrado no HTML.');
-            }
-            return;
-        }
-        
-        // Chamar a função normalmente
-        console.log('✅ Chamando openPaymentModal()...');
         openPaymentModal();
-        
     }, 300);
     
     trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
 }
+```
+
+---
+
+### **PASSO 3: Verifique se `openPaymentModal()` existe**
+
+**Busque no `script2.js` por:**
+```
+function openPaymentModal()
+```
+
+✅ **ELA EXISTE** (linha aproximada 1917). Está completa e funcional.
+
+---
+
+### **PASSO 4: Verifique se `sendToWhatsApp()` existe**
+
+**Busque no `script2.js` por:**
+```
+function sendToWhatsApp()
 
 // ==================== CHECKOUT VIA WHATSAPP ====================
 
@@ -6038,3 +6005,4 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
