@@ -255,7 +255,7 @@ function getDefaultVideos() {
       order: 1
     },
     {
-      url: '',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%202.mp4?alt=media&token=2970f736-f208-4330-8cf4-174728624812',
       title: 'ESTILO',
       subtitle: 'Looks incríveis',
       order: 2
@@ -267,7 +267,7 @@ function getDefaultVideos() {
       order: 3
     },
     {
-      url: '',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%204.mp4?alt=media&token=806830bb-9e12-4397-8684-8c330fa2dba4',
       title: 'VOCÊ',
       subtitle: 'Seja versátil',
       order: 4
@@ -5985,6 +5985,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
