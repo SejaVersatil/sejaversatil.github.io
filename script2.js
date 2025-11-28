@@ -4370,25 +4370,7 @@ function checkout() {
     
     trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
 }
-```
 
----
-
-### **PASSO 3: Verifique se `openPaymentModal()` existe**
-
-**Busque no `script2.js` por:**
-```
-function openPaymentModal()
-```
-
-✅ **ELA EXISTE** (linha aproximada 1917). Está completa e funcional.
-
----
-
-### **PASSO 4: Verifique se `sendToWhatsApp()` existe**
-
-**Busque no `script2.js` por:**
-```
 function sendToWhatsApp()
 
 // ==================== CHECKOUT VIA WHATSAPP ====================
@@ -6005,4 +5987,5 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
