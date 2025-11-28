@@ -4474,21 +4474,6 @@ function closePaymentModal() {
     }
 }
     
-    // Configurar listeners para opções de pagamento
-    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-    const installmentsBox = document.getElementById('installmentsBox');
-    
-    paymentOptions.forEach(option => {
-        option.addEventListener('change', function() {
-            if (this.value === 'credito-parcelado') {
-                installmentsBox.style.display = 'block';
-            } else {
-                installmentsBox.style.display = 'none';
-            }
-        });
-    });
-}
-
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
 async function sendToWhatsApp() {
@@ -5993,4 +5978,5 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
