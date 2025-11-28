@@ -3041,7 +3041,7 @@ function updateCartUI() {
         } else {
             // ✅ Usar DocumentFragment (mais rápido)
             const fragment = document.createDocumentFragment();
-            
+    
             cart.forEach(item => {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'cart-item';
@@ -6019,6 +6019,7 @@ window.removeCoupon = removeCoupon;
 
 console.log('✅ Funções de checkout expostas globalmente');
 console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
+
 
 
 
