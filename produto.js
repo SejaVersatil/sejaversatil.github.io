@@ -301,133 +301,7 @@ function renderGallery(specificImages = null) {
 }
 
 // Função que distribui as fotos nos lugares certos (Hero 1, Hero 2 e Grid)
-function updateGalleryDisplay(images) {
-    if (!images || images.length === 0) return;
-
-    const isMobile = window.innerWidth <= 768;
-
-    // ========================================
-    // MOBILE: TODAS AS FOTOS NO SWIPE
-    // ========================================
-    if (isMobile) {
-        const galleryContainer = document.getElementById('galleryContainer');
-        
-        if (galleryContainer) {
-            // Limpa container
-            galleryContainer.innerHTML = '';
-            
-            // Injeta TODAS as fotos no swipe
-            images.forEach((img, index) => {
-                const photoDiv = document.createElement('div');
-                photoDiv.className = 'gallery-photo-full';
-                photoDiv.style.backgroundImage = `url('${img}')`;
-                photoDiv.style.backgroundSize = 'cover';
-                photoDiv.style.backgroundPosition = 'center';
-                photoDiv.style.backgroundRepeat = 'no-repeat';
-                
-                const imgTag = document.createElement('img');
-                imgTag.src = img;
-                imgTag.alt = `Foto ${index + 1}`;
-                imgTag.style.width = '100%';
-                imgTag.style.height = '100%';
-                imgTag.style.objectFit = 'cover';
-                imgTag.style.opacity = '0'; // Invisível, só para SEO
-                
-                photoDiv.appendChild(imgTag);
-                galleryContainer.appendChild(photoDiv);
-            });
-        }
-        
-        // Esconde botão e thumbnails no mobile
-        const thumbnailContainer = document.getElementById('thumbnailList');
-        const btnShowMore = document.getElementById('btnShowMore');
-        if (thumbnailContainer) thumbnailContainer.style.display = 'none';
-        if (btnShowMore) btnShowMore.style.display = 'none';
-        
-        return; // Para aqui no mobile
-    }
-
-    // ========================================
-    // DESKTOP: 2 PRINCIPAIS + THUMBNAILS
-    // ========================================
-    const img1 = document.getElementById('mainImg1');
-    const img2 = document.getElementById('mainImg2');
-
-    // Atualiza Foto 1
-    if (img1) {
-        const src1 = images[0];
-        img1.src = src1;
-        if (img1.parentElement) {
-            img1.parentElement.style.backgroundImage = `url('${src1}')`;
-            img1.parentElement.style.transition = 'opacity 0.3s';
-            img1.parentElement.style.opacity = '0.5';
-            setTimeout(() => img1.parentElement.style.opacity = '1', 200);
-        }
-    }
-
-    // Atualiza Foto 2
-    if (img2) {
-        const src2 = images[1] || images[0];
-        img2.src = src2;
-        if (img2.parentElement) {
-            img2.parentElement.style.display = images[1] ? 'block' : 'none';
-            img2.parentElement.style.backgroundImage = `url('${src2}')`;
-            img2.parentElement.style.transition = 'opacity 0.3s';
-            img2.parentElement.style.opacity = '0.5';
-            setTimeout(() => img2.parentElement.style.opacity = '1', 200);
-        }
-    }
-
-    // THUMBNAILS (Desktop Only)
-    const thumbnailContainer = document.getElementById('thumbnailList');
-    const btnShowMore = document.getElementById('btnShowMore');
-
-    if (!thumbnailContainer || !btnShowMore) return;
-
-    state.galleryExpanded = false;
-
-    const remainingImages = images.slice(2);
-
-    if (remainingImages.length > 0) {
-        thumbnailContainer.innerHTML = remainingImages.map(img => `
-            <div class="gallery-photo-extra" style="
-                width: 100%;
-                aspect-ratio: 3/4;
-                background-image: url('${img}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                border-radius: 0;
-                cursor: pointer;
-            " onclick="swapMainImage('${img}')">
-                <img src="${img}" alt="Foto Extra" style="width:100%;height:100%;object-fit:cover;opacity:0;">
-            </div>
-        `).join('');
-
-        thumbnailContainer.style.maxHeight = '0';
-        thumbnailContainer.style.overflow = 'hidden';
-        thumbnailContainer.style.display = 'grid';
-        btnShowMore.style.display = 'flex';
-        btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    } else {
-        thumbnailContainer.innerHTML = '';
-        thumbnailContainer.style.maxHeight = '0';
-        thumbnailContainer.style.display = 'none';
-        btnShowMore.style.display = 'none';
-    }
-}
 // Função para clicar na miniatura e jogar ela para a principal
-function swapMainImage(newSrc) {
-    const img1 = document.getElementById('mainImg1');
-    if (img1) {
-        img1.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        img1.style.opacity = '0.5';
-        setTimeout(() => {
-            img1.src = newSrc;
-            img1.style.opacity = '1';
-        }, 200);
-    }
-}
 
 /* =========================
    Cores (Renderização Blindada)
@@ -516,84 +390,6 @@ function renderColors() {
 }
 
 /* Função Unificada de Seleção de Cor */
-function selectColor(colorName) {
-    console.log('🎨 Trocando cor para:', colorName);
-    
-    // 1. Atualiza Estado Global
-    state.selectedColor = colorName;
-
-    // 2. Atualiza visual das bolinhas
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.color === colorName);
-    });
-
-    // 3. Atualiza o texto escrito
-    if (elExists('selectedColorName')) {
-        $('selectedColorName').textContent = colorName;
-    }
-
-    // 4. Busca as imagens da cor selecionada
-    const p = state.currentProduct;
-    let newImages = [];
-
-    // ✅ LÓGICA MELHORADA: Busca as fotos da cor
-    if (p.colors && Array.isArray(p.colors)) {
-        const colorObj = p.colors.find(c => {
-            // Normaliza para comparar strings exatas
-            const cName = typeof c === 'object' ? String(c.name).trim() : String(c).trim();
-            return cName === colorName;
-        });
-        
-        if (colorObj) {
-            console.log('✅ Cor encontrada:', colorObj);
-            
-            // Se o objeto for tipo string simples (só o nome)
-            if (typeof colorObj === 'string') {
-                console.warn('⚠️ Cor é string simples, usando fotos padrão');
-                newImages = p.images || [];
-            }
-            // Se for objeto com array de imagens
-            else if (colorObj.images && Array.isArray(colorObj.images) && colorObj.images.length > 0) {
-                newImages = colorObj.images;
-                console.log('✅ Imagens da cor carregadas:', newImages.length);
-            }
-            // Se for objeto mas sem imagens
-            else {
-                console.warn('⚠️ Cor encontrada mas sem campo "images"');
-                newImages = p.images || [];
-            }
-        } else {
-            console.warn('⚠️ Cor não encontrada no array');
-            newImages = p.images || [];
-        }
-    } else {
-        console.warn('⚠️ Produto sem array de cores');
-        newImages = p.images || [];
-    }
-
-    // 5. Validação Final
-    if (newImages.length === 0) {
-        console.error('❌ Nenhuma imagem disponível, usando placeholder');
-        newImages = ['https://via.placeholder.com/600x800/cccccc/666666?text=Sem+Foto'];
-    }
-
-   setTimeout(() => {
-    const galleryContainer = document.getElementById('galleryContainer');
-    if (galleryContainer) {
-        galleryContainer.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-        });
-    }
-}, 100);
-
-    // 6. Atualiza a Galeria (SEMPRE)
-    updateGalleryDisplay(newImages);
-
-    // 7. Atualiza disponibilidade de tamanhos
-    renderSizes();
-}
 /* =========================
    Tamanhos (Corrigido: Clique + Sem Pré-seleção)
    ========================= */
@@ -865,208 +661,11 @@ function calculateShipping() {
     resultsDiv.classList.add('active');
 }
 
-function addToCartFromDetails() {
-    const p = state.currentProduct;
-    if (!p) return;
 
-    if (!state.selectedSize) {
-        alert('Selecione um tamanho.');
-        return;
-    }
-    if (!state.selectedColor) {
-        alert('Selecione uma cor.');
-        return;
-    }
 
-    const cartItemId = `${p.id}__${normalizeIdPart(state.selectedSize)}__${normalizeIdPart(state.selectedColor)}`;
-    const existing = state.cart.find(i => i.cartItemId === cartItemId);
 
-    // --- LÓGICA ROBUSTA DE IMAGEM ---
-let imgUrl = '';
 
-// Verifica se existe a função global getImageForColor
-if (typeof getImageForColor === 'function') {
-    imgUrl = getImageForColor(p, state.selectedColor);
-} else {
-    // Fallback: lógica inline
-    if (state.selectedColor && Array.isArray(p.colors)) {
-        const colorObj = p.colors.find(c => {
-            const cName = typeof c === 'object' ? c.name : c;
-            return String(cName).trim() === String(state.selectedColor).trim();
-        });
-        
-        if (colorObj && colorObj.images && colorObj.images.length > 0) {
-            imgUrl = colorObj.images[0];
-        } else if (Array.isArray(p.images) && p.images.length > 0) {
-            imgUrl = p.images[0];
-        } else if (p.image) {
-            imgUrl = p.image;
-        }
-    } else {
-        if (Array.isArray(p.images) && p.images.length > 0) {
-            imgUrl = p.images[0];
-        } else if (p.image) {
-            imgUrl = p.image;
-        }
-    }
-}
 
-const itemPayload = {
-    cartItemId,
-    productId: p.id,
-    name: p.name,
-    price: safeNumber(p.price, 0),
-    quantity: state.selectedQuantity,
-    selectedSize: state.selectedSize,
-    selectedColor: state.selectedColor,
-    image: imgUrl // ✅ Agora usa a imagem da cor correta
-};
-   
-console.log('🛒 Adicionando ao carrinho:', itemPayload);
-   
-    if (existing) {
-        existing.quantity = safeNumber(existing.quantity, 1) + itemPayload.quantity;
-    } else {
-        state.cart.push(itemPayload);
-    }
-
-    saveCartToStorage();
-    updateCartUI();
-    toggleCart(); // Abre o carrinho automaticamente
-}
-
-function toggleCart() {
-    const sidebar = $('cartSidebar');
-    const overlay = $('cartOverlay');
-    if (sidebar) sidebar.classList.toggle('active');
-    if (overlay) overlay.classList.toggle('active');
-}
-
-function updateCartUI() {
-    const cartCount = $('cartCount');
-    const cartItems = $('cartItems');
-    const cartFooter = $('cartFooter');
-    const cartTotal = $('cartTotal');
-
-    const totalItems = state.cart.reduce((s, it) => s + safeNumber(it.quantity, 0), 0);
-    if (cartCount) {
-        cartCount.textContent = totalItems;
-        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
-
-    if (!cartItems) return;
-
-    if (!state.cart.length) {
-        cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
-        if (cartFooter) cartFooter.style.display = 'none';
-        return;
-    }
-
-    cartItems.innerHTML = '';
-
-    state.cart.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'cart-item';
-
-        // --- IMAGEM DO ITEM ---
-        const imgDiv = document.createElement('div');
-        imgDiv.className = 'cart-item-img';
-
-        // Força o estilo via JS para garantir
-        imgDiv.style.width = '70px';
-        imgDiv.style.height = '90px';
-        imgDiv.style.backgroundSize = 'cover';
-        imgDiv.style.backgroundPosition = 'center';
-        imgDiv.style.borderRadius = '4px';
-        imgDiv.style.flexShrink = '0';
-
-        if (isImageUrl(item.image)) {
-            imgDiv.style.backgroundImage = `url("${item.image}")`;
-        } else {
-            imgDiv.style.backgroundColor = '#eee'; // Cinza se não tiver foto
-        }
-
-        const info = document.createElement('div');
-        info.className = 'cart-item-info';
-
-        const title = document.createElement('div');
-        title.className = 'cart-item-title';
-        title.textContent = item.name;
-
-        const meta = document.createElement('div');
-        meta.style.fontSize = '0.75rem';
-        meta.style.color = '#666';
-        meta.innerHTML = `${item.selectedSize || ''} | ${item.selectedColor || ''}`;
-
-        const price = document.createElement('div');
-        price.className = 'cart-item-price';
-        price.textContent = `R$ ${safeNumber(item.price, 0).toFixed(2)}`;
-
-        const qtyBox = document.createElement('div');
-        qtyBox.className = 'cart-item-qty';
-
-        const btnMinus = document.createElement('button');
-        btnMinus.className = 'qty-btn';
-        btnMinus.textContent = '-';
-        btnMinus.onclick = () => updateQuantity(item.cartItemId, -1);
-
-        const spanQty = document.createElement('span');
-        spanQty.textContent = item.quantity;
-
-        const btnPlus = document.createElement('button');
-        btnPlus.className = 'qty-btn';
-        btnPlus.textContent = '+';
-        btnPlus.onclick = () => updateQuantity(item.cartItemId, 1);
-
-        qtyBox.appendChild(btnMinus);
-        qtyBox.appendChild(spanQty);
-        qtyBox.appendChild(btnPlus);
-
-        const remove = document.createElement('div');
-        remove.className = 'remove-item';
-        remove.textContent = 'Remover';
-        remove.onclick = () => removeFromCart(item.cartItemId);
-
-        info.append(title, meta, price, qtyBox, remove);
-        row.append(imgDiv, info);
-        cartItems.appendChild(row);
-    });
-
-const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-const discount = state.couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
-
-// ✅ ADICIONA ATUALIZAÇÃO DO SUBTOTAL
-const cartSubtotal = document.getElementById('cartSubtotal');
-if (cartSubtotal) {
-    cartSubtotal.textContent = `R$ ${subtotal.toFixed(2)}`;
-}
-
-if (cartTotal) cartTotal.textContent = `R$ ${total.toFixed(2)}`;
-if (cartFooter) cartFooter.style.display = 'block';
-}
-
-function updateQuantity(cartItemId, change) {
-    const item = state.cart.find(i => i.cartItemId === cartItemId);
-    if (!item) return;
-    item.quantity = safeNumber(item.quantity, 0) + change;
-    if (item.quantity <= 0) removeFromCart(cartItemId);
-    else {
-        saveCartToStorage();
-        updateCartUI();
-    }
-}
-
-function removeFromCart(cartItemId) {
-    state.cart = state.cart.filter(i => i.cartItemId !== cartItemId);
-    saveCartToStorage();
-    updateCartUI();
-}
-
-function checkout() {
-    if (!state.cart.length) return alert('Carrinho vazio!');
-    openPaymentModal();
-}
 
 window.addEventListener('storage', (e) => {
     if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
@@ -1078,47 +677,7 @@ window.addEventListener('storage', (e) => {
 /* =========================
    Modal Pagamento / WhatsApp
    ========================= */
-function openPaymentModal() {
-    const modal = $('paymentModal');
-    const itemsContainer = $('paymentCartItems');
-    const totalContainer = $('paymentTotal');
-    if (!modal || !itemsContainer) return;
 
-    itemsContainer.innerHTML = '';
-    state.cart.forEach(it => {
-        const row = document.createElement('div');
-        row.className = 'payment-cart-item';
-
-        const left = document.createElement('div');
-        const name = document.createElement('div');
-        name.className = 'payment-cart-item-name';
-        name.textContent = it.name;
-        const det = document.createElement('div');
-        det.className = 'payment-cart-item-details';
-        det.textContent = `Qtd: ${it.quantity} (${it.selectedSize}/${it.selectedColor})`;
-        left.append(name, det);
-
-        const right = document.createElement('div');
-        right.style.fontWeight = '700';
-        right.textContent = `R$ ${(safeNumber(it.quantity) * safeNumber(it.price)).toFixed(2)}`;
-
-        row.append(left, right);
-        itemsContainer.appendChild(row);
-    });
-
-    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-const discount = state.couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
-if (totalContainer) totalContainer.textContent = `R$ ${total.toFixed(2)}`;
-
-    modal.classList.add('active');
-    setupPaymentListeners();
-}
-
-function closePaymentModal() {
-    const modal = $('paymentModal');
-    if (modal) modal.classList.remove('active');
-}
 
 function setupPaymentListeners() {
     const opts = document.querySelectorAll('input[name="paymentMethod"]');
@@ -1131,43 +690,6 @@ function setupPaymentListeners() {
     });
 }
 
-function sendToWhatsApp() {
-    if (!state.cart.length) return;
-    const checked = document.querySelector('input[name="paymentMethod"]:checked');
-    if (!checked) return alert('Selecione a forma de pagamento.');
-
-    const method = checked.value;
-    const inst = $('installments') ? $('installments').value : '1';
-
-    const mapMethod = {
-        'pix': 'PIX',
-        'boleto': 'Boleto Bancário',
-        'credito-avista': 'Cartão de Crédito (À vista)',
-        'credito-parcelado': `Cartão Parcelado (${inst}x)`
-    };
-
-    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-const discount = state.couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
-
-let msg = `*🛍️ PEDIDO - SEJA VERSÁTIL*\n\n`;
-    state.cart.forEach((item, i) => {
-        msg += `${i+1}. *${item.name}*\n`;
-        msg += `   TAM: ${item.selectedSize} | COR: ${item.selectedColor}\n`;
-        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n\n`;
-    });
-
-    msg += `*TOTAL: R$ ${total.toFixed(2)}*\n`;
-if (state.appliedCoupon) {
-    msg += `Cupom aplicado: ${state.appliedCoupon.code} (-R$ ${discount.toFixed(2)})\n`;
-}
-   
-    msg += `Pagamento: ${mapMethod[method] || method}\n`;
-    msg += `\n_Enviado pelo site_`;
-
-    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
-    closePaymentModal();
-}
 
 /* =========================
    Compra Direta (Botão WhatsApp abaixo de comprar)
@@ -1185,66 +707,9 @@ function buyViaWhatsApp() {
 /* =========================
    Helpers & Countdown
    ========================= */
-function getCategoryName(cat) {
-    const map = {
-        'blusas': 'Blusas',
-        'conjunto calca': 'Conjunto Calça',
-        'peca unica': 'Peça Única',
-        'conjunto short saia': 'Conjunto Short Saia',
-        'conjunto short': 'Conjunto Short',
-        'all': 'Todos'
-    };
-    return map[String(cat).toLowerCase()] || String(cat).toUpperCase();
-}
 
-function getColorHex(name) {
-    const map = {
-        'Rosa': '#FFB6C1',
-        'Preto': '#000000',
-        'Azul': '#4169E1',
-        'Verde': '#32CD32',
-        'Branco': '#FFFFFF',
-        'Vermelho': '#DC143C',
-        'Amarelo': '#FFD700',
-        'Cinza': '#808080',
-        'Lilás': '#9370DB',
-        'Coral': '#FF7F50',
-        'Nude': '#E8BEAC',
-        'Bege': '#F5F5DC',
-        'Laranja': '#FFA500'
-    };
-    return map[name] || '#ddd';
-}
 
-function toggleSidebar() {
-    const sb = $('sidebarMenu');
-    const ov = $('sidebarOverlay');
-    if (sb) sb.classList.toggle('active');
-    if (ov) ov.classList.toggle('active');
-}
 
-function initBlackFridayCountdown() {
-    // Ajuste a data aqui se necessário
-    const end = new Date(2025, 10, 30, 23, 59, 59);
-    if (state.countdownInterval) clearInterval(state.countdownInterval);
-
-    const update = () => {
-        const diff = end.getTime() - Date.now();
-        if (diff <= 0) return clearInterval(state.countdownInterval);
-
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-        if (elExists('bfDays')) $('bfDays').textContent = String(d).padStart(2, '0');
-        if (elExists('bfHours')) $('bfHours').textContent = String(h).padStart(2, '0');
-        if (elExists('bfMinutes')) $('bfMinutes').textContent = String(m).padStart(2, '0');
-        if (elExists('bfSeconds')) $('bfSeconds').textContent = String(s).padStart(2, '0');
-    };
-    update();
-    state.countdownInterval = setInterval(update, 1000);
-}
 
 /* Máscara CEP */
 document.addEventListener('input', (e) => {
@@ -1379,63 +844,8 @@ function resetCouponButton() {
     }
 }
 
-function removeCoupon() {
-    state.appliedCoupon = null;
-    state.couponDiscount = 0;
-    
-    const badge = document.getElementById('appliedCouponBadge');
-    const input = document.getElementById('couponInput');
-    const btn = document.getElementById('applyCouponBtn');
-    const message = document.getElementById('couponMessage');
-    
-    if (badge) badge.style.display = 'none';
-    if (input) {
-        input.disabled = false;
-        input.value = '';
-        input.classList.remove('success');
-    }
-    if (btn) {
-        btn.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'APLICAR';
-        btn.style.opacity = '1';
-    }
-    if (message) message.classList.remove('active');
-    
-    updateCartUI();
-    saveCartToStorage();
-    showToast('Cupom removido', 'info');
-}
 
-function showAppliedCouponBadge(coupon, discount) {
-    const badge = document.getElementById('appliedCouponBadge');
-    const codeEl = document.getElementById('appliedCouponCode');
-    const discountEl = document.getElementById('appliedCouponDiscount');
-    
-    if (!badge || !codeEl || !discountEl) return;
-    
-    codeEl.textContent = coupon.code;
-    
-    if (coupon.type === 'percentage') {
-        discountEl.textContent = `${coupon.value}% de desconto (R$ ${discount.toFixed(2)})`;
-    } else {
-        discountEl.textContent = `Desconto de R$ ${discount.toFixed(2)}`;
-    }
-    
-    badge.style.display = 'flex';
-}
 
-function showCouponMessage(text, type) {
-    const message = document.getElementById('couponMessage');
-    if (!message) return;
-    
-    message.textContent = text;
-    message.className = `coupon-message ${type} active`;
-    
-    setTimeout(() => {
-        message.classList.remove('active');
-    }, 5000);
-}
 
 /* =================================================================== */
 /* BUSCA INTELIGENTE COMPLETA (LIVE SEARCH) - PÁGINA DE PRODUTO        */
@@ -1557,64 +967,11 @@ function renderSearchDropdown(products, query) {
 
 let currentUser = null;
 
-function openUserPanel() {
-    const panel = document.getElementById('userPanel');
-    if (panel) panel.classList.add('active');
-    checkUserSession();
-}
 
-function closeUserPanel() {
-    const panel = document.getElementById('userPanel');
-    if (panel) panel.classList.remove('active');
-}
 
-function switchUserTab(tab) {
-    document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.user-tab-content').forEach(content => content.classList.remove('active'));
 
-    if (tab === 'login') {
-        document.querySelectorAll('.user-panel-tab')[0].classList.add('active');
-        document.getElementById('loginTab').classList.add('active');
-    } else if (tab === 'register') {
-        document.querySelectorAll('.user-panel-tab')[1].classList.add('active');
-        document.getElementById('registerTab').classList.add('active');
-    }
-}
 
-function checkUserSession() {
-    // Verifica sessão do Firebase
-    if (typeof auth !== 'undefined') {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                showLoggedInView(user);
-            } else {
-                currentUser = null;
-                hideLoggedInView();
-            }
-        });
-    }
-}
 
-function showLoggedInView(user) {
-    document.getElementById('userPanelTabs').style.display = 'none';
-    document.getElementById('loginTab').classList.remove('active');
-    document.getElementById('registerTab').classList.remove('active');
-    document.getElementById('userLoggedTab').classList.add('active');
-
-    document.getElementById('userNameDisplay').textContent = user.displayName || 'Cliente';
-    document.getElementById('userEmailDisplay').textContent = user.email;
-}
-
-function hideLoggedInView() {
-    const tabs = document.getElementById('userPanelTabs');
-    if (tabs) tabs.style.display = 'flex';
-
-    const loggedTab = document.getElementById('userLoggedTab');
-    if (loggedTab) loggedTab.classList.remove('active');
-
-    switchUserTab('login');
-}
 
 async function userLogin(event) {
     event.preventDefault();
@@ -1751,15 +1108,6 @@ function updateFavoriteStatus() {
 }
 
 // 4. Atualizar Contador do Header
-function updateFavoritesCount() {
-    const favCount = document.getElementById('favoritesCount');
-    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
-
-    if (favCount) {
-        favCount.textContent = favorites.length;
-        favCount.style.display = favorites.length > 0 ? 'flex' : 'none';
-    }
-}
 
 // 5. Redirecionar Fav
 function goToFavoritesPage() {
@@ -1794,38 +1142,6 @@ function shareToInstagram() {
 }
 
 // Função auxiliar de Toast (caso você ainda não tenha no código, adicione esta também)
-function showToast(msg, type = 'success') {
-    const toast = document.createElement('div');
-    toast.style.position = 'fixed';
-    toast.style.bottom = '20px';
-    toast.style.left = '50%';
-    toast.style.transform = 'translateX(-50%)';
-    toast.style.background = type === 'success' ? '#333' : '#ff4444';
-    toast.style.color = '#fff';
-    toast.style.padding = '12px 24px';
-    toast.style.borderRadius = '30px';
-    toast.style.zIndex = '10000';
-    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-    toast.style.fontSize = '14px';
-    toast.style.fontWeight = '500';
-    toast.textContent = msg;
-
-    document.body.appendChild(toast);
-
-    // Animação de entrada
-    toast.animate([
-        { opacity: 0, transform: 'translate(-50%, 20px)' },
-        { opacity: 1, transform: 'translate(-50%, 0)' }
-    ], { duration: 300, fill: 'forwards' });
-
-    // Remove após 3 segundos
-    setTimeout(() => {
-        toast.animate([
-            { opacity: 1 },
-            { opacity: 0 }
-        ], { duration: 300, fill: 'forwards' }).onfinish = () => toast.remove();
-    }, 3000);
-}
 
 // Função que o botão "MOSTRAR MAIS" chama no onclick
 window.toggleGalleryExpansion = function() {
@@ -1854,13 +1170,3 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
-
-
-
-
-
-
-
-
-
-
