@@ -6021,11 +6021,20 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// ==================== EXPOR FUNÇÕES GLOBAIS PARA O HTML ====================
-// ✅ CRITICAL: O HTML precisa acessar essas funções via onclick
+// ==================== EXPOR FUNÇÕES GLOBAIS ====================
+// ✅ CRITICAL: Permite que o HTML chame essas funções via onclick
+
 window.openPaymentModal = openPaymentModal;
 window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 window.closeCustomerDataModal = closeCustomerDataModal;
+window.collectGuestCustomerData = collectGuestCustomerData;
+window.isValidCPF = isValidCPF;
+window.getUserPhone = getUserPhone;
+window.getUserCPF = getUserCPF;
+window.saveOrderToFirestore = saveOrderToFirestore;
+window.applyCoupon = applyCoupon;
+window.removeCoupon = removeCoupon;
 
-console.log('✅ Funções de pagamento expostas globalmente');
+console.log('✅ Funções de checkout expostas globalmente');
+console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
