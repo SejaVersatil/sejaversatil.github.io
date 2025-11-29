@@ -525,8 +525,31 @@
   </div>
 
   <script src="produto.js" defer></script>
+
+<!-- Modal de Pagamento -->
+<div class="payment-modal" id="paymentModal">
+    <div class="payment-modal-content">
+        <span class="close-payment-modal" onclick="closePaymentModal()">✕</span>
+        <h3>Finalizar Pedido</h3>
+        <div class="payment-summary">
+            <h4>Resumo do Pedido</h4>
+            <div id="paymentCartItems"></div>
+            <div class="payment-total">
+                <span>Total:</span>
+                <span id="paymentTotal">R$ 0,00</span>
+            </div>
+        </div>
+        <div class="payment-options">
+            <h4>Forma de Pagamento</h4>
+            <!-- Opções de pagamento aqui -->
+        </div>
+        <button class="payment-confirm-btn" onclick="sendToWhatsApp()">📱 Finalizar Pedido via WhatsApp</button>
+    </div>
+</div>
+  
 </body>
 </html>
+
 
 
 
