@@ -274,7 +274,7 @@ function getDefaultVideos() {
       order: 1
     },
     {
-      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%202.mp4?alt=media&token=2b74bf78-6d27-42e6-bad1-ae923d1e714a',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%202%20.mp4?alt=media&token=8f66e794-844d-4696-8123-dd8776194f31',
       title: 'ESTILO',
       subtitle: 'Looks incríveis',
       order: 2
@@ -6123,6 +6123,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
