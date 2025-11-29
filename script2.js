@@ -743,6 +743,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // ✅ CORREÇÃO 1: Carrega settings ANTES
         loadSettings();
+
+        setupPaymentListeners();
+        
+        await loadProducts();
         
         // ✅ CORREÇÃO 2: Carrega produtos ANTES do carrinho
         await loadProducts();
@@ -4450,12 +4454,24 @@ function checkout() {
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
 
 function openPaymentModal() {
-    const modal = $('paymentModal');
-    const cartItemsContainer = $('paymentCartItems');
-    const totalContainer = $('paymentTotal');
+    const modal = document.getElementById('paymentModal');
+    const cartItemsContainer = document.getElementById('paymentCartItems');
+    const totalContainer = document.getElementById('paymentTotal');
+    
+    console.log('🔍 Debug openPaymentModal:', {
+        modal: !!modal,
+        cartItemsContainer: !!cartItemsContainer,
+        totalContainer: !!totalContainer,
+        cartLength: cart.length
+    });
     
     if (!modal || !cartItemsContainer || !totalContainer) {
-        console.error('❌ Modal de pagamento não encontrado!');
+        console.error('❌ CRÍTICO: Elementos do modal ausentes!', {
+            modal: modal ? 'OK' : 'MISSING',
+            cartItemsContainer: cartItemsContainer ? 'OK' : 'MISSING',
+            totalContainer: totalContainer ? 'OK' : 'MISSING'
+        });
+        alert('Erro ao abrir modal de pagamento. Verifique o console.');
         return;
     }
     
@@ -4494,7 +4510,7 @@ function openPaymentModal() {
         couponDiscount,
         cartLength: cart.length
     });
-    
+}
     // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
     cartItemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -4569,6 +4585,19 @@ function closePaymentModal() {
     if (modal) {
         modal.classList.remove('active');
     }
+} // <--- Faltava essa chave aqui
+
+function setupPaymentListeners() {
+    const opts = document.querySelectorAll('input[name="paymentMethod"]');
+    const box = document.getElementById('installmentsBox');
+    
+    if (!opts.length || !box) return;
+    
+    opts.forEach(opt => {
+        opt.addEventListener('change', function() {
+            box.style.display = this.value === 'credito-parcelado' ? 'block' : 'none';
+        });
+    });
 }
 
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
@@ -6169,6 +6198,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
