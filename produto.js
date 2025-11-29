@@ -1268,3 +1268,19 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 
 // Garante que a inicialização ocorra após o carregamento de todos os scripts
 window.addEventListener('DOMContentLoaded', initializeProductPage);
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnShowMore = document.getElementById('btnShowMore');
+    if (btnShowMore) {
+        btnShowMore.addEventListener('click', () => {
+            // Verifica se a função existe antes de chamar para evitar erros
+            if (typeof toggleGalleryExpansion === 'function') {
+                toggleGalleryExpansion();
+            } else {
+                console.error('A função toggleGalleryExpansion() não foi encontrada.');
+            }
+        });
+    }
+});
+
