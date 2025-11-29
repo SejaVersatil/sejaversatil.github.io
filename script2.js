@@ -3251,11 +3251,8 @@ function removeFromCart(identifier) {
 }
 
 function toggleCart() {
-      if (sidebar) sidebar.classList.toggle('active');
+    if (sidebar) sidebar.classList.toggle('active');
     if (overlay) overlay.classList.toggle('active');
-}
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
 }
 
 function saveCart() {
@@ -6128,6 +6125,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
