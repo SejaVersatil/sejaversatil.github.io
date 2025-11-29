@@ -1068,33 +1068,27 @@ function removeFromCart(cartItemId) {
     updateCartUI();
 }
 
+// Função de Checkout Padronizada
 function checkout() {
-    if (!state.cart.length) {
-        // Usando showToast para consistência, se estiver disponível
-        if (typeof showToast === 'function') {
-            showToast('Seu carrinho está vazio!', 'error');
-        } else {
-            alert('Carrinho vazio!');
-        }
+    // 1. Validar se o carrinho não está vazio
+    if (!state.cart || state.cart.length === 0) {
+        showToast('Seu carrinho está vazio!', 'error');
         return;
     }
-    
-    // 1. Fechar carrinho (Assumindo que toggleCart está definida e exposta)
+
+    // 2. Fechar o carrinho lateral (se a função existir)
     if (typeof toggleCart === 'function') {
         toggleCart();
     }
-    
-    // 2. Abrir modal de pagamento (após um pequeno delay para a animação do carrinho)
+
+    // 3. Abrir o modal de pagamento após um pequeno delay
     setTimeout(() => {
         if (typeof openPaymentModal === 'function') {
             openPaymentModal();
         } else {
-            console.error('Função openPaymentModal não está definida. Verifique se foi carregada.');
-            // Fallback: tentar abrir o modal diretamente (menos robusto)
-            const modal = document.getElementById('paymentModal');
-            if (modal) modal.classList.add('active');
+            console.error('A função openPaymentModal() não foi encontrada!');
         }
-    }, 300); // Delay de 300ms para a animação de fechamento do carrinho
+    }, 300); // 300ms para a animação do carrinho
 }
 
 window.addEventListener('storage', (e) => {
@@ -1884,6 +1878,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
