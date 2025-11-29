@@ -286,7 +286,7 @@ function getDefaultVideos() {
       order: 3
     },
     {
-      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%204.mp4?alt=media&token=806830bb-9e12-4397-8684-8c330fa2dba4',
+      url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%204%20.mp4?alt=media&token=cffa1c61-6b35-43c5-ba74-970a1e13bd09',
       title: 'VOCÊ',
       subtitle: 'Seja versátil',
       order: 4
@@ -6123,5 +6123,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
