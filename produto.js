@@ -1049,9 +1049,14 @@ if (cartFooter) cartFooter.style.display = 'block';
 function updateQuantity(cartItemId, change) {
     const item = state.cart.find(i => i.cartItemId === cartItemId);
     if (!item) return;
+    
+    // NOTA: Se você tiver lógica de estoque, ela deve ser verificada aqui antes de alterar a quantidade.
+    
     item.quantity = safeNumber(item.quantity, 0) + change;
-    if (item.quantity <= 0) removeFromCart(cartItemId);
-    else {
+    
+    if (item.quantity <= 0) {
+        removeFromCart(cartItemId);
+    } else {
         saveCartToStorage();
         updateCartUI();
     }
@@ -1064,15 +1069,40 @@ function removeFromCart(cartItemId) {
 }
 
 function checkout() {
-    if (!state.cart.length) return alert('Carrinho vazio!');
-    openPaymentModal();
+    if (!state.cart.length) {
+        // Usando showToast para consistência, se estiver disponível
+        if (typeof showToast === 'function') {
+            showToast('Seu carrinho está vazio!', 'error');
+        } else {
+            alert('Carrinho vazio!');
+        }
+        return;
+    }
+    
+    // 1. Fechar carrinho (Assumindo que toggleCart está definida e exposta)
+    if (typeof toggleCart === 'function') {
+        toggleCart();
+    }
+    
+    // 2. Abrir modal de pagamento (após um pequeno delay para a animação do carrinho)
+    setTimeout(() => {
+        if (typeof openPaymentModal === 'function') {
+            openPaymentModal();
+        } else {
+            console.error('Função openPaymentModal não está definida. Verifique se foi carregada.');
+            // Fallback: tentar abrir o modal diretamente (menos robusto)
+            const modal = document.getElementById('paymentModal');
+            if (modal) modal.classList.add('active');
+        }
+    }, 300); // Delay de 300ms para a animação de fechamento do carrinho
 }
 
 window.addEventListener('storage', (e) => {
     if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
         console.log('🔄 Carrinho atualizado em outra aba');
-        loadCartFromStorage();
-        updateCartUI();
+        // Assumindo que loadCartFromStorage e updateCartUI estão definidas
+        if (typeof loadCartFromStorage === 'function') loadCartFromStorage();
+        if (typeof updateCartUI === 'function') updateCartUI();
     }
 });
 /* =========================
@@ -1854,5 +1884,6 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
