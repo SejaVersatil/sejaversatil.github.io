@@ -3339,6 +3339,7 @@ function saveCart() {
         // Log de sucesso
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         console.log(`✅ Carrinho salvo: ${cart.length} itens | Total: R$ ${total.toFixed(2)}`);
+        //          ^^ ✅ CORRIGIDO
         
         return true;
         
@@ -3363,7 +3364,6 @@ function saveCart() {
 }
 
 // ==================== INICIALIZAÇÃO ====================
-
 // Garante que os elementos são carregados ao iniciar a página
 document.addEventListener('DOMContentLoaded', () => {
     // Cache dos elementos do carrinho
@@ -6248,6 +6248,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
