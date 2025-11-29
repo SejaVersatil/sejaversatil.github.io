@@ -4374,22 +4374,32 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
+    // Verifica se o carrinho está vazio
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
-    // Fechar carrinho
-    toggleCart();
+    // 1. Fechar carrinho (toggleCart deve estar definida em ambos os scripts)
+    if (typeof toggleCart === 'function') {
+        toggleCart();
+    }
     
-    // Aguardar animação de fechamento (300ms) e abrir modal de pagamento
+    // 2. Abrir modal de pagamento (após um pequeno delay para a animação do carrinho)
     setTimeout(() => {
-        openPaymentModal();
+        // openPaymentModal deve estar definida no mesmo script
+        if (typeof openPaymentModal === 'function') {
+            openPaymentModal(); 
+        } else {
+            console.error('openPaymentModal não está definida!');
+        }
     }, 300);
     
-    trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
+    // 3. Rastreamento (se a função trackEvent estiver definida)
+    if (typeof trackEvent === 'function') {
+        trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
+    }
 }
-
 // ==================== CHECKOUT VIA WHATSAPP ====================
 
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
@@ -6113,4 +6123,5 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
