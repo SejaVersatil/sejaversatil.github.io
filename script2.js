@@ -4578,7 +4578,6 @@ function openPaymentModal() {
             });
         });
     }
-}
 
 function closePaymentModal() {
     const modal = document.getElementById('paymentModal');
@@ -6198,6 +6197,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
