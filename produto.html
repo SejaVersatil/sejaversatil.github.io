@@ -15,11 +15,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- LINKS DE CSS REFATORADOS -->
-  <link rel="stylesheet" href="style.css"> <!-- CSS Global (antigo css2.txt) -->
-  <link rel="stylesheet" href="produto.css"> <!-- CSS Específico do Produto (antigo produtocss.txt) -->
+  <link rel="stylesheet" href="produto.css">
+  <link rel="stylesheet" href="css2.css">
 
-  <!-- CONFIGURAÇÃO FIREBASE (MANTIDA NO HEAD POR SER GLOBAL) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -27,7 +25,7 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs", // Chave simulada, substitua pela real
+      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
       authDomain: "seja-versatil.firebaseapp.com",
       projectId: "seja-versatil",
       storageBucket: "seja-versatil.firebasestorage.app",
@@ -38,13 +36,11 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    const storage = firebase.storage();
   </script>
 </head>
 
 <body class="product-page">
   
-  <!-- SIDEBAR E CARRINHO (MANTIDOS PARA REUTILIZAÇÃO) -->
   <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
   <aside id="sidebarMenu" class="sidebar-menu" aria-labelledby="sidebarTitle" role="navigation">
     <h3 id="sidebarTitle" class="visually-hidden">Menu</h3>
@@ -148,7 +144,6 @@
     </nav>
   </header>
 
-  <!-- CARRINHO (REUTILIZADO DO INDEX) -->
   <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()" aria-hidden="true"></div>
   <aside id="cartSidebar" class="cart-sidebar" role="dialog" aria-label="Meu carrinho" aria-hidden="true">
     <div class="cart-header">
@@ -207,388 +202,11 @@
 </div>
   </aside>
 
-  <!-- PAINEL DE USUÁRIO/AUTENTICAÇÃO (Copiado de index.html) -->
-  <div class="user-panel" id="userPanel">
-    <div class="user-header">
-      <h3>Minha Conta</h3>
-      <span class="close-user-panel" onclick="closeUserPanel()">✕</span>
-    </div>
-    <div class="user-content">
-      <div class="user-tabs-nav">
-        <button class="user-tab-btn active" onclick="switchUserTab('login')">Login</button>
-        <button class="user-tab-btn" onclick="switchUserTab('register')">Criar Conta</button>
-      </div>
-
-      <div class="user-tabs-container">
-        <div class="user-tab-content active" id="loginTab">
-          <form onsubmit="userLogin(event)">
-            <div class="form-group">
-              <label for="loginEmail">E-mail</label>
-              <input type="email" id="loginEmail" required autocomplete="email">
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">Senha</label>
-              <input type="password" id="loginPassword" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="form-btn">Entrar</button>
-            <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
-          </form>
-          <div class="form-link">
-            <a href="#" onclick="resetPassword(); return false;">Esqueceu a senha?</a>
-          </div>
-          <div class="form-link">
-            Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Crie uma aqui</a>
-          </div>
-        </div>
-
-        <div class="user-tab-content" id="registerTab">
-          <form onsubmit="userRegister(event)">
-            <div class="form-group">
-              <label for="registerName">Nome Completo</label>
-              <input type="text" id="registerName" required>
-            </div>
-            <div class="form-group">
-              <label for="registerEmail">E-mail</label>
-              <input type="email" id="registerEmail" required autocomplete="email">
-            </div>
-            <div class="form-group">
-              <label for="registerPassword">Senha</label>
-              <input type="password" id="registerPassword" required>
-            </div>
-            <div class="form-group">
-              <label for="registerConfirmPassword">Confirmar Senha</label>
-              <input type="password" id="registerConfirmPassword" minlength="6" required>
-            </div>
-            <button type="submit" class="form-btn">Criar Conta</button>
-            <div class="form-error" id="registerError">Erro ao criar conta</div>
-            <div class="form-success" id="registerSuccess">Conta criada com sucesso! Verifique seu email.</div>
-          </form>
-          <div class="form-link">
-            Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-          </div>
-        </div>
-
-        <div class="user-tab-content" id="userLoggedTab">
-          <div class="user-logged-in">
-            <h4>Bem-vindo(a)! <span id="userName"></span></h4>
-            <div class="user-info">
-              <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
-              <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
-            </div>
-            <div class="user-actions">
-              <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')"> Meus Pedidos</button>
-              <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
-              <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">🔧 Painel Administrativo</button>
-              <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAINEL ADMINISTRATIVO (Copiado de index.html) -->
-  <div class="admin-panel" id="adminPanel">
-    <div class="admin-header">
-      <h2>🔧 Painel Administrativo - Seja Versátil</h2>
-      <button class="admin-close" onclick="closeAdminPanel()" aria-label="Fechar">Sair do Painel</button>
-    </div>
-    <div class="admin-content">
-      <div class="admin-stats">
-        <div class="stat-card">
-          <h4 id="totalProducts">0</h4>
-          <p>Total de Produtos</p>
-        </div>
-        <div class="stat-card">
-          <h4 id="totalRevenue">R$ 0</h4>
-          <p>Valor em Estoque</p>
-        </div>
-        <div class="stat-card">
-          <h4 id="totalOrders">0</h4>
-          <p>Pedidos (simulado)</p>
-        </div>
-        <div class="stat-card">
-          <h4 id="activeProducts">0</h4>
-          <p>Produtos Ativos</p>
-        </div>
-      </div>
-
-      <div class="admin-tabs">
-        <button class="admin-tab active" onclick="switchAdminTab('products')">Produtos</button>
-        <button class="admin-tab" onclick="switchAdminTab('settings')">Configurações</button>
-        <button class="admin-tab" onclick="switchAdminTab('coupons')">Cupons</button>
-      </div>
-
-      <div class="admin-tab-content active" id="productsTab">
-        <button class="admin-btn admin-btn-add" onclick="openProductModal()">+ Adicionar Novo Produto</button>
-        <div class="admin-products-grid" id="adminProductsGrid"></div>
-      </div>
-
-      <div class="admin-tab-content" id="settingsTab">
-        <h3 style="margin-bottom: 1.5rem;">Configurações do Site</h3>
-        <div class="admin-form-group">
-          <label for="settingBannerTitle">Banner Principal - Texto 1</label>
-          <input type="text" id="settingBannerTitle" value="Seja Versátil">
-        </div>
-
-        <div class="admin-form-group">
-          <label for="settingBannerSubtitle">Banner Principal - Subtítulo</label>
-          <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
-        </div>
-        <div class="admin-form-group">
-          <label for="settingTopBanner">Mensagem do Banner de Promoção</label>
-          <input type="text" id="settingTopBanner" value="Frete Grátis acima de R$ 299 | Parcele em até 6x sem juros">
-        </div>
-        <div class="admin-form-group">
-          <label style="color: #e74c3c;">⚠️ Área de Perigo</label>
-          <button class="admin-btn admin-btn-delete" onclick="limparTodosProdutos()" style="width: 100%;">🗑️ Limpar TODOS os Produtos do Firestore</button>
-          <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Esta ação não pode ser desfeita! Use apenas para testes.</p>
-        </div>
-        <!-- GERENCIAMENTO DE VÍDEOS -->
-        <div class="admin-form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e5e5;">
-          <label style="color: #667eea;">🎬 Gerenciar Grid de Vídeos</label>
-          <button class="admin-btn admin-btn-add" onclick="openVideoManager()" style="width: 100%;">
-            📹 Abrir Gerenciador de Vídeos
-          </button>
-          <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
-            Adicione até 5 vídeos de 5-10 segundos (máx 2MB cada)
-          </p>
-        </div>
-        <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
-      </div>
-
-      <!-- Nova Aba de Cupons -->
-      <div class="admin-tab-content" id="couponsTab">
-        <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
-        
-        <div style="margin-top: 2rem;">
-          <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
-          <div id="activeCouponsList" class="coupons-list"></div>
-        </div>
-        
-        <div style="margin-top: 2rem;">
-          <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
-          <div id="inactiveCouponsList" class="coupons-list"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE PRODUTO (CRUD) (Copiado de index.html) -->
-  <div class="admin-modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal-content" style="max-width: 900px;">
-      <div class="admin-modal-header">
-        <h3 id="modalTitle">Adicionar Produto</h3>
-        <button class="admin-close" onclick="closeProductModal()">✕</button>
-      </div>
-      <form id="productForm" onsubmit="saveProduct(event)" novalidate>
-        <input type="hidden" id="productId">
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="productName">Nome do Produto *</label>
-            <input type="text" id="productName" required>
-          </div>
-          <div class="admin-form-group">
-            <label for="productCategory">Categoria *</label>
-            <select id="productCategory" required>
-              <option value="blusas">Blusas</option>
-              <option value="conjunto calca">Conjunto Calça</option>
-              <option value="peca unica">Peça Única</option>
-              <option value="conjunto short saia">Conjunto Short Saia</option>
-              <option value="conjunto short">Conjunto Short</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="productPrice">Preço Atual (R$) *</label>
-            <input type="number" id="productPrice" step="0.01" required min="0">
-          </div>
-          <div class="admin-form-group">
-            <label for="productOldPrice">Preço Antigo (R$)</label>
-            <input type="number" id="productOldPrice" step="0.01" min="0">
-          </div>
-          <div class="admin-form-group">
-            <label for="productBadge">Badge (Ex: Novo, -30%)</label>
-            <input type="text" id="productBadge" maxlength="10">
-          </div>
-          <div class="admin-form-group" style="display: flex; align-items: center; margin-top: 1.5rem;">
-            <label for="productBlackFriday" style="margin-right: 1rem;">
-              <input type="checkbox" id="productBlackFriday" style="width: auto; margin-right: 0.5rem;">
-              Black Friday
-            </label>
-          </div>
-        </div>
-
-        <!-- Gerenciamento de Imagens e Cores -->
-        <div class="admin-form-section">
-          <h4>Imagens e Cores</h4>
-          <p class="form-tip">Adicione as imagens de uma cor. Depois, clique em "Adicionar Cor" para salvar e começar a adicionar as imagens da próxima cor.</p>
-          
-          <div class="admin-form-row">
-            <div class="admin-form-group" style="flex: 1;">
-              <label for="imageUpload">Upload de Imagens</label>
-              <input type="file" id="imageUpload" multiple accept="image/*" onchange="handleImageUpload(event)">
-            </div>
-            <div class="admin-form-group" style="flex: 1;">
-              <label>Opções Avançadas</label>
-              <div style="display: flex; gap: 10px;">
-                <button type="button" class="admin-btn-secondary" onclick="toggleUrlInput()">URL</button>
-                <button type="button" class="admin-btn-secondary" onclick="toggleGradientInput()">Gradiente</button>
-                <button type="button" class="admin-btn-add" onclick="addColorToProduct()">+ Adicionar Cor</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Input de URL -->
-          <div class="admin-form-row" id="imageUrlInputBox" style="display: none; margin-top: 10px;">
-            <input type="text" id="imageUrlField" placeholder="Cole a URL da imagem aqui">
-            <button type="button" class="admin-btn-add" onclick="addImageFromUrl()">Adicionar URL</button>
-          </div>
-
-          <!-- Input de Gradiente -->
-          <div class="admin-form-row" id="imageGradientInputBox" style="display: none; margin-top: 10px;">
-            <input type="text" id="gradientField" placeholder="Ex: linear-gradient(to right, #ff7e5f, #feb47b)">
-            <button type="button" class="admin-btn-add" onclick="addGradientImage()">Adicionar Gradiente</button>
-          </div>
-
-          <!-- Lista de Imagens Temporárias -->
-          <div class="admin-form-group">
-            <label>Imagens da Cor Atual (serão salvas ao clicar em "Adicionar Cor")</label>
-            <div class="image-list-admin" id="productImagesList">
-              <p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma imagem adicionada ainda</p>
-            </div>
-          </div>
-
-          <!-- Lista de Cores Salvas -->
-          <div class="admin-form-group">
-            <label>Cores Salvas</label>
-            <div class="color-list-admin" id="productColorsManager">
-              <p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma cor adicionada ainda</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-form-actions">
-          <button type="submit" class="admin-btn-save">Salvar Produto</button>
-          <button type="button" class="admin-btn-cancel" onclick="closeProductModal()">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal de Cupom (Copiado de index.html) -->
-  <div class="admin-modal" id="couponModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal-content" style="max-width: 600px;">
-      <div class="admin-modal-header">
-        <h3>Criar/Editar Cupom</h3>
-        <button class="admin-close" onclick="closeCouponModal()">✕</button>
-      </div>
-      
-      <form id="couponForm" onsubmit="saveCoupon(event)" novalidate>
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="couponCode">Código do Cupom *</label>
-            <input type="text" id="couponCode" required maxlength="20" style="text-transform: uppercase;">
-          </div>
-          
-          <div class="admin-form-group">
-            <label for="couponType">Tipo de Desconto *</label>
-            <select id="couponType" required onchange="toggleMaxDiscount()">
-              <option value="percentage">Porcentagem (%)</option>
-              <option value="fixed">Valor Fixo (R$)</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="couponValue">Valor do Desconto *</label>
-            <input type="number" id="couponValue" step="0.01" required min="0">
-          </div>
-          
-          <div class="admin-form-group" id="maxDiscountGroup">
-            <label for="couponMaxDiscount">Desconto Máximo (R$)</label>
-            <input type="number" id="couponMaxDiscount" step="0.01" min="0">
-          </div>
-        </div>
-        
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="couponMinValue">Valor Mínimo do Carrinho (R$)</label>
-            <input type="number" id="couponMinValue" step="0.01" min="0">
-          </div>
-          
-          <div class="admin-form-group">
-            <label for="couponUsageLimit">Limite Total de Usos</label>
-            <input type="number" id="couponUsageLimit" min="1">
-          </div>
-        </div>
-        
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="couponUsagePerUser">Usos por Usuário</label>
-            <input type="number" id="couponUsagePerUser" min="1">
-          </div>
-          
-          <div class="admin-form-group" style="display: flex; align-items: center; margin-top: 1.5rem;">
-            <label for="couponActive" style="margin-right: 1rem;">
-              <input type="checkbox" id="couponActive" checked style="width: auto; margin-right: 0.5rem;">
-              Cupom Ativo
-            </label>
-          </div>
-        </div>
-        
-        <div class="admin-form-row">
-          <div class="admin-form-group">
-            <label for="couponValidFrom">Válido A Partir De</label>
-            <input type="datetime-local" id="couponValidFrom">
-          </div>
-          
-          <div class="admin-form-group">
-            <label for="couponValidUntil">Válido Até</label>
-            <input type="datetime-local" id="couponValidUntil">
-          </div>
-        </div>
-        
-        <input type="hidden" id="couponId">
-        
-        <div class="admin-form-actions">
-          <button type="submit" class="admin-btn-save">Salvar Cupom</button>
-          <button type="button" class="admin-btn-cancel" onclick="closeCouponModal()">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- VIDEO MANAGER MODAL (Copiado de index.html) -->
-  <div class="admin-modal" id="videoManagerModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal-content" style="max-width: 800px;">
-      <div class="admin-modal-header">
-        <h3>🎬 Gerenciar Vídeos da Home</h3>
-        <button class="admin-close" onclick="closeVideoManager()" aria-label="Fechar">✕</button>
-      </div>
-      
-      <div style="padding: 1.5rem;">
-        <div class="video-manager-list" id="videoManagerList">
-          <!-- Vídeos serão renderizados aqui -->
-        </div>
-        
-        <div class="admin-form-group" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
-          <label for="videoUpload">Upload de Novo Vídeo (MP4, WebM)</label>
-          <input type="file" id="videoUpload" accept="video/mp4,video/webm" onchange="handleVideoUpload(event)">
-          <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Máximo 2MB por arquivo. Adicione um título e ordem após o upload.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <main class="product-page-container" role="main">
     <div class="product-main-grid">
 
       <div class="product-gallery-section">
-    <button class="btn-favorite-floating" id="favoriteBtn" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
+    <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
@@ -614,88 +232,273 @@
         </svg>
     </button>
 </div>
+    
+      <div class="product-info-section">
+        <nav class="breadcrumb">
+            <a href="index.html">Início</a> › <span id="breadcrumbCategory">Categoria</span> › <span id="breadcrumbProduct">Produto</span>
+        </nav>
+        
+        <div class="product-header-wrapper">
+            <div class="header-left">
+                <h1 class="product-title" id="detailsProductName">Carregando...</h1>
+                <div class="share-widget">
+                    <div class="share-options">
+                        <button class="share-btn instagram" onclick="shareToInstagram()" title="Copiar Link para Instagram" type="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </button>
+                        <button class="share-btn whatsapp" onclick="shareToWhatsApp()" title="Compartilhar no WhatsApp" type="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="share-trigger">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </div>
+                </div>
+            </div>
 
-      <div class="product-details-section">
-        <div class="product-header">
-          <h1 id="productName"></h1>
-          <p class="product-category" id="productCategory"></p>
+            <div class="product-pricing">
+                <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
+                <div class="price-main-row">
+                    <span class="price-current" id="detailsPriceNew">R$ --,--</span>
+                    <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
+                </div>
+                <div class="price-installments" id="detailsInstallments">Em até 10x sem juros</div>
+            </div>
         </div>
 
-        <div class="product-price-info">
-          <div class="price-group">
-            <span class="price-old" id="productOldPrice"></span>
-            <span class="price-new" id="productPrice"></span>
-          </div>
-          <p class="installments-info" id="installmentsInfo">Em até 6x sem juros</p>
+        <div class="product-selector-group">
+            <label class="selector-label">Cor: <span id="selectedColorName">Selecione</span></label>
+            <div class="color-options-grid" id="colorSelector"></div>
+        </div>
+        
+        <div class="product-selector-group">
+            <label class="selector-label">Tamanho</label>
+            <div class="size-options-grid" id="sizeSelector"></div>
+            <span id="selectedSizeName" style="display:none;"></span>
         </div>
 
-        <div class="product-options">
-          <!-- Opção de Cor -->
-          <div class="product-option">
-            <label>Cor: <span id="selectedColorDisplay"></span></label>
-            <div class="color-selector" id="colorSelector">
-              <!-- Cores serão injetadas aqui -->
+        <div class="product-selector-group">
+            <label class="selector-label">Quantidade</label>
+            <div class="quantity-controls">
+                <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)">−</button>
+                <input type="number" id="productQuantity" value="1" min="1" max="10" readonly>
+                <button class="qty-control-btn" type="button" onclick="changeQuantity(1)">+</button>
             </div>
-          </div>
-
-          <!-- Opção de Tamanho -->
-          <div class="product-option">
-            <label>Tamanho: <span id="selectedSizeDisplay"></span></label>
-            <div class="size-selector" id="sizeSelector">
-              <!-- Tamanhos serão injetados aqui -->
-            </div>
-            <p class="stock-info" id="stockInfo"></p>
-          </div>
-
-          <!-- Opção de Quantidade -->
-          <div class="product-option quantity-selector">
-            <label>Quantidade:</label>
-            <div class="quantity-control">
-              <button onclick="updateQuantityControl(-1)" type="button">-</button>
-              <input type="number" id="quantityInput" value="1" min="1" max="10" readonly>
-              <button onclick="updateQuantityControl(1)" type="button">+</button>
-            </div>
-          </div>
         </div>
 
-        <div class="product-actions">
-          <button class="btn-add-cart-large" onclick="addToCartFromDetails()" type="button">
-            ADICIONAR AO CARRINHO
-          </button>
-          <button class="btn-buy-now" onclick="buyNow()" type="button">
-            COMPRAR AGORA
-          </button>
+        <div class="product-action-buttons">
+            <button class="btn btn-primary" onclick="addToCartFromDetails()" type="button">COMPRAR</button>
+            <button class="btn btn-whatsapp-main" onclick="buyViaWhatsApp()" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                COMPRE PELO WHATSAPP
+            </button>
+        </div>
+        
+        <div class="product-selector-group">
+            <label class="selector-label">Frete e Entrega</label>
+            <div class="shipping-input-row">
+                <input type="text" id="zipCodeInput" class="shipping-input" placeholder="Digite seu CEP" maxlength="9">
+                <button class="shipping-calc-btn" onclick="calculateShipping()" type="button">CALCULAR</button>
+            </div>
+            <div class="shipping-results" id="shippingResults"></div>
         </div>
 
-        <div class="product-info-tabs">
-          <div class="tabs-header">
-            <button class="tab-btn active" onclick="switchTab('description')" type="button">Descrição</button>
-            <button class="tab-btn" onclick="switchTab('specs')" type="button">Especificações</button>
-          </div>
-          <div class="tabs-content">
-            <div class="tab-content active" id="descriptionTab">
-              <p id="productDescription">Carregando descrição...</p>
+        <div class="trust-badges-list">
+            <div class="trust-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <div class="badge-text">
+                    <strong>Primeira troca é fácil e gratuita.</strong>
+                    <a href="#">Confira as opções de troca aqui.</a>
+                </div>
             </div>
-            <div class="tab-content" id="specsTab">
-              <ul id="productSpecs">
-                <li>Material: Poliamida de alta compressão</li>
-                <li>Tecnologia: Secagem rápida e proteção UV50+</li>
-                <li>Cores: Variadas</li>
-                <li>Tamanhos: P, M, G, GG</li>
-              </ul>
+            <div class="trust-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <div class="badge-text">
+                    <strong>Cuidar do produto o torna mais durável.</strong>
+                    <a href="#">Confira os cuidados com o produto.</a>
+                </div>
             </div>
-          </div>
         </div>
+      
+      <div class="secondary-actions">
+        <button class="action-link" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            Tabela de medidas
+        </button>
+        <button class="action-link" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Descubra seu tamanho
+        </button>
       </div>
+          
+      <div class="short-description-container">
+        <p class="short-desc-text">
+           O Shorts possui aplicação de estampa tecnológica, acompanhando os recortes estratégicos para melhor performance.
+        </p>
+        <a href="#productDescription" class="view-full-desc">Veja descrição completa ↓</a>
+      </div>
+
+      <div class="product-description-section" id="productDescription"></div>
     </div>
 
-    <section class="related-products-section">
-      <h2>Looks Relacionados</h2>
-      <div class="related-products-grid" id="relatedProductsGrid">
-        <!-- Produtos relacionados serão injetados aqui -->
-      </div>
-    </section>
+    <div class="related-products-section">
+        <h3>Você Também Pode Gostar</h3>
+        <div class="related-products-grid" id="relatedProductsGrid"></div>
+    </div>
   </main>
+
+  <a href="https://wa.me/5571991427103?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos" 
+     class="whatsapp-float" 
+     target="_blank" 
+     rel="noopener noreferrer" 
+     aria-label="Falar no WhatsApp">
+    <svg viewBox="0 0 48 48" fill="white">
+        <path d="M4.868 43.303l2.694-9.835C5.9 30.59 5.026 27.324 5.027 23.979c.002-10.763 8.766-19.525 19.532-19.525 5.215.002 10.115 2.031 13.8 5.713 3.685 3.684 5.713 8.584 5.711 13.796-.002 10.763-8.767 19.524-19.532 19.524-.001 0 .001 0 0 0h-.008c-3.177-.001-6.3-.798-9.073-2.311l-9.457 2.127zm10.477-6.052l.575.341c2.57 1.526 5.527 2.334 8.554 2.335h.006c8.948 0 16.232-7.282 16.234-16.229.001-4.339-1.688-8.418-4.755-11.484-3.067-3.066-7.148-4.753-11.489-4.755-8.951 0-16.235 7.282-16.237 16.228-.001 3.196.935 6.314 2.707 9.013l.374.595-1.588 5.801 5.619-1.445z"/>
+        <path d="M32.992 27.157c-.488-.244-2.888-1.424-3.336-1.587-.448-.162-.774-.244-1.1.245-.326.488-1.263 1.588-1.548 1.913-.285.326-.57.366-1.059.122-.488-.244-2.06-.759-3.922-2.419-1.45-1.292-2.428-2.889-2.713-3.377-.285-.489-.03-.753.214-.996.22-.22.488-.57.732-.855.244-.285.326-.489.489-.814.162-.326.081-.611-.041-.855-.122-.244-1.1-2.651-1.507-3.628-.396-.952-.798-.823-1.1-.838-.285-.014-.611-.017-.937-.017-.326 0-.855.122-1.303.611-.448.488-1.711 1.672-1.711 4.078s1.752 4.729 1.996 5.055c.244.326 3.445 5.262 8.346 7.379 1.166.504 2.077.805 2.787.031.709.259 2.069.635 3.328.348 1.259-.287 2.888-1.18 3.295-2.318.407-1.139.407-2.114.285-2.318-.122-.203-.448-.326-.937-.57z"/>
+    </svg>
+  </a>
+
+  
+  <!-- ==================== MODALS SECTION ==================== -->
+  <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="payment-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="payment-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
+        <h3>Escolha a Forma de Pagamento</h3>
+        <button class="payment-modal-close" onclick="closePaymentModal()" type="button" aria-label="Fechar">✕</button>
+      </div>
+      <div class="payment-summary">
+        <h4>Resumo do Pedido</h4>
+        <div id="paymentCartItems" class="payment-cart-items"></div>
+        <div class="payment-total"><span>Total:</span><strong id="paymentTotal">R$ 0,00</strong></div>
+      </div>
+      <div class="payment-options">
+        <h4>Forma de Pagamento</h4>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="pix" checked>
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>PIX</strong><small>Aprovação imediata</small></div>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="boleto">
+          <div class="payment-option-content">
+            <span class="payment-icon">📄</span>
+            <div class="payment-info"><strong>Boleto</strong><small>Vencimento em 3 dias</small></div>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-avista">
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>Cartão à vista</strong></div>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-parcelado">
+          <div class="payment-option-content">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info"><strong>Cartão Parcelado</strong></div>
+          </div>
+        </label>
+        <div id="installmentsBox" class="installments-box" style="display:none;">
+          <label for="installments">Número de Parcelas:</label>
+          <select id="installments">
+              <option value="2">2x sem juros</option>
+              <option value="3">3x sem juros</option>
+          </select>
+        </div>
+      </div>
+      <button class="payment-confirm-btn" onclick="sendToWhatsApp()" type="button">📱 Finalizar Pedido via WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="user-panel" id="userPanel">
+    <div class="user-panel-content">
+        <div class="user-panel-header">
+            <h3>Minha Conta</h3>
+            <button class="user-panel-close" onclick="closeUserPanel()" type="button" aria-label="Fechar">✕</button>
+        </div>
+        
+        <div class="user-panel-tabs" id="userPanelTabs">
+            <button class="user-panel-tab active" onclick="switchUserTab('login')" type="button">Entrar</button>
+            <button class="user-panel-tab" onclick="switchUserTab('register')" type="button">Cadastrar</button>
+        </div>
+
+        <div class="user-panel-body">
+            <div class="user-tab-content active" id="loginTab">
+                <form onsubmit="userLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">E-mail</label>
+                        <input type="email" id="loginEmail" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Senha</label>
+                        <input type="password" id="loginPassword" required autocomplete="current-password">
+                    </div>
+                    <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
+                        <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
+                    </div>
+                    <button type="submit" class="form-btn">Entrar</button>
+                    <div class="form-error" id="loginError">E-mail ou senha incorretos</div>
+                </form>
+                <div class="form-link">
+                    Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
+                </div>
+            </div>
+
+            <div class="user-tab-content" id="registerTab">
+                <form onsubmit="userRegister(event)">
+                    <div class="form-group">
+                        <label for="registerName">Nome Completo</label>
+                        <input type="text" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">E-mail</label>
+                        <input type="email" id="registerEmail" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Senha</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="form-btn">Criar Conta</button>
+                    <div class="form-error" id="registerError">Erro ao criar conta</div>
+                    <div class="form-success" id="registerSuccess">Conta criada com sucesso!</div>
+                </form>
+                <div class="form-link">
+                    Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
+                </div>
+            </div>
+
+            <div class="user-tab-content" id="userLoggedTab">
+                <div class="user-logged-in">
+                    <h4>Bem-vindo(a), <span id="userNameDisplay"></span>!</h4>
+                    <div class="user-info">
+                        <p><strong>E-mail:</strong> <span id="userEmailDisplay"></span></p>
+                    </div>
+                    <div class="user-actions">
+                        <button class="user-action-btn" onclick="alert('Em breve: Meus Pedidos')" type="button">📦 Meus Pedidos</button>
+                        <button class="user-action-btn logout" onclick="userLogout()" type="button">Sair da Conta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
 
   <footer class="site-footer" role="contentinfo">
     <div class="footer-content">
@@ -726,76 +529,14 @@
       <div class="loading-text">Carregando...</div>
   </div>
 
-  <!-- SCRIPTS REFATORADOS -->
-  <script src="main.js" defer></script> <!-- Funções globais (antigo script2.txt) -->
-  <script src="produto.js" defer></script> <!-- Funções específicas do produto (antigo produtojs.txt) -->
-
-  <script>
-    // Funções de simulação para evitar erro de referência no HTML
-    function saveSettings() {
-      showToast('Configurações salvas (simulado)!', 'success');
-    }
-    function openProductModal() {
-      document.getElementById('productModal').style.display = 'flex';
-    }
-    function openCouponModal() {
-      document.getElementById('couponModal').style.display = 'flex';
-    }
-    function openVideoManager() {
-      document.getElementById('videoManagerModal').style.display = 'flex';
-    }
-    function closeProductModal() {
-      document.getElementById('productModal').style.display = 'none';
-    }
-    function closeCouponModal() {
-      document.getElementById('couponModal').style.display = 'none';
-    }
-    function closeVideoManager() {
-      document.getElementById('videoManagerModal').style.display = 'none';
-    }
-    function switchAdminTab(tab) {
-      document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
-      document.getElementById(tab + 'Tab').classList.add('active');
-      document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
-      document.querySelector(`.admin-tab[onclick*='${tab}']`).classList.add('active');
-    }
-    function limparTodosProdutos() {
-      if (confirm('Tem certeza que deseja limpar TODOS os produtos?')) {
-        showToast('Produtos limpos (simulado)!', 'success');
-      }
-    }
-    function toggleMaxDiscount() {
-      // Simulação de toggle
-    }
-    function handleImageUpload() {
-      showToast('Upload de imagem (simulado)!', 'info');
-    }
-    function toggleUrlInput() {
-      showToast('Toggle URL Input (simulado)!', 'info');
-    }
-    function toggleGradientInput() {
-      showToast('Toggle Gradient Input (simulado)!', 'info');
-    }
-    function addColorToProduct() {
-      showToast('Adicionar Cor (simulado)!', 'info');
-    }
-    function addImageFromUrl() {
-      showToast('Adicionar Imagem por URL (simulado)!', 'info');
-    }
-    function addGradientImage() {
-      showToast('Adicionar Gradiente (simulado)!', 'info');
-    }
-    function handleVideoUpload() {
-      showToast('Upload de vídeo (simulado)!', 'info');
-    }
-    function saveProduct(event) {
-      event.preventDefault();
-      showToast('Produto salvo (simulado)!', 'success');
-    }
-    function saveCoupon(event) {
-      event.preventDefault();
-      showToast('Cupom salvo (simulado)!', 'success');
-    }
-  </script>
+  <script src="js/script2.js" defer></script>\n  <script src="js/produto.js" defer></script>
+  </div>
 </body>
 </html>
+
+
+
+
+
+
+
