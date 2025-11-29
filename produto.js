@@ -1103,47 +1103,41 @@ window.addEventListener('storage', (e) => {
    Modal Pagamento / WhatsApp
    ========================= */
 function openPaymentModal() {
-    const modal = $('paymentModal');
-    const itemsContainer = $('paymentCartItems');
-    const totalContainer = $('paymentTotal');
-    if (!modal || !itemsContainer) return;
+    const modal = document.getElementById('paymentModal');
+    const cartItemsContainer = document.getElementById('paymentCartItems');
+    const totalContainer = document.getElementById('paymentTotal');
 
-    itemsContainer.innerHTML = '';
-    state.cart.forEach(it => {
-        const row = document.createElement('div');
-        row.className = 'payment-cart-item';
+    if (!modal || !cartItemsContainer || !totalContainer) {
+        console.error('Elementos do modal de pagamento não encontrados!');
+        return;
+    }
 
-        const left = document.createElement('div');
-        const name = document.createElement('div');
-        name.className = 'payment-cart-item-name';
-        name.textContent = it.name;
-        const det = document.createElement('div');
-        det.className = 'payment-cart-item-details';
-        det.textContent = `Qtd: ${it.quantity} (${it.selectedSize}/${it.selectedColor})`;
-        left.append(name, det);
+    // Lógica para renderizar itens e total (copiada do script2.js)
+    const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = state.couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
 
-        const right = document.createElement('div');
-        right.style.fontWeight = '700';
-        right.textContent = `R$ ${(safeNumber(it.quantity) * safeNumber(it.price)).toFixed(2)}`;
+    cartItemsContainer.innerHTML = state.cart.map(item => `
+        <div class="payment-cart-item">
+            <div>
+                <div class="payment-cart-item-name">${item.name}</div>
+                <div class="payment-cart-item-details">Qtd: ${item.quantity} × R$ ${item.price.toFixed(2)}</div>
+            </div>
+            <div style="font-weight: 700;">R$ ${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+    `).join('');
 
-        row.append(left, right);
-        itemsContainer.appendChild(row);
-    });
-
-    const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-const discount = state.couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
-if (totalContainer) totalContainer.textContent = `R$ ${total.toFixed(2)}`;
+    totalContainer.textContent = `R$ ${total.toFixed(2)}`;
 
     modal.classList.add('active');
-    setupPaymentListeners();
 }
 
 function closePaymentModal() {
-    const modal = $('paymentModal');
-    if (modal) modal.classList.remove('active');
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 }
-
 function setupPaymentListeners() {
     const opts = document.querySelectorAll('input[name="paymentMethod"]');
     const box = $('installmentsBox');
@@ -1878,6 +1872,7 @@ window.toggleGalleryExpansion = function() {
         }
     }
 };
+
 
 
 
