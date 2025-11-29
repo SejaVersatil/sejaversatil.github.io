@@ -4510,7 +4510,9 @@ function openPaymentModal() {
         couponDiscount,
         cartLength: cart.length
     });
-}
+
+    // --- REMOVIDA CHAVE QUE FECHAVA A FUNÇÃO PREMATURAMENTE AQUI ---
+
     // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
     cartItemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -4585,6 +4587,7 @@ function closePaymentModal() {
     if (modal) {
         modal.classList.remove('active');
     }
+} // --- ADICIONADA CHAVE QUE FALTAVA AQUI ---
 
 function setupPaymentListeners() {
     const opts = document.querySelectorAll('input[name="paymentMethod"]');
@@ -4598,7 +4601,6 @@ function setupPaymentListeners() {
         });
     });
 }
-
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
 async function sendToWhatsApp() {
@@ -6197,6 +6199,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
