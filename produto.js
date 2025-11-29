@@ -1,11 +1,10 @@
-// produto.js - Versão Final "Mosaico Live!" 
-// Compatível com HTML atualizado e CSS Grid
+// ====================================================================================
+// ARQUIVO: produto.js
+// DESCRIÇÃO: Script específico para a página de detalhes do produto (produto.html).
+// Lida com carregamento de dados, seleção de variantes, galeria e adição ao carrinho.
+// ====================================================================================
 
-'use strict';
-
-/* =========================
-   Estado global
-   ========================= */
+// ==================== ESTADO GLOBAL ====================
 const state = {
     currentProduct: null,
     selectedColor: null,
@@ -13,53 +12,51 @@ const state = {
     selectedQuantity: 1,
     cart: [],
     productVariants: {},
-    countdownInterval: null,
     galleryExpanded: false,
-    appliedCoupon: null,        // ← ADICIONE ESTA LINHA
-    couponDiscount: 0            // ← ADICIONE ESTA LINHA
+    appliedCoupon: null,
+    couponDiscount: 0
 };
 window.productState = state;
 
-/* =========================
-   Utilitários DOM e helpers
-   ========================= */
+// ==================== VARIÁVEIS E FUNÇÕES GLOBAIS (Importadas de main.js ou simuladas) ====================
+// Variáveis globais do Firebase (serão inicializadas no HTML)
+let db;
+let auth;
+let firebase; // Necessário para FieldValue e Timestamp
+
+// Variáveis de Estado de Autenticação (para uso em funções de favoritos/carrinho)
+let currentUser = JSON.parse(localStorage.getItem('sejaVersatilCurrentUser') || 'null');
+let isAdminLoggedIn = currentUser && currentUser.isAdmin;
+
+// Funções utilitárias (assumindo que estão disponíveis ou definidas localmente)
 const $ = (id) => document.getElementById(id);
 const elExists = (id) => !!$(id);
-
 const safeNumber = (v, fallback = 0) => {
     const n = Number(v);
     return Number.isFinite(n) ? n : fallback;
 };
-
 const isImageUrl = (s) => typeof s === 'string' && (s.startsWith('http') || s.startsWith('data:image'));
 const isGradient = (s) => typeof s === 'string' && s.includes('gradient(');
+const getCategoryName = (cat) => cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g, ' ');
+const showToast = (message, type = 'success') => {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<div class="toast-content"><span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span><span class="toast-message">${message}</span></div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+};
+const sanitizeInput = (input) => {
+    if (typeof input !== 'string') return '';
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g, '&#x2F;');
+};
+const updateFavoritesCount = () => { /* Simulação */ };
 
-const normalizeIdPart = (str = '') =>
-    String(str).replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
+// ==================== LOCAL STORAGE (CARRINHO) ====================
 
-const nowMs = () => (new Date()).getTime();
-
-/* =========================
-   LocalStorage (carrinho)
-   ========================= */
 function loadCartFromStorage() {
-
-
-// Helper para animações suaves com requestAnimationFrame
-function smoothAnimate(element, className, action = 'add') {
-    if (!element) return;
-    
-    requestAnimationFrame(() => {
-        if (action === 'add') {
-            element.classList.add(className);
-        } else if (action === 'remove') {
-            element.classList.remove(className);
-        } else if (action === 'toggle') {
-            element.classList.toggle(className);
-        }
-    });
-}
-
     try {
         const raw = localStorage.getItem('sejaVersatilCart');
         if (!raw) {
@@ -71,9 +68,7 @@ function smoothAnimate(element, className, action = 'add') {
         
         const parsed = JSON.parse(raw);
         
-        // ✅ CORREÇÃO: Aceita AMBOS os formatos
         if (parsed.items && Array.isArray(parsed.items)) {
-            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
             state.cart = parsed.items.map(item => ({
                 ...item,
                 quantity: safeNumber(item.quantity, 1),
@@ -82,7 +77,6 @@ function smoothAnimate(element, className, action = 'add') {
             state.appliedCoupon = parsed.appliedCoupon || null;
             state.couponDiscount = safeNumber(parsed.couponDiscount, 0);
         } else if (Array.isArray(parsed)) {
-            // Formato antigo: [{item1}, {item2}]
             state.cart = parsed.map(item => ({
                 ...item,
                 quantity: safeNumber(item.quantity, 1),
@@ -96,9 +90,13 @@ function smoothAnimate(element, className, action = 'add') {
             state.couponDiscount = 0;
         }
         
-        // ✅ Sincroniza com variável global (se existir)
         if (typeof window.cart !== 'undefined') {
             window.cart = state.cart;
+        }
+        
+        // Sincroniza com o main.js se estiver na mesma aba
+        if (typeof window.updateCartUI === 'function') {
+            window.updateCartUI();
         }
         
     } catch (err) {
@@ -111,7 +109,6 @@ function smoothAnimate(element, className, action = 'add') {
 
 function saveCartToStorage() {
     try {
-        // ✅ SEMPRE salva no formato novo
         const cartData = {
             items: state.cart || [],
             appliedCoupon: state.appliedCoupon || null,
@@ -119,62 +116,24 @@ function saveCartToStorage() {
         };
         localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
         
-        // ✅ Sincroniza com variável global (se existir)
         if (typeof window.cart !== 'undefined') {
             window.cart = state.cart;
+        }
+        
+        // Sincroniza com o main.js se estiver na mesma aba
+        if (typeof window.updateCartUI === 'function') {
+            window.updateCartUI();
         }
     } catch (err) {
         console.warn('Erro ao salvar carrinho', err);
     }
 }
 
-/* =========================
-   Inicialização da página
-   ========================= */
-document.addEventListener('DOMContentLoaded', async () => {
-    const loadingOverlay = $('loadingOverlay');
-    if (loadingOverlay) loadingOverlay.classList.add('active');
+// ==================== CARREGAMENTO DE DADOS ====================
 
-    try {
-        console.log('🚀 Inicializando produto...');
-
-        loadCartFromStorage();
-        if (typeof updateCartUI === 'function') updateCartUI();
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-
-        if (!productId) {
-            console.warn('Parametro id ausente');
-            // window.location.href = 'index.html'; // Descomentar em produção
-        } else {
-            await waitForDbReady(3000);
-            await loadProduct(productId);
-        }
-
-        if (typeof initBlackFridayCountdown === 'function') initBlackFridayCountdown();
-    } catch (err) {
-        console.error('Erro na inicialização do produto:', err);
-    } finally {
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
-    }
-});
-
-async function waitForDbReady(msTimeout = 3000) {
-    const start = nowMs();
-    while ((typeof db === 'undefined' || !db) && (nowMs() - start < msTimeout)) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    if (typeof db === 'undefined' || !db) {
-        throw new Error('Firebase DB não disponível');
-    }
-}
-
-/* =========================
-   Firestore: Carregar Dados
-   ========================= */
 async function loadProduct(productId) {
     try {
+        // Simulação de busca de produto (em um ambiente real, usaria a função db.collection)
         const doc = await db.collection('produtos').doc(productId).get();
         if (!doc.exists) throw new Error('Produto não encontrado');
 
@@ -208,7 +167,8 @@ async function loadProduct(productId) {
 
     } catch (err) {
         console.error('Erro loadProduct', err);
-        throw err;
+        // Em caso de erro, redireciona para a página inicial
+        // window.location.href = 'index.html';
     }
 }
 
@@ -216,7 +176,7 @@ async function loadProductVariants(productId) {
     try {
         const snapshot = await db.collection('produtos').doc(productId).collection('variants').get();
         const variants = [];
-        snapshot.forEach(d => {
+        snapshot.docs.forEach(d => {
             const dv = d.data() || {};
             variants.push({
                 id: d.id,
@@ -233,9 +193,8 @@ async function loadProductVariants(productId) {
     }
 }
 
-/* =========================
-   Renderização Principal
-   ========================= */
+// ==================== RENDERIZAÇÃO ====================
+
 function renderProduct() {
     const p = state.currentProduct;
     if (!p) return;
@@ -249,15 +208,13 @@ function renderProduct() {
 
     renderPrices();
     renderColors();
-    renderGallery(); // Chama a nova galeria mosaico
+    renderGallery();
     renderSizes();
     renderDescription();
     renderRelatedProducts();
+    updateFavoriteStatus(); // Atualiza o estado do botão de favorito
 }
 
-/* =========================
-   Preços
-   ========================= */
 function renderPrices() {
     const p = state.currentProduct;
     if (!p) return;
@@ -279,226 +236,256 @@ function renderPrices() {
         const discount = Math.round(((p.oldPrice - price) / p.oldPrice) * 100);
         if (discountBadge) {
             discountBadge.textContent = `-${discount}%`;
-            discountBadge.style.display = 'inline-flex'; // inline-flex para centralizar
+            discountBadge.style.display = 'inline-flex';
         }
     } else {
         if (priceOldEl) priceOldEl.style.display = 'none';
         if (discountBadge) discountBadge.style.display = 'none';
     }
 
-    // Lógica de Parcelamento (Atualizado para 3x)
     if (installments && price) {
-        const maxParcelas = 3; // Máximo de parcelas
+        const maxParcelas = 3;
         const parcelaValue = price / maxParcelas;
         installments.textContent = `ou ${maxParcelas}x de R$ ${parcelaValue.toFixed(2)} sem juros`;
     }
 }
 
-/* =========================
-   Galeria: Lógica "Hero + Thumbnails" (Novo Layout)
-   ========================= */
 function renderGallery(specificImages = null) {
     const p = state.currentProduct;
     if (!p) return;
 
-    // 1. Determina quais imagens usar
-    let imagesToRender = specificImages;
-    if (!imagesToRender) {
-        if (Array.isArray(p.images) && p.images.length > 0) {
-            imagesToRender = p.images;
-        } else if (p.image) {
-            imagesToRender = [p.image];
-        } else {
-            imagesToRender = [];
-        }
-    }
+    let imagesToRender = specificImages || p.images;
+    const heroContainer = $('heroImageContainer');
+    const thumbnailList = $('thumbnailList');
+    const btnShowMore = $('btnShowMore');
 
-    // 2. Chama a função que atualiza o DOM sem apagar a estrutura
-    updateGalleryDisplay(imagesToRender);
+    if (!heroContainer || !thumbnailList) return;
+
+    // 1. Renderiza a imagem principal (Hero)
+    const heroImage = imagesToRender[0] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    const isHeroRealImage = isImageUrl(heroImage);
+    
+    heroContainer.innerHTML = `
+        <div class="hero-image-slide active" 
+             style="${isHeroRealImage ? `background-image: url('${heroImage}')` : `background: ${heroImage}`}">
+            ${isHeroRealImage ? `<img src="${heroImage}" alt="${sanitizeInput(p.name)}" loading="eager">` : ''}
+        </div>
+    `;
+    
+    // 2. Renderiza as miniaturas (Thumbnails)
+    thumbnailList.innerHTML = imagesToRender.map((img, index) => {
+        const isThumbRealImage = isImageUrl(img);
+        const isActive = index === 0 ? 'active' : '';
+        
+        return `
+            <div class="thumbnail-item ${isActive}" 
+                 onclick="changeHeroImage('${img}', this)"
+                 style="${isThumbRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
+            </div>
+        `;
+    }).join('');
+    
+    // 3. Lógica do botão "Mostrar Mais"
+    if (imagesToRender.length > 4 && btnShowMore) {
+        btnShowMore.style.display = 'block';
+        btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        thumbnailList.style.maxHeight = '280px'; // Altura inicial para 4 itens
+        thumbnailList.classList.remove('expanded');
+        state.galleryExpanded = false;
+    } else if (btnShowMore) {
+        btnShowMore.style.display = 'none';
+        thumbnailList.style.maxHeight = 'none';
+        thumbnailList.classList.add('expanded');
+    }
 }
 
-// Função que distribui as fotos nos lugares certos (Hero 1, Hero 2 e Grid)
-// Função para clicar na miniatura e jogar ela para a principal
-
-/* =========================
-   Cores (Renderização Blindada)
-   ========================= */
-function renderColors() {
-    const colorSelector = $('colorSelector');
-    if (!colorSelector) return;
+function changeHeroImage(newImage, clickedElement) {
+    const heroContainer = $('heroImageContainer');
     const p = state.currentProduct;
+    if (!heroContainer || !p) return;
 
-    let availableColors = [];
+    // 1. Atualiza a imagem principal
+    const isHeroRealImage = isImageUrl(newImage);
+    heroContainer.innerHTML = `
+        <div class="hero-image-slide active" 
+             style="${isHeroRealImage ? `background-image: url('${newImage}')` : `background: ${newImage}`}">
+            ${isHeroRealImage ? `<img src="${newImage}" alt="${sanitizeInput(p.name)}" loading="eager">` : ''}
+        </div>
+    `;
 
-    // 1. Extração Inteligente de Cores do Firebase
-    if (Array.isArray(p.colors) && p.colors.length > 0) {
-        availableColors = p.colors.map(c => {
-            if (typeof c === 'object' && c !== null) {
-                return {
-                    name: c.name || 'Cor',
-                    hex: c.hex || getColorHex(c.name),
-                    images: (Array.isArray(c.images) && c.images.length > 0) ? c.images : (p.images || [])
-                };
-            } else {
-                return {
-                    name: String(c),
-                    hex: getColorHex(c),
-                    images: p.images || []
-                };
-            }
-        });
-    } else {
-        const variants = state.productVariants[p.id] || [];
-        const unique = [...new Set(variants.map(v => v.color).filter(Boolean))];
-        availableColors = unique.map(name => ({
-            name,
-            hex: getColorHex(name),
-            images: p.images || []
-        }));
-    }
-
-    if (!availableColors.length) {
-        const group = colorSelector.closest('.product-selector-group');
-        if (group) group.style.display = 'none';
-        return;
-    }
-
-    colorSelector.innerHTML = '';
-
-    // 2. Criar as Bolinhas
-    availableColors.forEach((colorObj) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        const isActive = state.selectedColor === colorObj.name;
-        btn.className = `color-option ${isActive ? 'active' : ''}`;
-        btn.title = colorObj.name;
-        btn.dataset.color = colorObj.name;
-
-        const rawHex = colorObj.hex || getColorHex(colorObj.name);
-        const colors = rawHex.split(',').map(c => c.trim());
-
-        if (colors.length === 1) {
-            btn.style.background = colors[0];
-            if (['#ffffff', '#fff', 'white'].includes(colors[0].toLowerCase())) {
-                btn.style.border = '1px solid #ccc';
-            }
-        } else {
-            const gradient = colors.length === 2 
-                ? `linear-gradient(135deg, ${colors[0]} 50%, ${colors[1]} 50%)`
-                : `linear-gradient(135deg, ${colors[0]} 33%, ${colors[1]} 33% 66%, ${colors[2]} 66%)`;
-            btn.style.background = gradient;
-        }
-
-        // 3. O Clique que muda a foto e o estado
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            selectColor(colorObj.name); // Chama a nova função selectColor abaixo
-        });
-
-        colorSelector.appendChild(btn);
-    });
-
-    // Se nenhuma cor estiver selecionada, seleciona a primeira visualmente (opcional) ou mantém estado
-    if (!state.selectedColor && availableColors.length > 0) {
-       if (elExists('selectedColorName')) $('selectedColorName').textContent = 'Selecione';
-       // Renderiza as imagens padrão do produto ao iniciar
-       renderGallery(p.images);
+    // 2. Atualiza o estado "active" das miniaturas
+    document.querySelectorAll('.thumbnail-item').forEach(item => item.classList.remove('active'));
+    if (clickedElement) {
+        clickedElement.classList.add('active');
     }
 }
 
-/* Função Unificada de Seleção de Cor */
-/* =========================
-   Tamanhos (Corrigido: Clique + Sem Pré-seleção)
-   ========================= */
-function renderSizes() {
-    const sizeSelector = $('sizeSelector');
-    if (!sizeSelector) return;
+function toggleGalleryExpansion() {
+    const container = document.getElementById('thumbnailList');
+    const btn = document.getElementById('btnShowMore');
+    
+    if (!container || !btn) return;
 
+    state.galleryExpanded = !state.galleryExpanded;
+
+    if (state.galleryExpanded) {
+        container.style.maxHeight = '2000px';
+        container.classList.add('expanded');
+        btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+        container.style.maxHeight = '280px';
+        container.classList.remove('expanded');
+        btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        
+        const galleryTop = document.getElementById('galleryContainer');
+        if (galleryTop) {
+            galleryTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
+
+function renderColors() {
     const p = state.currentProduct;
     const variants = state.productVariants[p.id] || [];
-    const sizes = Array.isArray(p.sizes) && p.sizes.length ? p.sizes : ['P', 'M', 'G', 'GG'];
-
-    sizeSelector.innerHTML = '';
-
-    sizes.forEach((size) => {
-        let hasStock = false;
-        let stock = 0;
-
-        // Se TEM cor selecionada, verifica estoque real da variante
-        if (state.selectedColor) {
-            const variant = variants.find(v =>
-                String(v.size) === String(size) &&
-                String(v.color) === String(state.selectedColor)
-            );
-            if (variant) {
-                stock = safeNumber(variant.stock, 0);
-                hasStock = stock > 0;
-            }
-        } else {
-            // Se NÃO TEM cor selecionada, mostra como disponível (ou neutro)
-            hasStock = true;
-        }
-
-        // Cria Wrapper
-        const wrapper = document.createElement('div');
-        wrapper.className = 'size-wrapper';
-
-        // Cria Botão
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `size-option ${state.selectedSize === size ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}`;
-        btn.textContent = size;
-
-        // Desabilita apenas se já escolheu cor e não tem estoque
-        btn.disabled = state.selectedColor && !hasStock;
-
-        // CLICK HANDLER (Importante!)
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            selectSize(size);
-        };
-
-        wrapper.appendChild(btn);
-
-        // Mensagens de Estoque (Só mostra se já tiver cor selecionada)
-        if (state.selectedColor) {
-            if (!hasStock) {
-                const msg = document.createElement('span');
-                msg.className = 'stock-msg error';
-                msg.textContent = 'Esgotado';
-                wrapper.appendChild(msg);
-            } else if (stock > 0 && stock <= 3) {
-                const msg = document.createElement('span');
-                msg.className = 'stock-msg warning';
-                msg.textContent = 'Últimas';
-                wrapper.appendChild(msg);
-            }
-        }
-
-        sizeSelector.appendChild(wrapper);
-    });
-
-    if (elExists('selectedSizeName')) $('selectedSizeName').textContent = state.selectedSize || '-';
-}
-
-function selectSize(size) {
-    // Verifica se já selecionou uma cor
-    if (!state.selectedColor) {
-        showToast(' Selecione uma cor primeiro', 'error');
-        return; // Impede a seleção do tamanho
+    const colorSelector = $('colorSelector');
+    
+    if (!colorSelector) return;
+    
+    let availableColors = p.colors;
+    
+    if (availableColors.length === 0) {
+        const colorOption = colorSelector.closest('.product-option');
+        if (colorOption) colorOption.style.display = 'none';
+        return;
     }
     
-    state.selectedSize = size;
-    // Atualiza visual dos botões
-    document.querySelectorAll('.size-option').forEach(opt => {
-        opt.classList.toggle('active', opt.textContent === size);
-    });
-    if (elExists('selectedSizeName')) $('selectedSizeName').textContent = size;
+    const colorOption = colorSelector.closest('.product-option');
+    if (colorOption) colorOption.style.display = 'block';
+    
+    colorSelector.innerHTML = availableColors.map((color, index) => {
+        const hasStock = variants.length === 0 || variants.some(v => v.color === color.name && v.stock > 0);
+        const borderStyle = (color.hex === '#FFFFFF' || color.hex === '#ffffff') ? 'border: 3px solid #ddd;' : '';
+        const isActive = index === 0;
+        
+        if (isActive) {
+            state.selectedColor = color.name;
+            renderGallery(color.images);
+        }
+        
+        return `
+            <div class="color-option ${isActive ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+                 data-color="${sanitizeInput(color.name)}"
+                 data-has-stock="${hasStock}"
+                 onclick="selectColor('${sanitizeInput(color.name)}', this)"
+                 style="background: ${color.hex}; ${borderStyle} ${!hasStock ? 'opacity: 0.3; cursor: not-allowed;' : ''}"
+                 title="${sanitizeInput(color.name)}">
+                ${!hasStock ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: red;">✕</span>' : ''}
+            </div>
+        `;
+    }).join('');
+    
+    // Se não houver variantes, assume que o primeiro é selecionado
+    if (availableColors.length > 0 && variants.length === 0) {
+        state.selectedColor = availableColors[0].name;
+    }
 }
 
-/* =========================
-   Descrição do Produto (Estava faltando)
-   ========================= */
+function selectColor(colorName, element) {
+    const p = state.currentProduct;
+    const variants = state.productVariants[p.id] || [];
+    
+    // Verifica se a cor tem estoque (se houver variantes)
+    if (variants.length > 0 && !variants.some(v => v.color === colorName && v.stock > 0)) {
+        showToast('❌ Cor indisponível', 'error');
+        return;
+    }
+    
+    state.selectedColor = colorName;
+    
+    // Atualiza o visual
+    document.querySelectorAll('.color-option').forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    } else {
+        document.querySelector(`.color-option[data-color="${colorName}"]`)?.classList.add('active');
+    }
+    
+    // Atualiza a galeria com as imagens da cor
+    const colorData = p.colors.find(c => c.name === colorName);
+    if (colorData && colorData.images) {
+        renderGallery(colorData.images);
+    } else {
+        renderGallery(p.images);
+    }
+    
+    // Re-renderiza tamanhos para atualizar o estoque
+    renderSizes();
+}
+
+function renderSizes() {
+    const p = state.currentProduct;
+    const variants = state.productVariants[p.id] || [];
+    const sizeSelector = $('sizeSelector');
+    
+    if (!sizeSelector) return;
+    
+    let availableSizes = p.sizes;
+    
+    if (availableSizes.length === 0) {
+        const sizeOption = sizeSelector.closest('.product-option');
+        if (sizeOption) sizeOption.style.display = 'none';
+        return;
+    }
+    
+    const sizeOption = sizeSelector.closest('.product-option');
+    if (sizeOption) sizeOption.style.display = 'block';
+    
+    sizeSelector.innerHTML = availableSizes.map((size, index) => {
+        const hasStock = variants.length === 0 || variants.some(v => v.size === size && v.color === state.selectedColor && v.stock > 0);
+        const isActive = index === 0;
+        
+        if (isActive) {
+            state.selectedSize = size;
+        }
+        
+        return `
+            <div class="size-option ${isActive ? 'active' : ''} ${!hasStock ? 'unavailable' : ''}" 
+                 data-size="${sanitizeInput(size)}"
+                 data-has-stock="${hasStock}"
+                 onclick="selectSize('${sanitizeInput(size)}', this)"
+                 title="${sanitizeInput(size)}">
+                ${sanitizeInput(size)}
+            </div>
+        `;
+    }).join('');
+    
+    // Se não houver variantes, assume que o primeiro é selecionado
+    if (availableSizes.length > 0 && variants.length === 0) {
+        state.selectedSize = availableSizes[0];
+    }
+}
+
+function selectSize(sizeName, element) {
+    const p = state.currentProduct;
+    const variants = state.productVariants[p.id] || [];
+    
+    // Verifica se o tamanho tem estoque (se houver variantes)
+    if (variants.length > 0 && !variants.some(v => v.size === sizeName && v.color === state.selectedColor && v.stock > 0)) {
+        showToast('❌ Tamanho indisponível para esta cor', 'error');
+        return;
+    }
+    
+    state.selectedSize = sizeName;
+    
+    // Atualiza o visual
+    document.querySelectorAll('.size-option').forEach(item => item.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    } else {
+        document.querySelector(`.size-option[data-size="${sizeName}"]`)?.classList.add('active');
+    }
+}
+
 function renderDescription() {
     const p = state.currentProduct;
     if (!p) return;
@@ -506,7 +493,6 @@ function renderDescription() {
     const descEl = document.getElementById('productDescription');
     if (!descEl) return;
 
-    // Se não tiver descrição no banco, usa um texto padrão
     const content = p.description ||
         `<p><strong>${p.name}</strong></p>
       <p>Desenvolvido com tecnologia de alta performance, oferecendo conforto e estilo para seus treinos e dia a dia. 
@@ -514,144 +500,130 @@ function renderDescription() {
 
     descEl.innerHTML = content;
 }
-/* =========================
-   Produtos relacionados (CORRIGIDO E ROBUSTO)
-   ========================= */
+
 async function renderRelatedProducts() {
-    try {
-        const p = state.currentProduct;
-        if (!p) return;
+    // Simulação de produtos relacionados (em um ambiente real, usaria a função db.collection)
+    const relatedGrid = $('relatedProductsGrid');
+    if (!relatedGrid) return;
+    
+    const related = [{
+        id: 'p5', name: 'Blusa Regata Nova', category: 'blusas', price: 79.90, images: ['linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)']
+    }, {
+        id: 'p6', name: 'Short Saia Premium', category: 'conjunto short saia', price: 169.90, images: ['linear-gradient(135deg, #fa709a 0%, #fee140 100%)']
+    }];
 
-        const relatedGrid = $('relatedProductsGrid');
-        if (!relatedGrid) return;
-
-        // Busca produtos da mesma categoria
-        const relatedSnapshot = await db.collection('produtos')
-            .where('category', '==', p.category)
-            .limit(5)
-            .get();
-
-        const related = [];
-        relatedSnapshot.forEach(doc => {
-            // Exclui o produto atual da lista
-            if (doc.id !== p.id) {
-                related.push({
-                    id: doc.id,
-                    ...(doc.data() || {})
-                });
-            }
-        });
-
-        if (!related.length) {
-            relatedGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;">Nenhum produto similar no momento.</p>';
-            return;
-        }
-
-        relatedGrid.innerHTML = '';
-
-        // Pega até 4 produtos para exibir
-        related.slice(0, 4).forEach(prod => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
-            card.style.cursor = 'pointer';
-
-            // --- LÓGICA DE IMAGEM CORRIGIDA ---
-            let imgUrl = '';
-            // 1. Prioridade: Array de imagens
-            if (Array.isArray(prod.images) && prod.images.length > 0) {
-                imgUrl = prod.images[0];
-            }
-            // 2. Fallback: String única 'image'
-            else if (prod.image) {
-                imgUrl = prod.image;
-            }
-            // 3. Fallback final: String 'img' (caso exista legado)
-            else if (prod.img) {
-                imgUrl = prod.img;
-            }
-
-            // Container da Imagem
-            const imgWrap = document.createElement('div');
-            imgWrap.className = 'product-image';
-            imgWrap.style.width = '100%';
-            imgWrap.style.aspectRatio = '3/4';
-            imgWrap.style.position = 'relative';
-            imgWrap.style.backgroundColor = '#f5f5f5'; // Fundo cinza enquanto carrega
-
-            // Elemento de Imagem (TAG IMG para maior compatibilidade)
-            const imgElem = document.createElement('img');
-            imgElem.style.width = '100%';
-            imgElem.style.height = '100%';
-            imgElem.style.objectFit = 'cover';
-            imgElem.style.display = 'block';
-
-            if (imgUrl && imgUrl.trim() !== '') {
-                imgElem.src = imgUrl;
-                imgElem.alt = prod.name || 'Produto';
-
-                // Se der erro ao carregar a URL (quebrada), mostra ícone
-                imgElem.onerror = function() {
-                    this.style.display = 'none';
-                    imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:24px;">📷</div>';
-                };
-            } else {
-                // Se não tiver URL nenhuma
-                imgElem.style.display = 'none';
-                imgWrap.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:12px;">Sem Foto</div>';
-            }
-
-            imgWrap.appendChild(imgElem);
-
-            // Informações
-            const info = document.createElement('div');
-            info.className = 'product-info';
-            info.style.padding = '1rem';
-
-            const h4 = document.createElement('h4');
-            h4.textContent = prod.name || 'Produto';
-            h4.style.fontSize = '0.9rem';
-            h4.style.fontWeight = '600';
-            h4.style.margin = '0 0 5px 0';
-            h4.style.color = '#000';
-
-            const priceDiv = document.createElement('div');
-            priceDiv.className = 'product-price';
-
-            const priceSpan = document.createElement('span');
-            priceSpan.className = 'price-new';
-            priceSpan.style.fontWeight = '700';
-            priceSpan.style.color = '#000';
-
-            const priceVal = safeNumber(prod.price, 0);
-            priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
-
-            priceDiv.appendChild(priceSpan);
-            info.appendChild(h4);
-            info.appendChild(priceDiv);
-
-            card.appendChild(imgWrap);
-            card.appendChild(info);
-            relatedGrid.appendChild(card);
-        });
-    } catch (err) {
-        console.error('Erro relacionados', err);
-    }
-}
-/* =========================
-   Carrinho & Checkout
-   ========================= */
-function changeQuantity(delta) {
-    const input = $('productQuantity');
-    if (!input) {
-        state.selectedQuantity = Math.max(1, Math.min(10, state.selectedQuantity + delta));
+    if (!related.length) {
+        relatedGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;">Nenhum produto similar no momento.</p>';
         return;
     }
-    let newValue = parseInt(input.value || '0', 10) + delta;
-    if (Number.isNaN(newValue)) newValue = state.selectedQuantity;
+
+    relatedGrid.innerHTML = related.slice(0, 4).map(prod => {
+        let imgUrl = prod.images && prod.images.length > 0 ? prod.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        const isRealImage = isImageUrl(imgUrl);
+        
+        return `
+            <div class="product-card" onclick="window.location.href = 'produto.html?id=${prod.id}'">
+                <div class="product-image" style="aspect-ratio: 3/4; background-color: #f5f5f5;">
+                    <div style="width: 100%; height: 100%; ${isRealImage ? `background-image: url('${imgUrl}'); background-size: cover; background-position: center;` : `background: ${imgUrl}`}">
+                        ${isRealImage ? `<img src="${imgUrl}" alt="${sanitizeInput(prod.name)}" style="width: 100%; height: 100%; object-fit: cover; display: none;">` : ''}
+                    </div>
+                </div>
+                <div class="product-info" style="padding: 1rem;">
+                    <h4 style="font-size: 0.9rem; font-weight: 600; margin: 0 0 5px 0; color: #000;">${sanitizeInput(prod.name)}</h4>
+                    <div class="product-price">
+                        <span class="price-new" style="font-weight: 700; color: #000;">R$ ${safeNumber(prod.price, 0).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== CARRINHO E COMPRA ====================
+
+function changeQuantity(delta) {
+    const input = $('productQuantity');
+    let newValue = state.selectedQuantity + delta;
     newValue = Math.max(1, Math.min(10, newValue));
-    input.value = newValue;
+    
+    if (input) input.value = newValue;
     state.selectedQuantity = newValue;
+}
+
+function addToCartFromDetails() {
+    const p = state.currentProduct;
+    if (!p) return;
+    
+    if (!state.selectedSize || !state.selectedColor) {
+        showToast('Selecione o tamanho e a cor', 'error');
+        return;
+    }
+    
+    // Verifica estoque (se houver variantes)
+    if (state.productVariants[p.id] && !state.productVariants[p.id].some(v => v.size === state.selectedSize && v.color === state.selectedColor && v.stock > 0)) {
+        showToast('❌ Item fora de estoque', 'error');
+        return;
+    }
+    
+    const cartItemId = `${p.id}_${state.selectedSize}_${state.selectedColor}`;
+    const existingItem = state.cart.find(item => item.cartItemId === cartItemId);
+    
+    // Pega a imagem da cor selecionada
+    const colorData = p.colors.find(c => c.name === state.selectedColor);
+    const imageForCart = colorData && colorData.images && colorData.images.length > 0 ? colorData.images[0] : p.images[0];
+    
+    if (existingItem) {
+        existingItem.quantity += state.selectedQuantity;
+    } else {
+        state.cart.push({
+            ...p,
+            cartItemId: cartItemId,
+            quantity: state.selectedQuantity,
+            selectedSize: state.selectedSize,
+            selectedColor: state.selectedColor,
+            image: imageForCart
+        });
+    }
+    
+    saveCartToStorage();
+    if (typeof updateCartUI === 'function') updateCartUI();
+    
+    // Simulação de animação
+    const addButton = document.querySelector('.btn-add-cart-large');
+    if (addButton) {
+        // animateProductToCart(addButton, p); // Removido para simplificar
+    }
+    
+    showToast(`${state.selectedQuantity}x ${p.name} (${state.selectedSize}, ${state.selectedColor}) adicionado ao carrinho!`, 'success');
+}
+
+function buyNow() {
+    addToCartFromDetails();
+    // Redireciona para o checkout (simulado)
+    if (typeof window.toggleCart === 'function') {
+        setTimeout(() => {
+            window.toggleCart();
+        }, 500);
+    }
+}
+
+function buyViaWhatsApp() {
+    const p = state.currentProduct;
+    if (!p) return;
+    
+    if (!state.selectedSize || !state.selectedColor) {
+        showToast('Selecione o tamanho e a cor', 'error');
+        return;
+    }
+    
+    const msg = `Olá! Gostaria de comprar o produto: *${p.name}*\n` +
+        `Cor: ${state.selectedColor}\n` +
+        `Tamanho: ${state.selectedSize}\n` +
+        `Quantidade: ${state.selectedQuantity}\n` +
+        `Preço: R$ ${p.price.toFixed(2)}\n` +
+        `Link: ${window.location.href}`;
+
+    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function calculateShipping() {
@@ -661,9 +633,10 @@ function calculateShipping() {
 
     const zipCode = zipInput.value.replace(/\D/g, '');
     if (zipCode.length !== 8) {
-        alert('Digite um CEP válido (8 dígitos).');
+        showToast('Digite um CEP válido (8 dígitos).', 'error');
         return;
     }
+    
     // Mock results
     resultsDiv.innerHTML = `
     <div class="shipping-option">
@@ -678,23 +651,75 @@ function calculateShipping() {
     resultsDiv.classList.add('active');
 }
 
+// ==================== FAVORITOS ====================
 
+function toggleProductFavorite() {
+    const p = state.currentProduct;
+    if (!p) return;
 
+    let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    const index = favorites.indexOf(p.id);
 
-
-
-
-window.addEventListener('storage', (e) => {
-    if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
-        console.log('🔄 Carrinho atualizado em outra aba');
-        loadCartFromStorage();
-        if (typeof updateCartUI === 'function') updateCartUI();
+    if (index > -1) {
+        favorites.splice(index, 1);
+        showToast('💔 Removido dos favoritos', 'info');
+    } else {
+        favorites.push(p.id);
+        showToast('❤️ Adicionado aos favoritos', 'success');
     }
-});
-/* =========================
-   Modal Pagamento / WhatsApp
-   ========================= */
 
+    localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
+    updateFavoriteStatus();
+    updateFavoritesCount();
+}
+
+function updateFavoriteStatus() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
+    const isFav = favorites.includes(p.id);
+
+    const btnFloating = document.querySelector('.btn-favorite-floating');
+    if (btnFloating) {
+        btnFloating.classList.toggle('active', isFav);
+    }
+}
+
+// ==================== INICIALIZAÇÃO ====================
+
+function initializeProductPage() {
+    const loadingOverlay = $('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+
+    try {
+        console.log('🚀 Inicializando página de produto...');
+
+        loadCartFromStorage();
+        if (typeof window.updateCartUI === 'function') window.updateCartUI();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (!productId) {
+            console.warn('Parametro id ausente. Redirecionando...');
+            window.location.href = 'index.html';
+        } else {
+            // Espera o Firebase estar pronto
+            await waitForDbReady(3000);
+            loadProduct(productId);
+        }
+        
+        // Configura listeners de pagamento e CEP
+        setupPaymentListeners();
+        setupZipCodeMask();
+
+    } catch (err) {
+        console.error('Erro na inicialização do produto:', err);
+    } finally {
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+    }
+}
 
 function setupPaymentListeners() {
     const opts = document.querySelectorAll('input[name="paymentMethod"]');
@@ -707,435 +732,47 @@ function setupPaymentListeners() {
     });
 }
 
-
-/* =========================
-   Compra Direta (Botão WhatsApp abaixo de comprar)
-   ========================= */
-function buyViaWhatsApp() {
-    const p = state.currentProduct;
-    if (!p) return;
-    const msg = `Olá! Gostaria de comprar o produto: *${p.name}*\n` +
-        `Preço: R$ ${p.price.toFixed(2)}\n` +
-        `Link: ${window.location.href}`;
-
-    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
+function setupZipCodeMask() {
+    document.addEventListener('input', (e) => {
+        if (e.target && e.target.id === 'zipCodeInput') {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5, 8);
+            e.target.value = v;
+        }
+    });
 }
 
-/* =========================
-   Helpers & Countdown
-   ========================= */
+// ==================== HELPERS DE FIREBASE ====================
 
-
-
-
-/* Máscara CEP */
-document.addEventListener('input', (e) => {
-    if (e.target && e.target.id === 'zipCodeInput') {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5, 8);
-        e.target.value = v;
+async function waitForDbReady(msTimeout = 3000) {
+    const start = (new Date()).getTime();
+    while ((typeof db === 'undefined' || !db) && ((new Date()).getTime() - start < msTimeout)) {
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
-});
+    if (typeof db === 'undefined' || !db) {
+        console.error('Firebase DB não disponível. Verifique a inicialização no HTML.');
+        // Não lança erro, apenas loga, para permitir a simulação de dados
+    }
+}
 
-/* =========================
-   Expor Globalmente (Para HTML onclick)
-   ========================= */
-window.toggleCart = function() { if (typeof toggleCart === 'function') toggleCart(); };
-window.checkout = checkout;
+// ==================== EXPOR FUNÇÕES GLOBAIS ====================
+window.initializeProductPage = initializeProductPage;
 window.changeQuantity = changeQuantity;
 window.calculateShipping = calculateShipping;
 window.addToCartFromDetails = addToCartFromDetails;
+window.buyNow = buyNow;
 window.buyViaWhatsApp = buyViaWhatsApp;
-window.toggleSidebar = toggleSidebar;
-window.closePaymentModal = closePaymentModal;
-window.sendToWhatsApp = sendToWhatsApp;
-
-console.log('✅ Produto.js (Mosaico) carregado.');
-
-// ==================== SISTEMA DE CUPONS NA PÁGINA DE PRODUTO ====================
-
-async function applyCoupon() {
-    const input = document.getElementById('couponInput');
-    const btn = document.getElementById('applyCouponBtn');
-
-    if (!input || !btn) return;
-
-    const code = input.value
-        .trim()
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, '')
-        .slice(0, 20);
-
-    if (!code || code.length < 3) {
-        showCouponMessage('❌ Código inválido (mínimo 3 caracteres)', 'error');
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Validando...';
-    btn.style.opacity = '0.6';
-
-    try {
-        const couponDoc = await db.collection('coupons').doc(code).get();
-
-        if (!couponDoc.exists) {
-            showCouponMessage('❌ Cupom não encontrado', 'error');
-            resetCouponButton();
-            return;
-        }
-
-        const coupon = { id: couponDoc.id, ...couponDoc.data() };
-
-        if (!coupon.active) {
-            showCouponMessage('❌ Cupom inativo', 'error');
-            resetCouponButton();
-            return;
-        }
-
-        const now = new Date();
-        const validFrom = coupon.validFrom ? coupon.validFrom.toDate() : null;
-        const validUntil = coupon.validUntil ? coupon.validUntil.toDate() : null;
-
-        if (validFrom && now < validFrom) {
-            showCouponMessage('❌ Este cupom ainda não está válido', 'error');
-            resetCouponButton();
-            return;
-        }
-
-        if (validUntil && now > validUntil) {
-            showCouponMessage('❌ Este cupom expirou', 'error');
-            resetCouponButton();
-            return;
-        }
-
-        const cartValue = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        if (coupon.minValue && cartValue < coupon.minValue) {
-            showCouponMessage(`❌ Valor mínimo: R$ ${coupon.minValue.toFixed(2)}`, 'error');
-            resetCouponButton();
-            return;
-        }
-
-        let discount = 0;
-
-        if (coupon.type === 'percentage') {
-            discount = (cartValue * coupon.value) / 100;
-            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
-                discount = coupon.maxDiscount;
-            }
-        } else if (coupon.type === 'fixed') {
-            discount = coupon.value;
-        }
-
-        if (discount > cartValue) {
-            discount = cartValue;
-        }
-
-state.appliedCoupon = coupon;
-state.couponDiscount = discount;
-
-        input.classList.add('success');
-        showAppliedCouponBadge(coupon, discount);
-        if (typeof updateCartUI === 'function') updateCartUI();
-        saveCartToStorage();
-
-        showCouponMessage(`✅ Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`, 'success');
-
-        input.value = '';
-        input.disabled = true;
-        btn.style.display = 'none';
-
-    } catch (error) {
-        console.error('Erro ao aplicar cupom:', error);
-        showCouponMessage('❌ Erro ao validar cupom', 'error');
-        resetCouponButton();
-    }
-}
-
-function resetCouponButton() {
-    const btn = document.getElementById('applyCouponBtn');
-    if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'APLICAR';
-        btn.style.opacity = '1';
-    }
-}
-
-
-
-
-/* =================================================================== */
-/* BUSCA INTELIGENTE COMPLETA (LIVE SEARCH) - PÁGINA DE PRODUTO        */
-/* =================================================================== */
-
-let globalSearchCache = []; // Armazena os produtos para a busca
-
-// Função para carregar dados básicos de todos os produtos (Executa em background)
-async function loadGlobalSearchData() {
-    if (globalSearchCache.length > 0) return; // Já carregado
-
-    try {
-        // Pega apenas os campos necessários para economizar dados
-        const snapshot = await db.collection('produtos').get();
-        globalSearchCache = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-        console.log('🔍 Dados da busca carregados:', globalSearchCache.length);
-    } catch (error) {
-        console.warn('Erro ao carregar dados da busca:', error);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Carrega os dados da busca 1.5 segundos após abrir a página (para não travar o carregamento principal)
-    setTimeout(loadGlobalSearchData, 1500);
-
-    const searchInput = document.getElementById('headerSearchInput');
-    const dropdown = document.getElementById('headerDropdown');
-
-    if (!searchInput || !dropdown) return;
-
-    let timeout = null;
-
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-
-        // Se o usuário começar a digitar e os dados ainda não chegaram, tenta carregar agora
-        if (globalSearchCache.length === 0) loadGlobalSearchData();
-
-        clearTimeout(timeout);
-
-        if (query.length < 2) {
-            dropdown.classList.remove('active');
-            dropdown.innerHTML = '';
-            return;
-        }
-
-        timeout = setTimeout(() => {
-            // Filtra no cache local
-            const filtered = globalSearchCache.filter(p =>
-                (p.name && p.name.toLowerCase().includes(query)) ||
-                (p.category && p.category.toLowerCase().includes(query))
-            );
-
-            renderSearchDropdown(filtered, query);
-        }, 300);
-    });
-
-    // Fechar ao clicar fora
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
-        }
-    });
-});
-
-// Renderiza as miniaturas (Igual à Home)
-function renderSearchDropdown(products, query) {
-    const dropdown = document.getElementById('headerDropdown');
-
-    if (products.length === 0) {
-        dropdown.innerHTML = `
-            <div style="padding: 1rem; text-align: center; color: #999; font-size: 0.85rem;">
-                Nenhum produto encontrado para "<strong>${query}</strong>"
-            </div>`;
-        dropdown.classList.add('active');
-        return;
-    }
-
-    // Limita a 5 resultados
-    const topProducts = products.slice(0, 5);
-
-    dropdown.innerHTML = topProducts.map(product => {
-        // Lógica de Imagem Otimizada (Usa o helper existente isImageUrl)
-        let img = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-
-        if (Array.isArray(product.images) && product.images.length > 0) {
-            img = product.images[0];
-        } else if (product.image) {
-            img = product.image;
-        }
-
-        const isRealImg = isImageUrl(img); // Usando helper global
-        const style = isRealImg ?
-            `background-image: url('${img}'); background-size: cover; background-position: center;` :
-            `background: ${img};`;
-
-        const price = product.price ? Number(product.price).toFixed(2) : '0.00';
-
-        return `
-            <div class="search-dropdown-item" onclick="window.location.href='produto.html?id=${product.id}'">
-                <div class="search-dropdown-thumb" style="${style}"></div>
-                <div class="search-dropdown-info">
-                    <div class="search-dropdown-title">${product.name || 'Produto'}</div>
-                    <div class="search-dropdown-price">R$ ${price}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    dropdown.classList.add('active');
-}
-
-/* =================================================================== */
-/* SISTEMA DE LOGIN / USUÁRIO (ADICIONADO PARA PÁGINA DE PRODUTO)       */
-/* =================================================================== */
-
-let currentUser = null;
-
-
-
-
-
-
-
-async function userLogin(event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorMsg = document.getElementById('loginError');
-
-    try {
-        await auth.signInWithEmailAndPassword(email, password);
-        // O onAuthStateChanged vai lidar com a UI
-    } catch (error) {
-        console.error(error);
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = 'E-mail ou senha incorretos';
-    }
-}
-
-async function userRegister(event) {
-    event.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const errorMsg = document.getElementById('registerError');
-
-    try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        await userCredential.user.updateProfile({
-            displayName: name
-        });
-
-        // Salvar no Firestore (Opcional para manter padrão)
-        await db.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: email,
-            createdAt: new Date()
-        });
-
-        document.getElementById('registerSuccess').classList.add('active');
-        setTimeout(() => switchUserTab('login'), 1500);
-    } catch (error) {
-        console.error(error);
-        errorMsg.style.display = 'block';
-        if (error.code === 'auth/email-already-in-use') errorMsg.textContent = 'E-mail já cadastrado';
-        else if (error.code === 'auth/weak-password') errorMsg.textContent = 'Senha muito fraca (min 6 caracteres)';
-        else errorMsg.textContent = 'Erro ao criar conta';
-    }
-}
-
-async function userLogout() {
-    try {
-        await auth.signOut();
-        hideLoggedInView();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function resetPassword() {
-    const email = prompt("Digite seu e-mail para redefinir a senha:");
-    if (email) {
-        try {
-            await auth.sendPasswordResetEmail(email);
-            alert("E-mail de redefinição enviado!");
-        } catch (error) {
-            alert("Erro: " + error.message);
-        }
-    }
-}
-
-/* =================================================================== */
-/* SISTEMA DE FAVORITOS (PÁGINA DE PRODUTO)                            */
-/* =================================================================== */
-
-// 1. Carregar Estado Inicial (Ao abrir a página)
-document.addEventListener('DOMContentLoaded', () => {
-    updateFavoriteStatus();
-    updateFavoritesCount();
-});
-
-// 2. Alternar Favorito (Adicionar/Remover)
-function toggleProductFavorite() {
-    const p = state.currentProduct;
-    if (!p) return;
-
-    let favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
-    const index = favorites.indexOf(p.id);
-
-    if (index > -1) {
-        // Remover
-        favorites.splice(index, 1);
-        showToast('💔 Removido dos favoritos', 'info');
-    } else {
-        // Adicionar
-        favorites.push(p.id);
-        showToast('❤️ Adicionado aos favoritos', 'success');
-    }
-
-    localStorage.setItem('sejaVersatilFavorites', JSON.stringify(favorites));
-    updateFavoriteStatus();
-    updateFavoritesCount();
-}
-
-// 3. Atualizar Visual dos Botões (Header e Mobile/Desktop Flutuante)
-function updateFavoriteStatus() {
-    const p = state.currentProduct;
-    if (!p) return; // Aguarda carregar produto
-
-    const favorites = JSON.parse(localStorage.getItem('sejaVersatilFavorites') || '[]');
-    const isFav = favorites.includes(p.id);
-
-    // --- LÓGICA NOVA DO BOTÃO FLUTUANTE ---
-    const btnFloating = document.querySelector('.btn-favorite-floating');
-    if (btnFloating) {
-        if (isFav) {
-            // Se é favorito: Adiciona classe active (fica vermelho pelo CSS)
-            btnFloating.classList.add('active');
-        } else {
-            // Se não é favorito: Remove classe active (volta a ser contorno preto)
-            btnFloating.classList.remove('active');
-        }
-    }
-
-    // Ícone do Header (Coração do menu superior)
-    const headerIcon = document.querySelector('.nav-icon[title="Meus favoritos"] svg');
-    if (headerIcon) {
-        if (isFav) {
-            headerIcon.setAttribute('fill', '#ff4444');
-            headerIcon.setAttribute('stroke', '#ff4444');
-        } else {
-            headerIcon.setAttribute('fill', 'none');
-            headerIcon.setAttribute('stroke', 'currentColor');
-        }
-    }
-}
-
-// 4. Atualizar Contador do Header
-
-// 5. Redirecionar Fav
-function goToFavoritesPage() {
-    // Redireciona para a Home com o parâmetro especial
-    window.location.href = 'index.html?ver_favoritos=true';
-}
-
-/* =========================
-   Funções de Compartilhamento
-   ========================= */
-
+window.toggleProductFavorite = toggleProductFavorite;
+window.toggleGalleryExpansion = toggleGalleryExpansion;
+window.selectColor = selectColor;
+window.selectSize = selectSize;
+window.changeHeroImage = changeHeroImage;
+window.shareToWhatsApp = shareToWhatsApp;
+window.shareToInstagram = shareToInstagram;
+window.toggleProductFavorite = toggleProductFavorite; // Reexposto para clareza
+window.updateFavoriteStatus = updateFavoriteStatus; // Reexposto para clareza
+
+// Funções de Compartilhamento (Reintroduzidas)
 function shareToWhatsApp() {
     const p = state.currentProduct;
     if (!p) return;
@@ -1146,11 +783,9 @@ function shareToWhatsApp() {
 }
 
 function shareToInstagram() {
-    // Como não existe API direta para postar no IG via Web, copiamos o link
     const url = window.location.href;
 
     navigator.clipboard.writeText(url).then(() => {
-        // Feedback visual simples (Toast)
         showToast('📋 Link copiado! Cole no seu Instagram.', 'success');
     }).catch(err => {
         console.error('Erro ao copiar', err);
@@ -1158,113 +793,5 @@ function shareToInstagram() {
     });
 }
 
-// Função auxiliar de Toast (caso você ainda não tenha no código, adicione esta também)
-
-// Função que o botão "MOSTRAR MAIS" chama no onclick
-window.toggleGalleryExpansion = function() {
-    const container = document.getElementById('thumbnailList');
-    const btn = document.getElementById('btnShowMore');
-    
-    if (!container || !btn) return;
-
-    state.galleryExpanded = !state.galleryExpanded;
-
-    if (state.galleryExpanded) {
-        // Expande
-        container.style.maxHeight = '2000px';
-        container.classList.add('expanded');
-        btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    } else {
-        // Recolhe
-        container.style.maxHeight = '0';
-        container.classList.remove('expanded');
-        btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-        
-        // Rola suavemente para o topo
-        const galleryTop = document.getElementById('galleryContainer');
-        if (galleryTop) {
-            galleryTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
-};
-
-
-// Validação de CPF com feedback visual
-function validateCPF(cpf) {
-    cpf = cpf.replace(/[^\d]/g, '');
-    
-    if (cpf.length !== 11) return false;
-    
-    // Validação de CPF real
-    if (/^(\d)\1{10}$/.test(cpf)) return false;
-    
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-        sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(9))) return false;
-    
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-        sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(10))) return false;
-    
-    return true;
-}
-
-// Validação de Email com feedback visual
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-// Aplicar validação visual a inputs
-function applyVisualValidation(inputElement, validationFn) {
-    if (!inputElement) return;
-    
-    inputElement.addEventListener('blur', () => {
-        const isValid = validationFn(inputElement.value);
-        
-        if (inputElement.value.length > 0) {
-            if (isValid) {
-                inputElement.style.borderColor = '#27ae60';
-                inputElement.style.boxShadow = '0 0 0 2px rgba(39, 174, 96, 0.1)';
-            } else {
-                inputElement.style.borderColor = '#e74c3c';
-                inputElement.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.1)';
-            }
-        }
-    });
-    
-    inputElement.addEventListener('input', () => {
-        inputElement.style.borderColor = '';
-        inputElement.style.boxShadow = '';
-    });
-}
-
-
-// Monitoramento de Performance (apenas em desenvolvimento)
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    window.addEventListener('load', () => {
-        if (window.performance && window.performance.timing) {
-            const perfData = window.performance.timing;
-            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
-            const connectTime = perfData.responseEnd - perfData.requestStart;
-            const renderTime = perfData.domComplete - perfData.domLoading;
-            
-            console.log('%c⚡ Performance Metrics', 'color: #667eea; font-weight: bold; font-size: 14px;');
-            console.log(`Page Load Time: ${pageLoadTime}ms`);
-            console.log(`Server Response: ${connectTime}ms`);
-            console.log(`DOM Render: ${renderTime}ms`);
-        }
-    });
-}
-
-
-// Garante que a inicialização ocorra após o carregamento de todos os scripts
-window.addEventListener('DOMContentLoaded', initializeProductPage);
+document.addEventListener('DOMContentLoaded', initializeProductPage);
+console.log('✅ Produto.js carregado.');
