@@ -4374,7 +4374,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    loadCartFromStorage(); // LINHA ADICIONADA: Garante que o carrinho está sincronizado com o localStorage
+    if (typeof loadCartFromStorage === 'function') {
+        loadCartFromStorage(); // Garante que o carrinho está sincronizado com o localStorage
+    }
 
     // Verifica se o carrinho está vazio
     if (cart.length === 0) {
@@ -6126,6 +6128,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
