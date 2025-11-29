@@ -3251,9 +3251,9 @@ function removeFromCart(identifier) {
 }
 
 function toggleCart() {
-    const sidebar = document.getElementById('cartSidebar');
-    const overlay = document.getElementById('cartOverlay');
-    
+      if (sidebar) sidebar.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
+}
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
 }
@@ -6128,6 +6128,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
