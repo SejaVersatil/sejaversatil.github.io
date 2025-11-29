@@ -3261,107 +3261,28 @@ function removeFromCart(identifier) {
 }
 
 function toggleCart() {
-    // Auto-inicializa elementos se ainda não estiverem em cache
-    if (!window.cartSidebar) {
-        window.cartSidebar = document.getElementById('cartSidebar');
-    }
-    if (!window.cartOverlay) {
-        window.cartOverlay = document.getElementById('sidebarOverlay');
-    }
+    const sidebar = document.getElementById('cartSidebar');
+    const overlay = document.getElementById('cartOverlay');
     
-    // Validação crítica
-    if (!window.cartSidebar) {
-        console.error('❌ ERRO: Elemento #cartSidebar não encontrado no HTML!');
-        console.error('👉 Verifique se existe <div id="cartSidebar"> no seu index.html');
-        
-        if (typeof showToast === 'function') {
-            showToast('Erro ao abrir carrinho', 'error');
-        }
-        return;
-    }
-    
-    // Toggle da classe 'active'
-    const isOpening = !window.cartSidebar.classList.contains('active');
-    window.cartSidebar.classList.toggle('active');
-    
-    // Gerenciar scroll do body
-    document.body.style.overflow = isOpening ? 'hidden' : '';
-    
-    // Toggle do overlay
-    if (window.cartOverlay) {
-        window.cartOverlay.classList.toggle('active');
-    }
-    
-    // Log para debug
-    console.log(`🛒 Carrinho ${isOpening ? 'aberto' : 'fechado'}`);
-    
-    // Analytics (opcional)
-    if (typeof trackEvent === 'function') {
-        trackEvent('Cart', isOpening ? 'Open' : 'Close', 'User action');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function saveCart() {
+    try {
+        // ✅ SEMPRE salva no formato novo
+        const cartData = {
+            items: cart || [],
+            appliedCoupon: appliedCoupon || null,
+            couponDiscount: couponDiscount || 0
+        };
+        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        console.log(' Carrinho salvo:', cart.length, 'itens');
+    } catch (err) {
+        console.warn(' Erro ao salvar carrinho:', err);
     }
 }
 
-/**
- * Salva o carrinho no localStorage com validações
- * @returns {boolean} true se salvou com sucesso, false se falhou
- */
-function saveCart() {
-    try {
-        // Validações de segurança
-        if (!Array.isArray(cart)) {
-            console.warn('⚠️ Variável "cart" não é array, resetando...');
-            cart = [];
-        }
-        
-        // Sanitizar couponDiscount
-        const safeCouponDiscount = (typeof couponDiscount === 'number' && !isNaN(couponDiscount)) 
-            ? couponDiscount 
-            : 0;
-        
-        // Estrutura de dados
-        const cartData = {
-            items: cart,
-            appliedCoupon: appliedCoupon || null,
-            couponDiscount: safeCouponDiscount,
-            savedAt: Date.now(), // Timestamp para debug
-            version: '2.0' // Versão do formato (útil para migrações futuras)
-        };
-        
-        // Salvar
-        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-        
-        // Verificar se salvou
-        const verification = localStorage.getItem('sejaVersatilCart');
-        if (!verification) {
-            throw new Error('Verificação de salvamento falhou');
-        }
-        
-        // Log de sucesso
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        console.log(`✅ Carrinho salvo: ${cart.length} itens | Total: R$ ${total.toFixed(2)}`);
-        //          ^^ ✅ CORRIGIDO
-        
-        return true;
-        
-    } catch (err) {
-        console.error('❌ ERRO ao salvar carrinho:', err.message);
-        
-        // Tentar salvar versão básica como fallback
-        try {
-            localStorage.setItem('sejaVersatilCart', JSON.stringify({ items: [] }));
-            console.warn('⚠️ Carrinho salvo em modo de emergência (vazio)');
-        } catch (fallbackErr) {
-            console.error('❌ Falha crítica: localStorage pode estar cheio ou desabilitado');
-        }
-        
-        // Notificar usuário
-        if (typeof showToast === 'function') {
-            showToast('Erro ao salvar carrinho. Dados podem ser perdidos.', 'error');
-        }
-        
-        return false;
-    }
-}
 
 // ==================== INICIALIZAÇÃO ====================
 // Garante que os elementos são carregados ao iniciar a página
@@ -6248,6 +6169,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
