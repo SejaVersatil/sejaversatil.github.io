@@ -727,6 +727,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loadingOverlay) {
         loadingOverlay.classList.add('active');
     }
+
+    window.cartSidebar = document.getElementById('cartSidebar');
+    window.cartOverlay = document.getElementById('sidebarOverlay');
+    
+    if (!window.cartSidebar) {
+        console.error('❌ CRITICAL: Cart sidebar not found in HTML!');
+    }
+    if (!window.cartOverlay) {
+        console.warn('⚠️ Overlay not found - cart may not close properly');
+    }
     
     try {
         console.log('🚀 Iniciando carregamento do site...');
@@ -3251,24 +3261,137 @@ function removeFromCart(identifier) {
 }
 
 function toggleCart() {
-    if (sidebar) sidebar.classList.toggle('active');
-    if (overlay) overlay.classList.toggle('active');
-}
-
-function saveCart() {
-    try {
-        // ✅ SEMPRE salva no formato novo
-        const cartData = {
-            items: cart || [],
-            appliedCoupon: appliedCoupon || null,
-            couponDiscount: couponDiscount || 0
-        };
-        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-        console.log(' Carrinho salvo:', cart.length, 'itens');
-    } catch (err) {
-        console.warn(' Erro ao salvar carrinho:', err);
+    // Auto-inicializa elementos se ainda não estiverem em cache
+    if (!window.cartSidebar) {
+        window.cartSidebar = document.getElementById('cartSidebar');
+    }
+    if (!window.cartOverlay) {
+        window.cartOverlay = document.getElementById('sidebarOverlay');
+    }
+    
+    // Validação crítica
+    if (!window.cartSidebar) {
+        console.error('❌ ERRO: Elemento #cartSidebar não encontrado no HTML!');
+        console.error('👉 Verifique se existe <div id="cartSidebar"> no seu index.html');
+        
+        if (typeof showToast === 'function') {
+            showToast('Erro ao abrir carrinho', 'error');
+        }
+        return;
+    }
+    
+    // Toggle da classe 'active'
+    const isOpening = !window.cartSidebar.classList.contains('active');
+    window.cartSidebar.classList.toggle('active');
+    
+    // Gerenciar scroll do body
+    document.body.style.overflow = isOpening ? 'hidden' : '';
+    
+    // Toggle do overlay
+    if (window.cartOverlay) {
+        window.cartOverlay.classList.toggle('active');
+    }
+    
+    // Log para debug
+    console.log(`🛒 Carrinho ${isOpening ? 'aberto' : 'fechado'}`);
+    
+    // Analytics (opcional)
+    if (typeof trackEvent === 'function') {
+        trackEvent('Cart', isOpening ? 'Open' : 'Close', 'User action');
     }
 }
+
+/**
+ * Salva o carrinho no localStorage com validações
+ * @returns {boolean} true se salvou com sucesso, false se falhou
+ */
+function saveCart() {
+    try {
+        // Validações de segurança
+        if (!Array.isArray(cart)) {
+            console.warn('⚠️ Variável "cart" não é array, resetando...');
+            cart = [];
+        }
+        
+        // Sanitizar couponDiscount
+        const safeCouponDiscount = (typeof couponDiscount === 'number' && !isNaN(couponDiscount)) 
+            ? couponDiscount 
+            : 0;
+        
+        // Estrutura de dados
+        const cartData = {
+            items: cart,
+            appliedCoupon: appliedCoupon || null,
+            couponDiscount: safeCouponDiscount,
+            savedAt: Date.now(), // Timestamp para debug
+            version: '2.0' // Versão do formato (útil para migrações futuras)
+        };
+        
+        // Salvar
+        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+        
+        // Verificar se salvou
+        const verification = localStorage.getItem('sejaVersatilCart');
+        if (!verification) {
+            throw new Error('Verificação de salvamento falhou');
+        }
+        
+        // Log de sucesso
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        console.log(`✅ Carrinho salvo: ${cart.length} itens | Total: R$ ${total.toFixed(2)}`);
+        
+        return true;
+        
+    } catch (err) {
+        console.error('❌ ERRO ao salvar carrinho:', err.message);
+        
+        // Tentar salvar versão básica como fallback
+        try {
+            localStorage.setItem('sejaVersatilCart', JSON.stringify({ items: [] }));
+            console.warn('⚠️ Carrinho salvo em modo de emergência (vazio)');
+        } catch (fallbackErr) {
+            console.error('❌ Falha crítica: localStorage pode estar cheio ou desabilitado');
+        }
+        
+        // Notificar usuário
+        if (typeof showToast === 'function') {
+            showToast('Erro ao salvar carrinho. Dados podem ser perdidos.', 'error');
+        }
+        
+        return false;
+    }
+}
+
+// ==================== INICIALIZAÇÃO ====================
+
+// Garante que os elementos são carregados ao iniciar a página
+document.addEventListener('DOMContentLoaded', () => {
+    // Cache dos elementos do carrinho
+    window.cartSidebar = document.getElementById('cartSidebar');
+    window.cartOverlay = document.getElementById('sidebarOverlay');
+    
+    // Validação na inicialização
+    if (!window.cartSidebar) {
+        console.error('❌ CRÍTICO: #cartSidebar não encontrado ao carregar página!');
+    }
+    if (!window.cartOverlay) {
+        console.warn('⚠️ #sidebarOverlay não encontrado - overlay pode não funcionar');
+    }
+    
+    // Setup de eventos
+    if (window.cartOverlay) {
+        window.cartOverlay.addEventListener('click', toggleCart);
+    }
+    
+    // Fechar carrinho com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && window.cartSidebar?.classList.contains('active')) {
+            toggleCart();
+        }
+    });
+    
+    console.log('✅ Sistema de carrinho inicializado');
+});
 
 function loadCart() {
     const saved = localStorage.getItem('sejaVersatilCart');
@@ -6125,6 +6248,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
