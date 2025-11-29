@@ -4578,13 +4578,13 @@ function openPaymentModal() {
             });
         });
     }
+}
 
 function closePaymentModal() {
     const modal = document.getElementById('paymentModal');
     if (modal) {
         modal.classList.remove('active');
     }
-} // <--- Faltava essa chave aqui
 
 function setupPaymentListeners() {
     const opts = document.querySelectorAll('input[name="paymentMethod"]');
@@ -6197,6 +6197,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
