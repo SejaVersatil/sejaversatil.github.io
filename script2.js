@@ -4465,15 +4465,11 @@ function openPaymentModal() {
         cartLength: cart.length
     });
     
-    if (!modal || !cartItemsContainer || !totalContainer) {
-        console.error('❌ CRÍTICO: Elementos do modal ausentes!', {
-            modal: modal ? 'OK' : 'MISSING',
-            cartItemsContainer: cartItemsContainer ? 'OK' : 'MISSING',
-            totalContainer: totalContainer ? 'OK' : 'MISSING'
-        });
-        alert('Erro ao abrir modal de pagamento. Verifique o console.');
-        return;
-    }
+    if (!modal) {
+    console.error('❌ CRÍTICO: Elemento principal do modal ausente!');
+    alert('Erro ao abrir modal de pagamento. Verifique o console.');
+    return;
+}
     
     console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
     
@@ -6199,4 +6195,5 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
