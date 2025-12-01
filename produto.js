@@ -1289,9 +1289,14 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
     
     msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
     
-    if (paymentMethod === 'credito-parcelado') {
-        const inst = document.getElementById('installments') ? document.getElementById('installments').value : '';
-        if(inst) msg += `Parcelas: ${inst}x\n`;
+     if (paymentMethod === 'credito-parcelado') {
+        const installmentsSelect = document.getElementById('installmentsSelect');
+        if (!installmentsSelect || !installmentsSelect.value) {
+            showToast('Selecione o número de parcelas.', 'error');
+            // Reabre o modal de pagamento se estiver fechado (caso tenha vindo do fluxo de visitante)
+            openPaymentModal(); 
+            return;
+        }
     }
 
     return msg;
@@ -2119,6 +2124,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
