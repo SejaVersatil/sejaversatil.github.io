@@ -1069,27 +1069,27 @@ function removeFromCart(cartItemId) {
     updateCartUI();
 }
 
-// Função de Checkout Padronizada
 function checkout() {
-    // 1. Validar se o carrinho não está vazio
-    if (!state.cart || state.cart.length === 0) {
-        showToast('Seu carrinho está vazio!', 'error');
+    // Verifica se o carrinho está vazio antes de redirecionar (opcional, mas recomendado)
+    const rawCart = localStorage.getItem('sejaVersatilCart');
+    // Ajuste seguro para leitura do JSON caso ele tenha estrutura antiga ou nova
+    let isEmpty = true;
+    if (rawCart) {
+        const parsed = JSON.parse(rawCart);
+        if (parsed.items && Array.isArray(parsed.items)) {
+             isEmpty = parsed.items.length === 0;
+        } else if (Array.isArray(parsed)) {
+             isEmpty = parsed.length === 0;
+        }
+    }
+
+    if (isEmpty) {
+        alert('Seu carrinho está vazio!');
         return;
     }
-
-    // 2. Fechar o carrinho lateral (se a função existir)
-    if (typeof toggleCart === 'function') {
-        toggleCart();
-    }
-
-    // 3. Abrir o modal de pagamento após um pequeno delay
-    setTimeout(() => {
-        if (typeof openPaymentModal === 'function') {
-            openPaymentModal();
-        } else {
-            console.error('A função openPaymentModal() não foi encontrada!');
-        }
-    }, 300); // 300ms para a animação do carrinho
+    
+    // Redireciona para a nova página de checkout
+    window.location.href = 'checkout.html';
 }
 
 window.addEventListener('storage', (e) => {
@@ -2128,4 +2128,5 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
