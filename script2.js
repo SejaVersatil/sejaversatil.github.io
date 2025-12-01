@@ -4782,7 +4782,7 @@ if (paymentMethod === 'credito-parcelado') {
 }
 
 // Função Auxiliar para formatar a mensagem (Baseada no arquivo enviado)
-function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod) {
+function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod, installments = null) {
     let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     
@@ -4816,11 +4816,8 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
     
     msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
     
-   if (paymentMethod === 'credito-parcelado') {
-        // Usa o novo ID 'installmentsSelect'
-        const instSelect = document.getElementById('installmentsSelect');
-        const inst = instSelect ? instSelect.value : '';
-        if(inst) msg += `Parcelas: ${inst}x\n`;
+    if (installments) {
+        msg += `Parcelas: ${installments}x\n`;
     }
     
     return msg;
@@ -6065,6 +6062,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
