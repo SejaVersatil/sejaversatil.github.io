@@ -4806,12 +4806,13 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
     
     msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
     
-    // Adiciona info de parcelas se disponível no DOM
-    if (paymentMethod === 'credito-parcelado') {
-        const inst = document.getElementById('installments') ? document.getElementById('installments').value : '';
+   if (paymentMethod === 'credito-parcelado') {
+        // Usa o novo ID 'installmentsSelect'
+        const instSelect = document.getElementById('installmentsSelect');
+        const inst = instSelect ? instSelect.value : '';
         if(inst) msg += `Parcelas: ${inst}x\n`;
     }
-
+    
     return msg;
 }
 
@@ -6054,5 +6055,6 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
