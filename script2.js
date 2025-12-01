@@ -4646,165 +4646,169 @@ function setupPaymentListeners() {
 }
 // ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
+// ==================== 2. SISTEMA DE CHECKOUT APRIMORADO ====================
+
 async function sendToWhatsApp() {
-    if (!cart.length) {
+    if (!cart || cart.length === 0) {
         showToast('Carrinho vazio!', 'error');
         return;
     }
 
-    // 1. COLETA DE DADOS DO CLIENTE
-    const isLoggedIn = auth.currentUser !== null;
+    // 1. Coleta de Dados do Cliente
     let customerData = {};
-   
-    if (!isLoggedIn) {
-        customerData = await collectGuestCustomerData();
-        if (!customerData) return;
-    } else {
+    
+    if (auth.currentUser) {
+        // Usuário Logado: Tenta pegar do objeto global ou do Firestore
         customerData = {
-            name: currentUser.name,
-            email: currentUser.email,
-            phone: await getUserPhone(),
-            cpf: await getUserCPF(),
-            userId: currentUser.uid
+            name: currentUser?.name || auth.currentUser.displayName,
+            email: auth.currentUser.email,
+            phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
+            cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
+            uid: auth.currentUser.uid
         };
         
-        if (!customerData.phone || !customerData.cpf) return;
-    }
-    
-    // 2. REVALIDAR CUPOM NO SERVIDOR
-    if (appliedCoupon) {
-        try {
-            const couponDoc = await db.collection('coupons').doc(appliedCoupon.id).get();
-            
-            if (!couponDoc.exists || !couponDoc.data().active) {
-                showToast('❌ Cupom inválido', 'error');
-                removeCoupon();
-                return;
-            }
-            
-            const serverCoupon = couponDoc.data();
-            const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            if (serverCoupon.minValue && subtotalCheck < serverCoupon.minValue) {
-                showToast(`❌ Valor mínimo: R$ ${serverCoupon.minValue.toFixed(2)}`, 'error');
-                removeCoupon();
-                return;
-            }
-            
-            let recalculatedDiscount = 0;
-            if (serverCoupon.type === 'percentage') {
-                recalculatedDiscount = (subtotalCheck * serverCoupon.value) / 100;
-                if (serverCoupon.maxDiscount && recalculatedDiscount > serverCoupon.maxDiscount) {
-                    recalculatedDiscount = serverCoupon.maxDiscount;
-                }
-            } else {
-                recalculatedDiscount = serverCoupon.value;
-            }
-            
-            couponDiscount = Math.min(recalculatedDiscount, subtotalCheck);
-            
-        } catch (error) {
-            console.error('Erro ao validar cupom:', error);
-            showToast('Erro ao validar cupom', 'error');
-            removeCoupon();
-            return;
+        // Se faltar dado crítico, pede via prompt ou modal (simplificado aqui)
+        if (!customerData.phone) {
+             const phone = prompt("Precisamos do seu WhatsApp para confirmar o pedido:");
+             if(!phone) return;
+             customerData.phone = phone;
+        }
+    } else {
+        // Usuário Visitante: Abre o modal de dados que você já tem
+        // NOTA: Se esta função for chamada pelo botão do modal de dados, os dados virão do form
+        // Se for chamada pelo modal de pagamento, verifica se precisa coletar dados
+        
+        // Se não temos dados, chama a função de coleta do seu código original
+        if (typeof collectGuestCustomerData === 'function') {
+            const guestData = await collectGuestCustomerData(); 
+            if (!guestData) return; // Cancelou
+            customerData = guestData;
+        } else {
+            // Fallback caso a função não exista
+            customerData = { name: 'Visitante', email: 'Não informado', phone: 'Não informado' };
         }
     }
-    
-    // 3. PREPARAÇÃO DOS DADOS DO PEDIDO
+
+    // 2. Dados do Pagamento
     const paymentInput = document.querySelector('input[name="paymentMethod"]:checked');
     if (!paymentInput) {
         showToast('Selecione uma forma de pagamento', 'error');
         return;
     }
-    
     const paymentMethod = paymentInput.value;
-    const installmentsEl = document.getElementById('installments');
-    const installments = installmentsEl ? installmentsEl.value : '1';
     
-    const paymentMethodsMap = {
-        'pix': 'PIX',
+    // 3. Cálculos
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
+
+    // 4. Salvar no Firestore (Lógica melhorada do arquivo enviado)
+    let orderId = 'PENDENTE';
+    
+    try {
+        const orderData = {
+            userId: auth.currentUser ? auth.currentUser.uid : 'guest',
+            customer: customerData,
+            items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                size: item.selectedSize || null,
+                color: item.selectedColor || null
+            })),
+            totals: {
+                subtotal: subtotal,
+                discount: discount,
+                total: total
+            },
+            paymentMethod: paymentMethod,
+            status: 'Pendente WhatsApp',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, value: appliedCoupon.value } : null
+        };
+
+        const docRef = await db.collection('orders').add(orderData);
+        orderId = docRef.id;
+
+        // Registrar uso do cupom se houver
+        if (appliedCoupon) {
+            // Chama sua função existente ou usa a lógica direta
+            if(typeof registerCouponUsage === 'function') {
+                await registerCouponUsage(appliedCoupon.id, total, discount);
+            }
+        }
+
+    } catch (error) {
+        console.error('Erro ao salvar pedido:', error);
+        showToast('Erro ao processar pedido, mas vamos tentar enviar o WhatsApp.', 'error');
+    }
+
+    // 5. Gerar Mensagem WhatsApp (Layout Profissional)
+    const msg = generateWhatsAppMessage(orderId, customerData, cart, { subtotal, discount, total }, paymentMethod);
+
+    // 6. Enviar
+    const WHATSAPP_NUMBER = '5571991427103'; // Confirme se este é o número correto
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappURL, '_blank');
+
+    // 7. Limpeza
+    closePaymentModal();
+    if(typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
+    
+    // Limpar carrinho
+    cart = [];
+    appliedCoupon = null;
+    couponDiscount = 0;
+    saveCart(); // Sua função de salvar no localStorage
+    updateCartUI(); // Sua função de atualizar UI
+    
+    showToast('Pedido enviado para o WhatsApp!', 'success');
+}
+
+// Função Auxiliar para formatar a mensagem (Baseada no arquivo enviado)
+function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod) {
+    let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    
+    msg += `*👤 CLIENTE:*\n`;
+    msg += `Nome: ${customer.name}\n`;
+    if(customer.phone) msg += `Tel: ${customer.phone}\n`;
+    if(customer.cpf) msg += `CPF: ${customer.cpf}\n`;
+    msg += `\n`;
+
+    msg += `*📦 PRODUTOS:*\n`;
+    items.forEach((item, index) => {
+        msg += `${index + 1}. *${item.name}*\n`;
+        msg += `   ${item.quantity}x R$ ${item.price.toFixed(2)} | Tam: ${item.selectedSize || '-'} Cor: ${item.selectedColor || '-'}\n`;
+    });
+    msg += `\n`;
+
+    msg += `*💰 RESUMO:*\n`;
+    msg += `Subtotal: R$ ${totals.subtotal.toFixed(2)}\n`;
+    if (totals.discount > 0) {
+        msg += `Desconto: - R$ ${totals.discount.toFixed(2)}\n`;
+    }
+    msg += `*TOTAL: R$ ${totals.total.toFixed(2)}*\n`;
+    msg += `\n`;
+    
+    const paymentMap = {
+        'pix': 'PIX (Aprovação Imediata)',
         'boleto': 'Boleto Bancário',
-        'credito-avista': 'Cartão de Crédito à Vista',
-        'credito-parcelado': `Cartão de Crédito Parcelado em ${installments}x sem juros`
+        'credito-avista': 'Cartão de Crédito (À Vista)',
+        'credito-parcelado': 'Cartão de Crédito (Parcelado)'
     };
     
-    const paymentText = paymentMethodsMap[paymentMethod] || paymentMethod;
-    const subtotal = cart.reduce((s, it) => s + ((it.price || 0) * (it.quantity || 0)), 0);
-    const total = Math.max(0, subtotal - (couponDiscount || 0));
-
-    // 4. SALVAR NO FIRESTORE
-    try {
-        await saveOrderToFirestore(customerData, cart, paymentMethod, installments);
-        
-        if (appliedCoupon) {
-            await registerCouponUsage(appliedCoupon.id, total, couponDiscount);
-        }
-        
-    } catch (error) {
-        console.error(error);
-        showToast('Erro ao salvar pedido. Tente novamente.', 'error');
-        return;
-    }
-
-    // 5. MONTAGEM DA MENSAGEM
-    let msg = `*🛍️ NOVO PEDIDO - SEJA VERSÁTIL*\n`;
-    msg += `*Cliente:* ${customerData.name}\n`;
-    if (customerData.cpf) msg += `*CPF:* ${customerData.cpf}\n`;
-    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    msg += `*📦 PRODUTOS:*\n`;
+    msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
     
-    cart.forEach((item, index) => {
-        msg += `${index+1}. *${item.name}*\n`;
-        if (item.selectedSize || item.selectedColor) {
-            msg += `   📏 Tam: ${item.selectedSize || '-'} | 🎨 Cor: ${item.selectedColor || '-'}\n`;
-        }
-        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n`;
-        msg += `   Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n\n`;
-    });
-
-    if (appliedCoupon && couponDiscount > 0) {
-        msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-        msg += `🎟️ *CUPOM:* ${appliedCoupon.code}\n`;
-        msg += `💰 *Desconto:* -R$ ${couponDiscount.toFixed(2)}\n`;
-    }
-
-    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-    if (couponDiscount > 0) {
-        msg += `*Subtotal: R$ ${subtotal.toFixed(2)}*\n`;
-    }
-    msg += `*💰 TOTAL: R$ ${total.toFixed(2)}*\n\n`;
-    msg += `*💳 PAGAMENTO:* ${paymentText}\n`;
-    
+    // Adiciona info de parcelas se disponível no DOM
     if (paymentMethod === 'credito-parcelado') {
-        const installmentValue = (total / parseInt(installments)).toFixed(2);
-        msg += `📊 ${installments}x de R$ ${installmentValue}\n`;
+        const inst = document.getElementById('installments') ? document.getElementById('installments').value : '';
+        if(inst) msg += `Parcelas: ${inst}x\n`;
     }
 
-    msg += `\n_Pedido salvo no sistema_`;
-
-    // 6. ENVIO E LIMPEZA
-    const encodedMessage = encodeURIComponent(msg);
-    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-    
-    window.open(whatsappURL, '_blank');
-    
-    closePaymentModal();
-    showToast('Pedido realizado com sucesso!', 'success');
-    
-    setTimeout(() => {
-        if (confirm('Pedido enviado! Deseja limpar o carrinho?')) {
-            cart = [];
-            appliedCoupon = null;
-            couponDiscount = 0;
-            saveCart();
-            updateCartUI();
-            toggleCart();
-        }
-    }, 2000);
-    
-    trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
-  }
+    return msg;
+}
 
 // ==================== FUNÇÕES AUXILIARES (TRAZIDAS DO SEU CÓDIGO) ====================
 
@@ -6220,6 +6224,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
