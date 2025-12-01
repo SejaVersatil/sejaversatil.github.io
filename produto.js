@@ -1164,12 +1164,22 @@ async function sendToWhatsApp() {
     }
     const paymentMethod = checked.value;
 
+    // ✅ CORREÇÃO 1: Validar parcelas ANTES de processar
+    let installments = null;
+    if (paymentMethod === 'credito-parcelado') {
+        const installmentsSelect = document.getElementById('installmentsSelect');
+        if (!installmentsSelect || !installmentsSelect.value) {
+            showToast('Selecione o número de parcelas.', 'error');
+            return; // ← Interrompe AQUI
+        }
+        installments = installmentsSelect.value; // ← Captura o valor
+    }
+
     // 2. Coleta de Dados do Cliente
     let customerData = {};
-    const currentUser = auth.currentUser; // Pega direto do Firebase Auth
+    const currentUser = auth.currentUser;
 
     if (currentUser) {
-        // Logado
         const phone = await getUserPhone();
         const cpf = await getUserCPF();
         
@@ -1186,9 +1196,8 @@ async function sendToWhatsApp() {
             uid: currentUser.uid
         };
     } else {
-        // Visitante
         const guestData = await collectGuestCustomerData();
-        if (!guestData) return; // Usuário cancelou o modal
+        if (!guestData) return;
         customerData = guestData;
     }
 
@@ -1204,7 +1213,7 @@ async function sendToWhatsApp() {
             userId: customerData.uid || 'guest',
             customer: customerData,
             items: state.cart.map(item => ({
-                id: item.productId || item.id, // Garante compatibilidade de ID
+                id: item.productId || item.id,
                 name: item.name,
                 price: item.price,
                 quantity: item.quantity,
@@ -1214,6 +1223,7 @@ async function sendToWhatsApp() {
             })),
             totals: { subtotal, discount, total },
             paymentMethod,
+            installments: installments, // ✅ Salva no banco
             status: 'Pendente WhatsApp',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             appliedCoupon: state.appliedCoupon ? { code: state.appliedCoupon.code, value: state.appliedCoupon.value } : null
@@ -1222,7 +1232,6 @@ async function sendToWhatsApp() {
         const docRef = await db.collection('orders').add(orderData);
         orderId = docRef.id;
 
-        // Registrar uso do cupom
         if (state.appliedCoupon) {
             await registerCouponUsage(state.appliedCoupon.id, total, discount);
         }
@@ -1232,8 +1241,8 @@ async function sendToWhatsApp() {
         showToast('Erro ao processar, mas vamos tentar enviar o WhatsApp.', 'error');
     }
 
-    // 5. Gerar Mensagem WhatsApp Formatada
-    const msg = generateWhatsAppMessage(orderId, customerData, state.cart, { subtotal, discount, total }, paymentMethod);
+    // ✅ CORREÇÃO 2: Passa installments como parâmetro
+    const msg = generateWhatsAppMessage(orderId, customerData, state.cart, { subtotal, discount, total }, paymentMethod, installments);
 
     // 6. Enviar
     const WHATSAPP_NUMBER = '5571991427103'; 
@@ -1244,7 +1253,6 @@ async function sendToWhatsApp() {
     closePaymentModal();
     if (typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
     
-    // Resetar estado global
     state.cart = [];
     state.appliedCoupon = null;
     state.couponDiscount = 0;
@@ -1254,8 +1262,8 @@ async function sendToWhatsApp() {
     showToast('Pedido realizado com sucesso!', 'success');
 }
 
-// Função Geradora de Mensagem (Compatível com Produto.js)
-function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod) {
+// ✅ CORREÇÃO 3: Função geradora PURA (sem efeitos colaterais)
+function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod, installments = null) {
     let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     
@@ -1268,7 +1276,7 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
     msg += `*📦 PRODUTOS:*\n`;
     items.forEach((item, index) => {
         msg += `${index + 1}. *${item.name}*\n`;
-        msg += `   ${item.quantity}x R$ ${item.price.toFixed(2)} | Tam: ${item.selectedSize} Cor: ${item.selectedColor}\n`;
+        msg += `   ${item.quantity}x R$ ${item.price.toFixed(2)} | Tam: ${item.selectedSize || '-'} Cor: ${item.selectedColor || '-'}\n`;
     });
     msg += `\n`;
 
@@ -1289,17 +1297,12 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
     
     msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
     
-     if (paymentMethod === 'credito-parcelado') {
-        const installmentsSelect = document.getElementById('installmentsSelect');
-        if (!installmentsSelect || !installmentsSelect.value) {
-            showToast('Selecione o número de parcelas.', 'error');
-            // Reabre o modal de pagamento se estiver fechado (caso tenha vindo do fluxo de visitante)
-            openPaymentModal(); 
-            return;
-        }
+    // ✅ CORREÇÃO 4: Adiciona parcelas se existir (sem validação)
+    if (installments) {
+        msg += `Parcelas: ${installments}x sem juros\n`;
     }
 
-    return msg;
+    return msg; // ← SEMPRE retorna string
 }
 
 /* =========================
@@ -2124,6 +2127,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
