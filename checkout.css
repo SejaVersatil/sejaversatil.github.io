@@ -1,0 +1,569 @@
+/* ==========================================================================
+   CHECKOUT.CSS - Estilização da Página de Checkout
+   ========================================================================== */
+
+/* 1. RESET BÁSICO E TIPOGRAFIA */
+body {
+    font-family: var(--font-main, 'Century Gothic', sans-serif);
+    background-color: var(--gray-bg, #f8f8f8);
+    color: var(--text, #1a1a1a);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-display, 'Century Gothic', sans-serif);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.checkout-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary, #000);
+}
+
+/* 2. HEADER SIMPLIFICADO */
+.checkout-header {
+    background: var(--white, #fff);
+    border-bottom: 1px solid var(--gray, #e5e5e5);
+    padding: 1rem 0;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
+}
+
+.checkout-header .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkout-header .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--primary, #000);
+    text-decoration: none;
+    text-align: center;
+    flex-grow: 1; /* Centraliza o logo */
+}
+
+.checkout-header .back-to-store {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light, #666);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.checkout-header .back-to-store:hover {
+    color: var(--primary, #000);
+}
+
+.checkout-header .header-placeholder {
+    /* Garante que o logo fique centralizado, ocupando o mesmo espaço do link "Voltar" */
+    width: 150px; 
+    visibility: hidden;
+}
+
+/* 3. LAYOUT PRINCIPAL (GRID) */
+.checkout-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px; /* Desktop: 2 colunas (Dados e Resumo) */
+    gap: 3rem;
+    align-items: flex-start; /* Alinha o topo das colunas */
+}
+
+/* 4. ESTILIZAÇÃO DA COLUNA DE DADOS (ESQUERDA) */
+.checkout-data-flow {
+    background: var(--white, #fff);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
+}
+
+.checkout-step {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray, #e5e5e5);
+}
+
+.checkout-step:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.checkout-step h2 {
+    font-size: 1.5rem;
+    color: var(--primary, #000);
+    margin-bottom: 1.5rem;
+}
+
+/* Formulário */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text, #1a1a1a);
+}
+
+input[type="text"],
+input[type="email"],
+select {
+    padding: 0.8rem;
+    border: 1px solid var(--gray, #e5e5e5);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent, #8b7ab8);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(139, 122, 184, 0.2); /* Cor da accent com transparência */
+}
+
+/* Botões */
+.btn-primary {
+    background-color: var(--primary, #000);
+    color: var(--white, #fff);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--text, #1a1a1a);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-large {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.btn-secondary {
+    background-color: var(--white, #fff);
+    color: var(--primary, #000);
+    border: 1px solid var(--primary, #000);
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary, #000);
+    color: var(--white, #fff);
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Identificação */
+#identification-form {
+    position: relative;
+}
+
+#identification-form .form-group {
+    margin-bottom: 1rem;
+}
+
+#user-info-display {
+    padding: 1rem;
+    border: 1px solid var(--gray, #e5e5e5);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.auth-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.guest-option {
+    font-size: 0.9rem;
+    color: var(--text-light, #666);
+}
+
+/* Entrega */
+#delivery-form .form-group:has(#cep) {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+#delivery-form .form-group:has(#cep) input {
+    flex-grow: 1;
+}
+
+.shipping-options-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--gray, #e5e5e5);
+    border-radius: 4px;
+}
+
+.shipping-options-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.shipping-option input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.shipping-option label {
+    font-weight: 400;
+    font-size: 1rem;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+/* Pagamento */
+.payment-tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--gray, #e5e5e5);
+}
+
+.payment-tab-btn {
+    background: none;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-light, #666);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.payment-tab-btn.active {
+    color: var(--primary, #000);
+    border-bottom-color: var(--primary, #000);
+}
+
+.payment-content {
+    display: none;
+    padding-top: 1rem;
+}
+
+.payment-content.active {
+    display: block;
+}
+
+/* PIX */
+.pix-instructions {
+    text-align: center;
+}
+
+.pix-qr-code-simulated {
+    background: var(--gray-bg, #f8f8f8);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.pix-qr-code-simulated img {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray, #e5e5e5);
+}
+
+/* Cartão de Crédito */
+#credit-card-form {
+    max-width: 450px;
+}
+
+/* 5. ESTILIZAÇÃO DA COLUNA DE RESUMO (DIREITA) */
+.checkout-summary-sticky {
+    position: sticky;
+    top: 120px; /* Ajuste para ficar abaixo do header */
+    padding-top: 2rem;
+}
+
+.checkout-summary {
+    background: var(--white, #fff);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.1));
+}
+
+.checkout-summary h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary, #000);
+}
+
+/* Lista de Produtos */
+.summary-product-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px; /* Espaço para a barra de rolagem */
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-light, #f8f8f8);
+}
+
+.summary-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--gray-light, #f8f8f8);
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.summary-item-image {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.summary-item-details {
+    flex-grow: 1;
+    font-size: 0.9rem;
+}
+
+.summary-item-details strong {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.summary-item-price {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.empty-cart-summary {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-light, #666);
+}
+
+/* Cupom */
+.summary-coupon-section {
+    padding: 1rem 0;
+    border-top: 1px solid var(--gray-light, #f8f8f8);
+    border-bottom: 1px solid var(--gray-light, #f8f8f8);
+    margin-bottom: 1.5rem;
+}
+
+.coupon-input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.coupon-input {
+    flex-grow: 1;
+    padding: 0.6rem;
+    border: 1px solid var(--gray, #e5e5e5);
+    border-radius: 4px;
+}
+
+.coupon-apply-btn {
+    background-color: var(--secondary, #8b7ab8);
+    color: var(--white, #fff);
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.coupon-apply-btn:hover {
+    background-color: var(--accent-light, #a894c9);
+}
+
+.applied-coupon-badge {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e6ffe6; /* Verde claro para sucesso */
+    border: 1px solid #b3ffb3;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.applied-coupon-code {
+    font-weight: 700;
+    color: #006600;
+}
+
+.remove-coupon-btn {
+    background: none;
+    border: none;
+    color: #006600;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* Totais */
+.summary-totals {
+    margin-bottom: 1.5rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: var(--text, #1a1a1a);
+}
+
+.discount-row span {
+    color: #e74c3c; /* Vermelho para desconto */
+    font-weight: 600;
+}
+
+.total-final {
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding-top: 1rem;
+    border-top: 2px solid var(--primary, #000);
+    margin-top: 1rem;
+}
+
+/* Feedback de Loading */
+.loading-feedback {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--accent, #8b7ab8);
+}
+
+/* 6. RESPONSIVIDADE (MOBILE) */
+@media (max-width: 1024px) {
+    .checkout-grid {
+        grid-template-columns: 1fr; /* Coluna única no mobile */
+        gap: 2rem;
+    }
+
+    .checkout-summary-sticky {
+        position: static; /* Remove sticky no mobile */
+        top: auto;
+        padding-top: 0;
+    }
+
+    .checkout-summary {
+        order: -1; /* Coloca o resumo no topo no mobile */
+        margin-bottom: 2rem;
+    }
+
+    .checkout-header .header-content {
+        padding: 0 1rem;
+    }
+
+    .checkout-header .logo {
+        font-size: 1.5rem;
+    }
+
+    .checkout-header .back-to-store {
+        font-size: 0.75rem;
+    }
+
+    .checkout-header .header-placeholder {
+        width: 100px;
+    }
+
+    .checkout-container {
+        padding: 0 1rem;
+        margin: 1rem auto;
+    }
+
+    .checkout-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkout-data-flow {
+        padding: 1rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    /* Ajuste para o botão de finalizar pedido no mobile */
+    .checkout-summary .btn-large {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-summary {
+        /* No mobile, o resumo pode ser colapsável, mas por simplicidade, vamos deixá-lo aberto no topo */
+        /* Para ser colapsável, seria necessário JS e uma estrutura diferente */
+    }
+}

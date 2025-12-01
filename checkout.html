@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Pedido - Seja Versátil</title>
+    
+    <!-- Tipografia Century Gothic e variáveis globais -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Existente e Novo CSS de Checkout -->
+    <link rel="stylesheet" href="css2.css">
+    <link rel="stylesheet" href="checkout.css">
+
+    <!-- Inicialização do Firebase (Manter a inicialização existente) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script>
+        // Configuração do Firebase (Manter a configuração existente)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+            authDomain: "seja-versatil.firebaseapp.com",
+            projectId: "seja-versatil",
+            storageBucket: "seja-versatil.firebasestorage.app",
+            messagingSenderId: "102339207381",
+            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+            measurementId: "G-86E5CX4S3T"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+    </script>
+</head>
+<body>
+    <header class="checkout-header">
+        <div class="header-content">
+            <a href="index.html" class="back-to-store">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Voltar para a Loja
+            </a>
+            <a href="index.html" class="logo">SEJA VERSÁTIL</a>
+            <div class="header-placeholder"></div>
+        </div>
+    </header>
+
+    <main class="checkout-container">
+        <h1 class="checkout-title">Finalização de Pedido</h1>
+        
+        <div class="checkout-grid">
+            <!-- Coluna da Esquerda: Fluxo de Dados -->
+            <section class="checkout-data-flow">
+                
+                <!-- Passo 1 - Identificação -->
+                <div class="checkout-step" id="step-identification">
+                    <h2>1. Identificação</h2>
+                    <div id="user-info-display" style="display: none;">
+                        <p>Olá, <strong id="user-name-display"></strong> (<span id="user-email-display"></span>)</p>
+                        <button id="logout-btn" class="btn-secondary">Sair</button>
+                    </div>
+                    <form id="identification-form" class="form-section">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nome Completo</label>
+                            <input type="text" id="name" name="name" required placeholder="Seu nome completo">
+                        </div>
+                        <div class="auth-options">
+                            <button type="button" id="login-register-btn" class="btn-secondary">Entrar / Cadastrar</button>
+                            <p class="guest-option">ou continue como visitante</p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Passo 2 - Entrega -->
+                <div class="checkout-step" id="step-delivery">
+                    <h2>2. Entrega</h2>
+                    <form id="delivery-form" class="form-section">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" name="cep" required placeholder="00000-000" maxlength="9">
+                            <button type="button" id="search-cep-btn" class="btn-secondary btn-small">Buscar</button>
+                        </div>
+                        <div id="address-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="street">Rua</label>
+                                <input type="text" id="street" name="street" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="number">Número</label>
+                                    <input type="text" id="number" name="number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="complement">Complemento (Opcional)</label>
+                                    <input type="text" id="complement" name="complement">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="neighborhood">Bairro</label>
+                                <input type="text" id="neighborhood" name="neighborhood" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">Cidade</label>
+                                    <input type="text" id="city" name="city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">Estado</label>
+                                    <input type="text" id="state" name="state" required maxlength="2">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="shipping-options-container" id="shipping-options-container" style="display: none;">
+                            <h3>Opções de Frete</h3>
+                            <div class="shipping-option">
+                                <input type="radio" id="shipping-pac" name="shipping-method" value="PAC" required>
+                                <label for="shipping-pac">PAC (5-10 dias úteis) - <span id="pac-price">R$ 25,00</span></label>
+                            </div>
+                            <div class="shipping-option">
+                                <input type="radio" id="shipping-sedex" name="shipping-method" value="SEDEX" required>
+                                <label for="shipping-sedex">SEDEX (2-5 dias úteis) - <span id="sedex-price">R$ 45,00</span></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Passo 3 - Pagamento -->
+                <div class="checkout-step" id="step-payment">
+                    <h2>3. Pagamento</h2>
+                    <div class="payment-tabs">
+                        <button class="payment-tab-btn active" data-method="pix">PIX</button>
+                        <button class="payment-tab-btn" data-method="credit-card">Cartão de Crédito</button>
+                    </div>
+
+                    <div id="payment-pix" class="payment-content active">
+                        <div class="pix-instructions">
+                            <p>O pagamento via PIX garante a aprovação mais rápida do seu pedido.</p>
+                            <div class="pix-qr-code-simulated">
+                                <img src="https://via.placeholder.com/150?text=QR+Code+Simulado" alt="QR Code Simulado">
+                                <p>Escaneie o QR Code ou use o código Copia e Cola abaixo.</p>
+                                <button class="btn-primary btn-small">Copiar Código PIX</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="payment-credit-card" class="payment-content">
+                        <form id="credit-card-form" class="form-section">
+                            <div class="form-group">
+                                <label for="card-number">Número do Cartão</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-name">Nome Impresso no Cartão</label>
+                                <input type="text" id="card-name" name="card-name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">Validade (MM/AA)</label>
+                                    <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/AA" required maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvv">CVV</label>
+                                    <input type="text" id="card-cvv" name="card-cvv" placeholder="XXX" required maxlength="4">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="card-installments">Parcelamento</label>
+                                <select id="card-installments" name="card-installments" required>
+                                    <option value="1">1x sem juros</option>
+                                    <option value="2">2x sem juros</option>
+                                    <option value="3">3x sem juros</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coluna da Direita: Resumo do Pedido -->
+            <aside class="checkout-summary-sticky">
+                <div class="checkout-summary">
+                    <h2>Resumo do Pedido</h2>
+                    
+                    <!-- Listagem de Produtos -->
+                    <div id="summary-product-list" class="summary-product-list">
+                        <!-- Itens do carrinho serão injetados aqui pelo JS -->
+                        <div class="empty-cart-summary">Seu carrinho está vazio.</div>
+                    </div>
+
+                    <!-- Cupom de Desconto -->
+                    <div class="summary-coupon-section">
+                        <div class="coupon-input-row">
+                            <input type="text" 
+                                class="coupon-input" 
+                                id="checkoutCouponInput" 
+                                placeholder="Cupom de Desconto" 
+                                maxlength="20"
+                                autocomplete="off">
+                            <button class="coupon-apply-btn" 
+                                    id="checkoutApplyCouponBtn" 
+                                    type="button">
+                                Aplicar
+                            </button>
+                        </div>
+                        <div class="coupon-message" id="checkoutCouponMessage"></div>
+                        <div class="applied-coupon-badge" id="checkoutAppliedCouponBadge" style="display: none;">
+                            <span class="applied-coupon-code" id="checkoutAppliedCouponCode"></span>
+                            <button class="remove-coupon-btn" type="button" id="checkoutRemoveCouponBtn" title="Remover cupom">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- Valores -->
+                    <div class="summary-totals">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span id="summary-subtotal">R$ 0,00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Frete:</span>
+                            <span id="summary-shipping">R$ 0,00</span>
+                        </div>
+                        <div class="total-row discount-row" id="summary-discount-row" style="display: none;">
+                            <span>Desconto:</span>
+                            <span id="summary-discount">- R$ 0,00</span>
+                        </div>
+                        <div class="total-row total-final">
+                            <span>Total:</span>
+                            <span id="summary-total">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Ação -->
+                    <button id="finalize-order-btn" class="btn-primary btn-large" disabled>
+                        FINALIZAR PEDIDO
+                    </button>
+                    <div id="loading-feedback" class="loading-feedback" style="display: none;">
+                        Processando...
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Script de Checkout -->
+    <script src="checkout.js"></script>
+</body>
+</html>
