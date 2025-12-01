@@ -1149,42 +1149,152 @@ function setupPaymentListeners() {
     });
 }
 
-function sendToWhatsApp() {
-    if (!state.cart.length) return;
+async function sendToWhatsApp() {
+    // Validação do carrinho usando 'state.cart'
+    if (!state.cart || state.cart.length === 0) {
+        showToast('Carrinho vazio!', 'error');
+        return;
+    }
+
+    // 1. Validar Pagamento
     const checked = document.querySelector('input[name="paymentMethod"]:checked');
-    if (!checked) return alert('Selecione a forma de pagamento.');
+    if (!checked) {
+        showToast('Selecione a forma de pagamento.', 'error');
+        return;
+    }
+    const paymentMethod = checked.value;
 
-    const method = checked.value;
-    const inst = $('installments') ? $('installments').value : '1';
+    // 2. Coleta de Dados do Cliente
+    let customerData = {};
+    const currentUser = auth.currentUser; // Pega direto do Firebase Auth
 
-    const mapMethod = {
-        'pix': 'PIX',
-        'boleto': 'Boleto Bancário',
-        'credito-avista': 'Cartão de Crédito (À vista)',
-        'credito-parcelado': `Cartão Parcelado (${inst}x)`
-    };
+    if (currentUser) {
+        // Logado
+        const phone = await getUserPhone();
+        const cpf = await getUserCPF();
+        
+        if (!phone || !cpf) {
+            showToast('Dados incompletos. Preencha telefone e CPF.', 'error');
+            return;
+        }
 
+        customerData = {
+            name: currentUser.displayName || 'Cliente',
+            email: currentUser.email,
+            phone: phone,
+            cpf: cpf,
+            uid: currentUser.uid
+        };
+    } else {
+        // Visitante
+        const guestData = await collectGuestCustomerData();
+        if (!guestData) return; // Usuário cancelou o modal
+        customerData = guestData;
+    }
+
+    // 3. Cálculos Financeiros
     const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
-const discount = state.couponDiscount || 0;
-const total = Math.max(0, subtotal - discount);
+    const discount = state.couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
 
-let msg = `*🛍️ PEDIDO - SEJA VERSÁTIL*\n\n`;
-    state.cart.forEach((item, i) => {
-        msg += `${i+1}. *${item.name}*\n`;
-        msg += `   TAM: ${item.selectedSize} | COR: ${item.selectedColor}\n`;
-        msg += `   QTD: ${item.quantity} x R$ ${item.price.toFixed(2)}\n\n`;
-    });
+    // 4. Salvar Pedido no Firestore
+    let orderId = 'PENDENTE';
+    try {
+        const orderData = {
+            userId: customerData.uid || 'guest',
+            customer: customerData,
+            items: state.cart.map(item => ({
+                id: item.productId || item.id, // Garante compatibilidade de ID
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                size: item.selectedSize || null,
+                color: item.selectedColor || null,
+                image: item.image
+            })),
+            totals: { subtotal, discount, total },
+            paymentMethod,
+            status: 'Pendente WhatsApp',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            appliedCoupon: state.appliedCoupon ? { code: state.appliedCoupon.code, value: state.appliedCoupon.value } : null
+        };
 
-    msg += `*TOTAL: R$ ${total.toFixed(2)}*\n`;
-if (state.appliedCoupon) {
-    msg += `Cupom aplicado: ${state.appliedCoupon.code} (-R$ ${discount.toFixed(2)})\n`;
-}
-   
-    msg += `Pagamento: ${mapMethod[method] || method}\n`;
-    msg += `\n_Enviado pelo site_`;
+        const docRef = await db.collection('orders').add(orderData);
+        orderId = docRef.id;
 
-    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
+        // Registrar uso do cupom
+        if (state.appliedCoupon) {
+            await registerCouponUsage(state.appliedCoupon.id, total, discount);
+        }
+
+    } catch (error) {
+        console.error('Erro ao salvar pedido:', error);
+        showToast('Erro ao processar, mas vamos tentar enviar o WhatsApp.', 'error');
+    }
+
+    // 5. Gerar Mensagem WhatsApp Formatada
+    const msg = generateWhatsAppMessage(orderId, customerData, state.cart, { subtotal, discount, total }, paymentMethod);
+
+    // 6. Enviar
+    const WHATSAPP_NUMBER = '5571991427103'; 
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappURL, '_blank');
+
+    // 7. Limpeza e Reset
     closePaymentModal();
+    if (typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
+    
+    // Resetar estado global
+    state.cart = [];
+    state.appliedCoupon = null;
+    state.couponDiscount = 0;
+    
+    saveCartToStorage();
+    updateCartUI();
+    showToast('Pedido realizado com sucesso!', 'success');
+}
+
+// Função Geradora de Mensagem (Compatível com Produto.js)
+function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod) {
+    let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    
+    msg += `*👤 CLIENTE:*\n`;
+    msg += `Nome: ${customer.name}\n`;
+    msg += `Tel: ${customer.phone}\n`;
+    if(customer.cpf) msg += `CPF: ${customer.cpf}\n`;
+    msg += `\n`;
+
+    msg += `*📦 PRODUTOS:*\n`;
+    items.forEach((item, index) => {
+        msg += `${index + 1}. *${item.name}*\n`;
+        msg += `   ${item.quantity}x R$ ${item.price.toFixed(2)} | Tam: ${item.selectedSize} Cor: ${item.selectedColor}\n`;
+    });
+    msg += `\n`;
+
+    msg += `*💰 FINANCEIRO:*\n`;
+    msg += `Subtotal: R$ ${totals.subtotal.toFixed(2)}\n`;
+    if (totals.discount > 0) {
+        msg += `Desconto: - R$ ${totals.discount.toFixed(2)}\n`;
+    }
+    msg += `*TOTAL: R$ ${totals.total.toFixed(2)}*\n`;
+    msg += `\n`;
+    
+    const paymentMap = {
+        'pix': 'PIX (Aprovação Imediata)',
+        'boleto': 'Boleto Bancário',
+        'credito-avista': 'Cartão de Crédito (À Vista)',
+        'credito-parcelado': 'Cartão de Crédito (Parcelado)'
+    };
+    
+    msg += `*💳 PAGAMENTO:* ${paymentMap[paymentMethod] || paymentMethod}\n`;
+    
+    if (paymentMethod === 'credito-parcelado') {
+        const inst = document.getElementById('installments') ? document.getElementById('installments').value : '';
+        if(inst) msg += `Parcelas: ${inst}x\n`;
+    }
+
+    return msg;
 }
 
 /* =========================
@@ -1874,6 +1984,141 @@ window.toggleGalleryExpansion = function() {
 };
 
 
+// ==================== FUNÇÕES AUXILIARES DE CHECKOUT ====================
+
+// Validação de Email
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Validação de CPF
+function isValidCPF(cpf) {
+    cpf = cpf.replace(/\D/g, '');
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let soma = 0, resto;
+    for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(9, 10))) return false;
+    soma = 0;
+    for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(10, 11))) return false;
+    return true;
+}
+
+// Coleta dados de visitante
+function collectGuestCustomerData() {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('customerDataModal');
+        const form = document.getElementById('customerDataForm');
+        
+        if (!modal || !form) {
+            console.error('Modal de dados não encontrado');
+            resolve(null);
+            return;
+        }
+        
+        modal.classList.add('active');
+        
+        const submitHandler = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('guestName').value.trim();
+            const email = document.getElementById('guestEmail').value.trim();
+            const phone = document.getElementById('guestPhone').value.replace(/\D/g, '');
+            const cpf = document.getElementById('guestCPF').value.replace(/\D/g, '');
+            
+            if (!name || !validateEmail(email) || phone.length < 10 || !isValidCPF(cpf)) {
+                showToast('Preencha os dados corretamente.', 'error');
+                return;
+            }
+            
+            modal.classList.remove('active');
+            form.removeEventListener('submit', submitHandler);
+            resolve({ name, email, phone, cpf });
+        };
+        
+        form.addEventListener('submit', submitHandler);
+        
+        window.closeCustomerDataModal = () => {
+            modal.classList.remove('active');
+            form.removeEventListener('submit', submitHandler);
+            resolve(null);
+        };
+    });
+}
+
+// Pegar telefone do usuário logado (Firestore)
+async function getUserPhone() {
+    if (!auth.currentUser) return null;
+    const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+    if (doc.exists && doc.data().phone) return doc.data().phone;
+    
+    const phone = prompt('Confirme seu WhatsApp (com DDD):');
+    if (phone) {
+        await db.collection('users').doc(auth.currentUser.uid).update({ phone: phone.replace(/\D/g,'') });
+        return phone.replace(/\D/g,'');
+    }
+    return null;
+}
+
+// Pegar CPF do usuário logado (Firestore)
+async function getUserCPF() {
+    if (!auth.currentUser) return null;
+    const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+    if (doc.exists && doc.data().cpf) return doc.data().cpf;
+    
+    const cpf = prompt('Confirme seu CPF para a nota fiscal:');
+    if (cpf && isValidCPF(cpf)) {
+        await db.collection('users').doc(auth.currentUser.uid).update({ cpf: cpf.replace(/\D/g,'') });
+        return cpf.replace(/\D/g,'');
+    }
+    return null;
+}
+
+// Registrar uso do cupom no Firestore
+async function registerCouponUsage(couponId, orderValue, discountApplied) {
+    if (!auth.currentUser) return;
+    try {
+        const batch = db.batch();
+        const couponRef = db.collection('coupons').doc(couponId);
+        const usageRef = db.collection('coupon_usage').doc();
+        
+        batch.update(couponRef, { usedCount: firebase.firestore.FieldValue.increment(1) });
+        batch.set(usageRef, {
+            couponId,
+            userId: auth.currentUser.uid,
+            usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            orderValue,
+            discountApplied
+        });
+        await batch.commit();
+    } catch (err) {
+        console.error('Erro ao registrar cupom:', err);
+    }
+}
+
+// Máscaras de Input (Ativar no final do carregamento)
+function setupMasks() {
+    const cpfInput = document.getElementById('guestCPF');
+    const phoneInput = document.getElementById('guestPhone');
+    
+    if (cpfInput) cpfInput.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        e.target.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    });
+    
+    if (phoneInput) phoneInput.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        e.target.value = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    });
+}
+// Chamar setupMasks ao carregar
+document.addEventListener('DOMContentLoaded', setupMasks);
 
 
 
