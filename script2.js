@@ -1081,6 +1081,27 @@ async function userLogin(event) {
     }
 }
 
+// ==================== 1. COLE ISTO ANTES DA FUNÇÃO DE REGISTRO ====================
+
+/**
+ * Verifica a força da senha com base em critérios de segurança.
+ * Retorna uma pontuação de 0 a 4.
+ */
+function checkPasswordStrength(password) {
+    let score = 0;
+    // Mínimo de 8 caracteres (melhoria de segurança em relação aos 6 anteriores)
+    if (password.length < 8) return 0; 
+    score++; 
+
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++; // Maiúsculas e minúsculas
+    if (/\d/.test(password)) score++; // Números
+    if (/[^a-zA-Z0-9\s]/.test(password)) score++; // Símbolos
+
+    return score;
+}
+
+// ==================== 2. SUBSTITUA A SUA ANTIGA userRegister POR ESTA ====================
+
 async function userRegister(event) {
     event.preventDefault();
     
@@ -1093,67 +1114,71 @@ async function userRegister(event) {
     
     errorMsg.classList.remove('active');
     successMsg.classList.remove('active');
-    
-    // ✅ Validações profissionais
+
+    // 1. Validação de Campos Básica
     if (!name || !email || !password || !confirmPassword) {
-        errorMsg.textContent = 'Preencha todos os campos';
+        errorMsg.textContent = 'Preencha todos os campos.';
         errorMsg.classList.add('active');
         return;
     }
     
     if (!validateEmail(email)) {
-        errorMsg.textContent = 'E-mail inválido';
+        errorMsg.textContent = 'E-mail inválido.';
         errorMsg.classList.add('active');
         return;
     }
     
-    if (password.length < 6) {
-    errorMsg.textContent = 'Senha deve ter no mínimo 6 caracteres';
+    if (password !== confirmPassword) {
+        errorMsg.textContent = 'As senhas não coincidem.';
         errorMsg.classList.add('active');
         return;
     }
 
-    // ✅ Validação de força de senha (VERSÃO LIGHT)
-if (!/(?=.*[a-zA-Z])/.test(password)) {
-    errorMsg.textContent = 'Senha deve conter pelo menos uma letra';
-    errorMsg.classList.add('active');
-    return;
-}
-    
-    if (password !== confirmPassword) {
-        errorMsg.textContent = 'As senhas não coincidem';
+    // 2. Validação de Força da Senha (USA A NOVA FUNÇÃO AQUI)
+    const strength = checkPasswordStrength(password);
+    if (strength < 3) {
+        errorMsg.textContent = 'Senha muito fraca. Use pelo menos 8 caracteres, letras maiúsculas, minúsculas e números.';
         errorMsg.classList.add('active');
         return;
     }
+
+    // Feedback visual no botão
+    const registerBtn = document.querySelector('#registerTab button[type="submit"]'); // Seleciona o botão do form
+    const originalText = registerBtn ? registerBtn.textContent : 'Criar Conta';
+    if(registerBtn) {
+        registerBtn.disabled = true;
+        registerBtn.textContent = 'Registrando...';
+    }
     
-    document.getElementById('loadingOverlay').classList.add('active');
-    
+    // Mostra overlay de carregamento (mantendo seu padrão visual)
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+
     try {
-        // ✅ CRIAR USUÁRIO NO FIREBASE AUTHENTICATION
+        // 3. Criação de Usuário no Firebase Auth
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // ✅ ATUALIZAR PERFIL COM NOME
-        await user.updateProfile({
-            displayName: name
-        });
+        // 4. Atualizar Perfil e Salvar Dados no Firestore com MERGE (Mais seguro)
+        await user.updateProfile({ displayName: name });
         
-        // ✅ SALVAR DADOS ADICIONAIS NO FIRESTORE
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             isAdmin: false,
-            newsletter: false
-        });
-        
-        // ✅ ENVIAR EMAIL DE VERIFICAÇÃO
+            newsletter: false,
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true }); // merge evita sobrescrever dados se o doc já existir
+
+        // 5. Enviar Email de Verificação
         await user.sendEmailVerification({
             url: window.location.href,
             handleCodeInApp: true
         });
-        
-        successMsg.textContent = '✅ Conta criada! Verifique seu email.';
+
+        // 6. Sucesso e Feedback
+        successMsg.textContent = '✅ Conta criada! Verifique seu email para ativar.';
         successMsg.classList.add('active');
         showToast('Conta criada com sucesso!', 'success');
         
@@ -1165,30 +1190,35 @@ if (!/(?=.*[a-zA-Z])/.test(password)) {
         
         // Trocar para aba de login após 3 segundos
         setTimeout(() => {
-            switchUserTab('login');
+            if (typeof switchUserTab === 'function') switchUserTab('login');
             successMsg.classList.remove('active');
         }, 3000);
-        
-        //console.log('✅ Usuário cadastrado:', user.uid);
-        
+
     } catch (error) {
         console.error('❌ Erro ao criar conta:', error);
         
-        let errorMessage = 'Erro ao criar conta';
+        let errorMessage = 'Erro desconhecido ao criar conta. Tente novamente.';
         
+        // Mapeamento de erros
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'Este email já está cadastrado';
+            errorMessage = 'Este email já está cadastrado. Tente fazer login.';
         } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Email inválido';
+            errorMessage = 'O formato do email é inválido.';
         } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'Senha muito fraca';
+            errorMessage = 'A senha é muito fraca.';
+        } else if (error.message) {
+             errorMessage = error.message;
         }
-        
+
         errorMsg.textContent = errorMessage;
         errorMsg.classList.add('active');
-        
+
     } finally {
-        document.getElementById('loadingOverlay').classList.remove('active');
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+        if (registerBtn) {
+            registerBtn.disabled = false;
+            registerBtn.textContent = originalText;
+        }
     }
 }
 
@@ -6163,6 +6193,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
