@@ -5617,22 +5617,16 @@ console.log('✅ Sistema de estoque integrado ao site');
 // ==================== BLACK FRIDAY COUNTDOWN ====================
 
 function initBlackFridayCountdown() {
-    // Definir data final da Black Friday (ajuste conforme necessário)
-    // Formato: Ano, Mês (0-11), Dia, Hora, Minuto, Segundo
-    const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59); // 30 de Novembro de 2025, 23:59:59
+    const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59);
+    let countdownInterval; // ✅ DECLARE FIRST
     
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = blackFridayEnd - now;
         
-        // Se a promoção terminou
         if (distance < 0) {
-            document.querySelector('.top-banner').innerHTML = `
-                <div class="bf-content">
-                    <span class="bf-label"> BLACK FRIDAY ENCERRADA | VOLTE EM BREVE!</span>
-                </div>
-            `;
-            clearInterval(countdownInterval);
+            document.querySelector('.top-banner').innerHTML = `...`;
+            clearInterval(countdownInterval); // ✅ Now accessible
             return;
         }
         
@@ -6191,6 +6185,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
