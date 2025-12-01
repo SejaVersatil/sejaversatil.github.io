@@ -4472,30 +4472,15 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    // ✅ REMOVE the loadCartFromStorage call - cart is already loaded on DOMContentLoaded
-    if (!cart || cart.length === 0) {
-        showToast('Seu carrinho está vazio!', 'error');
+    // Verifica se o carrinho está vazio antes de redirecionar (opcional, mas recomendado)
+    const rawCart = localStorage.getItem('sejaVersatilCart');
+    if (!rawCart || JSON.parse(rawCart).items.length === 0) {
+        alert('Seu carrinho está vazio!');
         return;
     }
     
-    // Close cart
-    if (typeof toggleCart === 'function') {
-        toggleCart();
-    }
-    
-    // Open payment modal after delay
-    setTimeout(() => {
-        if (typeof openPaymentModal === 'function') {
-            openPaymentModal();
-        } else {
-            console.error('openPaymentModal não existe!');
-        }
-    }, 300);
-    
-    // Track event
-    if (typeof trackEvent === 'function') {
-        trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
-    }
+    // Redireciona para a nova página de checkout
+    window.location.href = 'checkout.html';
 }
 
 // ==================== CHECKOUT VIA WHATSAPP ====================
@@ -6062,6 +6047,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
