@@ -6092,24 +6092,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// ==================== EXPOR FUNÇÕES GLOBAIS ====================
-window.openPaymentModal = openPaymentModal;
-window.closePaymentModal = closePaymentModal;
-window.sendToWhatsApp = sendToWhatsApp;
-window.closeCustomerDataModal = closeCustomerDataModal;
-window.collectGuestCustomerData = collectGuestCustomerData;
-window.isValidCPF = isValidCPF;
-window.getUserPhone = getUserPhone;
-window.getUserCPF = getUserCPF;
-window.saveOrderToFirestore = saveOrderToFirestore;
-window.applyCoupon = applyCoupon;
-window.removeCoupon = removeCoupon;
-window.checkout = checkout;
-
-console.log('✅ Funções de checkout expostas globalmente');
-console.log('🧪 Teste: typeof openPaymentModal =', typeof openPaymentModal);
-
-
 // Validação de CPF com feedback visual
 function validateCPF(cpf) {
     cpf = cpf.replace(/[^\d]/g, '');
@@ -6186,7 +6168,15 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     });
 }
 
-
-
-
-
+window.openPaymentModal = openPaymentModal;
+window.closePaymentModal = closePaymentModal;
+window.sendToWhatsApp = sendToWhatsApp;
+window.closeCustomerDataModal = closeCustomerDataModal;
+window.collectGuestCustomerData = collectGuestCustomerData;
+window.isValidCPF = isValidCPF;
+window.getUserPhone = getUserPhone;
+window.getUserCPF = getUserCPF;
+window.saveOrderToFirestore = saveOrderToFirestore;
+window.applyCoupon = applyCoupon;
+window.removeCoupon = removeCoupon;
+window.checkout = checkout;
