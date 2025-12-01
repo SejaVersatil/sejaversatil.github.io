@@ -2717,7 +2717,7 @@ function setupAutoCarousel() {
     productCards.forEach(card => {
         const productId = card.getAttribute('data-product-id');
         
-        // ✅ CORREÇÃO: Limpar interval existente
+        // ✅ CLEAR existing interval before creating new one
         if (carouselIntervals[productId]) {
             clearInterval(carouselIntervals[productId]);
             delete carouselIntervals[productId];
@@ -2733,7 +2733,7 @@ function setupAutoCarousel() {
             return;
         }
         
-        // ✅ CORREÇÃO: Verificar se já tem listeners
+        // ✅ CHECK if listeners already exist
         if (carouselEventsRegistered.has(productId)) {
             return;
         }
@@ -2742,7 +2742,7 @@ function setupAutoCarousel() {
         
         let currentSlideIndex = 0;
         
-        // ✅ CORREÇÃO: Usar função nomeada para poder remover listener
+        // ✅ STORE references to remove listeners later if needed
         const handleMouseEnter = () => {
             if (carouselsPaused) return;
             
@@ -2764,10 +2764,6 @@ function setupAutoCarousel() {
             currentSlideIndex = 0;
             updateCarouselSlides(card, 0);
         };
-        
-        // ✅ CORREÇÃO: Remover listeners antigos antes de adicionar novos
-        card.removeEventListener('mouseenter', handleMouseEnter);
-        card.removeEventListener('mouseleave', handleMouseLeave);
         
         card.addEventListener('mouseenter', handleMouseEnter);
         card.addEventListener('mouseleave', handleMouseLeave);
@@ -6195,5 +6191,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
