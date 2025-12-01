@@ -5652,7 +5652,7 @@ function initBlackFridayCountdown() {
     updateCountdown();
     
     // Atualizar a cada segundo
-    const countdownInterval = setInterval(updateCountdown, 1000);
+    countdownInterval = setInterval(updateCountdown, 1000); // CORRIGIDO: Removido 'const' para usar a variável let declarada acima
 }
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 // MARCAR PRODUTOS COMO BLACK FRIDAY
@@ -6185,6 +6185,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         }
     });
 }
+
 
 
 
