@@ -4748,7 +4748,6 @@ async function sendToWhatsApp() {
     
     trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
   }
-}
 
 // ==================== FUNÇÕES AUXILIARES (TRAZIDAS DO SEU CÓDIGO) ====================
 
@@ -6164,6 +6163,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
