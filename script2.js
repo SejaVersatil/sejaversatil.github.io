@@ -4425,20 +4425,19 @@ function checkout() {
         return;
     }
     
-    // 1. Fechar carrinho (toggleCart deve estar definida em ambos os scripts)
-    if (typeof toggleCart === 'function') {
-        toggleCart();
-    }
-    
-    // 2. Abrir modal de pagamento (após um pequeno delay para a animação do carrinho)
+    // 1. Abrir modal de pagamento IMEDIATAMENTE
+if (typeof openPaymentModal === 'function') {
+    openPaymentModal(); 
+} else {
+    console.error('openPaymentModal não está definida!');
+}
+
+// 2. Fechar carrinho (opcionalmente com um pequeno delay para a animação)
+if (typeof toggleCart === 'function') {
     setTimeout(() => {
-        // openPaymentModal deve estar definida no mesmo script
-        if (typeof openPaymentModal === 'function') {
-            openPaymentModal(); 
-        } else {
-            console.error('openPaymentModal não está definida!');
-        }
-    }, 300);
+        toggleCart();
+    }, 100); // Pequeno delay para a animação de abertura do modal
+}
     
     // 3. Rastreamento (se a função trackEvent estiver definida)
     if (typeof trackEvent === 'function') {
@@ -6180,3 +6179,4 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
