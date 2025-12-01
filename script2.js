@@ -6050,4 +6050,3 @@ window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
 
-
