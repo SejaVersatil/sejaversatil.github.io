@@ -4458,10 +4458,10 @@ function openPaymentModal() {
     });
     
     if (!modal) {
-    console.error('❌ CRÍTICO: Elemento principal do modal ausente!');
-    alert('Erro ao abrir modal de pagamento. Verifique o console.');
-    return;
-}
+        console.error('❌ CRÍTICO: Elemento principal do modal ausente!');
+        alert('Erro ao abrir modal de pagamento. Verifique o console.');
+        return;
+    }
     
     console.log('✅ Abrindo modal de pagamento com', cart.length, 'itens');
     
@@ -4499,9 +4499,7 @@ function openPaymentModal() {
         cartLength: cart.length
     });
 
-    // --- REMOVIDA CHAVE QUE FECHAVA A FUNÇÃO PREMATURAMENTE AQUI ---
-
-    // ✅ CORREÇÃO 2: Renderizar itens (código já existe, manter)
+    // ✅ CORREÇÃO 2: Renderizar itens
     cartItemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
@@ -4526,7 +4524,7 @@ function openPaymentModal() {
         `;
     }).join('');
     
-    // ✅ CORREÇÃO 3: Mostrar cupom aplicado (NOVO BLOCO)
+    // ✅ CORREÇÃO 3: Mostrar cupom aplicado
     if (appliedCoupon && couponDiscount > 0) {
         cartItemsContainer.innerHTML += `
             <div style="padding: 0.8rem; margin-top: 0.5rem; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745; border-radius: 4px;">
@@ -6176,6 +6174,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
