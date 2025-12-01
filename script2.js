@@ -4416,34 +4416,33 @@ document.addEventListener('keydown', (e) => {
 
 function checkout() {
     if (typeof loadCartFromStorage === 'function') {
-        loadCartFromStorage(); // Garante que o carrinho está sincronizado com o localStorage
+        loadCartFromStorage();
     }
-
-    // Verifica se o carrinho está vazio
     if (cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
     // 1. Abrir modal de pagamento IMEDIATAMENTE
-if (typeof openPaymentModal === 'function') {
-    openPaymentModal(); 
-} else {
-    console.error('openPaymentModal não está definida!');
-}
+    if (typeof openPaymentModal === 'function') {
+        openPaymentModal(); 
+    } else {
+        console.error('openPaymentModal não está definida!');
+    }
 
-// 2. Fechar carrinho (opcionalmente com um pequeno delay para a animação)
-if (typeof toggleCart === 'function') {
-    setTimeout(() => {
-        toggleCart();
-    }, 100); // Pequeno delay para a animação de abertura do modal
-}
+    // 2. Fechar carrinho (opcionalmente com um pequeno delay para a animação)
+    if (typeof toggleCart === 'function') {
+        setTimeout(() => {
+            toggleCart();
+        }, 100);
+    }
     
-    // 3. Rastreamento (se a função trackEvent estiver definida)
+    // 3. Rastreamento
     if (typeof trackEvent === 'function') {
         trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
     }
 }
+
 // ==================== CHECKOUT VIA WHATSAPP ====================
 
 const WHATSAPP_NUMBER = '5571991427103'; // SEU NÚMERO COM DDI + DDD + NÚMERO
@@ -6179,4 +6178,5 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
