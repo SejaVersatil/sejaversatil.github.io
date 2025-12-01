@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         loadCartFromStorage();
         updateCartUI();
+        setupPaymentListeners();
 
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
@@ -2127,3 +2128,4 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
