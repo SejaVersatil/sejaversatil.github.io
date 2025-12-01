@@ -524,6 +524,40 @@
       <div class="loading-text">Carregando...</div>
   </div>
 
+<!-- Modal Dados do Cliente Visitante -->
+<div class="payment-modal" id="customerDataModal" style="display: none;">
+    <div class="payment-modal-content">
+        <div class="payment-modal-header">
+            <h3>Complete seus Dados</h3>
+            <button class="payment-modal-close" onclick="closeCustomerDataModal()" type="button">✕</button>
+        </div>
+        
+        <form id="customerDataForm" style="padding: 1.5rem;">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="guestName" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Nome Completo *</label>
+                <input type="text" id="guestName" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="guestEmail" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">E-mail *</label>
+                <input type="email" id="guestEmail" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="guestPhone" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">WhatsApp (com DDD) *</label>
+                <input type="tel" id="guestPhone" required placeholder="(71) 99999-9999" maxlength="15" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="guestCPF" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">CPF *</label>
+                <input type="text" id="guestCPF" required placeholder="000.000.000-00" maxlength="14" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            
+            <button type="submit" class="payment-confirm-btn" style="width: 100%;">Continuar para WhatsApp</button>
+        </form>
+    </div>
+</div>
+  
   <script src="produto.js" defer></script>
 
 <!-- Modal de Pagamento -->
@@ -549,6 +583,7 @@
   
 </body>
 </html>
+
 
 
 
