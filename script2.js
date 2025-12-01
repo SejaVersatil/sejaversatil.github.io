@@ -4591,29 +4591,23 @@ function setupPaymentListeners() {
 
 async function sendToWhatsApp() {
     if (!cart.length) {
-    showToast('Carrinho vazio!', 'error');
-    return;
-}
+        showToast('Carrinho vazio!', 'error');
+        return;
+    }
 
     // 1. COLETA DE DADOS DO CLIENTE
     const isLoggedIn = auth.currentUser !== null;
     let customerData = {};
    
-      if (!isLoggedIn) {
-        // Apenas coletar os dados do cliente
-        if (typeof collectGuestCustomerData === 'function') {
-            customerData = await collectGuestCustomerData();
-            if (!customerData) return;
-        } else {
-            customerData = { name: 'Cliente', cpf: 'Não informado', email: 'Não informado' };
-        }
+    if (!isLoggedIn) {
+        customerData = await collectGuestCustomerData();
+        if (!customerData) return;
     } else {
-        // Dados do usuário logado
         customerData = {
             name: currentUser.name,
             email: currentUser.email,
-            phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
-            cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
+            phone: await getUserPhone(),
+            cpf: await getUserCPF(),
             userId: currentUser.uid
         };
         
@@ -4634,14 +4628,12 @@ async function sendToWhatsApp() {
             const serverCoupon = couponDoc.data();
             const subtotalCheck = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
-            // Revalidar valor mínimo
             if (serverCoupon.minValue && subtotalCheck < serverCoupon.minValue) {
                 showToast(`❌ Valor mínimo: R$ ${serverCoupon.minValue.toFixed(2)}`, 'error');
                 removeCoupon();
                 return;
             }
             
-            // Recalcular desconto
             let recalculatedDiscount = 0;
             if (serverCoupon.type === 'percentage') {
                 recalculatedDiscount = (subtotalCheck * serverCoupon.value) / 100;
@@ -4652,7 +4644,6 @@ async function sendToWhatsApp() {
                 recalculatedDiscount = serverCoupon.value;
             }
             
-            // Atualizar desconto global
             couponDiscount = Math.min(recalculatedDiscount, subtotalCheck);
             
         } catch (error) {
@@ -4704,7 +4695,7 @@ async function sendToWhatsApp() {
     msg += `*Cliente:* ${customerData.name}\n`;
     if (customerData.cpf) msg += `*CPF:* ${customerData.cpf}\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    msg += `* PRODUTOS:*\n`;
+    msg += `*📦 PRODUTOS:*\n`;
     
     cart.forEach((item, index) => {
         msg += `${index+1}. *${item.name}*\n`;
@@ -4755,9 +4746,8 @@ async function sendToWhatsApp() {
         }
     }, 2000);
     
-    if (typeof trackEvent === 'function') {
-        trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
-    }
+    trackEvent('E-commerce', 'Checkout WhatsApp', paymentText);
+  }
 }
 
 // ==================== FUNÇÕES AUXILIARES (TRAZIDAS DO SEU CÓDIGO) ====================
@@ -6174,6 +6164,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
