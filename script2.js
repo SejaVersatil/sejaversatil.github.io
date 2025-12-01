@@ -4674,14 +4674,19 @@ async function sendToWhatsApp() {
              customerData.phone = phone;
         }
     } else {
-        // Usuário Visitante: Abre o modal de dados que você já tem
-        // NOTA: Se esta função for chamada pelo botão do modal de dados, os dados virão do form
-        // Se for chamada pelo modal de pagamento, verifica se precisa coletar dados
-        
-        // Se não temos dados, chama a função de coleta do seu código original
+        // Usuário Visitante: DEVE coletar dados antes de prosseguir
         if (typeof collectGuestCustomerData === 'function') {
+            // Fecha o modal de pagamento para abrir o de dados
+            closePaymentModal(); 
+            
+            // collectGuestCustomerData é assíncrona e retorna os dados ou null se cancelado
             const guestData = await collectGuestCustomerData(); 
-            if (!guestData) return; // Cancelou
+            
+            if (!guestData) {
+                // Se cancelou, reabre o modal de pagamento e interrompe
+                openPaymentModal(); 
+                return; 
+            }
             customerData = guestData;
         } else {
             // Fallback caso a função não exista
@@ -6049,4 +6054,5 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
