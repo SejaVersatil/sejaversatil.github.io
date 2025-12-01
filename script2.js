@@ -4415,29 +4415,27 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    if (typeof loadCartFromStorage === 'function') {
-        loadCartFromStorage();
-    }
-    if (cart.length === 0) {
+    // ✅ REMOVE the loadCartFromStorage call - cart is already loaded on DOMContentLoaded
+    if (!cart || cart.length === 0) {
         showToast('Seu carrinho está vazio!', 'error');
         return;
     }
     
-    // 1. Abrir modal de pagamento IMEDIATAMENTE
-    if (typeof openPaymentModal === 'function') {
-        openPaymentModal(); 
-    } else {
-        console.error('openPaymentModal não está definida!');
-    }
-
-    // 2. Fechar carrinho (opcionalmente com um pequeno delay para a animação)
+    // Close cart
     if (typeof toggleCart === 'function') {
-        setTimeout(() => {
-            toggleCart();
-        }, 100);
+        toggleCart();
     }
     
-    // 3. Rastreamento
+    // Open payment modal after delay
+    setTimeout(() => {
+        if (typeof openPaymentModal === 'function') {
+            openPaymentModal();
+        } else {
+            console.error('openPaymentModal não existe!');
+        }
+    }, 300);
+    
+    // Track event
     if (typeof trackEvent === 'function') {
         trackEvent('E-commerce', 'Checkout Started', `${cart.length} items`);
     }
@@ -6178,5 +6176,6 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
