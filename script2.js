@@ -984,103 +984,130 @@ function hideLoggedInView() {
 async function userLogin(event) {
     event.preventDefault();
     
+    // Obter campos e limpar espaços
     const emailOrUsername = document.getElementById('loginEmail').value.toLowerCase().trim();
     const password = document.getElementById('loginPassword').value;
     const errorMsg = document.getElementById('loginError');
 
+    // Validação básica
+    errorMsg.classList.remove('active');
     if (!emailOrUsername || !password) {
         errorMsg.textContent = 'Preencha todos os campos';
         errorMsg.classList.add('active');
         return;
     }
 
+    // Feedback visual no botão
+    const loginBtn = document.querySelector('#loginTab .form-btn');
+    const originalText = loginBtn ? loginBtn.textContent : 'Entrar';
+    if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Entrando...';
+    }
+
     try {
-        // Converter 'admin' para email completo se necessário
+        // Conversão de "admin" para email
         let email = emailOrUsername;
         if (!emailOrUsername.includes('@')) {
             if (emailOrUsername === 'admin') {
                 email = 'admin@sejaversatil.com.br';
             } else {
-                errorMsg.textContent = 'Use "admin" ou "admin@sejaversatil.com.br" para login';
-                errorMsg.classList.add('active');
-                return;
+                throw { code: 'custom/invalid-username', message: 'Use "admin" ou um e-mail válido para login' };
             }
         }
         
-        // ✅ AUTENTICAR COM FIREBASE
+        // 1. AUTENTICAR COM FIREBASE
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
         console.log('✅ Autenticado com Firebase:', user.email);
 
+        // 2. VERIFICAR SE O EMAIL ESTÁ CONFIRMADO (Melhoria de Segurança)
         if (!user.emailVerified) {
-    await auth.signOut();
-    errorMsg.textContent = '⚠️ Verifique seu email antes de fazer login';
-    errorMsg.classList.add('active');
-    
-    const resend = confirm('Deseja reenviar o email de verificação?');
-    if (resend) {
-        await user.sendEmailVerification();
-        showToast('Email de verificação reenviado!', 'info');
-    }
-    return;
-}
+            await auth.signOut(); // Desloga o usuário imediatamente
+            
+            errorMsg.textContent = '⚠️ Verifique seu email antes de fazer login';
+            errorMsg.classList.add('active');
+            
+            const resend = confirm('Seu email não foi verificado. Deseja reenviar o email de verificação?');
+            if (resend) {
+                await user.sendEmailVerification();
+                showToast('Email de verificação reenviado!', 'info');
+            }
+            return; // Interrompe o fluxo
+        }
         
-        // ✅ VERIFICAR SE É ADMIN E CARREGAR PERMISSÕES
+        // 3. ATUALIZAR ÚLTIMO LOGIN
+        await db.collection('users').doc(user.uid).update({
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {}); // Ignora se o doc não existir (ex: admin)
+
+        // 4. VERIFICAR SE É ADMIN E CARREGAR PERMISSÕES
         const adminDoc = await db.collection('admins').doc(user.uid).get();
         
         if (adminDoc.exists && adminDoc.data().role === 'admin') {
             const adminData = adminDoc.data();
             
-            // ✅ SALVAR COM PERMISSÕES
+            // Salvar dados de Admin
             currentUser = {
                 name: adminData.name || 'Administrador',
                 email: user.email,
                 isAdmin: true,
                 uid: user.uid,
-                permissions: adminData.permissions || [] // ← CORREÇÃO PRINCIPAL
+                permissions: adminData.permissions || []
             };
             
             localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
             isAdminLoggedIn = true;
             
             showLoggedInView();
-            errorMsg.classList.remove('active');
-            showToast('Login realizado com sucesso!', 'success');
-            
-            // console.log('✅ Admin logado com UID:', user.uid);
+            showToast('Login de administrador realizado!', 'success');
             console.log('📋 Permissões carregadas:', currentUser.permissions);
-            return;
             
         } else {
-            // Usuário autenticado mas NÃO é admin
-            await auth.signOut();
-            errorMsg.textContent = 'Você não tem permissões de administrador';
-            errorMsg.classList.add('active');
-            return;
+            // Login de Usuário Comum
+            currentUser = {
+                name: user.displayName || 'Cliente',
+                email: user.email,
+                isAdmin: false,
+                uid: user.uid
+            };
+            
+            localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+            isAdminLoggedIn = false;
+            
+            showLoggedInView();
+            showToast(`Bem-vindo(a), ${currentUser.name}!`, 'success');
+            closeUserPanel(); // Fecha o modal se for cliente comum
         }
         
-    } catch (firebaseError) {
-        console.error('❌ Erro Firebase:', firebaseError.code);
+    } catch (error) {
+        console.error('❌ Erro no Login:', error.code || error);
         
-        // Mensagens de erro amigáveis
         let errorMessage = 'Email ou senha incorretos';
         
-        if (firebaseError.code === 'auth/user-not-found') {
-            errorMessage = 'Usuário não encontrado';
-        } else if (firebaseError.code === 'auth/wrong-password') {
-            errorMessage = 'Senha incorreta';
-        } else if (firebaseError.code === 'auth/invalid-email') {
-            errorMessage = 'Email inválido';
-        } else if (firebaseError.code === 'auth/too-many-requests') {
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            errorMessage = 'Email ou senha incorretos';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Formato de email inválido';
+        } else if (error.code === 'auth/too-many-requests') {
             errorMessage = 'Muitas tentativas. Aguarde alguns minutos.';
+        } else if (error.code === 'auth/user-disabled') {
+            errorMessage = 'Esta conta foi desativada.';
+        } else if (error.message) {
+            errorMessage = error.message; // Mensagens customizadas
         }
         
         errorMsg.textContent = errorMessage;
         errorMsg.classList.add('active');
+        
+    } finally {
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = originalText;
+        }
     }
 }
-
 // ==================== 1. COLE ISTO ANTES DA FUNÇÃO DE REGISTRO ====================
 
 /**
@@ -6193,6 +6220,7 @@ window.saveOrderToFirestore = saveOrderToFirestore;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
