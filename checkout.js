@@ -1,5 +1,5 @@
 // ==========================================================================
-// CHECKOUT.JS - Lógica de Carrinho, Firebase, Validação e Finalização
+// CHECKOUT.JS - Lógica de Carrinho, Firebase, Validação e Finalização (WhatsApp)
 // ==========================================================================
 
 'use strict';
@@ -17,9 +17,11 @@ const state = {
     user: null,
     address: null,
     selectedShipping: null,
-    selectedPayment: 'pix',
     isProcessing: false
 };
+
+// ** ATENÇÃO: SUBSTITUA ESTE NÚMERO PELO SEU NÚMERO DE WHATSAPP REAL **
+const WHATSAPP_NUMBER = '5511999999999'; 
 
 // ==================== UTILS ====================
 
@@ -60,7 +62,11 @@ function loadCartFromStorage() {
             state.cart.items = parsed.items.map(item => ({
                 ...item,
                 quantity: Number(item.quantity) || 1,
-                price: Number(item.price) || 0
+                price: Number(item.price) || 0,
+                name: item.name || 'Produto Sem Nome', // Garantir que o nome exista
+                size: item.size || '',
+                color: item.color || '',
+                image: item.image || ''
             }));
             state.cart.appliedCoupon = parsed.appliedCoupon || null;
             state.cart.couponDiscount = Number(parsed.couponDiscount) || 0;
@@ -69,13 +75,20 @@ function loadCartFromStorage() {
             state.cart.items = parsed.map(item => ({
                 ...item,
                 quantity: Number(item.quantity) || 1,
-                price: Number(item.price) || 0
+                price: Number(item.price) || 0,
+                name: item.name || 'Produto Sem Nome',
+                size: item.size || '',
+                color: item.color || '',
+                image: item.image || ''
             }));
             state.cart.appliedCoupon = null;
             state.cart.couponDiscount = 0;
         } else {
             return false;
         }
+
+        // Filtra itens com preço zero ou quantidade zero para evitar problemas
+        state.cart.items = state.cart.items.filter(item => item.price > 0 && item.quantity > 0);
 
         if (state.cart.items.length === 0) {
             return false;
@@ -86,19 +99,6 @@ function loadCartFromStorage() {
     } catch (err) {
         console.error('Erro ao carregar carrinho:', err);
         return false;
-    }
-}
-
-function saveCartToStorage() {
-    try {
-        const cartData = {
-            items: state.cart.items || [],
-            appliedCoupon: state.cart.appliedCoupon || null,
-            couponDiscount: state.cart.couponDiscount || 0
-        };
-        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-    } catch (err) {
-        console.error('Erro ao salvar carrinho', err);
     }
 }
 
@@ -116,9 +116,9 @@ function clearCart() {
 
 // Simulação de base de dados de cupons
 const availableCoupons = {
-    'PRIMEIRACOMPRA': { type: 'percent', value: 0.10, description: '10% OFF na primeira compra' },
-    'FRETEGRATIS': { type: 'shipping', value: 0, description: 'Frete Grátis' },
-    'DEZREAIS': { type: 'fixed', value: 10.00, description: 'R$ 10,00 de desconto' }
+    'PRIMEIRACOMPRA': { code: 'PRIMEIRACOMPRA', type: 'percent', value: 0.10, description: '10% OFF na primeira compra' },
+    'FRETEGRATIS': { code: 'FRETEGRATIS', type: 'shipping', value: 0, description: 'Frete Grátis' },
+    'DEZREAIS': { code: 'DEZREAIS', type: 'fixed', value: 10.00, description: 'R$ 10,00 de desconto' }
 };
 
 function calculateDiscount(subtotal, shipping) {
@@ -214,10 +214,11 @@ function updateIdentificationStep(isLoggedIn) {
         emailInput.disabled = true;
 
     } else {
-        displayEl.style.display = 'none';
+        displayEl.style.display = 'flex'; // Mantém o display flex para o layout
         formEl.style.display = 'flex';
         nameInput.disabled = false;
         emailInput.disabled = false;
+        displayEl.style.display = 'none'; // Esconde a mensagem de logado se não estiver logado
     }
     
     // Adiciona listener ao botão de logout
@@ -246,13 +247,12 @@ async function searchCep() {
     const addressFieldsEl = $('address-fields');
     const shippingOptionsEl = $('shipping-options-container');
 
-    if (cep.length !== 8) {
-        alert('CEP inválido.');
+    if (cep.length !== 9) { // 8 dígitos + hífen
+        alert('CEP inválido. Digite no formato 00000-000.');
         return;
     }
 
     // Simulação da API ViaCEP
-    // Em produção, usaríamos: fetch(`https://viacep.com.br/ws/${cep}/json/`)
     const simulatedAddress = {
         logradouro: 'Rua Simulação de Endereço',
         bairro: 'Bairro Teste',
@@ -318,27 +318,14 @@ function simulateShippingCalculation() {
 
 function handleShippingSelection(event) {
     const selectedRadio = event.target;
-    const priceEl = $(selectedRadio.id.replace('shipping', ''));
-    const price = Number(priceEl.textContent.replace('R$', '').replace(',', '.').trim());
+    const priceText = $(selectedRadio.id.replace('shipping-', '') + '-price').textContent;
+    const price = Number(priceText.replace('R$', '').replace('.', '').replace(',', '.').trim());
 
     state.selectedShipping = {
         method: selectedRadio.value,
         price: price
     };
     updateSummary();
-}
-
-// ==================== PAGAMENTO ====================
-
-function handlePaymentTabClick(event) {
-    const method = event.target.dataset.method;
-    state.selectedPayment = method;
-
-    document.querySelectorAll('.payment-tab-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-
-    document.querySelectorAll('.payment-content').forEach(content => content.style.display = 'none');
-    $(`payment-${method}`).style.display = 'block';
 }
 
 // ==================== RESUMO DO PEDIDO ====================
@@ -406,7 +393,7 @@ function updateSummary() {
     }
 }
 
-// ==================== VALIDAÇÃO E FINALIZAÇÃO ====================
+// ==================== VALIDAÇÃO E FINALIZAÇÃO (WHATSAPP) ====================
 
 function validateForm() {
     // 1. Validação de Identificação
@@ -426,7 +413,7 @@ function validateForm() {
     const state_uf = $('state').value.trim();
     
     if (cep.length !== 8 || !street || !number || !neighborhood || !city || state_uf.length !== 2) {
-        alert('Por favor, preencha todos os campos de endereço e selecione o frete.');
+        alert('Por favor, preencha todos os campos de endereço.');
         return false;
     }
 
@@ -435,20 +422,43 @@ function validateForm() {
         return false;
     }
 
-    // 3. Validação de Pagamento
-    if (state.selectedPayment === 'credit-card') {
-        const cardNumber = $('card-number').value.replace(/\s/g, '');
-        const cardName = $('card-name').value.trim();
-        const cardExpiry = $('card-expiry').value.trim();
-        const cardCvv = $('card-cvv').value.trim();
-
-        if (cardNumber.length < 16 || !cardName || cardExpiry.length !== 5 || cardCvv.length < 3) {
-            alert('Por favor, preencha todos os dados do Cartão de Crédito corretamente.');
-            return false;
-        }
-    }
-
     return true;
+}
+
+function buildWhatsAppMessage(orderId) {
+    let message = `*NOVO PEDIDO SEJA VERSÁTIL - #${orderId}*\n\n`;
+    
+    // 1. Detalhes do Cliente
+    message += `*CLIENTE:*\n`;
+    message += `Nome: ${$('name').value.trim()}\n`;
+    message += `Email: ${$('email').value.trim()}\n\n`;
+
+    // 2. Itens do Pedido
+    message += `*ITENS DO PEDIDO:*\n`;
+    state.cart.items.forEach((item, index) => {
+        message += `${index + 1}. ${item.name} (${item.size}/${item.color}) - Qtd: ${item.quantity} - ${formatCurrency(item.price * item.quantity)}\n`;
+    });
+    message += `\n`;
+
+    // 3. Totais
+    message += `*RESUMO DE VALORES:*\n`;
+    message += `Subtotal: ${formatCurrency(state.cart.subtotal)}\n`;
+    message += `Frete (${state.selectedShipping.method}): ${formatCurrency(state.selectedShipping.price)}\n`;
+    if (state.cart.couponDiscount > 0) {
+        message += `Desconto (${state.cart.appliedCoupon.code}): -${formatCurrency(state.cart.couponDiscount)}\n`;
+    }
+    message += `*TOTAL GERAL: ${formatCurrency(state.cart.total)}*\n\n`;
+
+    // 4. Endereço de Entrega
+    message += `*ENDEREÇO DE ENTREGA:*\n`;
+    message += `CEP: ${$('cep').value.trim()}\n`;
+    message += `Rua: ${$('street').value.trim()}, ${$('number').value.trim()} (${$('complement').value.trim()})\n`;
+    message += `Bairro: ${$('neighborhood').value.trim()}\n`;
+    message += `Cidade/UF: ${$('city').value.trim()}/${$('state').value.trim()}\n\n`;
+
+    message += `Aguardamos seu contato para confirmar o pedido e finalizar o pagamento.`;
+
+    return encodeURIComponent(message);
 }
 
 async function finalizeOrder() {
@@ -460,7 +470,7 @@ async function finalizeOrder() {
 
     state.isProcessing = true;
     $('finalize-order-btn').disabled = true;
-    $('finalize-order-btn').textContent = 'PROCESSANDO...';
+    $('finalize-order-btn').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10M12 22v-10M2 12h10M22 12h-10"/></svg> REGISTRANDO PEDIDO...';
     $('loading-feedback').style.display = 'block';
 
     const orderData = {
@@ -468,7 +478,7 @@ async function finalizeOrder() {
         userName: $('name').value.trim(),
         userEmail: $('email').value.trim(),
         date: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 'Aguardando Pagamento',
+        status: 'Aguardando Contato WhatsApp', // Status atualizado
         items: state.cart.items.map(item => ({
             id: item.id,
             name: item.name,
@@ -483,7 +493,7 @@ async function finalizeOrder() {
         couponCode: state.cart.appliedCoupon ? state.cart.appliedCoupon.code : null,
         discount: state.cart.couponDiscount,
         total: state.cart.total,
-        paymentMethod: state.selectedPayment,
+        paymentMethod: 'WhatsApp', // Método de pagamento atualizado
         address: {
             cep: $('cep').value.replace(/\D/g, ''),
             street: $('street').value.trim(),
@@ -493,30 +503,32 @@ async function finalizeOrder() {
             city: $('city').value.trim(),
             state: $('state').value.trim(),
         },
-        // Dados de pagamento sensíveis NÃO devem ser salvos no Firestore
-        // Apenas uma referência de transação seria salva após o processamento real
     };
 
     try {
         // 1. Salvar o pedido no Firestore
         const docRef = await db.collection('orders').add(orderData);
-        console.log('Pedido salvo com ID:', docRef.id);
+        const orderId = docRef.id.substring(0, 8).toUpperCase(); // Usa um ID curto para o WhatsApp
 
-        // 2. Limpar o carrinho
+        // 2. Construir a mensagem do WhatsApp
+        const whatsappMessage = buildWhatsAppMessage(orderId);
+        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
+
+        // 3. Limpar o carrinho
         clearCart();
 
-        // 3. Redirecionar para a página de sucesso (simulação)
-        // Em um cenário real, você passaria o ID do pedido para a página de sucesso
-        alert(`Pedido #${docRef.id} finalizado com sucesso! Status: Aguardando Pagamento (${state.selectedPayment}).`);
-        window.location.href = 'index.html?order=success'; // Redireciona para a home com um parâmetro de sucesso
+        // 4. Redirecionar para o WhatsApp
+        window.location.href = whatsappLink;
+
+        // Nota: O redirecionamento interrompe o script. A mensagem de sucesso é implícita.
 
     } catch (error) {
         console.error('Erro ao finalizar pedido:', error);
-        alert('Ocorreu um erro ao finalizar seu pedido. Por favor, tente novamente.');
+        alert('Ocorreu um erro ao registrar seu pedido. Por favor, tente novamente.');
         
         state.isProcessing = false;
         $('finalize-order-btn').disabled = false;
-        $('finalize-order-btn').textContent = 'FINALIZAR PEDIDO';
+        $('finalize-order-btn').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 15.1 15.1 0 0 1-2.2 3.4c-.9.9-2.1 1.6-3.4 2.2a8.38 8.38 0 0 1-3.8.9c-4.6 0-8.5-3.9-8.5-8.5S7.4 3 12 3s8.5 3.9 8.5 8.5z"></path><path d="M12 17.5c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path><path d="M12 14.5v-3M12 10.5h.01"></path></svg> FINALIZAR PEDIDO E ENVIAR PARA WHATSAPP';
         $('loading-feedback').style.display = 'none';
     }
 }
@@ -537,17 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Máscaras
     applyMask($('cep'), '##.###-###');
-    applyMask($('card-number'), '#### #### #### ####');
-    applyMask($('card-expiry'), '##/##');
-    applyMask($('card-cvv'), '####');
 
     // Eventos
     $('search-cep-btn').addEventListener('click', searchCep);
     document.querySelectorAll('input[name="shipping-method"]').forEach(radio => {
         radio.addEventListener('change', handleShippingSelection);
-    });
-    document.querySelectorAll('.payment-tab-btn').forEach(btn => {
-        btn.addEventListener('click', handlePaymentTabClick);
     });
     $('checkoutApplyCouponBtn').addEventListener('click', applyCoupon);
     $('checkoutRemoveCouponBtn').addEventListener('click', removeCoupon);
