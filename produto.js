@@ -1718,97 +1718,6 @@ function switchUserTab(tab) {
     }
 }
 
-function checkUserSession() {
-    // Verifica sessão do Firebase
-    if (typeof auth !== 'undefined') {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                showLoggedInView(user);
-            } else {
-                currentUser = null;
-                hideLoggedInView();
-            }
-        });
-    }
-}
-
-function showLoggedInView(user) {
-    document.getElementById('userPanelTabs').style.display = 'none';
-    document.getElementById('loginTab').classList.remove('active');
-    document.getElementById('registerTab').classList.remove('active');
-    document.getElementById('userLoggedTab').classList.add('active');
-
-    document.getElementById('userNameDisplay').textContent = user.displayName || 'Cliente';
-    document.getElementById('userEmailDisplay').textContent = user.email;
-}
-
-function hideLoggedInView() {
-    const tabs = document.getElementById('userPanelTabs');
-    if (tabs) tabs.style.display = 'flex';
-
-    const loggedTab = document.getElementById('userLoggedTab');
-    if (loggedTab) loggedTab.classList.remove('active');
-
-    switchUserTab('login');
-}
-
-async function userLogin(event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorMsg = document.getElementById('loginError');
-
-    try {
-        await auth.signInWithEmailAndPassword(email, password);
-        // O onAuthStateChanged vai lidar com a UI
-    } catch (error) {
-        console.error(error);
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = 'E-mail ou senha incorretos';
-    }
-}
-
-async function userRegister(event) {
-    event.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const errorMsg = document.getElementById('registerError');
-
-    try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        await userCredential.user.updateProfile({
-            displayName: name
-        });
-
-        // Salvar no Firestore (Opcional para manter padrão)
-        await db.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: email,
-            createdAt: new Date()
-        });
-
-        document.getElementById('registerSuccess').classList.add('active');
-        setTimeout(() => switchUserTab('login'), 1500);
-    } catch (error) {
-        console.error(error);
-        errorMsg.style.display = 'block';
-        if (error.code === 'auth/email-already-in-use') errorMsg.textContent = 'E-mail já cadastrado';
-        else if (error.code === 'auth/weak-password') errorMsg.textContent = 'Senha muito fraca (min 6 caracteres)';
-        else errorMsg.textContent = 'Erro ao criar conta';
-    }
-}
-
-async function userLogout() {
-    try {
-        await auth.signOut();
-        hideLoggedInView();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 async function resetPassword() {
     const email = prompt("Digite seu e-mail para redefinir a senha:");
     if (email) {
@@ -2128,5 +2037,6 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
