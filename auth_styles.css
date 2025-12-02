@@ -1,0 +1,92 @@
+/* =================================================================
+   auth_styles.css - Estilos para Feedbacks Visuais
+   ================================================================= */
+
+/* --- 1. Estilo para Inputs com Erro --- */
+.input-error {
+    border-color: #F44336 !important; /* Vermelho */
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+}
+
+.input-success {
+    border-color: #4CAF50 !important; /* Verde */
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* --- 2. Estilo para Botões em Loading State --- */
+.loading {
+    position: relative;
+    pointer-events: none; /* Impede cliques adicionais */
+    opacity: 0.8;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Oculta o texto do botão em loading */
+.loading:not(.loading-no-text) {
+    color: transparent !important;
+}
+
+/* --- 3. Estilo para Toasts (Feedback) --- */
+/* O estilo base do Toast está no JS para garantir que funcione em qualquer página,
+   mas você pode adicionar mais refinamento aqui se quiser. */
+
+.toast {
+    /* Estilos definidos no JS */
+}
+
+.toast-success {
+    background-color: #4CAF50;
+}
+
+.toast-error {
+    background-color: #F44336;
+}
+
+.toast-info {
+    background-color: #2196F3;
+}
+
+/* --- 4. Estilo para Barra de Força de Senha (Exemplo) --- */
+.password-strength-container {
+    margin-top: 5px;
+    height: 5px;
+    background-color: #eee;
+    border-radius: 2.5px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-weak {
+    background-color: #F44336; /* Vermelho */
+}
+
+.strength-medium {
+    background-color: #FFC107; /* Amarelo */
+}
+
+.strength-strong {
+    background-color: #4CAF50; /* Verde */
+}
