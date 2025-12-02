@@ -1,241 +1,415 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizar Pedido - Seja Versátil</title>
-    
-    <!-- Tipografia Century Gothic e variáveis globais -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- CSS Existente e Novo CSS de Checkout -->
-    <link rel="stylesheet" href="css2.css">
-    <link rel="stylesheet" href="checkout.css">
-
-    <!-- Inicialização do Firebase (Manter a inicialização existente) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-    <script>
-        // Configuração do Firebase (Manter a configuração existente)
-        const firebaseConfig = {
-            apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-            authDomain: "seja-versatil.firebaseapp.com",
-            projectId: "seja-versatil",
-            storageBucket: "seja-versatil.firebasestorage.app",
-            messagingSenderId: "102339207381",
-            appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-            measurementId: "G-86E5CX4S3T"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Finalize sua compra - Seja Versátil">
+  <title>Finalizar Compra - Seja Versátil</title>
+  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Base (Reutiliza variáveis globais) -->
+  <link rel="stylesheet" href="css2.css">
+  <!-- CSS Dedicado do Checkout -->
+  <link rel="stylesheet" href="checkout.css">
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+      authDomain: "seja-versatil.firebaseapp.com",
+      projectId: "seja-versatil",
+      storageBucket: "seja-versatil.firebasestorage.app",
+      messagingSenderId: "102339207381",
+      appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+      measurementId: "G-86E5CX4S3T"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+  </script>
 </head>
-<body>
-    <header class="checkout-header">
-        <div class="header-content">
-            <a href="index.html" class="logo">SEJA VERSÁTIL</a>
+
+<body class="checkout-page">
+  
+  <!-- Header Minimalista -->
+  <header class="checkout-header">
+    <div class="checkout-header-container">
+      <a href="index.html" class="checkout-logo">SEJA VERSÁTIL</a>
+      <div class="checkout-security">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>COMPRA 100% SEGURA</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="checkout-breadcrumb">
+    <div class="checkout-container">
+      <a href="index.html">Início</a>
+      <span class="breadcrumb-separator">›</span>
+      <a href="index.html#produtos">Produtos</a>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-current">Finalizar Compra</span>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="checkout-main">
+    <div class="checkout-container">
+      
+      <!-- Grid de 2 Colunas -->
+      <div class="checkout-grid">
+        
+        <!-- ===================== COLUNA ESQUERDA ===================== -->
+        <div class="checkout-left-column">
+          
+          <!-- Seção 1: Dados Pessoais -->
+          <section class="checkout-section" id="sectionDados">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">1</div>
+              <h2 class="checkout-section-title">DADOS PESSOAIS</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <!-- Tabs Login/Cadastro (Se não logado) -->
+              <div class="checkout-auth-tabs" id="authTabs" style="display: none;">
+                <button class="checkout-auth-tab active" data-tab="login">LOGIN</button>
+                <button class="checkout-auth-tab" data-tab="cadastro">CADASTRO</button>
+              </div>
+              
+              <!-- Mensagem se logado -->
+              <div class="checkout-logged-info" id="loggedInfo" style="display: none;">
+                <p>Bem-vindo(a), <strong id="loggedUserName"></strong>!</p>
+                <button type="button" class="checkout-btn-logout" onclick="logoutCheckout()">Sair da conta</button>
+              </div>
+              
+              <!-- Formulário de Dados -->
+              <form id="checkoutFormDados" class="checkout-form">
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group full">
+                    <label for="inputNome">Nome Completo *</label>
+                    <input type="text" id="inputNome" required minlength="3">
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputEmail">E-mail *</label>
+                    <input type="email" id="inputEmail" required>
+                  </div>
+                  <div class="checkout-form-group">
+                    <label for="inputTelefone">Telefone/WhatsApp *</label>
+                    <input type="tel" id="inputTelefone" placeholder="(00) 00000-0000" required>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputCPF">CPF *</label>
+                    <input type="text" id="inputCPF" placeholder="000.000.000-00" required>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+          
+          <!-- Seção 2: Endereço de Entrega -->
+          <section class="checkout-section" id="sectionEndereco">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">2</div>
+              <h2 class="checkout-section-title">ENDEREÇO DE ENTREGA</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <p class="checkout-section-subtitle">Preencha seus dados para continuar</p>
+              
+              <form id="checkoutFormEndereco" class="checkout-form">
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group small">
+                    <label for="inputCEP">CEP *</label>
+                    <input type="text" id="inputCEP" placeholder="00000-000" required>
+                    <small class="form-helper">
+                      <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">
+                        Não sei meu CEP
+                      </a>
+                    </small>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group large">
+                    <label for="inputRua">Rua *</label>
+                    <input type="text" id="inputRua" required>
+                  </div>
+                  <div class="checkout-form-group small">
+                    <label for="inputNumero">Número *</label>
+                    <input type="text" id="inputNumero" required>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputComplemento">Complemento</label>
+                    <input type="text" id="inputComplemento" placeholder="Apto, Bloco, etc">
+                  </div>
+                  <div class="checkout-form-group">
+                    <label for="inputBairro">Bairro *</label>
+                    <input type="text" id="inputBairro" required>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputCidade">Cidade *</label>
+                    <input type="text" id="inputCidade" required>
+                  </div>
+                  <div class="checkout-form-group small">
+                    <label for="inputUF">UF *</label>
+                    <select id="inputUF" required>
+                      <option value="">--</option>
+                      <option value="AC">AC</option>
+                      <option value="AL">AL</option>
+                      <option value="AP">AP</option>
+                      <option value="AM">AM</option>
+                      <option value="BA">BA</option>
+                      <option value="CE">CE</option>
+                      <option value="DF">DF</option>
+                      <option value="ES">ES</option>
+                      <option value="GO">GO</option>
+                      <option value="MA">MA</option>
+                      <option value="MT">MT</option>
+                      <option value="MS">MS</option>
+                      <option value="MG">MG</option>
+                      <option value="PA">PA</option>
+                      <option value="PB">PB</option>
+                      <option value="PR">PR</option>
+                      <option value="PE">PE</option>
+                      <option value="PI">PI</option>
+                      <option value="RJ">RJ</option>
+                      <option value="RN">RN</option>
+                      <option value="RS">RS</option>
+                      <option value="RO">RO</option>
+                      <option value="RR">RR</option>
+                      <option value="SC">SC</option>
+                      <option value="SP">SP</option>
+                      <option value="SE">SE</option>
+                      <option value="TO">TO</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+          
+          <!-- Seção 3: Pagamento -->
+          <section class="checkout-section" id="sectionPagamento">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">3</div>
+              <h2 class="checkout-section-title">PAGAMENTO</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <p class="checkout-section-subtitle">Aguardando o preenchimento das etapas anteriores.</p>
+              
+              <form id="checkoutFormPagamento" class="checkout-form" style="display: none;">
+                <div class="checkout-payment-options">
+                  
+                  <!-- Opção PIX -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="pix" checked>
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-info">
+                        <strong>PIX</strong>
+                        <small>Aprovação imediata</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Boleto -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="boleto">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">📄</div>
+                      <div class="payment-option-info">
+                        <strong>Boleto Bancário</strong>
+                        <small>Vencimento em 3 dias</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Cartão à Vista -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="credito-avista">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-info">
+                        <strong>Cartão de Crédito</strong>
+                        <small>À vista</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Cartão Parcelado -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="credito-parcelado">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-info">
+                        <strong>Cartão Parcelado</strong>
+                        <small>Em até 3x sem juros</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                </div>
+                
+                <!-- Box de Parcelas (oculto inicialmente) -->
+                <div class="checkout-installments-box" id="installmentsBox" style="display: none;">
+                  <label for="installmentsSelect">Número de Parcelas:</label>
+                  <select id="installmentsSelect">
+                    <option value="">Selecione</option>
+                    <option value="2">2x sem juros</option>
+                    <option value="3">3x sem juros</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+          </section>
+          
         </div>
-    </header>
-
-    <main class="checkout-container">
-        <div class="checkout-grid">
-            <!-- Coluna da Esquerda: Detalhes do Cliente e Entrega -->
-            <section class="checkout-details-column">
-                
-                <!-- Breadcrumb Simplificado (Hardyn Style) -->
-                <div class="breadcrumb-checkout">
-                    <a href="index.html">Início</a>
-                    <span>/</span>
-                    <a href="#" onclick="toggleCart(); return false;">Carrinho</a>
-                    <span>/</span>
-                    <span>Informações</span>
+        
+        <!-- ===================== COLUNA DIREITA (RESUMO) ===================== -->
+        <aside class="checkout-right-column">
+          <div class="checkout-summary-sticky">
+            
+            <div class="checkout-summary-header">
+              <h3>CARRINHO <span id="summaryCartCode">(KUJKG3YE)</span></h3>
+            </div>
+            
+            <!-- Lista de Produtos -->
+            <div class="checkout-summary-items" id="summaryItems">
+              <!-- Será preenchido dinamicamente -->
+            </div>
+            
+            <!-- Totais -->
+            <div class="checkout-summary-totals">
+              <div class="summary-total-row">
+                <span>VALOR TOTAL:</span>
+                <strong id="summarySubtotal">R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row discount" id="summaryDiscountRow" style="display: none;">
+                <span>DESCONTO:</span>
+                <strong id="summaryDiscount">-R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row pix-discount">
+                <span>10% OFF NO PIX À VISTA</span>
+                <strong id="summaryPixDiscount">R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row installment" id="summaryInstallmentRow" style="display: none;">
+                <span>OPÇÕES DE <strong>PARCELAMENTO:</strong></span>
+                <div class="installment-info">
+                  <strong id="summaryInstallmentValue">R$0,00</strong>
+                  <small id="summaryInstallmentDetail">EM ATÉ 3X SEM JUROS</small>
                 </div>
-
-                <h1 class="checkout-title">Informações de Contato e Entrega</h1>
-                
-                <!-- Passo 1 - Identificação -->
-                <div class="checkout-section" id="step-identification">
-                    <h2 class="section-title">1. Contato</h2>
-                    
-                    <div id="user-info-display" class="user-info-display" style="display: none;">
-                        <p class="logged-in-message">
-                            Você está logado como <strong id="user-name-display"></strong> (<span id="user-email-display"></span>).
-                        </p>
-                        <button id="logout-btn" class="btn-secondary btn-small">Sair / Mudar Conta</button>
-                    </div>
-                    
-                    <form id="identification-form" class="form-section">
-                        <div class="form-group">
-                            <label for="email">E-mail</label>
-                            <input type="email" id="email" name="email" required placeholder="seu@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Nome Completo</label>
-                            <input type="text" id="name" name="name" required placeholder="Seu nome completo">
-                        </div>
-                        <div class="auth-options">
-                            <button type="button" id="login-register-btn" class="btn-secondary btn-small">Entrar / Cadastrar</button>
-                            <p class="guest-option">ou continue como visitante</p>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Passo 2 - Entrega -->
-                <div class="checkout-section" id="step-delivery">
-                    <h2 class="section-title">2. Endereço de Entrega</h2>
-                    <form id="delivery-form" class="form-section">
-                        <div class="form-group cep-group">
-                            <label for="cep">CEP</label>
-                            <div class="cep-input-row">
-                                <input type="text" id="cep" name="cep" required placeholder="00000-000" maxlength="9">
-                                <button type="button" id="search-cep-btn" class="btn-secondary btn-small">Buscar</button>
-                            </div>
-                        </div>
-                        <div id="address-fields" style="display: none;">
-                            <div class="form-group">
-                                <label for="street">Rua</label>
-                                <input type="text" id="street" name="street" required>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="number">Número</label>
-                                    <input type="text" id="number" name="number" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="complement">Complemento (Opcional)</label>
-                                    <input type="text" id="complement" name="complement">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="neighborhood">Bairro</label>
-                                <input type="text" id="neighborhood" name="neighborhood" required>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="city">Cidade</label>
-                                    <input type="text" id="city" name="city" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="state">Estado</label>
-                                    <input type="text" id="state" name="state" required maxlength="2">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="shipping-options-container" id="shipping-options-container" style="display: none;">
-                            <h3 class="shipping-title">Opções de Frete</h3>
-                            <div class="shipping-option">
-                                <input type="radio" id="shipping-pac" name="shipping-method" value="PAC" required>
-                                <label for="shipping-pac">
-                                    <span>PAC (5-10 dias úteis)</span>
-                                    <span id="pac-price" class="shipping-price">R$ 25,00</span>
-                                </label>
-                            </div>
-                            <div class="shipping-option">
-                                <input type="radio" id="shipping-sedex" name="shipping-method" value="SEDEX" required>
-                                <label for="shipping-sedex">
-                                    <span>SEDEX (2-5 dias úteis)</span>
-                                    <span id="sedex-price" class="shipping-price">R$ 45,00</span>
-                                </label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Passo 3 - Finalização (WhatsApp) -->
-                <div class="checkout-section final-step" id="step-finalization">
-                    <h2 class="section-title">3. Finalização</h2>
-                    <div class="whatsapp-info-box">
-                        <p>
-                            Ao clicar em **"FINALIZAR PEDIDO"**, seu pedido será registrado e você será **redirecionado(a) automaticamente** para o nosso WhatsApp para concluir o pagamento.
-                        </p>
-                        <p class="whatsapp-number">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 15.1 15.1 0 0 1-2.2 3.4c-.9.9-2.1 1.6-3.4 2.2a8.38 8.38 0 0 1-3.8.9c-4.6 0-8.5-3.9-8.5-8.5S7.4 3 12 3s8.5 3.9 8.5 8.5z"></path><path d="M12 17.5c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path><path d="M12 14.5v-3M12 10.5h.01"></path></svg>
-                            Atendimento Rápido e Seguro.
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Link de Retorno -->
-                <div class="return-link-container">
-                    <a href="#" onclick="toggleCart(); return false;" class="return-link">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        Voltar para o Carrinho
-                    </a>
-                </div>
-
-            </section>
-
-            <!-- Coluna da Direita: Resumo do Pedido -->
-            <aside class="checkout-summary-column">
-                <div class="checkout-summary">
-                    
-                    <!-- Listagem de Produtos -->
-                    <div id="summary-product-list" class="summary-product-list">
-                        <!-- Itens do carrinho serão injetados aqui pelo JS -->
-                        <div class="empty-cart-summary">Seu carrinho está vazio.</div>
-                    </div>
-
-                    <!-- Cupom de Desconto -->
-                    <div class="summary-coupon-section">
-                        <div class="coupon-input-row">
-                            <input type="text" 
-                                class="coupon-input" 
-                                id="checkoutCouponInput" 
-                                placeholder="Cupom de Desconto" 
-                                maxlength="20"
-                                autocomplete="off">
-                            <button class="coupon-apply-btn" 
-                                    id="checkoutApplyCouponBtn" 
-                                    type="button">
-                                Aplicar
-                            </button>
-                        </div>
-                        <div class="coupon-message" id="checkoutCouponMessage"></div>
-                        <div class="applied-coupon-badge" id="checkoutAppliedCouponBadge" style="display: none;">
-                            <span class="applied-coupon-code" id="checkoutAppliedCouponCode"></span>
-                            <button class="remove-coupon-btn" type="button" id="checkoutRemoveCouponBtn" title="Remover cupom">✕</button>
-                        </div>
-                    </div>
-
-                    <!-- Valores -->
-                    <div class="summary-totals">
-                        <div class="total-row">
-                            <span>Subtotal:</span>
-                            <span id="summary-subtotal">R$ 0,00</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Frete:</span>
-                            <span id="summary-shipping">R$ 0,00</span>
-                        </div>
-                        <div class="total-row discount-row" id="summary-discount-row" style="display: none;">
-                            <span>Desconto:</span>
-                            <span id="summary-discount">- R$ 0,00</span>
-                        </div>
-                        <div class="total-row total-final">
-                            <span>Total:</span>
-                            <span id="summary-total">R$ 0,00</span>
-                        </div>
-                    </div>
-
-                    <!-- Botão de Ação -->
-                    <button id="finalize-order-btn" class="btn-whatsapp btn-large" disabled>
-                        FINALIZAR PEDIDO
-                    </button>
-                    <div id="loading-feedback" class="loading-feedback" style="display: none;">
-                        Registrando pedido...
-                    </div>
-                </div>
-            </aside>
+              </div>
+            </div>
+            
+            <!-- Botão Finalizar -->
+            <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" disabled>
+              CONTINUAR COMPRANDO
+            </button>
+            
+            <!-- Selo de Segurança -->
+            <div class="checkout-security-badges">
+              <div class="security-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+                <span>Site Seguro</span>
+              </div>
+            </div>
+            
+          </div>
+        </aside>
+        
+      </div>
+      
+    </div>
+  </main>
+  
+  <!-- Footer Minimalista -->
+  <footer class="checkout-footer">
+    <div class="checkout-container">
+      <div class="checkout-footer-content">
+        <div class="footer-contact">
+          <h4>FALE COMIGO</h4>
+          <p>📞 (22) 2580-5484</p>
+          <p>📱 (22) 99821-4537</p>
+          <p>✉️ CONTATO@HARDYN.COM.BR</p>
         </div>
-    </main>
-
-    <!-- Script de Checkout -->
-    <script src="checkout.js"></script>
+        
+        <div class="footer-security">
+          <h4>SEGURANÇA & QUALIDADE</h4>
+          <div class="footer-badges">
+            <img src="https://via.placeholder.com/60x40/f5f5f5/999?text=SSL" alt="SSL">
+            <img src="https://via.placeholder.com/60x40/f5f5f5/999?text=Google" alt="Google Safe">
+          </div>
+        </div>
+        
+        <div class="footer-payment">
+          <h4>FORMAS DE PAGAMENTO</h4>
+          <div class="footer-payment-icons">
+            <span>💳 Visa</span>
+            <span>💳 Mastercard</span>
+            <span>💳 Elo</span>
+            <span>📱 PIX</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="checkout-footer-bottom">
+        <p>V.D.S. FITNESS LTDA | CNPJ: 30.998.103/0001-53 - Endereço: Rua Urbano Bachiré, 130 - Córrego D'Antas - 28630-230, Nova Friburgo - RJ</p>
+        <p>Preços e condições de pagamento exclusivos para compras via internet. Ofertas válidas até o término de nossos estoques ou válido enquanto durarem.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Loading Overlay -->
+  <div class="checkout-loading-overlay" id="checkoutLoadingOverlay">
+    <div class="loading-spinner">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+    <p>Processando seu pedido...</p>
+  </div>
+  
+  <!-- Toast Notifications -->
+  <div id="checkoutToastContainer"></div>
+  
+  <!-- Scripts -->
+  <script src="checkout.js"></script>
+  
 </body>
 </html>
