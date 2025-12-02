@@ -4472,14 +4472,31 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    // Verifica se o carrinho está vazio antes de redirecionar (opcional, mas recomendado)
+    // ✅ FORÇA SALVAMENTO IMEDIATO
+    saveCart();
+    
     const rawCart = localStorage.getItem('sejaVersatilCart');
-    if (!rawCart || JSON.parse(rawCart).items.length === 0) {
-        alert('Seu carrinho está vazio!');
+    if (!rawCart) {
+        showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'error');
         return;
     }
     
-    // Redireciona para a nova página de checkout
+    let cartData;
+    try {
+        cartData = JSON.parse(rawCart);
+    } catch (error) {
+        console.error('❌ Erro ao parsear carrinho:', error);
+        showToast('Erro no carrinho', 'Tente recarregar a página', 'error');
+        return;
+    }
+    
+    // ✅ VALIDA ESTRUTURA NOVA (objeto com .items)
+    const items = cartData.items || [];
+    if (items.length === 0) {
+        showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'error');
+        return;
+    }
+    
     window.location.href = 'checkout.html';
 }
 
@@ -6047,6 +6064,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
