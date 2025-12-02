@@ -130,15 +130,44 @@ async function initCheckout() {
 
 // === CARREGAR CARRINHO ===
 function loadCart() {
-  const storedCart = localStorage.getItem('sejaVersatilCart');
-  if (storedCart) {
-    try {
-      cartItems = JSON.parse(storedCart);
-    } catch (error) {
-      console.error('Erro ao carregar carrinho:', error);
-      cartItems = [];
+    const saved = localStorage.getItem(CONFIG.CART_STORAGE_KEY);
+    if (!saved) {
+        cartItems = [];
+        return;
     }
-  }
+    
+    try {
+        const parsed = JSON.parse(saved);
+        
+        // ✅ COMPATIBILIDADE COM FORMATO NOVO E LEGADO
+        if (parsed.items && Array.isArray(parsed.items)) {
+            // Formato: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            cartItems = parsed.items.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0,
+                size: item.selectedSize || item.size || 'M',
+                color: item.selectedColor || item.color || 'Padrão'
+            }));
+        } else if (Array.isArray(parsed)) {
+            // Formato antigo: [{...}, {...}]
+            cartItems = parsed.map(item => ({
+                ...item,
+                quantity: item.quantity || 1,
+                price: item.price || 0,
+                size: item.selectedSize || item.size || 'M',
+                color: item.selectedColor || item.color || 'Padrão'
+            }));
+        } else {
+            cartItems = [];
+        }
+        
+        console.log('✅ Carrinho carregado:', cartItems.length, 'itens');
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar carrinho:', error);
+        cartItems = [];
+    }
 }
 
 // === RENDERIZAR RESUMO (OTIMIZADO COM FRAGMENT) ===
