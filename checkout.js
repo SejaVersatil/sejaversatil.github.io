@@ -559,12 +559,24 @@ async function finalizarCompra() {
     showToast('Pedido realizado!', 'Você será redirecionado para o WhatsApp', 'success');
     
   } catch (error) {
-    console.error('Erro ao finalizar compra:', error);
-    showToast('Erro ao finalizar', 'Tente novamente mais tarde', 'error');
+    console.error('❌ Erro ao finalizar compra:', error);
+    
+    // ✅ MENSAGENS DE ERRO ESPECÍFICAS
+    let errorMessage = 'Erro ao processar pedido';
+    
+    if (error.code === 'permission-denied') {
+        errorMessage = 'Erro de permissão. Entre em contato com o suporte.';
+        console.error('🔒 Regras do Firestore bloqueando a criação do pedido');
+    } else if (error.code === 'unavailable') {
+        errorMessage = 'Sem conexão com o servidor. Verifique sua internet.';
+    } else if (error.message) {
+        errorMessage = error.message;
+    }
+    
+    showToast('Erro ao finalizar', errorMessage, 'error');
     DOM.btnFinalizarCompra.disabled = false;
-  } finally {
+} finally {
     showLoading(false);
-  }
 }
 
 // === COLETAR DADOS DO PEDIDO ===
