@@ -1,565 +1,801 @@
-// ==========================================================================
-// CHECKOUT.JS - Lógica de Carrinho, Firebase, Validação e Finalização (WhatsApp)
-// ==========================================================================
+// ============================================================================
+// CHECKOUT.JS - SEJA VERSÁTIL
+// Sistema Completo de Checkout com Firebase e LocalStorage
+// ============================================================================
 
-'use strict';
-
-// Variáveis de Estado Global
-const state = {
-    cart: {
-        items: [],
-        appliedCoupon: null,
-        couponDiscount: 0,
-        subtotal: 0,
-        shipping: 0,
-        total: 0
-    },
-    user: null,
-    address: null,
-    selectedShipping: null,
-    isProcessing: false
+// === CONFIGURAÇÕES ===
+const CONFIG = {
+  WHATSAPP_NUMBER: '5522998214537',
+  CART_STORAGE_KEY: 'sejaVersatilCart',
+  TOAST_DURATION: 5000,
+  REDIRECT_DELAY: 3000,
+  PIX_DISCOUNT: 0.10,
+  MIN_NAME_LENGTH: 3,
+  MIN_PHONE_LENGTH: 10,
+  CPF_LENGTH: 11,
+  CEP_LENGTH: 8
 };
 
-// ** ATENÇÃO: SUBSTITUA ESTE NÚMERO PELO SEU NÚMERO DE WHATSAPP REAL **
-const WHATSAPP_NUMBER = '557191427103'; 
+// === VARIÁVEIS GLOBAIS ===
+let cartItems = [];
+let currentUser = null;
+let subtotal = 0;
+let discount = 0;
+let total = 0;
+const cartCode = generateCartCode();
 
-// ==================== UTILS ====================
-
-const $ = (id) => document.getElementById(id);
-
-function formatCurrency(value) {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    }).format(value);
-}
-
-function applyMask(input, mask) {
-    function format() {
-        let i = 0;
-        const v = input.value.replace(/\D/g, '');
-        input.value = mask.replace(/#/g, () => v[i++] || '');
-    }
-    input.addEventListener('input', format);
-    input.addEventListener('focus', format);
-    input.addEventListener('blur', format);
-    return format;
-}
-
-// ==================== LOCAL STORAGE (CARRINHO) ====================
-
-function loadCartFromStorage() {
-    try {
-        const raw = localStorage.getItem('sejaVersatilCart');
-        if (!raw) {
-            return false; // Carrinho vazio
-        }
-        
-        const parsed = JSON.parse(raw);
-        
-        if (parsed.items && Array.isArray(parsed.items)) {
-            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
-            state.cart.items = parsed.items.map(item => ({
-                ...item,
-                quantity: Number(item.quantity) || 1,
-                price: Number(item.price) || 0,
-                name: item.name || 'Produto Sem Nome', // Garantir que o nome exista
-                size: item.size || '',
-                color: item.color || '',
-                image: item.image || ''
-            }));
-            state.cart.appliedCoupon = parsed.appliedCoupon || null;
-            state.cart.couponDiscount = Number(parsed.couponDiscount) || 0;
-        } else if (Array.isArray(parsed)) {
-            // Formato antigo: [{item1}, {item2}]
-            state.cart.items = parsed.map(item => ({
-                ...item,
-                quantity: Number(item.quantity) || 1,
-                price: Number(item.price) || 0,
-                name: item.name || 'Produto Sem Nome',
-                size: item.size || '',
-                color: item.color || '',
-                image: item.image || ''
-            }));
-            state.cart.appliedCoupon = null;
-            state.cart.couponDiscount = 0;
-        } else {
-            return false;
-        }
-
-        // Filtra itens com preço zero ou quantidade zero para evitar problemas
-        state.cart.items = state.cart.items.filter(item => item.price > 0 && item.quantity > 0);
-
-        if (state.cart.items.length === 0) {
-            return false;
-        }
-
-        return true;
-
-    } catch (err) {
-        console.error('Erro ao carregar carrinho:', err);
-        return false;
-    }
-}
-
-function clearCart() {
-    state.cart.items = [];
-    state.cart.appliedCoupon = null;
-    state.cart.couponDiscount = 0;
-    state.cart.subtotal = 0;
-    state.cart.shipping = 0;
-    state.cart.total = 0;
-    localStorage.removeItem('sejaVersatilCart');
-}
-
-// ==================== LÓGICA DE CUPOM (SIMULADA) ====================
-
-// Simulação de base de dados de cupons
-const availableCoupons = {
-    'PRIMEIRACOMPRA': { code: 'PRIMEIRACOMPRA', type: 'percent', value: 0.10, description: '10% OFF na primeira compra' },
-    'FRETEGRATIS': { code: 'FRETEGRATIS', type: 'shipping', value: 0, description: 'Frete Grátis' },
-    'DEZREAIS': { code: 'DEZREAIS', type: 'fixed', value: 10.00, description: 'R$ 10,00 de desconto' }
+// === CACHE DE ELEMENTOS DOM ===
+const DOM = {
+  authTabs: null,
+  loggedInfo: null,
+  loggedUserName: null,
+  formDados: null,
+  formEndereco: null,
+  formPagamento: null,
+  summaryItems: null,
+  summaryCartCode: null,
+  summarySubtotal: null,
+  summaryPixDiscount: null,
+  summaryInstallmentRow: null,
+  summaryInstallmentValue: null,
+  summaryInstallmentDetail: null,
+  installmentsBox: null,
+  installmentsSelect: null,
+  btnFinalizarCompra: null,
+  loadingOverlay: null,
+  toastContainer: null
 };
 
-function calculateDiscount(subtotal, shipping) {
-    let discount = 0;
-    let newShipping = shipping;
-
-    if (state.cart.appliedCoupon) {
-        const coupon = state.cart.appliedCoupon;
-        if (coupon.type === 'percent') {
-            discount = subtotal * coupon.value;
-        } else if (coupon.type === 'fixed') {
-            discount = coupon.value;
-        } else if (coupon.type === 'shipping') {
-            discount = shipping;
-            newShipping = 0;
-        }
-    }
-
-    // Garante que o desconto não seja maior que o subtotal
-    discount = Math.min(discount, subtotal);
-    
-    state.cart.couponDiscount = discount;
-    state.cart.shipping = newShipping;
-    state.cart.total = subtotal - discount + newShipping;
-}
-
-function applyCoupon() {
-    const input = $('checkoutCouponInput');
-    const messageEl = $('checkoutCouponMessage');
-    const code = input.value.toUpperCase().trim();
-
-    messageEl.textContent = '';
-    messageEl.style.color = 'red';
-
-    if (!code) {
-        messageEl.textContent = 'Digite um código de cupom.';
-        return;
-    }
-
-    if (availableCoupons[code]) {
-        state.cart.appliedCoupon = availableCoupons[code];
-        messageEl.textContent = `Cupom "${code}" aplicado com sucesso!`;
-        messageEl.style.color = 'green';
-        updateSummary();
-    } else {
-        state.cart.appliedCoupon = null;
-        state.cart.couponDiscount = 0;
-        messageEl.textContent = 'Cupom inválido ou expirado.';
-        updateSummary();
-    }
-}
-
-function removeCoupon() {
-    state.cart.appliedCoupon = null;
-    state.cart.couponDiscount = 0;
-    $('checkoutCouponInput').value = '';
-    $('checkoutCouponMessage').textContent = '';
-    updateSummary();
-}
-
-// ==================== FIREBASE (AUTENTICAÇÃO) ====================
-
-function setupAuthListener() {
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            state.user = user;
-            // Simula a busca do nome do usuário (o Firebase Auth só retorna displayName se foi setado)
-            state.user.displayName = user.displayName || $('name').value || 'Cliente'; 
-            updateIdentificationStep(true);
-        } else {
-            state.user = null;
-            updateIdentificationStep(false);
-        }
-    });
-}
-
-function updateIdentificationStep(isLoggedIn) {
-    const displayEl = $('user-info-display');
-    const formEl = $('identification-form');
-    const nameInput = $('name');
-    const emailInput = $('email');
-
-    if (isLoggedIn && state.user) {
-        displayEl.style.display = 'flex';
-        formEl.style.display = 'none';
-        $('user-name-display').textContent = state.user.displayName;
-        $('user-email-display').textContent = state.user.email;
-        
-        // Preenche os campos de entrega com os dados do usuário logado (se houver)
-        nameInput.value = state.user.displayName || '';
-        emailInput.value = state.user.email || '';
-        nameInput.disabled = true;
-        emailInput.disabled = true;
-
-    } else {
-        displayEl.style.display = 'flex'; // Mantém o display flex para o layout
-        formEl.style.display = 'flex';
-        nameInput.disabled = false;
-        emailInput.disabled = false;
-        displayEl.style.display = 'none'; // Esconde a mensagem de logado se não estiver logado
-    }
-    
-    // Adiciona listener ao botão de logout
-    $('logout-btn').onclick = () => {
-        auth.signOut().then(() => {
-            console.log('Usuário deslogado.');
-            // Limpa os campos de nome/email
-            $('name').value = '';
-            $('email').value = '';
-        }).catch((error) => {
-            console.error('Erro ao deslogar:', error);
-        });
-    };
-
-    // Simula o botão de Login/Cadastro
-    $('login-register-btn').onclick = () => {
-        alert('Funcionalidade de Login/Cadastro simulada. Em uma aplicação real, um modal de login seria aberto aqui.');
-    };
-}
-
-// ==================== ENDEREÇO E FRETE ====================
-
-async function searchCep() {
-    const cepInput = $('cep');
-    const cep = cepInput.value.replace(/\D/g, '');
-    const addressFieldsEl = $('address-fields');
-    const shippingOptionsEl = $('shipping-options-container');
-
-    if (cep.length !== 9) { // 8 dígitos + hífen
-        alert('CEP inválido. Digite no formato 00000-000.');
-        return;
-    }
-
-    // Simulação da API ViaCEP
-    const simulatedAddress = {
-        logradouro: 'Rua Simulação de Endereço',
-        bairro: 'Bairro Teste',
-        localidade: 'São Paulo',
-        uf: 'SP'
-    };
-
-    try {
-        // Simula um delay de rede
-        await new Promise(resolve => setTimeout(resolve, 500)); 
-
-        state.address = {
-            cep: cep,
-            street: simulatedAddress.logradouro,
-            neighborhood: simulatedAddress.bairro,
-            city: simulatedAddress.localidade,
-            state: simulatedAddress.uf,
-            number: '',
-            complement: ''
-        };
-
-        // Preenche os campos
-        $('street').value = state.address.street;
-        $('neighborhood').value = state.address.neighborhood;
-        $('city').value = state.address.city;
-        $('state').value = state.address.state;
-        $('number').value = ''; // O número deve ser preenchido pelo usuário
-        $('complement').value = '';
-
-        addressFieldsEl.style.display = 'flex';
-        shippingOptionsEl.style.display = 'block';
-        
-        // Foca no campo de número
-        $('number').focus();
-
-        // Simula o cálculo do frete e atualiza o resumo
-        simulateShippingCalculation();
-
-    } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
-        alert('Erro ao buscar CEP. Por favor, preencha o endereço manualmente.');
-        addressFieldsEl.style.display = 'flex';
-        shippingOptionsEl.style.display = 'none';
-    }
-}
-
-function simulateShippingCalculation() {
-    // Simula preços de frete
-    const pacPrice = 25.00;
-    const sedexPrice = 45.00;
-
-    $('pac-price').textContent = formatCurrency(pacPrice);
-    $('sedex-price').textContent = formatCurrency(sedexPrice);
-
-    // Seleciona o PAC por padrão se nenhum estiver selecionado
-    if (!state.selectedShipping) {
-        $('shipping-pac').checked = true;
-        state.selectedShipping = { method: 'PAC', price: pacPrice };
-    }
-    
-    updateSummary();
-}
-
-function handleShippingSelection(event) {
-    const selectedRadio = event.target;
-    const priceText = $(selectedRadio.id.replace('shipping-', '') + '-price').textContent;
-    const price = Number(priceText.replace('R$', '').replace('.', '').replace(',', '.').trim());
-
-    state.selectedShipping = {
-        method: selectedRadio.value,
-        price: price
-    };
-    updateSummary();
-}
-
-// ==================== RESUMO DO PEDIDO ====================
-
-function renderSummaryProducts() {
-    const listEl = $('summary-product-list');
-    
-    if (state.cart.items.length === 0) {
-        listEl.innerHTML = '<div class="empty-cart-summary">Seu carrinho está vazio.</div>';
-        return;
-    }
-
-    listEl.innerHTML = state.cart.items.map(item => `
-        <div class="summary-item">
-            <img src="${item.image || 'https://via.placeholder.com/60x80?text=SV'}" alt="${item.name}" class="summary-item-image">
-            <div class="summary-item-details">
-                <strong>${item.name}</strong>
-                <p>${item.color ? item.color + ' / ' : ''}${item.size || 'Tamanho Único'}</p>
-                <p>Qtd: ${item.quantity}</p>
-            </div>
-            <span class="summary-item-price">${formatCurrency(item.price * item.quantity)}</span>
-        </div>
-    `).join('');
-}
-
-function updateSummary() {
-    const subtotal = state.cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    state.cart.subtotal = subtotal;
-    
-    let shippingCost = state.selectedShipping ? state.selectedShipping.price : 0;
-
-    // Calcula o desconto e o total
-    calculateDiscount(subtotal, shippingCost);
-
-    // Atualiza o DOM
-    $('summary-subtotal').textContent = formatCurrency(subtotal);
-    $('summary-shipping').textContent = formatCurrency(state.cart.shipping);
-    $('summary-total').textContent = formatCurrency(state.cart.total);
-
-    const discountRow = $('summary-discount-row');
-    const discountEl = $('summary-discount');
-    const finalizeBtn = $('finalize-order-btn');
-
-    if (state.cart.couponDiscount > 0) {
-        discountEl.textContent = `- ${formatCurrency(state.cart.couponDiscount)}`;
-        discountRow.style.display = 'flex';
-    } else {
-        discountRow.style.display = 'none';
-    }
-
-    // Atualiza o badge do cupom
-    const badgeEl = $('checkoutAppliedCouponBadge');
-    if (state.cart.appliedCoupon) {
-        $('checkoutAppliedCouponCode').textContent = state.cart.appliedCoupon.description;
-        badgeEl.style.display = 'flex';
-    } else {
-        badgeEl.style.display = 'none';
-    }
-
-    // Habilita o botão de finalizar se houver itens e frete selecionado
-    if (state.cart.items.length > 0 && state.selectedShipping && !state.isProcessing) {
-        finalizeBtn.disabled = false;
-    } else {
-        finalizeBtn.disabled = true;
-    }
-}
-
-// ==================== VALIDAÇÃO E FINALIZAÇÃO (WHATSAPP) ====================
-
-function validateForm() {
-    // 1. Validação de Identificação
-    const name = $('name').value.trim();
-    const email = $('email').value.trim();
-    if (!name || !email || !email.includes('@')) {
-        alert('Por favor, preencha seu Nome e Email corretamente.');
-        return false;
-    }
-
-    // 2. Validação de Entrega
-    const cep = $('cep').value.replace(/\D/g, '');
-    const street = $('street').value.trim();
-    const number = $('number').value.trim();
-    const neighborhood = $('neighborhood').value.trim();
-    const city = $('city').value.trim();
-    const state_uf = $('state').value.trim();
-    
-    if (cep.length !== 8 || !street || !number || !neighborhood || !city || state_uf.length !== 2) {
-        alert('Por favor, preencha todos os campos de endereço.');
-        return false;
-    }
-
-    if (!state.selectedShipping) {
-        alert('Por favor, selecione uma opção de frete.');
-        return false;
-    }
-
-    return true;
-}
-
-function buildWhatsAppMessage(orderId) {
-    let message = `*NOVO PEDIDO SEJA VERSÁTIL - #${orderId}*\n\n`;
-    
-    // 1. Detalhes do Cliente
-    message += `*CLIENTE:*\n`;
-    message += `Nome: ${$('name').value.trim()}\n`;
-    message += `Email: ${$('email').value.trim()}\n\n`;
-
-    // 2. Itens do Pedido
-    message += `*ITENS DO PEDIDO:*\n`;
-    state.cart.items.forEach((item, index) => {
-        message += `${index + 1}. ${item.name} (${item.size}/${item.color}) - Qtd: ${item.quantity} - ${formatCurrency(item.price * item.quantity)}\n`;
-    });
-    message += `\n`;
-
-    // 3. Totais
-    message += `*RESUMO DE VALORES:*\n`;
-    message += `Subtotal: ${formatCurrency(state.cart.subtotal)}\n`;
-    message += `Frete (${state.selectedShipping.method}): ${formatCurrency(state.selectedShipping.price)}\n`;
-    if (state.cart.couponDiscount > 0) {
-        message += `Desconto (${state.cart.appliedCoupon.code}): -${formatCurrency(state.cart.couponDiscount)}\n`;
-    }
-    message += `*TOTAL GERAL: ${formatCurrency(state.cart.total)}*\n\n`;
-
-    // 4. Endereço de Entrega
-    message += `*ENDEREÇO DE ENTREGA:*\n`;
-    message += `CEP: ${$('cep').value.trim()}\n`;
-    message += `Rua: ${$('street').value.trim()}, ${$('number').value.trim()} (${$('complement').value.trim()})\n`;
-    message += `Bairro: ${$('neighborhood').value.trim()}\n`;
-    message += `Cidade/UF: ${$('city').value.trim()}/${$('state').value.trim()}\n\n`;
-
-    message += `Aguardamos seu contato para confirmar o pedido e finalizar o pagamento.`;
-
-    return encodeURIComponent(message);
-}
-
-async function finalizeOrder() {
-    if (state.isProcessing) return;
-
-    if (!validateForm()) {
-        return;
-    }
-
-    state.isProcessing = true;
-    $('finalize-order-btn').disabled = true;
-    $('finalize-order-btn').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10M12 22v-10M2 12h10M22 12h-10"/></svg> REGISTRANDO PEDIDO...';
-    $('loading-feedback').style.display = 'block';
-
-    const orderData = {
-        userId: state.user ? state.user.uid : 'guest',
-        userName: $('name').value.trim(),
-        userEmail: $('email').value.trim(),
-        date: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 'Aguardando Contato WhatsApp', // Status atualizado
-        items: state.cart.items.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            size: item.size,
-            color: item.color
-        })),
-        subtotal: state.cart.subtotal,
-        shippingMethod: state.selectedShipping.method,
-        shippingCost: state.selectedShipping.price,
-        couponCode: state.cart.appliedCoupon ? state.cart.appliedCoupon.code : null,
-        discount: state.cart.couponDiscount,
-        total: state.cart.total,
-        paymentMethod: 'WhatsApp', // Método de pagamento atualizado
-        address: {
-            cep: $('cep').value.replace(/\D/g, ''),
-            street: $('street').value.trim(),
-            number: $('number').value.trim(),
-            complement: $('complement').value.trim(),
-            neighborhood: $('neighborhood').value.trim(),
-            city: $('city').value.trim(),
-            state: $('state').value.trim(),
-        },
-    };
-
-    try {
-        // 1. Salvar o pedido no Firestore
-        const docRef = await db.collection('orders').add(orderData);
-        const orderId = docRef.id.substring(0, 8).toUpperCase(); // Usa um ID curto para o WhatsApp
-
-        // 2. Construir a mensagem do WhatsApp
-        const whatsappMessage = buildWhatsAppMessage(orderId);
-        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
-
-        // 3. Limpar o carrinho
-        clearCart();
-
-        // 4. Redirecionar para o WhatsApp
-        window.location.href = whatsappLink;
-
-        // Nota: O redirecionamento interrompe o script. A mensagem de sucesso é implícita.
-
-    } catch (error) {
-        console.error('Erro ao finalizar pedido:', error);
-        alert('Ocorreu um erro ao registrar seu pedido. Por favor, tente novamente.');
-        
-        state.isProcessing = false;
-        $('finalize-order-btn').disabled = false;
-        $('finalize-order-btn').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 15.1 15.1 0 0 1-2.2 3.4c-.9.9-2.1 1.6-3.4 2.2a8.38 8.38 0 0 1-3.8.9c-4.6 0-8.5-3.9-8.5-8.5S7.4 3 12 3s8.5 3.9 8.5 8.5z"></path><path d="M12 17.5c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path><path d="M12 14.5v-3M12 10.5h.01"></path></svg> FINALIZAR PEDIDO E ENVIAR PARA WHATSAPP';
-        $('loading-feedback').style.display = 'none';
-    }
-}
-
-// ==================== INICIALIZAÇÃO ====================
-
+// === INICIALIZAÇÃO ===
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Carregar Carrinho
-    const cartLoaded = loadCartFromStorage();
-    if (!cartLoaded) {
-        alert('Seu carrinho está vazio. Redirecionando para a loja.');
-        window.location.href = 'index.html';
-        return;
-    }
-
-    // 2. Setup Listeners
-    setupAuthListener();
-    
-    // Máscaras
-    applyMask($('cep'), '##.###-###');
-
-    // Eventos
-    $('search-cep-btn').addEventListener('click', searchCep);
-    document.querySelectorAll('input[name="shipping-method"]').forEach(radio => {
-        radio.addEventListener('change', handleShippingSelection);
-    });
-    $('checkoutApplyCouponBtn').addEventListener('click', applyCoupon);
-    $('checkoutRemoveCouponBtn').addEventListener('click', removeCoupon);
-    $('finalize-order-btn').addEventListener('click', finalizeOrder);
-
-    // 3. Renderização Inicial
-    renderSummaryProducts();
-    simulateShippingCalculation(); // Inicializa o frete e chama updateSummary
+  cacheDOMElements();
+  initCheckout();
 });
+
+// === CACHE DE ELEMENTOS DOM (PERFORMANCE) ===
+function cacheDOMElements() {
+  DOM.authTabs = document.getElementById('authTabs');
+  DOM.loggedInfo = document.getElementById('loggedInfo');
+  DOM.loggedUserName = document.getElementById('loggedUserName');
+  DOM.formDados = document.getElementById('checkoutFormDados');
+  DOM.formEndereco = document.getElementById('checkoutFormEndereco');
+  DOM.formPagamento = document.getElementById('checkoutFormPagamento');
+  DOM.summaryItems = document.getElementById('summaryItems');
+  DOM.summaryCartCode = document.getElementById('summaryCartCode');
+  DOM.summarySubtotal = document.getElementById('summarySubtotal');
+  DOM.summaryPixDiscount = document.getElementById('summaryPixDiscount');
+  DOM.summaryInstallmentRow = document.getElementById('summaryInstallmentRow');
+  DOM.summaryInstallmentValue = document.getElementById('summaryInstallmentValue');
+  DOM.summaryInstallmentDetail = document.getElementById('summaryInstallmentDetail');
+  DOM.installmentsBox = document.getElementById('installmentsBox');
+  DOM.installmentsSelect = document.getElementById('installmentsSelect');
+  DOM.btnFinalizarCompra = document.getElementById('btnFinalizarCompra');
+  DOM.loadingOverlay = document.getElementById('checkoutLoadingOverlay');
+  DOM.toastContainer = document.getElementById('checkoutToastContainer');
+}
+
+// === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
+async function initCheckout() {
+  try {
+    // Verificar autenticação
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      
+      if (user) {
+        // Usuário logado
+        DOM.authTabs.style.display = 'none';
+        DOM.loggedInfo.style.display = 'block';
+        DOM.loggedUserName.textContent = user.displayName || user.email;
+        
+        // Preencher formulário
+        document.getElementById('inputNome').value = user.displayName || '';
+        document.getElementById('inputEmail').value = user.email || '';
+        document.getElementById('inputEmail').disabled = true;
+      } else {
+        // Usuário não logado
+        DOM.authTabs.style.display = 'flex';
+        DOM.loggedInfo.style.display = 'none';
+      }
+    });
+    
+    // Carregar carrinho
+    loadCart();
+    
+    // Se carrinho vazio, redirecionar
+    if (cartItems.length === 0) {
+      showToast('Carrinho vazio', 'Adicione produtos antes de finalizar a compra', 'warning');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, CONFIG.REDIRECT_DELAY - 1000);
+      return;
+    }
+    
+    // Renderizar resumo
+    renderSummary();
+    
+    // Inicializar máscaras
+    initMasks();
+    
+    // Inicializar eventos
+    initEvents();
+    
+    // Atualizar código do carrinho
+    DOM.summaryCartCode.textContent = `(${cartCode})`;
+    
+  } catch (error) {
+    console.error('Erro na inicialização:', error);
+    showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
+  }
+}
+
+// === CARREGAR CARRINHO ===
+function loadCart() {
+  const storedCart = localStorage.getItem('sejaVersatilCart');
+  if (storedCart) {
+    try {
+      cartItems = JSON.parse(storedCart);
+    } catch (error) {
+      console.error('Erro ao carregar carrinho:', error);
+      cartItems = [];
+    }
+  }
+}
+
+// === RENDERIZAR RESUMO (OTIMIZADO COM FRAGMENT) ===
+function renderSummary() {
+  const fragment = document.createDocumentFragment();
+  subtotal = 0;
+  
+  cartItems.forEach(item => {
+    const itemTotal = item.price * item.quantity;
+    subtotal += itemTotal;
+    
+    const itemElement = document.createElement('div');
+    itemElement.className = 'checkout-summary-item';
+    itemElement.innerHTML = `
+      <img src="${item.image || 'https://via.placeholder.com/60'}" 
+           alt="${escapeHtml(item.name)}" 
+           class="checkout-summary-item-image"
+           loading="lazy">
+      <div class="checkout-summary-item-info">
+        <div class="checkout-summary-item-name">${escapeHtml(item.name)}</div>
+        <div class="checkout-summary-item-details">
+          Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Laranja')}
+        </div>
+        <div class="checkout-summary-item-price">
+          <span class="checkout-summary-item-qty">Qtd: ${item.quantity}</span>
+          <span class="checkout-summary-item-total">R$ ${formatCurrency(itemTotal)}</span>
+        </div>
+      </div>
+    `;
+    fragment.appendChild(itemElement);
+  });
+  
+  DOM.summaryItems.innerHTML = '';
+  DOM.summaryItems.appendChild(fragment);
+  
+  // Atualizar totais
+  updateTotals();
+}
+
+// === FUNÇÃO AUXILIAR: ESCAPAR HTML (SEGURANÇA XSS) ===
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// === FUNÇÃO AUXILIAR: FORMATAR MOEDA ===
+function formatCurrency(value) {
+  return value.toFixed(2).replace('.', ',');
+}
+
+// === ATUALIZAR TOTAIS ===
+function updateTotals() {
+  // Subtotal
+  DOM.summarySubtotal.textContent = `R$ ${formatCurrency(subtotal)}`;
+  
+  // Desconto PIX (10%)
+  const pixDiscount = subtotal * CONFIG.PIX_DISCOUNT;
+  DOM.summaryPixDiscount.textContent = `R$ ${formatCurrency(pixDiscount)}`;
+  
+  // Total
+  total = subtotal;
+  
+  // Calcular parcelas
+  const installmentValue = subtotal / 3;
+  DOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
+}
+
+// === INICIALIZAR MÁSCARAS (OTIMIZADO COM DEBOUNCE) ===
+function initMasks() {
+  // Máscara de Telefone
+  const inputTelefone = document.getElementById('inputTelefone');
+  inputTelefone.addEventListener('input', debounce((e) => {
+    e.target.value = applyPhoneMask(e.target.value);
+  }, 100));
+  
+  // Máscara de CPF
+  const inputCPF = document.getElementById('inputCPF');
+  inputCPF.addEventListener('input', debounce((e) => {
+    e.target.value = applyCPFMask(e.target.value);
+  }, 100));
+  
+  // Máscara de CEP
+  const inputCEP = document.getElementById('inputCEP');
+  inputCEP.addEventListener('input', debounce((e) => {
+    e.target.value = applyCEPMask(e.target.value);
+  }, 100));
+  
+  // Buscar CEP (com debounce maior)
+  inputCEP.addEventListener('blur', debounce(async () => {
+    const cep = inputCEP.value.replace(/\D/g, '');
+    if (cep.length === CONFIG.CEP_LENGTH) {
+      await buscarCEP(cep);
+    }
+  }, 300));
+}
+
+// === FUNÇÕES DE MÁSCARAS (EXTRAÍDAS PARA REUTILIZAÇÃO) ===
+function applyPhoneMask(value) {
+  value = value.replace(/\D/g, '');
+  if (value.length <= 11) {
+    value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+    value = value.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+  }
+  return value;
+}
+
+function applyCPFMask(value) {
+  value = value.replace(/\D/g, '');
+  if (value.length <= CONFIG.CPF_LENGTH) {
+    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, '$1.$2.$3-$4');
+    value = value.replace(/^(\d{3})(\d{3})(\d{0,3})$/, '$1.$2.$3');
+    value = value.replace(/^(\d{3})(\d{0,3})$/, '$1.$2');
+  }
+  return value;
+}
+
+function applyCEPMask(value) {
+  value = value.replace(/\D/g, '');
+  if (value.length <= CONFIG.CEP_LENGTH) {
+    value = value.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+  }
+  return value;
+}
+
+// === DEBOUNCE (PERFORMANCE) ===
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// === BUSCAR CEP (ViaCEP API) COM CACHE ===
+const cepCache = new Map();
+
+async function buscarCEP(cep) {
+  // Verificar cache primeiro
+  if (cepCache.has(cep)) {
+    const data = cepCache.get(cep);
+    preencherEndereco(data);
+    return;
+  }
+  
+  try {
+    showLoading(true);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error('Erro na resposta da API');
+    }
+    
+    const data = await response.json();
+    
+    if (data.erro) {
+      showToast('CEP não encontrado', 'Verifique o CEP digitado', 'error');
+      return;
+    }
+    
+    // Salvar no cache
+    cepCache.set(cep, data);
+    
+    // Preencher campos
+    preencherEndereco(data);
+    
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      showToast('Timeout', 'A busca demorou muito. Tente novamente', 'warning');
+    } else {
+      console.error('Erro ao buscar CEP:', error);
+      showToast('Erro ao buscar CEP', 'Tente novamente mais tarde', 'error');
+    }
+  } finally {
+    showLoading(false);
+  }
+}
+
+// === PREENCHER ENDEREÇO (EXTRAÍDO) ===
+function preencherEndereco(data) {
+  document.getElementById('inputRua').value = data.logradouro || '';
+  document.getElementById('inputBairro').value = data.bairro || '';
+  document.getElementById('inputCidade').value = data.localidade || '';
+  document.getElementById('inputUF').value = data.uf || '';
+  document.getElementById('inputComplemento').value = data.complemento || '';
+  
+  // Focar no número
+  document.getElementById('inputNumero').focus();
+  
+  // Validar formulário após preencher
+  validateForm();
+}
+
+// === INICIALIZAR EVENTOS ===
+function initEvents() {
+  // Tabs de Login/Cadastro
+  const authTabs = document.querySelectorAll('.checkout-auth-tab');
+  authTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      authTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+  
+  // Validação de formulários
+  const formDados = document.getElementById('checkoutFormDados');
+  formDados.addEventListener('submit', (e) => {
+    e.preventDefault();
+  });
+  
+  const formEndereco = document.getElementById('checkoutFormEndereco');
+  formEndereco.addEventListener('submit', (e) => {
+    e.preventDefault();
+  });
+  
+  // Mudança de método de pagamento
+  const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+  paymentMethods.forEach(method => {
+    method.addEventListener('change', handlePaymentMethodChange);
+  });
+  
+  // Mudança de parcelas
+  const installmentsSelect = document.getElementById('installmentsSelect');
+  installmentsSelect.addEventListener('change', updateInstallmentDisplay);
+  
+  // Validação em tempo real dos formulários
+  const allInputs = document.querySelectorAll('.checkout-form input, .checkout-form select');
+  allInputs.forEach(input => {
+    input.addEventListener('blur', validateForm);
+    input.addEventListener('input', validateForm);
+  });
+  
+  // Botão Finalizar
+  const btnFinalizarCompra = document.getElementById('btnFinalizarCompra');
+  btnFinalizarCompra.addEventListener('click', finalizarCompra);
+}
+
+// === VALIDAR FORMULÁRIO (OTIMIZADO COM VALIDAÇÕES VISUAIS) ===
+function validateForm() {
+  // Validar Dados Pessoais
+  const nome = document.getElementById('inputNome');
+  const email = document.getElementById('inputEmail');
+  const telefone = document.getElementById('inputTelefone');
+  const cpf = document.getElementById('inputCPF');
+  
+  const nomeValido = validateField(nome, nome.value.trim().length >= CONFIG.MIN_NAME_LENGTH);
+  const emailValido = validateField(email, isValidEmail(email.value.trim()));
+  const telefoneValido = validateField(telefone, telefone.value.replace(/\D/g, '').length >= CONFIG.MIN_PHONE_LENGTH);
+  const cpfValido = validateField(cpf, isValidCPF(cpf.value));
+  
+  const dadosValidos = nomeValido && emailValido && telefoneValido && cpfValido;
+  
+  // Validar Endereço
+  const cep = document.getElementById('inputCEP');
+  const rua = document.getElementById('inputRua');
+  const numero = document.getElementById('inputNumero');
+  const bairro = document.getElementById('inputBairro');
+  const cidade = document.getElementById('inputCidade');
+  const uf = document.getElementById('inputUF');
+  
+  const cepValido = validateField(cep, cep.value.replace(/\D/g, '').length === CONFIG.CEP_LENGTH);
+  const ruaValida = validateField(rua, rua.value.trim().length > 0);
+  const numeroValido = validateField(numero, numero.value.trim().length > 0);
+  const bairroValido = validateField(bairro, bairro.value.trim().length > 0);
+  const cidadeValida = validateField(cidade, cidade.value.trim().length > 0);
+  const ufValido = validateField(uf, uf.value.length > 0);
+  
+  const enderecoValido = cepValido && ruaValida && numeroValido && bairroValido && cidadeValida && ufValido;
+  
+  // Mostrar seção de pagamento se dados e endereço válidos
+  if (dadosValidos && enderecoValido) {
+    DOM.formPagamento.style.display = 'block';
+    document.querySelector('#sectionPagamento .checkout-section-subtitle').style.display = 'none';
+    
+    // Habilitar botão de finalizar
+    DOM.btnFinalizarCompra.disabled = false;
+    DOM.btnFinalizarCompra.textContent = 'FINALIZAR COMPRA';
+  } else {
+    DOM.formPagamento.style.display = 'none';
+    document.querySelector('#sectionPagamento .checkout-section-subtitle').style.display = 'block';
+    
+    // Desabilitar botão
+    DOM.btnFinalizarCompra.disabled = true;
+    DOM.btnFinalizarCompra.textContent = 'CONTINUAR COMPRANDO';
+  }
+}
+
+// === VALIDAR CAMPO INDIVIDUAL (FEEDBACK VISUAL) ===
+function validateField(element, isValid) {
+  if (element.value.trim() === '') {
+    element.classList.remove('error', 'success');
+    return false;
+  }
+  
+  if (isValid) {
+    element.classList.remove('error');
+    element.classList.add('success');
+    return true;
+  } else {
+    element.classList.remove('success');
+    element.classList.add('error');
+    return false;
+  }
+}
+
+// === MANIPULAR MUDANÇA DE MÉTODO DE PAGAMENTO ===
+function handlePaymentMethodChange(e) {
+  const method = e.target.value;
+  
+  if (method === 'credito-parcelado') {
+    DOM.installmentsBox.style.display = 'block';
+    DOM.summaryInstallmentRow.style.display = 'flex';
+  } else {
+    DOM.installmentsBox.style.display = 'none';
+    DOM.summaryInstallmentRow.style.display = 'none';
+  }
+  
+  updateTotals();
+}
+
+// === ATUALIZAR EXIBIÇÃO DE PARCELAS ===
+function updateInstallmentDisplay() {
+  const installments = DOM.installmentsSelect.value;
+  if (installments) {
+    const installmentValue = subtotal / parseInt(installments);
+    DOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
+    DOM.summaryInstallmentDetail.textContent = `EM ${installments}X SEM JUROS`;
+  }
+}
+
+// === FINALIZAR COMPRA (OTIMIZADA COM VALIDAÇÃO RIGOROSA) ===
+async function finalizarCompra() {
+  // Prevenir múltiplos cliques
+  if (DOM.btnFinalizarCompra.disabled) return;
+  
+  // Coletar e validar dados
+  const orderData = collectOrderData();
+  
+  if (!orderData) {
+    showToast('Dados inválidos', 'Verifique todos os campos', 'error');
+    return;
+  }
+  
+  try {
+    DOM.btnFinalizarCompra.disabled = true;
+    showLoading(true);
+    
+    // Criar objeto do pedido
+    const order = createOrderObject(orderData);
+    
+    // Salvar no Firestore
+    const docRef = await db.collection('pedidos').add(order);
+    console.log('Pedido salvo:', docRef.id);
+    
+    // Enviar para WhatsApp
+    enviarWhatsApp(order);
+    
+    // Limpar carrinho
+    localStorage.removeItem(CONFIG.CART_STORAGE_KEY);
+    
+    showToast('Pedido realizado!', 'Você será redirecionado para o WhatsApp', 'success');
+    
+  } catch (error) {
+    console.error('Erro ao finalizar compra:', error);
+    showToast('Erro ao finalizar', 'Tente novamente mais tarde', 'error');
+    DOM.btnFinalizarCompra.disabled = false;
+  } finally {
+    showLoading(false);
+  }
+}
+
+// === COLETAR DADOS DO PEDIDO ===
+function collectOrderData() {
+  const nome = document.getElementById('inputNome').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  const telefone = document.getElementById('inputTelefone').value;
+  const cpf = document.getElementById('inputCPF').value;
+  
+  const cep = document.getElementById('inputCEP').value;
+  const rua = document.getElementById('inputRua').value.trim();
+  const numero = document.getElementById('inputNumero').value.trim();
+  const complemento = document.getElementById('inputComplemento').value.trim();
+  const bairro = document.getElementById('inputBairro').value.trim();
+  const cidade = document.getElementById('inputCidade').value.trim();
+  const uf = document.getElementById('inputUF').value;
+  
+  const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+  if (!paymentMethodElement) {
+    showToast('Selecione o pagamento', 'Escolha uma forma de pagamento', 'warning');
+    return null;
+  }
+  
+  const paymentMethod = paymentMethodElement.value;
+  let installments = 1;
+  
+  if (paymentMethod === 'credito-parcelado') {
+    installments = parseInt(DOM.installmentsSelect.value) || 0;
+    if (installments === 0) {
+      showToast('Selecione as parcelas', 'Escolha o número de parcelas', 'warning');
+      return null;
+    }
+  }
+  
+  // Validações finais
+  if (!isValidEmail(email)) {
+    showToast('Email inválido', 'Verifique o email digitado', 'error');
+    return null;
+  }
+  
+  if (!isValidCPF(cpf)) {
+    showToast('CPF inválido', 'Verifique o CPF digitado', 'error');
+    return null;
+  }
+  
+  return {
+    nome, email, telefone, cpf,
+    cep, rua, numero, complemento, bairro, cidade, uf,
+    paymentMethod, installments
+  };
+}
+
+// === CRIAR OBJETO DO PEDIDO ===
+function createOrderObject(data) {
+  let finalTotal = subtotal;
+  let paymentMethodName = '';
+  
+  switch (data.paymentMethod) {
+    case 'pix':
+      finalTotal = subtotal * (1 - CONFIG.PIX_DISCOUNT);
+      paymentMethodName = 'PIX à Vista (10% OFF)';
+      break;
+    case 'boleto':
+      paymentMethodName = 'Boleto Bancário';
+      break;
+    case 'credito-avista':
+      paymentMethodName = 'Cartão de Crédito à Vista';
+      break;
+    case 'credito-parcelado':
+      paymentMethodName = `Cartão de Crédito ${data.installments}x sem juros`;
+      break;
+  }
+  
+  return {
+    codigo: cartCode,
+    data: new Date().toISOString(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    cliente: {
+      nome: data.nome,
+      email: data.email,
+      telefone: data.telefone,
+      cpf: data.cpf,
+      uid: currentUser ? currentUser.uid : null
+    },
+    endereco: {
+      cep: data.cep,
+      rua: data.rua,
+      numero: data.numero,
+      complemento: data.complemento,
+      bairro: data.bairro,
+      cidade: data.cidade,
+      uf: data.uf
+    },
+    items: cartItems.map(item => ({
+      ...item,
+      subtotal: item.price * item.quantity
+    })),
+    pagamento: {
+      metodo: data.paymentMethod,
+      metodoNome: paymentMethodName,
+      parcelas: data.installments
+    },
+    valores: {
+      subtotal: parseFloat(subtotal.toFixed(2)),
+      desconto: parseFloat((subtotal - finalTotal).toFixed(2)),
+      total: parseFloat(finalTotal.toFixed(2))
+    },
+    status: 'pendente'
+  };
+}
+
+// === ENVIAR PARA WHATSAPP (OTIMIZADA) ===
+function enviarWhatsApp(order) {
+  const message = buildWhatsAppMessage(order);
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodedMessage}`;
+  
+  // Abrir WhatsApp em nova aba
+  window.open(whatsappURL, '_blank');
+  
+  // Redirecionar para home após delay
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, CONFIG.REDIRECT_DELAY);
+}
+
+// === CONSTRUIR MENSAGEM DO WHATSAPP ===
+function buildWhatsAppMessage(order) {
+  let msg = `*🛍️ NOVO PEDIDO - ${order.codigo}*\n\n`;
+  
+  msg += `*👤 CLIENTE*\n`;
+  msg += `Nome: ${order.cliente.nome}\n`;
+  msg += `Email: ${order.cliente.email}\n`;
+  msg += `Telefone: ${order.cliente.telefone}\n`;
+  msg += `CPF: ${order.cliente.cpf}\n\n`;
+  
+  msg += `*📍 ENDEREÇO DE ENTREGA*\n`;
+  msg += `${order.endereco.rua}, ${order.endereco.numero}`;
+  if (order.endereco.complemento) {
+    msg += ` - ${order.endereco.complemento}`;
+  }
+  msg += `\n${order.endereco.bairro} - ${order.endereco.cidade}/${order.endereco.uf}\n`;
+  msg += `CEP: ${order.endereco.cep}\n\n`;
+  
+  msg += `*🛒 PRODUTOS*\n`;
+  order.items.forEach(item => {
+    msg += `- ${item.name} (${item.size || 'M'}/${item.color || 'Laranja'})\n`;
+    msg += `  Qtd: ${item.quantity} x R$ ${formatCurrency(item.price)} = R$ ${formatCurrency(item.price * item.quantity)}\n`;
+  });
+  
+  msg += `\n*💳 PAGAMENTO*\n`;
+  msg += `Método: ${order.pagamento.metodoNome}\n\n`;
+  
+  msg += `*💰 VALORES*\n`;
+  msg += `Subtotal: R$ ${formatCurrency(order.valores.subtotal)}\n`;
+  if (order.valores.desconto > 0) {
+    msg += `Desconto: R$ ${formatCurrency(order.valores.desconto)}\n`;
+  }
+  msg += `*TOTAL: R$ ${formatCurrency(order.valores.total)}*\n`;
+  
+  return msg;
+}
+
+// === LOGOUT ===
+function logoutCheckout() {
+  auth.signOut().then(() => {
+    showToast('Logout realizado', 'Você saiu da sua conta', 'success');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  });
+}
+
+// === GERAR CÓDIGO DO CARRINHO ===
+function generateCartCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+// === MOSTRAR/OCULTAR LOADING ===
+function showLoading(show) {
+  const overlay = document.getElementById('checkoutLoadingOverlay');
+  if (show) {
+    overlay.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
+  }
+}
+
+// === MOSTRAR TOAST (OTIMIZADA COM QUEUE) ===
+const toastQueue = [];
+let isShowingToast = false;
+
+function showToast(title, message, type = 'success') {
+  toastQueue.push({ title, message, type });
+  
+  if (!isShowingToast) {
+    processToastQueue();
+  }
+}
+
+function processToastQueue() {
+  if (toastQueue.length === 0) {
+    isShowingToast = false;
+    return;
+  }
+  
+  isShowingToast = true;
+  const { title, message, type } = toastQueue.shift();
+  
+  const icons = {
+    success: '✓',
+    error: '✕',
+    warning: '⚠'
+  };
+  
+  const toast = document.createElement('div');
+  toast.className = `checkout-toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type]}</div>
+    <div class="toast-content">
+      <div class="toast-title">${escapeHtml(title)}</div>
+      <div class="toast-message">${escapeHtml(message)}</div>
+    </div>
+  `;
+  
+  DOM.toastContainer.appendChild(toast);
+  
+  // Remover após duração configurada
+  setTimeout(() => {
+    toast.style.animation = 'toastSlideIn 0.3s ease-out reverse';
+    setTimeout(() => {
+      if (DOM.toastContainer.contains(toast)) {
+        DOM.toastContainer.removeChild(toast);
+      }
+      processToastQueue();
+    }, 300);
+  }, CONFIG.TOAST_DURATION);
+}
+
+// === VALIDAÇÃO DE EMAIL (RFC 5322 SIMPLIFICADA) ===
+function isValidEmail(email) {
+  const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return re.test(email) && email.length <= 254;
+}
+
+// === VALIDAÇÃO DE CPF ===
+function isValidCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  
+  let sum = 0;
+  let remainder;
+  
+  for (let i = 1; i <= 9; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+  
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+  
+  sum = 0;
+  for (let i = 1; i <= 10; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+  
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+  
+  return true;
+}
