@@ -1,11 +1,11 @@
 /* ==========================================================================
-   CHECKOUT.CSS - Estilização da Página de Checkout (Inspirado em Hardyn)
+   CHECKOUT.CSS - Estilização da Página de Checkout (Réplica Hardyn)
    ========================================================================== */
 
 /* 1. RESET BÁSICO E TIPOGRAFIA */
 body {
     font-family: var(--font-main, 'Century Gothic', sans-serif);
-    background-color: var(--gray-bg, #f8f8f8);
+    background-color: var(--white, #ffffff); /* Fundo branco para replicar o estilo clean */
     color: var(--text, #1a1a1a);
     line-height: 1.6;
 }
@@ -13,25 +13,26 @@ body {
 h1, h2, h3, h4 {
     font-family: var(--font-display, 'Century Gothic', sans-serif);
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
 .checkout-title {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 2rem;
+    font-size: 1.8rem; /* Tamanho mais contido */
+    text-align: left;
+    margin-bottom: 1.5rem;
     color: var(--primary, #000);
-    font-weight: 400; /* Mais leve para o título principal */
+    font-weight: 700;
     letter-spacing: 0;
+    text-transform: none;
 }
 
-/* 2. HEADER SIMPLIFICADO */
+/* 2. HEADER SIMPLIFICADO (Hardyn usa apenas o logo) */
 .checkout-header {
     background: var(--white, #fff);
     border-bottom: 1px solid var(--gray, #e5e5e5);
     padding: 1rem 0;
-    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
+    box-shadow: none; /* Remove a sombra para um visual mais clean */
 }
 
 .checkout-header .header-content {
@@ -39,7 +40,7 @@ h1, h2, h3, h4 {
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Centraliza o logo */
     align-items: center;
 }
 
@@ -50,27 +51,7 @@ h1, h2, h3, h4 {
     color: var(--primary, #000);
     text-decoration: none;
     text-align: center;
-    flex-grow: 1; 
-}
-
-.checkout-header .back-to-store {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-light, #666);
-    text-decoration: none;
-    transition: color 0.2s;
-    font-weight: 600;
-}
-
-.checkout-header .back-to-store:hover {
-    color: var(--primary, #000);
-}
-
-.checkout-header .header-placeholder {
-    width: 150px; 
-    visibility: hidden;
+    flex-grow: 0; 
 }
 
 /* 3. LAYOUT PRINCIPAL (GRID) */
@@ -87,35 +68,46 @@ h1, h2, h3, h4 {
     align-items: flex-start; 
 }
 
-/* 4. ESTILIZAÇÃO DA COLUNA DE DADOS (ESQUERDA) */
-.checkout-data-flow {
-    background: var(--white, #fff);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
+/* 4. COLUNA DE DETALHES (ESQUERDA) */
+.checkout-details-column {
+    padding: 0;
 }
 
-.checkout-step {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--gray, #e5e5e5);
+/* Breadcrumb */
+.breadcrumb-checkout {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
 }
 
-.checkout-step:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.breadcrumb-checkout a {
+    color: var(--text-light, #666);
+    text-decoration: none;
 }
 
-.checkout-step h2 {
-    font-size: 1.3rem;
+.breadcrumb-checkout span {
+    color: var(--text-lighter, #999);
+}
+
+/* Seções de Checkout */
+.checkout-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--gray, #e5e5e5); /* Borda sutil para destacar a seção */
+    border-radius: 4px;
+}
+
+.section-title {
+    font-size: 1.2rem;
     color: var(--primary, #000);
     margin-bottom: 1.5rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-/* Formulário */
+/* Formulário (Estilo Hardyn: Inputs com borda e padding) */
 .form-section {
     display: flex;
     flex-direction: column;
@@ -137,10 +129,11 @@ h1, h2, h3, h4 {
 }
 
 label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 0.3rem;
     color: var(--text, #1a1a1a);
+    text-transform: uppercase;
 }
 
 input[type="text"],
@@ -157,101 +150,11 @@ select {
 input:focus, select:focus {
     border-color: var(--primary, #000);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1); 
-}
-
-/* Botões */
-.btn-primary {
-    background-color: var(--primary, #000);
-    color: var(--white, #fff);
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: background-color 0.2s, opacity 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background-color: var(--text, #1a1a1a);
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.btn-large {
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-}
-
-.btn-secondary {
-    background-color: var(--white, #fff);
-    color: var(--primary, #000);
-    border: 1px solid var(--primary, #000);
-    padding: 0.8rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: var(--primary, #000);
-    color: var(--white, #fff);
-}
-
-.btn-small {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-}
-
-/* Botão WhatsApp (Destaque) */
-.btn-whatsapp {
-    background-color: #25D366; /* Cor do WhatsApp */
-    color: var(--white, #fff);
-    border: none;
-    padding: 1rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: background-color 0.2s, opacity 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
-}
-
-.btn-whatsapp:hover:not(:disabled) {
-    background-color: #1DA851;
-}
-
-.btn-whatsapp svg {
-    width: 24px;
-    height: 24px;
-    stroke: var(--white, #fff);
-    fill: none;
+    box-shadow: 0 0 0 1px var(--primary, #000); 
 }
 
 /* Identificação */
-.logged-in-message {
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
-}
-
-.logged-in-email {
-    font-size: 0.9rem;
-    color: var(--text-light, #666);
-    margin-bottom: 1rem;
-}
-
-#user-info-display {
+.user-info-display {
     padding: 1rem;
     border: 1px solid var(--gray, #e5e5e5);
     border-radius: 4px;
@@ -259,10 +162,6 @@ input:focus, select:focus {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 1rem;
-}
-
-#user-info-display button {
-    margin-top: 0.5rem;
 }
 
 .auth-options {
@@ -294,12 +193,11 @@ input:focus, select:focus {
     border-radius: 4px;
 }
 
-.shipping-options-container h3 {
-    font-size: 1.1rem;
+.shipping-title {
+    font-size: 1rem;
     margin-bottom: 1rem;
-    text-transform: none;
-    letter-spacing: normal;
-    font-weight: 600;
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
 .shipping-option {
@@ -327,6 +225,7 @@ input:focus, select:focus {
     justify-content: space-between;
     flex-grow: 1;
     cursor: pointer;
+    text-transform: none;
 }
 
 .shipping-price {
@@ -336,17 +235,17 @@ input:focus, select:focus {
 
 /* Finalização WhatsApp */
 .whatsapp-info-box {
-    background: #e6ffe6; /* Fundo verde claro */
-    border: 1px solid #25D366;
+    background: var(--gray-bg, #f8f8f8); /* Fundo cinza claro para replicar o box */
+    border: 1px solid var(--gray, #e5e5e5);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 4px;
     margin-top: 1rem;
 }
 
 .whatsapp-info-box p {
     font-size: 0.95rem;
     margin-bottom: 1rem;
-    color: #1DA851;
+    color: var(--text, #1a1a1a);
 }
 
 .whatsapp-info-box .whatsapp-number {
@@ -354,34 +253,47 @@ input:focus, select:focus {
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
-    color: #1DA851;
+    color: #25D366; /* Cor do WhatsApp */
     margin-top: 1.5rem;
-    border-top: 1px dashed #b3ffb3;
+    border-top: 1px dashed var(--gray, #e5e5e5);
     padding-top: 1rem;
 }
 
 .whatsapp-info-box svg {
-    stroke: #1DA851;
+    stroke: #25D366;
 }
 
-/* 5. ESTILIZAÇÃO DA COLUNA DE RESUMO (DIREITA) */
-.checkout-summary-sticky {
-    position: sticky;
-    top: 120px; 
-    padding-top: 0; /* Remove padding extra */
+/* Link de Retorno */
+.return-link-container {
+    margin-top: 2rem;
+}
+
+.return-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light, #666);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.return-link:hover {
+    color: var(--primary, #000);
+}
+
+/* 5. COLUNA DE RESUMO (DIREITA) */
+.checkout-summary-column {
+    padding: 0;
 }
 
 .checkout-summary {
-    background: var(--white, #fff);
+    background: var(--gray-bg, #f8f8f8); /* Fundo cinza claro para o resumo */
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.1));
-}
-
-.checkout-summary h2 {
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-    color: var(--primary, #000);
+    border-radius: 4px;
+    box-shadow: none; /* Remove a sombra para replicar o estilo */
+    position: sticky;
+    top: 120px; 
 }
 
 /* Lista de Produtos */
@@ -390,7 +302,8 @@ input:focus, select:focus {
     overflow-y: auto;
     padding-right: 10px; 
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--gray-light, #f8f8f8);
+    border-bottom: 1px solid var(--gray, #e5e5e5);
+    padding-bottom: 1.5rem;
 }
 
 .summary-item {
@@ -398,7 +311,7 @@ input:focus, select:focus {
     gap: 1rem;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px dashed var(--gray-light, #f8f8f8);
+    border-bottom: 1px dashed var(--gray, #e5e5e5);
 }
 
 .summary-item:last-child {
@@ -411,6 +324,7 @@ input:focus, select:focus {
     height: 80px;
     object-fit: cover;
     border-radius: 4px;
+    border: 1px solid var(--gray, #e5e5e5);
 }
 
 .summary-item-details {
@@ -430,17 +344,11 @@ input:focus, select:focus {
     color: var(--primary, #000);
 }
 
-.empty-cart-summary {
-    text-align: center;
-    padding: 2rem 0;
-    color: var(--text-light, #666);
-}
-
 /* Cupom */
 .summary-coupon-section {
     padding: 1rem 0;
-    border-top: 1px solid var(--gray-light, #f8f8f8);
-    border-bottom: 1px solid var(--gray-light, #f8f8f8);
+    border-top: 1px solid var(--gray, #e5e5e5);
+    border-bottom: 1px solid var(--gray, #e5e5e5);
     margin-bottom: 1.5rem;
 }
 
@@ -522,6 +430,36 @@ input:focus, select:focus {
     margin-top: 1rem;
 }
 
+/* Botão de Ação (WhatsApp) */
+.btn-whatsapp {
+    background-color: #25D366; 
+    color: var(--white, #fff);
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+    width: 100%;
+}
+
+.btn-whatsapp:hover:not(:disabled) {
+    background-color: #1DA851;
+}
+
+.btn-whatsapp svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--white, #fff);
+    fill: none;
+}
+
 /* Feedback de Loading */
 .loading-feedback {
     text-align: center;
@@ -537,31 +475,18 @@ input:focus, select:focus {
         gap: 2rem;
     }
 
-    .checkout-summary-sticky {
-        position: static; 
-        top: auto;
-        padding-top: 0;
-    }
-
-    .checkout-summary {
+    .checkout-summary-column {
         order: -1; 
         margin-bottom: 2rem;
     }
 
+    .checkout-summary {
+        position: static; 
+        top: auto;
+    }
+
     .checkout-header .header-content {
         padding: 0 1rem;
-    }
-
-    .checkout-header .logo {
-        font-size: 1.5rem;
-    }
-
-    .checkout-header .back-to-store {
-        font-size: 0.75rem;
-    }
-
-    .checkout-header .header-placeholder {
-        width: 100px;
     }
 
     .checkout-container {
@@ -570,11 +495,11 @@ input:focus, select:focus {
     }
 
     .checkout-title {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
     }
 
-    .checkout-data-flow {
+    .checkout-section {
         padding: 1rem;
     }
 
@@ -583,7 +508,7 @@ input:focus, select:focus {
         gap: 0;
     }
     
-    .checkout-summary .btn-large {
+    .btn-whatsapp {
         width: 100%;
     }
 }
@@ -591,21 +516,5 @@ input:focus, select:focus {
 @media (max-width: 768px) {
     .checkout-header .header-content {
         padding: 0 0.5rem;
-    }
-    
-    .checkout-header .back-to-store {
-        display: none; /* Oculta no mobile para simplificar */
-    }
-    
-    .checkout-header .header-placeholder {
-        width: 0;
-    }
-    
-    .checkout-header .logo {
-        flex-grow: 0;
-    }
-    
-    .checkout-header .header-content {
-        justify-content: center;
     }
 }
