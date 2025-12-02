@@ -38,32 +38,37 @@
 <body>
     <header class="checkout-header">
         <div class="header-content">
-            <a href="index.html" class="back-to-store">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                Voltar para a Loja
-            </a>
             <a href="index.html" class="logo">SEJA VERSÁTIL</a>
-            <div class="header-placeholder"></div>
         </div>
     </header>
 
     <main class="checkout-container">
-        <h1 class="checkout-title">Finalize seu Pedido</h1>
-        
         <div class="checkout-grid">
-            <!-- Coluna da Esquerda: Fluxo de Dados -->
-            <section class="checkout-data-flow">
+            <!-- Coluna da Esquerda: Detalhes do Cliente e Entrega -->
+            <section class="checkout-details-column">
+                
+                <!-- Breadcrumb Simplificado (Hardyn Style) -->
+                <div class="breadcrumb-checkout">
+                    <a href="index.html">Início</a>
+                    <span>/</span>
+                    <a href="#" onclick="toggleCart(); return false;">Carrinho</a>
+                    <span>/</span>
+                    <span>Informações</span>
+                </div>
+
+                <h1 class="checkout-title">Informações de Contato e Entrega</h1>
                 
                 <!-- Passo 1 - Identificação -->
-                <div class="checkout-step" id="step-identification">
-                    <h2>1. Identificação</h2>
-                    <div id="user-info-display" style="display: none;">
+                <div class="checkout-section" id="step-identification">
+                    <h2 class="section-title">1. Contato</h2>
+                    
+                    <div id="user-info-display" class="user-info-display" style="display: none;">
                         <p class="logged-in-message">
-                            Olá, <strong id="user-name-display"></strong>. Seu pedido será enviado para:
+                            Você está logado como <strong id="user-name-display"></strong> (<span id="user-email-display"></span>).
                         </p>
-                        <p class="logged-in-email" id="user-email-display"></p>
                         <button id="logout-btn" class="btn-secondary btn-small">Sair / Mudar Conta</button>
                     </div>
+                    
                     <form id="identification-form" class="form-section">
                         <div class="form-group">
                             <label for="email">E-mail</label>
@@ -74,15 +79,15 @@
                             <input type="text" id="name" name="name" required placeholder="Seu nome completo">
                         </div>
                         <div class="auth-options">
-                            <button type="button" id="login-register-btn" class="btn-secondary">Entrar / Cadastrar</button>
+                            <button type="button" id="login-register-btn" class="btn-secondary btn-small">Entrar / Cadastrar</button>
                             <p class="guest-option">ou continue como visitante</p>
                         </div>
                     </form>
                 </div>
 
                 <!-- Passo 2 - Entrega -->
-                <div class="checkout-step" id="step-delivery">
-                    <h2>2. Endereço e Frete</h2>
+                <div class="checkout-section" id="step-delivery">
+                    <h2 class="section-title">2. Endereço de Entrega</h2>
                     <form id="delivery-form" class="form-section">
                         <div class="form-group cep-group">
                             <label for="cep">CEP</label>
@@ -123,7 +128,7 @@
                         </div>
                         
                         <div class="shipping-options-container" id="shipping-options-container" style="display: none;">
-                            <h3>Selecione o Frete</h3>
+                            <h3 class="shipping-title">Opções de Frete</h3>
                             <div class="shipping-option">
                                 <input type="radio" id="shipping-pac" name="shipping-method" value="PAC" required>
                                 <label for="shipping-pac">
@@ -143,14 +148,11 @@
                 </div>
 
                 <!-- Passo 3 - Finalização (WhatsApp) -->
-                <div class="checkout-step final-step" id="step-finalization">
-                    <h2>3. Confirmação e Pagamento</h2>
+                <div class="checkout-section final-step" id="step-finalization">
+                    <h2 class="section-title">3. Finalização</h2>
                     <div class="whatsapp-info-box">
                         <p>
-                            Ao clicar em **"FINALIZAR PEDIDO E ENVIAR PARA WHATSAPP"**, seu pedido será registrado e você será **redirecionado(a) automaticamente** para o nosso WhatsApp com todos os detalhes do pedido e endereço preenchidos.
-                        </p>
-                        <p>
-                            Nossa equipe entrará em contato para confirmar o pedido e finalizar o pagamento (PIX, Cartão ou Boleto).
+                            Ao clicar em **"FINALIZAR PEDIDO"**, seu pedido será registrado e você será **redirecionado(a) automaticamente** para o nosso WhatsApp para concluir o pagamento.
                         </p>
                         <p class="whatsapp-number">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 15.1 15.1 0 0 1-2.2 3.4c-.9.9-2.1 1.6-3.4 2.2a8.38 8.38 0 0 1-3.8.9c-4.6 0-8.5-3.9-8.5-8.5S7.4 3 12 3s8.5 3.9 8.5 8.5z"></path><path d="M12 17.5c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path><path d="M12 14.5v-3M12 10.5h.01"></path></svg>
@@ -158,12 +160,20 @@
                         </p>
                     </div>
                 </div>
+                
+                <!-- Link de Retorno -->
+                <div class="return-link-container">
+                    <a href="#" onclick="toggleCart(); return false;" class="return-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        Voltar para o Carrinho
+                    </a>
+                </div>
+
             </section>
 
             <!-- Coluna da Direita: Resumo do Pedido -->
-            <aside class="checkout-summary-sticky">
+            <aside class="checkout-summary-column">
                 <div class="checkout-summary">
-                    <h2>Resumo do Pedido</h2>
                     
                     <!-- Listagem de Produtos -->
                     <div id="summary-product-list" class="summary-product-list">
@@ -215,8 +225,7 @@
 
                     <!-- Botão de Ação -->
                     <button id="finalize-order-btn" class="btn-whatsapp btn-large" disabled>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 15.1 15.1 0 0 1-2.2 3.4c-.9.9-2.1 1.6-3.4 2.2a8.38 8.38 0 0 1-3.8.9c-4.6 0-8.5-3.9-8.5-8.5S7.4 3 12 3s8.5 3.9 8.5 8.5z"></path><path d="M12 17.5c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path><path d="M12 14.5v-3M12 10.5h.01"></path></svg>
-                        FINALIZAR PEDIDO E ENVIAR PARA WHATSAPP
+                        FINALIZAR PEDIDO
                     </button>
                     <div id="loading-feedback" class="loading-feedback" style="display: none;">
                         Registrando pedido...
