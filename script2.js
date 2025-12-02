@@ -821,9 +821,6 @@ setTimeout(() => {
 }, 100);
 
 // ==================== SISTEMA DE ADMIN ====================
-
-let isAdminLoggedIn = false;
-let currentUser = null;
 let editingProductId = null;
 
 // ==================== SISTEMA DE USUÁRIOS ====================
@@ -5682,6 +5679,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
