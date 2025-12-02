@@ -1178,7 +1178,7 @@ async function sendToWhatsApp() {
 
     // 2. Coleta de Dados do Cliente
     let customerData = {};
-    const currentUser = auth.currentUser;
+    
 
     if (currentUser) {
         const phone = await getUserPhone();
@@ -2037,6 +2037,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
