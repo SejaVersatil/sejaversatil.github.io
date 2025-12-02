@@ -172,39 +172,53 @@ function loadCart() {
 
 // === RENDERIZAR RESUMO (OTIMIZADO COM FRAGMENT) ===
 function renderSummary() {
-  const fragment = document.createDocumentFragment();
-  subtotal = 0;
-  
-  cartItems.forEach(item => {
-    const itemTotal = item.price * item.quantity;
-    subtotal += itemTotal;
+    const fragment = document.createDocumentFragment();
+    subtotal = 0;
     
-    const itemElement = document.createElement('div');
-    itemElement.className = 'checkout-summary-item';
-    itemElement.innerHTML = `
-      <img src="${item.image || 'https://via.placeholder.com/60'}" 
-           alt="${escapeHtml(item.name)}" 
-           class="checkout-summary-item-image"
-           loading="lazy">
-      <div class="checkout-summary-item-info">
-        <div class="checkout-summary-item-name">${escapeHtml(item.name)}</div>
-        <div class="checkout-summary-item-details">
-          Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Laranja')}
-        </div>
-        <div class="checkout-summary-item-price">
-          <span class="checkout-summary-item-qty">Qtd: ${item.quantity}</span>
-          <span class="checkout-summary-item-total">R$ ${formatCurrency(itemTotal)}</span>
-        </div>
-      </div>
-    `;
-    fragment.appendChild(itemElement);
-  });
-  
-  DOM.summaryItems.innerHTML = '';
-  DOM.summaryItems.appendChild(fragment);
-  
-  // Atualizar totais
-  updateTotals();
+    cartItems.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        
+        // ✅ VALIDAÇÃO ROBUSTA DE IMAGEM
+        let imageSrc = 'https://via.placeholder.com/60x60/667eea/ffffff?text=SV';
+        
+        if (item.image) {
+            // Verifica se é URL válida
+            if (item.image.startsWith('http://') || item.image.startsWith('https://') || item.image.startsWith('data:image')) {
+                imageSrc = item.image;
+            }
+            // Se for gradiente CSS, usa placeholder
+            else if (item.image.includes('gradient')) {
+                imageSrc = 'https://via.placeholder.com/60x60/667eea/ffffff?text=' + encodeURIComponent(item.name.substring(0, 2));
+            }
+        }
+        
+        const itemElement = document.createElement('div');
+        itemElement.className = 'checkout-summary-item';
+        itemElement.innerHTML = `
+          <img src="${imageSrc}" 
+               alt="${escapeHtml(item.name)}" 
+               class="checkout-summary-item-image"
+               loading="lazy"
+               onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=SV'">
+          <div class="checkout-summary-item-info">
+            <div class="checkout-summary-item-name">${escapeHtml(item.name)}</div>
+            <div class="checkout-summary-item-details">
+              Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Padrão')}
+            </div>
+            <div class="checkout-summary-item-price">
+              <span class="checkout-summary-item-qty">Qtd: ${item.quantity}</span>
+              <span class="checkout-summary-item-total">R$ ${formatCurrency(itemTotal)}</span>
+            </div>
+          </div>
+        `;
+        fragment.appendChild(itemElement);
+    });
+    
+    DOM.summaryItems.innerHTML = '';
+    DOM.summaryItems.appendChild(fragment);
+    
+    updateTotals();
 }
 
 // === FUNÇÃO AUXILIAR: ESCAPAR HTML (SEGURANÇA XSS) ===
