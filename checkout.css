@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CHECKOUT.CSS - Estilização da Página de Checkout
+   CHECKOUT.CSS - Estilização da Página de Checkout (Inspirado em Hardyn)
    ========================================================================== */
 
 /* 1. RESET BÁSICO E TIPOGRAFIA */
@@ -22,6 +22,8 @@ h1, h2, h3, h4 {
     text-align: center;
     margin-bottom: 2rem;
     color: var(--primary, #000);
+    font-weight: 400; /* Mais leve para o título principal */
+    letter-spacing: 0;
 }
 
 /* 2. HEADER SIMPLIFICADO */
@@ -48,7 +50,7 @@ h1, h2, h3, h4 {
     color: var(--primary, #000);
     text-decoration: none;
     text-align: center;
-    flex-grow: 1; /* Centraliza o logo */
+    flex-grow: 1; 
 }
 
 .checkout-header .back-to-store {
@@ -59,6 +61,7 @@ h1, h2, h3, h4 {
     color: var(--text-light, #666);
     text-decoration: none;
     transition: color 0.2s;
+    font-weight: 600;
 }
 
 .checkout-header .back-to-store:hover {
@@ -66,7 +69,6 @@ h1, h2, h3, h4 {
 }
 
 .checkout-header .header-placeholder {
-    /* Garante que o logo fique centralizado, ocupando o mesmo espaço do link "Voltar" */
     width: 150px; 
     visibility: hidden;
 }
@@ -80,9 +82,9 @@ h1, h2, h3, h4 {
 
 .checkout-grid {
     display: grid;
-    grid-template-columns: 1fr 400px; /* Desktop: 2 colunas (Dados e Resumo) */
+    grid-template-columns: 1fr 400px; 
     gap: 3rem;
-    align-items: flex-start; /* Alinha o topo das colunas */
+    align-items: flex-start; 
 }
 
 /* 4. ESTILIZAÇÃO DA COLUNA DE DADOS (ESQUERDA) */
@@ -106,9 +108,11 @@ h1, h2, h3, h4 {
 }
 
 .checkout-step h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--primary, #000);
     margin-bottom: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* Formulário */
@@ -147,12 +151,13 @@ select {
     border-radius: 4px;
     font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: var(--font-main, 'Century Gothic', sans-serif);
 }
 
 input:focus, select:focus {
-    border-color: var(--accent, #8b7ab8);
+    border-color: var(--primary, #000);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(139, 122, 184, 0.2); /* Cor da accent com transparência */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1); 
 }
 
 /* Botões */
@@ -205,12 +210,44 @@ input:focus, select:focus {
     font-size: 0.85rem;
 }
 
-/* Identificação */
-#identification-form {
-    position: relative;
+/* Botão WhatsApp (Destaque) */
+.btn-whatsapp {
+    background-color: #25D366; /* Cor do WhatsApp */
+    color: var(--white, #fff);
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
 }
 
-#identification-form .form-group {
+.btn-whatsapp:hover:not(:disabled) {
+    background-color: #1DA851;
+}
+
+.btn-whatsapp svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--white, #fff);
+    fill: none;
+}
+
+/* Identificação */
+.logged-in-message {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.logged-in-email {
+    font-size: 0.9rem;
+    color: var(--text-light, #666);
     margin-bottom: 1rem;
 }
 
@@ -219,9 +256,13 @@ input:focus, select:focus {
     border: 1px solid var(--gray, #e5e5e5);
     border-radius: 4px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 1rem;
+}
+
+#user-info-display button {
+    margin-top: 0.5rem;
 }
 
 .auth-options {
@@ -237,14 +278,12 @@ input:focus, select:focus {
 }
 
 /* Entrega */
-#delivery-form .form-group:has(#cep) {
+.cep-group .cep-input-row {
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
     gap: 1rem;
 }
 
-#delivery-form .form-group:has(#cep) input {
+.cep-group input {
     flex-grow: 1;
 }
 
@@ -260,16 +299,24 @@ input:focus, select:focus {
     margin-bottom: 1rem;
     text-transform: none;
     letter-spacing: normal;
+    font-weight: 600;
 }
 
 .shipping-option {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--gray-light, #f8f8f8);
+}
+
+.shipping-option:last-child {
+    border-bottom: none;
 }
 
 .shipping-option input[type="radio"] {
     margin-right: 0.5rem;
+    accent-color: var(--primary, #000);
 }
 
 .shipping-option label {
@@ -279,70 +326,49 @@ input:focus, select:focus {
     display: flex;
     justify-content: space-between;
     flex-grow: 1;
-}
-
-/* Pagamento */
-.payment-tabs {
-    display: flex;
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid var(--gray, #e5e5e5);
-}
-
-.payment-tab-btn {
-    background: none;
-    border: none;
-    padding: 0.8rem 1.5rem;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-light, #666);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
 }
 
-.payment-tab-btn.active {
+.shipping-price {
+    font-weight: 700;
     color: var(--primary, #000);
-    border-bottom-color: var(--primary, #000);
 }
 
-.payment-content {
-    display: none;
+/* Finalização WhatsApp */
+.whatsapp-info-box {
+    background: #e6ffe6; /* Fundo verde claro */
+    border: 1px solid #25D366;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.whatsapp-info-box p {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: #1DA851;
+}
+
+.whatsapp-info-box .whatsapp-number {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #1DA851;
+    margin-top: 1.5rem;
+    border-top: 1px dashed #b3ffb3;
     padding-top: 1rem;
 }
 
-.payment-content.active {
-    display: block;
-}
-
-/* PIX */
-.pix-instructions {
-    text-align: center;
-}
-
-.pix-qr-code-simulated {
-    background: var(--gray-bg, #f8f8f8);
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-}
-
-.pix-qr-code-simulated img {
-    max-width: 150px;
-    height: auto;
-    margin-bottom: 1rem;
-    border: 1px solid var(--gray, #e5e5e5);
-}
-
-/* Cartão de Crédito */
-#credit-card-form {
-    max-width: 450px;
+.whatsapp-info-box svg {
+    stroke: #1DA851;
 }
 
 /* 5. ESTILIZAÇÃO DA COLUNA DE RESUMO (DIREITA) */
 .checkout-summary-sticky {
     position: sticky;
-    top: 120px; /* Ajuste para ficar abaixo do header */
-    padding-top: 2rem;
+    top: 120px; 
+    padding-top: 0; /* Remove padding extra */
 }
 
 .checkout-summary {
@@ -362,7 +388,7 @@ input:focus, select:focus {
 .summary-product-list {
     max-height: 300px;
     overflow-y: auto;
-    padding-right: 10px; /* Espaço para a barra de rolagem */
+    padding-right: 10px; 
     margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--gray-light, #f8f8f8);
 }
@@ -401,6 +427,7 @@ input:focus, select:focus {
 .summary-item-price {
     font-weight: 700;
     white-space: nowrap;
+    color: var(--primary, #000);
 }
 
 .empty-cart-summary {
@@ -430,7 +457,7 @@ input:focus, select:focus {
 }
 
 .coupon-apply-btn {
-    background-color: var(--secondary, #8b7ab8);
+    background-color: var(--primary, #000);
     color: var(--white, #fff);
     border: none;
     padding: 0.6rem 1rem;
@@ -438,18 +465,19 @@ input:focus, select:focus {
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.2s;
+    text-transform: uppercase;
 }
 
 .coupon-apply-btn:hover {
-    background-color: var(--accent-light, #a894c9);
+    background-color: var(--text, #1a1a1a);
 }
 
 .applied-coupon-badge {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #e6ffe6; /* Verde claro para sucesso */
-    border: 1px solid #b3ffb3;
+    background: #e6ffe6; 
+    border: 1px solid #25D366;
     padding: 0.5rem;
     border-radius: 4px;
     margin-top: 0.5rem;
@@ -457,13 +485,13 @@ input:focus, select:focus {
 
 .applied-coupon-code {
     font-weight: 700;
-    color: #006600;
+    color: #1DA851;
 }
 
 .remove-coupon-btn {
     background: none;
     border: none;
-    color: #006600;
+    color: #1DA851;
     cursor: pointer;
     font-weight: 700;
 }
@@ -482,12 +510,12 @@ input:focus, select:focus {
 }
 
 .discount-row span {
-    color: #e74c3c; /* Vermelho para desconto */
+    color: #e74c3c; 
     font-weight: 600;
 }
 
 .total-final {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 700;
     padding-top: 1rem;
     border-top: 2px solid var(--primary, #000);
@@ -505,18 +533,18 @@ input:focus, select:focus {
 /* 6. RESPONSIVIDADE (MOBILE) */
 @media (max-width: 1024px) {
     .checkout-grid {
-        grid-template-columns: 1fr; /* Coluna única no mobile */
+        grid-template-columns: 1fr; 
         gap: 2rem;
     }
 
     .checkout-summary-sticky {
-        position: static; /* Remove sticky no mobile */
+        position: static; 
         top: auto;
         padding-top: 0;
     }
 
     .checkout-summary {
-        order: -1; /* Coloca o resumo no topo no mobile */
+        order: -1; 
         margin-bottom: 2rem;
     }
 
@@ -555,15 +583,29 @@ input:focus, select:focus {
         gap: 0;
     }
     
-    /* Ajuste para o botão de finalizar pedido no mobile */
     .checkout-summary .btn-large {
         width: 100%;
     }
 }
 
 @media (max-width: 768px) {
-    .checkout-summary {
-        /* No mobile, o resumo pode ser colapsável, mas por simplicidade, vamos deixá-lo aberto no topo */
-        /* Para ser colapsável, seria necessário JS e uma estrutura diferente */
+    .checkout-header .header-content {
+        padding: 0 0.5rem;
+    }
+    
+    .checkout-header .back-to-store {
+        display: none; /* Oculta no mobile para simplificar */
+    }
+    
+    .checkout-header .header-placeholder {
+        width: 0;
+    }
+    
+    .checkout-header .logo {
+        flex-grow: 0;
+    }
+    
+    .checkout-header .header-content {
+        justify-content: center;
     }
 }
