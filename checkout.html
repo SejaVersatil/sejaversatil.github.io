@@ -11,19 +11,18 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- CSS Base (Reutiliza variáveis globais) -->
+  <!-- CSS Base -->
   <link rel="stylesheet" href="css2.css">
-  <!-- CSS Dedicado do Checkout -->
+  <!-- CSS Refatorado do Checkout -->
   <link rel="stylesheet" href="checkout.css">
   
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <!-- Firebase Storage (para uploads futuros) -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
   
   <script>
     const firebaseConfig = {
@@ -44,12 +43,15 @@
 
 <body class="checkout-page">
   
-  <!-- Header Minimalista -->
   <header class="checkout-header">
     <div class="checkout-header-container">
-      <a href="index.html" class="checkout-logo">SEJA VERSÁTIL</a>
+      <a href="index.html" class="checkout-logo">
+        <svg width="100" height="32" viewBox="0 0 100 32" fill="none">
+          <text x="0" y="24" font-family="Poppins, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Seja Versátil</text>
+        </svg>
+      </a>
       <div class="checkout-security">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
         <span>COMPRA 100% SEGURA</span>
@@ -64,7 +66,7 @@
       <span class="breadcrumb-separator">›</span>
       <a href="index.html#produtos">Produtos</a>
       <span class="breadcrumb-separator">›</span>
-      <span class="breadcrumb-current">Finalizar Compra</span>
+      <span class="breadcrumb-current">FINALIZAR</span>
     </div>
   </div>
 
@@ -82,12 +84,12 @@
           <section class="checkout-section" id="sectionDados">
             <div class="checkout-section-header">
               <div class="checkout-section-number">1</div>
-              <h2 class="checkout-section-title">DADOS PESSOAIS</h2>
+              <h2 class="checkout-section-title">Dados Pessoais</h2>
             </div>
             
             <div class="checkout-section-content">
-              <!-- Tabs Login/Cadastro (Se não logado) -->
-              <div class="checkout-auth-tabs" id="authTabs" style="display: none;">
+              <!-- Tabs Login/Cadastro -->
+              <div class="checkout-auth-tabs" id="authTabs">
                 <button class="checkout-auth-tab active" data-tab="login">LOGIN</button>
                 <button class="checkout-auth-tab" data-tab="cadastro">CADASTRO</button>
               </div>
@@ -102,18 +104,18 @@
               <form id="checkoutFormDados" class="checkout-form">
                 <div class="checkout-form-row">
                   <div class="checkout-form-group full">
-                    <label for="inputNome">Nome Completo *</label>
-                    <input type="text" id="inputNome" required minlength="3">
+                    <label for="inputNome">NOME COMPLETO *</label>
+                    <input type="text" id="inputNome" required minlength="3" placeholder="Digite seu nome">
                   </div>
                 </div>
                 
                 <div class="checkout-form-row">
                   <div class="checkout-form-group">
-                    <label for="inputEmail">E-mail *</label>
-                    <input type="email" id="inputEmail" required>
+                    <label for="inputEmail">E-MAIL *</label>
+                    <input type="email" id="inputEmail" required placeholder="Digite seu e-mail">
                   </div>
                   <div class="checkout-form-group">
-                    <label for="inputTelefone">Telefone/WhatsApp *</label>
+                    <label for="inputTelefone">TELEFONE *</label>
                     <input type="tel" id="inputTelefone" placeholder="(00) 00000-0000" required>
                   </div>
                 </div>
@@ -128,11 +130,10 @@
             </div>
           </section>
           
-          <!-- Seção 2: Endereço de Entrega -->
           <section class="checkout-section" id="sectionEndereco">
             <div class="checkout-section-header">
               <div class="checkout-section-number">2</div>
-              <h2 class="checkout-section-title">ENDEREÇO DE ENTREGA</h2>
+              <h2 class="checkout-section-title">Endereço de Entrega</h2>
             </div>
             
             <div class="checkout-section-content">
@@ -153,30 +154,30 @@
                 
                 <div class="checkout-form-row">
                   <div class="checkout-form-group large">
-                    <label for="inputRua">Rua *</label>
-                    <input type="text" id="inputRua" required>
+                    <label for="inputRua">RUA *</label>
+                    <input type="text" id="inputRua" required placeholder="Digite o nome da rua">
                   </div>
                   <div class="checkout-form-group small">
-                    <label for="inputNumero">Número *</label>
-                    <input type="text" id="inputNumero" required>
+                    <label for="inputNumero">NÚMERO *</label>
+                    <input type="text" id="inputNumero" required placeholder="Nº">
                   </div>
                 </div>
                 
                 <div class="checkout-form-row">
                   <div class="checkout-form-group">
-                    <label for="inputComplemento">Complemento</label>
+                    <label for="inputComplemento">COMPLEMENTO</label>
                     <input type="text" id="inputComplemento" placeholder="Apto, Bloco, etc">
                   </div>
                   <div class="checkout-form-group">
-                    <label for="inputBairro">Bairro *</label>
-                    <input type="text" id="inputBairro" required>
+                    <label for="inputBairro">BAIRRO *</label>
+                    <input type="text" id="inputBairro" required placeholder="Digite o bairro">
                   </div>
                 </div>
                 
                 <div class="checkout-form-row">
                   <div class="checkout-form-group">
-                    <label for="inputCidade">Cidade *</label>
-                    <input type="text" id="inputCidade" required>
+                    <label for="inputCidade">CIDADE *</label>
+                    <input type="text" id="inputCidade" required placeholder="Digite a cidade">
                   </div>
                   <div class="checkout-form-group small">
                     <label for="inputUF">UF *</label>
@@ -216,11 +217,10 @@
             </div>
           </section>
           
-          <!-- Seção 3: Pagamento -->
           <section class="checkout-section" id="sectionPagamento">
             <div class="checkout-section-header">
               <div class="checkout-section-number">3</div>
-              <h2 class="checkout-section-title">PAGAMENTO</h2>
+              <h2 class="checkout-section-title">Forma de Pagamento</h2>
             </div>
             
             <div class="checkout-section-content">
@@ -233,7 +233,11 @@
                   <label class="checkout-payment-option">
                     <input type="radio" name="paymentMethod" value="pix" checked>
                     <div class="payment-option-content">
-                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                        </svg>
+                      </div>
                       <div class="payment-option-info">
                         <strong>PIX</strong>
                         <small>Aprovação imediata</small>
@@ -246,7 +250,12 @@
                   <label class="checkout-payment-option">
                     <input type="radio" name="paymentMethod" value="boleto">
                     <div class="payment-option-content">
-                      <div class="payment-option-icon">📄</div>
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="2" y="3" width="20" height="18" rx="2"/>
+                          <line x1="2" y1="9" x2="22" y2="9"/>
+                        </svg>
+                      </div>
                       <div class="payment-option-info">
                         <strong>Boleto Bancário</strong>
                         <small>Vencimento em 3 dias</small>
@@ -259,7 +268,12 @@
                   <label class="checkout-payment-option">
                     <input type="radio" name="paymentMethod" value="credito-avista">
                     <div class="payment-option-content">
-                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="1" y="4" width="22" height="16" rx="2"/>
+                          <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                      </div>
                       <div class="payment-option-info">
                         <strong>Cartão de Crédito</strong>
                         <small>À vista</small>
@@ -272,7 +286,12 @@
                   <label class="checkout-payment-option">
                     <input type="radio" name="paymentMethod" value="credito-parcelado">
                     <div class="payment-option-content">
-                      <div class="payment-option-icon">💳</div>
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="1" y="4" width="22" height="16" rx="2"/>
+                          <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                      </div>
                       <div class="payment-option-info">
                         <strong>Cartão Parcelado</strong>
                         <small>Em até 3x sem juros</small>
@@ -339,13 +358,13 @@
             
             <!-- Botão Finalizar -->
             <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" disabled>
-              CONTINUAR COMPRANDO
+              < CONTINUAR COMPRANDO
             </button>
             
             <!-- Selo de Segurança -->
             <div class="checkout-security-badges">
               <div class="security-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   <path d="M9 12l2 2 4-4"/>
                 </svg>
@@ -367,16 +386,16 @@
       <div class="checkout-footer-content">
         <div class="footer-contact">
           <h4>FALE COMIGO</h4>
-          <p>📞 (22) 2580-5484</p>
-          <p>📱 (22) 99821-4537</p>
-          <p>✉️ CONTATO@HARDYN.COM.BR</p>
+          <p>📞 (71) 991427103</p>
+          <p>📱 (71) 991427103</p>
+          <p>✉️ sejaversatill@gmail.com</p>
         </div>
         
         <div class="footer-security">
           <h4>SEGURANÇA & QUALIDADE</h4>
           <div class="footer-badges">
-            <img src="https://via.placeholder.com/60x40/f5f5f5/999?text=SSL" alt="SSL">
-            <img src="https://via.placeholder.com/60x40/f5f5f5/999?text=Google" alt="Google Safe">
+            <img src="https://via.placeholder.com/60x36/ffffff/999?text=SSL" alt="SSL" loading="lazy">
+            <img src="https://via.placeholder.com/60x36/ffffff/999?text=SAFE" alt="Google Safe" loading="lazy">
           </div>
         </div>
         
@@ -392,8 +411,9 @@
       </div>
       
       <div class="checkout-footer-bottom">
-        <p>V.D.S. FITNESS LTDA | CNPJ: 30.998.103/0001-53 - Endereço: Rua Urbano Bachiré, 130 - Córrego D'Antas - 28630-230, Nova Friburgo - RJ</p>
-        <p>Preços e condições de pagamento exclusivos para compras via internet. Ofertas válidas até o término de nossos estoques ou válido enquanto durarem.</p>
+        <p>V.D.S. FITNESS LTDA | CNPJ: 30.998.103/0001-53</p>
+        <p>Endereço: Rua Urbano Bachiré, 130 - Córrego D'Antas - 28630-230, Nova Friburgo - RJ</p>
+        <p>Preços e condições de pagamento exclusivos para compras via internet. Ofertas válidas até o término de nossos estoques.</p>
       </div>
     </div>
   </footer>
