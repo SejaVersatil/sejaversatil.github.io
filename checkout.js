@@ -21,7 +21,7 @@ const state = {
 };
 
 // ** ATENÇÃO: SUBSTITUA ESTE NÚMERO PELO SEU NÚMERO DE WHATSAPP REAL **
-const WHATSAPP_NUMBER = '5571999999999'; 
+const WHATSAPP_NUMBER = '5571991427103'; 
 
 // ==================== UTILS ====================
 
