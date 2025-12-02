@@ -77,11 +77,6 @@ function cacheDOMElements() {
 // === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
 async function initCheckout() {
   try {
-    // Verificar autenticação
-    auth.onAuthStateChanged(async (user) => {
-      currentUser = user;
-      
-      if (user) {
         // Usuário logado
         DOM.authTabs.style.display = 'none';
         DOM.loggedInfo.style.display = 'block';
