@@ -4,17 +4,29 @@
    ============================================================================ */
 
 :root {
-    --color-primary: #667eea;
-    --color-secondary: #764ba2;
-    --color-text: #333;
-    --color-light-gray: #f4f4f4;
-    --color-border: #ddd;
-    --color-success: #28a745;
-    --color-error: #dc3545;
-    --color-warning: #ffc107;
-    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-heavy: 0 10px 20px rgba(0, 0, 0, 0.15);
+    /* Tons Pastel Minimalistas */
+    --color-primary: #B8A7D4;
+    --color-secondary: #D4B8C8;
+    --color-text: #4A4A4A;
+    --color-light-gray: #F9F7FC;
+    --color-border: #E8E4F0;
+    --color-success: #A8D5BA;
+    --color-error: #F5B7B1;
+    --color-warning: #F9E79F;
+    --color-accent: #C5CAE9;
+    --color-background: #FDFCFF;
+    
+    /* Sombras Suaves */
+    --shadow-light: 0 2px 8px rgba(184, 167, 212, 0.08);
+    --shadow-medium: 0 4px 12px rgba(184, 167, 212, 0.12);
+    --shadow-heavy: 0 8px 24px rgba(184, 167, 212, 0.16);
+    
+    /* Espaçamentos */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
 }
 
 /* ==================== RESET & BASE ====================*/
