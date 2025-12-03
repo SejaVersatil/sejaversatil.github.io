@@ -801,7 +801,6 @@ function buildOrderData() {
 
 // ==================== FINALIZAR COMPRA - WHATSAPP DIRETO ====================
 async function processCheckout() {
-    // Validation gates
     if (!CheckoutState.step1Valid || !CheckoutState.step2Valid || !CheckoutState.step3Valid) {
         showToast('Validação incompleta', 'Complete todas as etapas', 'error');
         return;
@@ -813,18 +812,25 @@ async function processCheckout() {
         CheckoutDOM.btnFinalizarCompra.disabled = true;
         showLoading(true);
         
-        // 1. Build order object
+        // 1. Build sanitized order
         const order = buildOrderData();
         
-        // 2. Save to Firestore (non-blocking background operation)
-        db.collection('pedidos').add(order).catch(err => {
-            console.warn('⚠️ Firestore write failed (non-critical):', err);
-        });
+        // 2. ✅ DEFENSIVE: Log order before Firestore write
+        console.log('📦 Order object:', JSON.stringify(order, null, 2));
         
-        // 3. Construct WhatsApp message
+        // 3. Save to Firestore (non-blocking)
+        db.collection('pedidos').add(order)
+            .then(docRef => console.log('✅ Firestore saved:', docRef.id))
+            .catch(err => {
+                console.warn('⚠️ Firestore write failed:', err.message);
+                // ✅ CRITICAL: Log the exact field causing the error
+                console.error('Problematic order data:', order);
+            });
+        
+        // 4. Construct WhatsApp message
         const message = buildWhatsAppMessage(order);
         
-        // 4. Clear cart BEFORE redirect
+        // 5. Clear cart BEFORE redirect
         if (CartManager) {
             CartManager.cart = [];
             CartManager.appliedCoupon = null;
@@ -832,13 +838,13 @@ async function processCheckout() {
             CartManager.save();
         }
         
-        // 5. Encode and redirect to WhatsApp
+        // 6. Redirect to WhatsApp
         const phone = '5571991427103';
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
         
         window.open(url, '_blank');
         
-        // 6. Redirect to home after 2 seconds
+        // 7. Redirect to home
         showToast('Pedido enviado!', 'Redirecionando...', 'success');
         setTimeout(() => {
             window.location.href = 'index.html';
@@ -852,7 +858,6 @@ async function processCheckout() {
         showLoading(false);
     }
 }
-
 
 // ==================== CONSTRUIR MENSAGEM WHATSAPP ====================
 function buildWhatsAppMessage(order) {
