@@ -732,8 +732,9 @@ function initEvents() {
     }
 }
 
-// ==================== FINALIZAR COMPRA ====================
+// ==================== FINALIZAR COMPRA - WHATSAPP DIRETO ====================
 async function processCheckout() {
+    // Validation gates
     if (!CheckoutState.step1Valid || !CheckoutState.step2Valid || !CheckoutState.step3Valid) {
         showToast('Validação incompleta', 'Complete todas as etapas', 'error');
         return;
@@ -745,28 +746,40 @@ async function processCheckout() {
         CheckoutDOM.btnFinalizarCompra.disabled = true;
         showLoading(true);
         
-        const order = createOrderObject();
+        // 1. Build order object
+        const order = buildOrderData();
         
-        const docRef = await db.collection('pedidos').add(order);
-        console.log('✅ Pedido salvo:', docRef.id);
+        // 2. Save to Firestore (non-blocking background operation)
+        db.collection('pedidos').add(order).catch(err => {
+            console.warn('⚠️ Firestore write failed (non-critical):', err);
+        });
         
-        enviarWhatsApp(order);
+        // 3. Construct WhatsApp message
+        const message = buildWhatsAppMessage(order);
         
-        if (CartManager) CartManager.clear();
-        
-        showToast('Pedido realizado!', 'Você será redirecionado para o WhatsApp', 'success');
-        
-    } catch (error) {
-        console.error('❌ Erro ao finalizar compra:', error);
-        
-        let errorMessage = 'Erro ao processar pedido';
-        if (error.code === 'permission-denied') {
-            errorMessage = 'Erro de permissão. Entre em contato com o suporte.';
-        } else if (error.code === 'unavailable') {
-            errorMessage = 'Sem conexão com o servidor. Verifique sua internet.';
+        // 4. Clear cart BEFORE redirect
+        if (CartManager) {
+            CartManager.cart = [];
+            CartManager.appliedCoupon = null;
+            CartManager.couponDiscount = 0;
+            CartManager.save();
         }
         
-        showToast('Erro ao finalizar', errorMessage, 'error');
+        // 5. Encode and redirect to WhatsApp
+        const phone = '5571991427103';
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        
+        window.open(url, '_blank');
+        
+        // 6. Redirect to home after 2 seconds
+        showToast('Pedido enviado!', 'Redirecionando...', 'success');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Checkout error:', error);
+        showToast('Erro ao processar', 'Tente novamente', 'error');
         CheckoutDOM.btnFinalizarCompra.disabled = false;
     } finally {
         showLoading(false);
