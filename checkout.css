@@ -690,7 +690,7 @@
 
 /* ==================== RESUMO - PRODUTOS AMPLIADOS ==================== */
 .summary-items {
-    max-height: 500px; /* ✅ Mais altura */
+    max-height: 550px; /* ✅ Mais altura para acomodar imagens maiores */
     overflow-y: auto;
     padding-right: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
