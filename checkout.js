@@ -188,39 +188,45 @@ function cacheDOMElements() {
 // ==================== INICIALIZAÇÃO PRINCIPAL ====================
 async function initCheckout() {
     try {
-        // 1. Monitorar autenticação
-        if (typeof auth !== 'undefined') {
-            auth.onAuthStateChanged((user) => {
-                updateAuthUI(user);
-            });
+        // ✅ WAIT for CartManager (safety net)
+        if (typeof CartManager === 'undefined') {
+            let attempts = 0;
+            while (typeof CartManager === 'undefined' && attempts < 30) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (typeof CartManager === 'undefined') {
+                console.error('❌ CRITICAL: CartManager failed to load');
+                showToast('Erro ao carregar', 'Recarregue a página', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
         }
         
-        // 2. Carregar carrinho (usando CartManager)
-        if (typeof CartManager !== 'undefined') {
-            CartManager.load();
-            CheckoutState.subtotal = CartManager.getSubtotal();
-            CheckoutState.couponDiscount = CartManager.couponDiscount;
+        // 1. Auth monitoring
+        if (window.authReady) {
+            const user = await window.authReady;
+            updateAuthUI(user);
         }
         
-        // 3. Verificar se carrinho está vazio
-        if (!CartManager || CartManager.cart.length === 0) {
-            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar a compra', 'warning');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, CHECKOUT_CONFIG.REDIRECT_DELAY - 1000);
+        // 2. Load cart
+        CartManager.load();
+        CheckoutState.subtotal = CartManager.getSubtotal();
+        CheckoutState.couponDiscount = CartManager.couponDiscount || 0;
+        
+        // 3. Verify cart not empty
+        if (!CartManager.cart || CartManager.cart.length === 0) {
+            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'warning');
+            setTimeout(() => window.location.href = 'index.html', 2000);
             return;
         }
         
-        // 4. Renderizar resumo
+        // Continue initialization...
         renderSummary();
-        
-        // 5. Inicializar máscaras
         initMasks();
-        
-        // 6. Inicializar eventos
         initEvents();
         
-        // 7. Atualizar código do carrinho
         if (CheckoutDOM.summaryCartCode) {
             CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
         }
@@ -228,11 +234,10 @@ async function initCheckout() {
         console.log('✅ Checkout inicializado com sucesso');
         
     } catch (error) {
-        console.error('❌ Erro na inicialização do checkout:', error);
+        console.error('❌ Erro na inicialização:', error);
         showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
     }
 }
-
 // ==================== AUTENTICAÇÃO ====================
 function updateAuthUI(user) {
     if (user) {
