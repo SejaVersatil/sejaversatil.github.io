@@ -2941,9 +2941,7 @@ function loadCart() {
     try {
         const parsed = JSON.parse(saved);
         
-        // ✅ ACEITA AMBOS OS FORMATOS
         if (parsed.items && Array.isArray(parsed.items)) {
-            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
             cart = parsed.items.map(item => ({
                 ...item,
                 quantity: item.quantity || 1,
@@ -2952,7 +2950,6 @@ function loadCart() {
             appliedCoupon = parsed.appliedCoupon || null;
             couponDiscount = parsed.couponDiscount || 0;
         } else if (Array.isArray(parsed)) {
-            // Formato antigo: [{item1}, {item2}]
             cart = parsed.map(item => ({
                 ...item,
                 quantity: item.quantity || 1,
@@ -5622,6 +5619,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
