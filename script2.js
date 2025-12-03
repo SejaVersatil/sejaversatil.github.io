@@ -3082,6 +3082,7 @@ async function applyCoupon() {
         // 7. Aplicar cupom
         appliedCoupon = coupon;
         couponDiscount = discount;
+        saveCart();
 
         // 8. Atualizar UI
         input.classList.add('success');
@@ -4197,11 +4198,22 @@ function setupPaymentListeners() {
         });
     });
 }
-// ==================== FUNÇÃO PRINCIPAL DE ENVIO (CORRIGIDA) ====================
 
 // ==================== 2. SISTEMA DE CHECKOUT APRIMORADO ====================
 
 async function sendToWhatsApp() {
+    // ✅ WAIT FOR AUTH STATE
+    await new Promise(resolve => {
+        if (auth.currentUser !== undefined) {
+            resolve();
+        } else {
+            const unsubscribe = auth.onAuthStateChanged(() => {
+                unsubscribe();
+                resolve();
+            });
+        }
+    });
+    
     if (!cart || cart.length === 0) {
         showToast('Carrinho vazio!', 'error');
         return;
@@ -4211,7 +4223,7 @@ async function sendToWhatsApp() {
     let customerData = {};
     
     if (auth.currentUser) {
-        // Usuário Logado: Tenta pegar do objeto global ou do Firestore
+        // Usuário Logado
         customerData = {
             name: currentUser?.name || auth.currentUser.displayName,
             email: auth.currentUser.email,
@@ -4220,7 +4232,6 @@ async function sendToWhatsApp() {
             uid: auth.currentUser.uid
         };
         
-        // Se faltar dado crítico, pede via prompt ou modal (simplificado aqui)
         if (!customerData.phone) {
              const phone = prompt("Precisamos do seu WhatsApp para confirmar o pedido:");
              if(!phone) return;
@@ -5615,6 +5626,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
