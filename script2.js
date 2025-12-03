@@ -176,7 +176,7 @@ let heroCarouselInterval;
 
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/kOzFAAv.jpeg',
+        image: 'https://i.imgur.com/ZVqxl8B.jpeg',
         title: '', // titulo da coleção//
         subtitle: '', //descrição do titulo//
         cta: 'EXPLORAR AGORA'
@@ -5891,6 +5891,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
