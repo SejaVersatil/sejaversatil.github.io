@@ -481,19 +481,14 @@ function updatePaymentUI() {
     
     CheckoutState.paymentData.method = selectedMethod.value;
     
-    // Mostrar/ocultar box de parcelas
+    // ✅ Mostrar/ocultar APENAS o box de parcelas
     if (CheckoutState.paymentData.method === 'credito-parcelado') {
         if (CheckoutDOM.installmentsBox) CheckoutDOM.installmentsBox.style.display = 'block';
     } else {
         if (CheckoutDOM.installmentsBox) CheckoutDOM.installmentsBox.style.display = 'none';
     }
     
-    // Mostrar/ocultar dados do cartão
-    if (CheckoutState.paymentData.method.includes('credito')) {
-        if (CheckoutDOM.cardDetailsBox) CheckoutDOM.cardDetailsBox.style.display = 'block';
-    } else {
-        if (CheckoutDOM.cardDetailsBox) CheckoutDOM.cardDetailsBox.style.display = 'none';
-    }
+    // ✅ REMOVIDO: Lógica do cardDetailsBox (não existe mais)
     
     updateTotals();
 }
