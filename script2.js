@@ -5189,15 +5189,20 @@ console.log('✅ Sistema de estoque integrado ao site');
 
 function initBlackFridayCountdown() {
     const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59);
-    let countdownInterval; // ✅ DECLARE FIRST
+    let countdownInterval; 
     
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = blackFridayEnd - now;
         
         if (distance < 0) {
-            document.querySelector('.top-banner').innerHTML = `...`;
-            clearInterval(countdownInterval); // ✅ Now accessible
+            // ✅ CORREÇÃO: Verificação de nulidade antes de manipular o HTML
+            const topBanner = document.querySelector('.top-banner');
+            if (topBanner) {
+                topBanner.innerHTML = `...`;
+            }
+            
+            clearInterval(countdownInterval); 
             return;
         }
         
@@ -5213,6 +5218,7 @@ function initBlackFridayCountdown() {
         const minutesEl = document.getElementById('bfMinutes');
         const secondsEl = document.getElementById('bfSeconds');
         
+        // As verificações abaixo já existiam no seu código e estão corretas
         if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
         if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
         if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
@@ -5223,7 +5229,7 @@ function initBlackFridayCountdown() {
     updateCountdown();
     
     // Atualizar a cada segundo
-    countdownInterval = setInterval(updateCountdown, 1000); // CORRIGIDO: Removido 'const' para usar a variável let declarada acima
+    countdownInterval = setInterval(updateCountdown, 1000); 
 }
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 // MARCAR PRODUTOS COMO BLACK FRIDAY
@@ -5877,6 +5883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
