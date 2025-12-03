@@ -2726,11 +2726,11 @@ function updateCartUI() {
             cartItems.appendChild(fragment);
 
             
-// Calcular subtotal
 const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
-
-// Aplicar desconto do cupom
-const discount = Math.min(couponDiscount || 0, subtotal);
+const discount = Math.min(
+    typeof couponDiscount === 'number' && !isNaN(couponDiscount) ? couponDiscount : 0,
+    subtotal
+);
 const total = Math.max(0, subtotal - discount);
 
 // Atualizar UI de valores
@@ -5626,6 +5626,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
