@@ -437,6 +437,13 @@
   
   <!-- Scripts -->
   <script src="checkout.js"></script>
+
+    <script>
+   window.addEventListener('error', (e) => {
+       console.error('🚨 Global Error:', e.error);
+       showToast('Erro inesperado', 'Recarregue a página', 'error');
+   });
+   </script>
   
 </body>
 </html>
