@@ -608,9 +608,47 @@ function validateEnderecoStep() {
     const cidade = CheckoutDOM.inputCidade?.value.trim();
     const uf = CheckoutDOM.inputUF?.value;
     
-    if (!cep || !rua || !numero || !bairro || !cidade || !uf) {
-        showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
-        return;
+    // ✅ Validação: CEP obrigatório (8 dígitos)
+    const cepLimpo = cep.replace(/\D/g, '');
+    if (!cep || cepLimpo.length !== CHECKOUT_CONFIG.CEP_LENGTH) {
+        showToast('CEP inválido', 'Digite um CEP válido (8 dígitos)', 'warning');
+        CheckoutDOM.inputCEP?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: Rua obrigatória
+    if (!rua || rua.length < 3) {
+        showToast('Rua inválida', 'Digite o nome da rua', 'warning');
+        CheckoutDOM.inputRua?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: Número obrigatório
+    if (!numero) {
+        showToast('Número obrigatório', 'Digite o número do endereço', 'warning');
+        CheckoutDOM.inputNumero?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: Bairro obrigatório
+    if (!bairro || bairro.length < 3) {
+        showToast('Bairro inválido', 'Digite o bairro', 'warning');
+        CheckoutDOM.inputBairro?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: Cidade obrigatória
+    if (!cidade || cidade.length < 3) {
+        showToast('Cidade inválida', 'Digite a cidade', 'warning');
+        CheckoutDOM.inputCidade?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: UF obrigatório
+    if (!uf || uf === '') {
+        showToast('UF obrigatório', 'Selecione o estado', 'warning');
+        CheckoutDOM.inputUF?.focus();
+        return false;
     }
     
     // Salvar dados
@@ -627,6 +665,7 @@ function validateEnderecoStep() {
     unlockColumn(3);
     
     showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
+    return true;
 }
 
 // ==================== VALIDAÇÃO ETAPA 3: PAGAMENTO ====================
