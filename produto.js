@@ -54,9 +54,7 @@ function loadCartFromStorage() {
         
         const parsed = JSON.parse(raw);
         
-        // ✅ CORREÇÃO: Aceita AMBOS os formatos
         if (parsed.items && Array.isArray(parsed.items)) {
-            // Formato novo: {items: [], appliedCoupon: {}, couponDiscount: 0}
             state.cart = parsed.items.map(item => ({
                 ...item,
                 quantity: safeNumber(item.quantity, 1),
@@ -65,7 +63,6 @@ function loadCartFromStorage() {
             state.appliedCoupon = parsed.appliedCoupon || null;
             state.couponDiscount = safeNumber(parsed.couponDiscount, 0);
         } else if (Array.isArray(parsed)) {
-            // Formato antigo: [{item1}, {item2}]
             state.cart = parsed.map(item => ({
                 ...item,
                 quantity: safeNumber(item.quantity, 1),
@@ -79,9 +76,11 @@ function loadCartFromStorage() {
             state.couponDiscount = 0;
         }
         
-        // ✅ Sincroniza com variável global (se existir)
+        // ✅ SYNC WITH GLOBAL SCOPE (for script2.js compatibility)
         if (typeof window.cart !== 'undefined') {
             window.cart = state.cart;
+            window.appliedCoupon = state.appliedCoupon;
+            window.couponDiscount = state.couponDiscount;
         }
         
     } catch (err) {
@@ -2035,6 +2034,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
