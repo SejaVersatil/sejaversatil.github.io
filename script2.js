@@ -1613,43 +1613,48 @@ function editProduct(productId) {
     openProductModal(productId);
 }
 
+// script2.js (SUBSTITUIR)
 async function deleteProduct(productId) {
-    // 🔒 VERIFICAR PERMISSÕES
-    if (!auth.currentUser || !currentUser.isAdmin) {
-        showToast('❌ Apenas admins podem excluir produtos', 'error');
-        return;
-    }
-    
-    if (!currentUser.permissions || !currentUser.permissions.includes('manage_products')) {
+    // A verificação de permissão é feita no Firestore Security Rules.
+    // A verificação de isAdminLoggedIn aqui é apenas para UX.
+    if (!isAdminLoggedIn) {
         showToast('❌ Você não tem permissão para excluir produtos', 'error');
         return;
     }
     
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-        document.getElementById('loadingOverlay').classList.add('active');
+    if (!confirm('Tem certeza que deseja excluir este produto? Esta ação é irreversível.')) {
+        return;
+    }
+
+    document.getElementById('loadingOverlay').classList.add('active');
+
+    try {
+        // 1. Deleta o documento principal
+        await db.collection("produtos").doc(productId).delete();
         
+        // 2. Deleta a subcoleção de variantes (ATENÇÃO: Firestore não deleta subcoleções automaticamente.
+        // Você precisará de uma Cloud Function para deletar a subcoleção de forma segura em produção.
+        // Por enquanto, o código abaixo apenas deleta o principal.)
         
-        try {
-            await db.collection("produtos").doc(productId).delete();
-            
-            const index = productsData.findIndex(p => p.id === productId);
-            if (index !== -1) {
-                productsData.splice(index, 1);
-            }
-            
-            productCache.clear();
-            saveProducts();
-            renderAdminProducts();
-            renderProducts();
-            updateAdminStats();
-            showToast('Produto excluído com sucesso!', 'success');
-            
-        } catch (error) {
-            console.error("Erro ao excluir produto:", error);
-            showToast('Erro ao excluir produto: ' + error.message, 'error');
-        } finally {
-            document.getElementById('loadingOverlay').classList.remove('active');
+        // 3. Atualiza o estado local
+        const index = productsData.findIndex(p => p.id === productId);
+        if (index !== -1) {
+            productsData.splice(index, 1);
         }
+        
+        productCache.clear();
+        // Não precisa chamar saveProducts() se você está usando o Firestore como fonte de verdade
+        renderAdminProducts();
+        renderProducts();
+        updateAdminStats();
+        showToast('Produto excluído com sucesso!', 'success');
+        
+    } catch (error) {
+        console.error("Erro ao excluir produto:", error);
+        // O erro mais comum será de permissão negada se as Security Rules estiverem corretas.
+        showToast('Erro ao excluir produto: ' + (error.code === 'permission-denied' ? 'Permissão negada. Verifique se você é admin.' : error.message), 'error');
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
     }
 }
 
@@ -5617,6 +5622,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
