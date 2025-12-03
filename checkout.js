@@ -732,6 +732,52 @@ function initEvents() {
     }
 }
 
+// ==================== CONSTRUIR OBJETO DO PEDIDO ====================
+function buildOrderData() {
+    const paymentMap = {
+        'pix': 'PIX à Vista (10% OFF)',
+        'boleto': 'Boleto Bancário',
+        'credito-avista': 'Cartão de Crédito à Vista',
+        'credito-parcelado': `Cartão ${CheckoutState.paymentData.installments}x sem juros`
+    };
+    
+    const cartItems = CartManager ? CartManager.cart : [];
+    
+    return {
+        codigo: CheckoutState.cartCode,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        cliente: {
+            nome: CheckoutState.userData.nome,
+            email: CheckoutState.userData.email,
+            telefone: CheckoutState.userData.telefone,
+            cpf: CheckoutState.userData.cpf,
+            uid: window.currentUser?.uid || null
+        },
+        endereco: CheckoutState.addressData,
+        items: cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            size: item.selectedSize || item.size || 'M',
+            color: item.selectedColor || item.color || 'Padrão',
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity
+        })),
+        pagamento: {
+            metodo: CheckoutState.paymentData.method,
+            metodoNome: paymentMap[CheckoutState.paymentData.method],
+            parcelas: CheckoutState.paymentData.installments
+        },
+        valores: {
+            subtotal: parseFloat(CheckoutState.subtotal.toFixed(2)),
+            desconto: parseFloat(CheckoutState.couponDiscount.toFixed(2)),
+            pixDesconto: parseFloat(CheckoutState.pixDiscount.toFixed(2)),
+            total: parseFloat(CheckoutState.total.toFixed(2))
+        },
+        status: 'pendente_whatsapp'
+    };
+}
+
 // ==================== FINALIZAR COMPRA - WHATSAPP DIRETO ====================
 async function processCheckout() {
     // Validation gates
@@ -786,66 +832,54 @@ async function processCheckout() {
     }
 }
 
-// ==================== CRIAR OBJETO DO PEDIDO ====================
-function createOrderObject() {
-    let paymentMethodName = '';
+
+// ==================== CONSTRUIR MENSAGEM WHATSAPP ====================
+function buildWhatsAppMessage(order) {
+    let msg = `*🛍️ NOVO PEDIDO - ${order.codigo}*\n\n`;
     
-    switch (CheckoutState.paymentData.method) {
-        case 'pix':
-            paymentMethodName = 'PIX à Vista (10% OFF)';
-            break;
-        case 'boleto':
-            paymentMethodName = 'Boleto Bancário';
-            break;
-        case 'credito-avista':
-            paymentMethodName = 'Cartão de Crédito à Vista';
-            break;
-        case 'credito-parcelado':
-            paymentMethodName = `Cartão de Crédito ${CheckoutState.paymentData.installments}x sem juros`;
-            break;
+    // Cliente
+    msg += `*👤 CLIENTE*\n`;
+    msg += `Nome: ${order.cliente.nome}\n`;
+    msg += `Email: ${order.cliente.email}\n`;
+    msg += `Telefone: ${order.cliente.telefone}\n`;
+    msg += `CPF: ${order.cliente.cpf}\n\n`;
+    
+    // Endereço
+    msg += `*📍 ENDEREÇO DE ENTREGA*\n`;
+    msg += `${order.endereco.rua}, ${order.endereco.numero}`;
+    if (order.endereco.complemento) {
+        msg += ` - ${order.endereco.complemento}`;
+    }
+    msg += `\n${order.endereco.bairro} - ${order.endereco.cidade}/${order.endereco.uf}\n`;
+    msg += `CEP: ${order.endereco.cep}\n\n`;
+    
+    // Produtos
+    msg += `*🛒 PRODUTOS*\n`;
+    order.items.forEach(item => {
+        msg += `- ${item.name} (${item.size}/${item.color})\n`;
+        msg += `  ${item.quantity}x R$ ${formatCurrency(item.price)} = R$ ${formatCurrency(item.subtotal)}\n`;
+    });
+    
+    // Pagamento
+    msg += `\n*💳 PAGAMENTO*\n`;
+    msg += `Método: ${order.pagamento.metodoNome}\n`;
+    
+    // Valores
+    msg += `\n*💰 VALORES*\n`;
+    msg += `Subtotal: R$ ${formatCurrency(order.valores.subtotal)}\n`;
+    
+    if (order.valores.desconto > 0) {
+        msg += `Desconto (Cupom): -R$ ${formatCurrency(order.valores.desconto)}\n`;
     }
     
-    const cartItems = CartManager ? CartManager.cart : [];
+    if (order.valores.pixDesconto > 0) {
+        msg += `Desconto (PIX 10%): -R$ ${formatCurrency(order.valores.pixDesconto)}\n`;
+    }
     
-    return {
-        codigo: CheckoutState.cartCode,
-        data: new Date().toISOString(),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        cliente: {
-            nome: CheckoutState.userData.nome,
-            email: CheckoutState.userData.email,
-            telefone: CheckoutState.userData.telefone,
-            cpf: CheckoutState.userData.cpf,
-            uid: typeof window.currentUser !== 'undefined' ? window.currentUser?.uid : null
-        },
-        endereco: {
-            cep: CheckoutState.addressData.cep,
-            rua: CheckoutState.addressData.rua,
-            numero: CheckoutState.addressData.numero,
-            complemento: CheckoutState.addressData.complemento,
-            bairro: CheckoutState.addressData.bairro,
-            cidade: CheckoutState.addressData.cidade,
-            uf: CheckoutState.addressData.uf
-        },
-        items: cartItems.map(item => ({
-            ...item,
-            subtotal: item.price * item.quantity
-        })),
-        pagamento: {
-            metodo: CheckoutState.paymentData.method,
-            metodoNome: paymentMethodName,
-            parcelas: CheckoutState.paymentData.installments
-        },
-        valores: {
-            subtotal: parseFloat(CheckoutState.subtotal.toFixed(2)),
-            desconto: parseFloat(CheckoutState.couponDiscount.toFixed(2)),
-            pixDesconto: parseFloat(CheckoutState.pixDiscount.toFixed(2)),
-            total: parseFloat(CheckoutState.total.toFixed(2))
-        },
-        status: 'pendente'
-    };
+    msg += `*TOTAL: R$ ${formatCurrency(order.valores.total)}*`;
+    
+    return msg;
 }
-
 // ==================== ENVIAR PARA WHATSAPP ====================
 function enviarWhatsApp(order) {
     const message = buildWhatsAppMessage(order);
@@ -857,46 +891,6 @@ function enviarWhatsApp(order) {
     setTimeout(() => {
         window.location.href = 'index.html';
     }, CHECKOUT_CONFIG.REDIRECT_DELAY);
-}
-
-// ==================== CONSTRUIR MENSAGEM DO WHATSAPP ====================
-function buildWhatsAppMessage(order) {
-    let msg = `*🛍️ NOVO PEDIDO - ${order.codigo}*\n\n`;
-    
-    msg += `*👤 CLIENTE*\n`;
-    msg += `Nome: ${order.cliente.nome}\n`;
-    msg += `Email: ${order.cliente.email}\n`;
-    msg += `Telefone: ${order.cliente.telefone}\n`;
-    msg += `CPF: ${order.cliente.cpf}\n\n`;
-    
-    msg += `*📍 ENDEREÇO DE ENTREGA*\n`;
-    msg += `${order.endereco.rua}, ${order.endereco.numero}`;
-    if (order.endereco.complemento) {
-        msg += ` - ${order.endereco.complemento}`;
-    }
-    msg += `\n${order.endereco.bairro} - ${order.endereco.cidade}/${order.endereco.uf}\n`;
-    msg += `CEP: ${order.endereco.cep}\n\n`;
-    
-    msg += `*🛒 PRODUTOS*\n`;
-    order.items.forEach(item => {
-        msg += `- ${item.name} (${item.size || 'M'}/${item.color || 'Padrão'})\n`;
-        msg += `  Qtd: ${item.quantity} x R$ ${formatCurrency(item.price)} = R$ ${formatCurrency(item.price * item.quantity)}\n`;
-    });
-    
-    msg += `\n*💳 PAGAMENTO*\n`;
-    msg += `Método: ${order.pagamento.metodoNome}\n\n`;
-    
-    msg += `*💰 VALORES*\n`;
-    msg += `Subtotal: R$ ${formatCurrency(order.valores.subtotal)}\n`;
-    if (order.valores.desconto > 0) {
-        msg += `Desconto (Cupom): R$ ${formatCurrency(order.valores.desconto)}\n`;
-    }
-    if (order.valores.pixDesconto > 0) {
-        msg += `Desconto (PIX): R$ ${formatCurrency(order.valores.pixDesconto)}\n`;
-    }
-    msg += `*TOTAL: R$ ${formatCurrency(order.valores.total)}*\n`;
-    
-    return msg;
 }
 
 // ==================== FUNÇÕES UTILITÁRIAS ====================
@@ -1014,7 +1008,6 @@ function processToastQueue() {
 }
 
 // ==================== EXPORT GLOBAL FUNCTIONS ====================
-// Required for HTML inline event handlers
 window.switchAuthTab = switchAuthTab;
 window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
@@ -1022,7 +1015,9 @@ window.handleLogout = handleLogout;
 window.validateDadosStep = validateDadosStep;
 window.validateEnderecoStep = validateEnderecoStep;
 window.validatePagamentoStep = validatePagamentoStep;
-window.processCheckout = processCheckout;
+window.processCheckout = processCheckout; // ✅ NOW TRIGGERS WHATSAPP
 window.updatePaymentUI = updatePaymentUI;
+window.buildOrderData = buildOrderData;
+window.buildWhatsAppMessage = buildWhatsAppMessage;
 
 console.log('✅ Checkout functions exported to global scope');
