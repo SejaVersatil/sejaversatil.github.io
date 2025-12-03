@@ -815,7 +815,7 @@ async function processCheckout() {
         // 1. Build sanitized order
         const order = buildOrderData();
         
-        // 2. ✅ DEFENSIVE: Log order before Firestore write
+        // 2. Log order before Firestore write
         console.log('📦 Order object:', JSON.stringify(order, null, 2));
         
         // 3. Save to Firestore (non-blocking)
@@ -823,7 +823,6 @@ async function processCheckout() {
             .then(docRef => console.log('✅ Firestore saved:', docRef.id))
             .catch(err => {
                 console.warn('⚠️ Firestore write failed:', err.message);
-                // ✅ CRITICAL: Log the exact field causing the error
                 console.error('Problematic order data:', order);
             });
         
@@ -838,17 +837,23 @@ async function processCheckout() {
             CartManager.save();
         }
         
-        // 6. Redirect to WhatsApp
+        // ✅ 6. UPDATE UI: Show "Finalizado" and disable button
+        if (CheckoutDOM.btnFinalizarCompra) {
+            CheckoutDOM.btnFinalizarCompra.textContent = 'FINALIZADO';
+            CheckoutDOM.btnFinalizarCompra.style.backgroundColor = '#6c757d';
+            CheckoutDOM.btnFinalizarCompra.style.cursor = 'not-allowed';
+        }
+        
+        // ✅ 7. Redirect to WhatsApp (NO HOME REDIRECT)
         const phone = '5571991427103';
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
         
-        window.open(url, '_blank');
+        showToast('Pedido enviado!', 'Abrindo WhatsApp...', 'success');
         
-        // 7. Redirect to home
-        showToast('Pedido enviado!', 'Redirecionando...', 'success');
+        // ✅ CRITICAL: Use setTimeout to ensure state updates before redirect
         setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
+            window.location.href = url; // ✅ REPLACE window.open with location.href
+        }, 1500);
         
     } catch (error) {
         console.error('❌ Checkout error:', error);
