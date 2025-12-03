@@ -4283,6 +4283,7 @@ function setupPaymentListeners() {
 // ==================== 2. SISTEMA DE CHECKOUT APRIMORADO ====================
 
 async function sendToWhatsApp() {
+    await window.authReady;
     // ✅ WAIT FOR AUTH STATE
     await new Promise(resolve => {
         if (auth.currentUser !== undefined) {
@@ -5708,6 +5709,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
