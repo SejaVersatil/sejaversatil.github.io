@@ -1487,6 +1487,11 @@ async function applyCoupon() {
 
 state.appliedCoupon = coupon;
 state.couponDiscount = discount;
+       if (typeof window.appliedCoupon !== 'undefined') {
+    window.appliedCoupon = coupon;
+    window.couponDiscount = discount;
+}
+saveCartToStorage();
 
         input.classList.add('success');
         showAppliedCouponBadge(coupon, discount);
@@ -2034,6 +2039,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
