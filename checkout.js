@@ -556,19 +556,33 @@ function validateDadosStep() {
     const telefone = CheckoutDOM.inputTelefone?.value.trim();
     const cpf = CheckoutDOM.inputCPF?.value.trim();
     
+    // ✅ Validação: Nome completo (mínimo 3 caracteres)
     if (!nome || nome.length < CHECKOUT_CONFIG.MIN_NAME_LENGTH) {
-        showToast('Nome inválido', 'Use no mínimo 3 caracteres', 'warning');
-        return;
+        showToast('Nome inválido', 'Digite seu nome completo (mínimo 3 caracteres)', 'warning');
+        CheckoutDOM.inputNome?.focus();
+        return false;
     }
     
-    if (!isValidEmail(email)) {
-        showToast('E-mail inválido', 'Verifique o e-mail digitado', 'error');
-        return;
+    // ✅ Validação: E-mail obrigatório e válido
+    if (!email || !isValidEmail(email)) {
+        showToast('E-mail inválido', 'Digite um e-mail válido', 'error');
+        CheckoutDOM.inputEmail?.focus();
+        return false;
     }
     
-    if (!isValidCPF(cpf)) {
-        showToast('CPF inválido', 'Verifique o CPF digitado', 'error');
-        return;
+    // ✅ Validação: Telefone obrigatório (mínimo 10 dígitos)
+    const telefoneLimpo = telefone.replace(/\D/g, '');
+    if (!telefone || telefoneLimpo.length < CHECKOUT_CONFIG.MIN_PHONE_LENGTH) {
+        showToast('Telefone inválido', 'Digite um telefone válido com DDD', 'warning');
+        CheckoutDOM.inputTelefone?.focus();
+        return false;
+    }
+    
+    // ✅ Validação: CPF obrigatório e válido
+    if (!cpf || !isValidCPF(cpf)) {
+        showToast('CPF inválido', 'Digite um CPF válido', 'error');
+        CheckoutDOM.inputCPF?.focus();
+        return false;
     }
     
     // Salvar dados
@@ -582,6 +596,7 @@ function validateDadosStep() {
     unlockColumn(2);
     
     showToast('Dados validados', 'Prossiga para o endereço', 'success');
+    return true;
 }
 
 // ==================== VALIDAÇÃO ETAPA 2: ENDEREÇO ====================
