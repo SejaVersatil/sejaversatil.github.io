@@ -751,6 +751,23 @@ function validateEnderecoStep() {
     unlockColumn(3);
     
     showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
+
+    // ✅ Salvar endereço no Firestore
+const user = auth.currentUser;
+if (user?.uid) {
+    db.collection('usuarios').doc(user.uid).update({
+        endereco: {
+            cep: cep,
+            rua: rua,
+            numero: numero,
+            complemento: CheckoutDOM.inputComplemento?.value.trim() || '',
+            bairro: bairro,
+            cidade: cidade,
+            uf: uf
+        },
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.warn('⚠️ Erro ao salvar endereço:', err));
+}
     return true;
 }
 
