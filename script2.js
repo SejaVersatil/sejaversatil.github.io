@@ -2887,16 +2887,15 @@ function toggleCart() {
 
 function saveCart() {
     try {
-        // ✅ SEMPRE salva no formato novo
         const cartData = {
             items: cart || [],
             appliedCoupon: appliedCoupon || null,
             couponDiscount: couponDiscount || 0
         };
         localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-        console.log(' Carrinho salvo:', cart.length, 'itens');
+        console.log('💾 Carrinho salvo:', cart.length, 'itens');
     } catch (err) {
-        console.warn(' Erro ao salvar carrinho:', err);
+        console.warn('⚠️ Erro ao salvar carrinho:', err);
     }
 }
 
@@ -5616,6 +5615,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
