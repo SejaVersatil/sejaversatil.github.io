@@ -730,9 +730,13 @@ function initEvents() {
     });
     
     // Mudança de parcelas
-    if (CheckoutDOM.installmentsSelect) {
-        CheckoutDOM.installmentsSelect.addEventListener('change', updateTotals);
-    }
+if (CheckoutDOM.installmentsSelect) {
+    CheckoutDOM.installmentsSelect.addEventListener('change', () => {
+        const selectedValue = parseInt(CheckoutDOM.installmentsSelect.value) || 1;
+        CheckoutState.paymentData.installments = selectedValue;
+        updateTotals(); // ✅ Atualiza o resumo imediatamente
+    });
+}
     
     // Botão Finalizar Compra
     if (CheckoutDOM.btnFinalizarCompra) {
