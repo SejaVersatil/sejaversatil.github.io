@@ -875,6 +875,25 @@ async function processCheckout() {
         showToast('Validação incompleta', 'Complete todas as etapas', 'error');
         return;
     }
+
+    // ✅ Validação final: Verificar se TODAS as etapas estão válidas
+if (!CheckoutState.step1Valid) {
+    showToast('Dados incompletos', 'Complete seus dados pessoais', 'error');
+    document.getElementById('column1Identity')?.scrollIntoView({ behavior: 'smooth' });
+    return;
+}
+
+if (!CheckoutState.step2Valid) {
+    showToast('Endereço incompleto', 'Complete o endereço de entrega', 'error');
+    document.getElementById('column2Delivery')?.scrollIntoView({ behavior: 'smooth' });
+    return;
+}
+
+if (!CheckoutState.step3Valid) {
+    showToast('Pagamento não selecionado', 'Confirme a forma de pagamento', 'error');
+    document.getElementById('column3Payment')?.scrollIntoView({ behavior: 'smooth' });
+    return;
+}
     
     if (CheckoutDOM.btnFinalizarCompra.disabled) return;
     
