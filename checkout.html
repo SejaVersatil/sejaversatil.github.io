@@ -104,7 +104,7 @@
               </div>
               
               <!-- Formulário de Dados -->
-              <form id="checkoutFormDados" class="checkout-form">
+              <form id="checkoutFormDados" class="checkout-form" onsubmit="event.preventDefault(); validateDadosStep();">
                 <div class="checkout-form-row">
                   <div class="checkout-form-group full">
                     <label for="inputNome">NOME COMPLETO *</label>
@@ -142,7 +142,7 @@
             <div class="checkout-section-content">
               <p class="checkout-section-subtitle">Preencha seus dados para continuar</p>
               
-              <form id="checkoutFormEndereco" class="checkout-form">
+              <form id="checkoutFormEndereco" class="checkout-form" onsubmit="event.preventDefault(); validateEnderecoStep();">
                 <div class="checkout-form-row">
                   <div class="checkout-form-group small">
                     <label for="inputCEP">CEP *</label>
@@ -229,7 +229,7 @@
             <div class="checkout-section-content">
               <p class="checkout-section-subtitle">Aguardando o preenchimento das etapas anteriores.</p>
               
-              <form id="checkoutFormPagamento" class="checkout-form" style="display: none;">
+              <form id="checkoutFormPagamento" class="checkout-form" onsubmit="event.preventDefault(); validatePagamentoStep();">
                 <div class="checkout-payment-options">
                   
                   <!-- Opção PIX -->
@@ -361,9 +361,9 @@
             </div>
             
             <!-- Botão Finalizar -->
-            <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" disabled>
-              < CONTINUAR COMPRANDO
-            </button>
+            <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" onclick="processCheckout()" disabled>
+  FINALIZAR COMPRA
+</button>
             
             <!-- Selo de Segurança -->
             <div class="checkout-security-badges">
