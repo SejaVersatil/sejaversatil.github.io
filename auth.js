@@ -264,6 +264,8 @@ async function userLogin(event) {
         
         // Se o login for bem-sucedido, o onAuthStateChanged fará o resto.
         showToast('Login realizado com sucesso!', 'success');
+        if (typeof loadCart === 'function') loadCart();
+if (typeof updateCartUI === 'function') updateCartUI();
         
     } catch (error) {
         console.error('❌ Erro no Login:', error);
