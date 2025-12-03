@@ -373,23 +373,24 @@ async function handleLogin() {
     }
     
     try {
-    showLoading(true);
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    
-    // ✅ Atualizar UI imediatamente após login
-    updateAuthUI(userCredential.user);
-    
-    showToast('Login realizado', 'Bem-vindo de volta!', 'success');
-} catch (error) {
-    console.error('❌ Erro no login:', error);
-    let message = 'Erro ao fazer login';
-    if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado';
-    if (error.code === 'auth/wrong-password') message = 'Senha incorreta';
-    if (error.code === 'auth/invalid-email') message = 'E-mail inválido';
-    showToast('Erro', message, 'error');
-} finally {
-    showLoading(false);
-}
+        showLoading(true);
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        
+        // ✅ Atualizar UI imediatamente após login
+        updateAuthUI(userCredential.user);
+        
+        showToast('Login realizado', 'Bem-vindo de volta!', 'success');
+    } catch (error) {
+        console.error('❌ Erro no login:', error);
+        let message = 'Erro ao fazer login';
+        if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado';
+        if (error.code === 'auth/wrong-password') message = 'Senha incorreta';
+        if (error.code === 'auth/invalid-email') message = 'E-mail inválido';
+        showToast('Erro', message, 'error');
+    } finally {
+        showLoading(false);
+    }
+} // ✅ FECHAMENTO CORRIGIDO
 // ==================== HANDLE CADASTRO ====================
 async function handleRegister() {
     const name = document.getElementById('registerName')?.value.trim();
