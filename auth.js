@@ -172,23 +172,17 @@ function updateUI(user) {
  * Esta é a ÚNICA fonte de verdade para o estado de autenticação.
  */
 auth.onAuthStateChanged(async (user) => {
-    // 1. Gerenciar o estado de loading inicial (para evitar "deslogado visualmente")
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
-        // A primeira vez que onAuthStateChanged é chamado, a sessão é resolvida.
-        // Removemos o loading state aqui para garantir que a UI só apareça
-        // após o Firebase ter verificado a persistência.
         loadingOverlay.classList.remove('active');
     }
 
     if (user) {
         console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
         
-        // 2. Tentar carregar dados do localStorage primeiro (para UX instantânea)
         let userData = JSON.parse(localStorage.getItem('sejaVersatilCurrentUser') || 'null');
         
         if (!userData || userData.uid !== user.uid) {
-            // Se não houver dados ou o UID for diferente, buscar no Firestore
             const adminDoc = await db.collection('admins').doc(user.uid).get();
             
             if (adminDoc.exists && adminDoc.data().role === 'admin') {
@@ -202,7 +196,6 @@ auth.onAuthStateChanged(async (user) => {
                     permissions: adminData.permissions || []
                 };
             } else {
-                // Usuário comum
                 userData = {
                     name: user.displayName || user.email.split('@')[0],
                     email: user.email,
@@ -212,25 +205,30 @@ auth.onAuthStateChanged(async (user) => {
                 };
             }
             
-            // Salvar no localStorage para persistência e UX
             localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(userData));
         }
         
         currentUser = userData;
         isAdminLoggedIn = currentUser.isAdmin;
         
+        // ✅ ADICIONAR: EXPORTA PARA ESCOPO GLOBAL
+        window.currentUser = currentUser;
+        window.isAdminLoggedIn = isAdminLoggedIn;
+        
     } else {
         console.log('🔄 Estado de auth mudou: usuário deslogado');
         
-        // Limpar estado
         currentUser = null;
         isAdminLoggedIn = false;
         localStorage.removeItem('sejaVersatilCurrentUser');
+        
+        // ✅ ADICIONAR: LIMPA VARIÁVEIS GLOBAIS
+        window.currentUser = null;
+        window.isAdminLoggedIn = false;
     }
     
-    // 3. Atualizar a UI
     updateUI(currentUser);
-if (typeof updateCartUI === 'function') updateCartUI();
+    if (typeof updateCartUI === 'function') updateCartUI();
 });
 
 // ==================== 3. FUNÇÕES DE AUTENTICAÇÃO REESCRITAS ====================
