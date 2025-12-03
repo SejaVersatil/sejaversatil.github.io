@@ -4381,10 +4381,15 @@ async function sendToWhatsApp() {
                 uid: currentUser.uid
             };
         } else {
-            const guestData = await collectGuestCustomerData();
-            if (!guestData) return;
-            customerData = guestData;
-        }
+    const guestData = await collectGuestCustomerData();
+    if (!guestData) return;
+    
+    // ✅ ADD MISSING UID FIELD FOR GUEST USERS
+    customerData = {
+        ...guestData,
+        uid: null // ← EXPLICITLY SET TO NULL FOR GUESTS
+    };
+}
 
         // 3. Cálculos Financeiros
         const subtotal = cart.reduce((s, it) => s + (it.price * it.quantity), 0);
@@ -5869,5 +5874,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
