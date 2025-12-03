@@ -672,18 +672,21 @@ function validateEnderecoStep() {
 function validatePagamentoStep() {
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
     
+    // ✅ Validação: Método de pagamento obrigatório
     if (!paymentMethod) {
         showToast('Selecione o pagamento', 'Escolha uma forma de pagamento', 'warning');
-        return;
+        return false;
     }
     
     CheckoutState.paymentData.method = paymentMethod.value;
     
+    // ✅ Validação: Se for parcelado, número de parcelas obrigatório
     if (CheckoutState.paymentData.method === 'credito-parcelado') {
         const installments = CheckoutDOM.installmentsSelect?.value;
-        if (!installments) {
+        if (!installments || installments === '') {
             showToast('Selecione as parcelas', 'Escolha o número de parcelas', 'warning');
-            return;
+            CheckoutDOM.installmentsSelect?.focus();
+            return false;
         }
         CheckoutState.paymentData.installments = parseInt(installments);
     } else {
@@ -696,6 +699,7 @@ function validatePagamentoStep() {
     if (CheckoutDOM.btnFinalizarCompra) CheckoutDOM.btnFinalizarCompra.disabled = false;
     
     showToast('Pagamento validado', 'Pronto para finalizar', 'success');
+    return true;
 }
 
 // ==================== INICIALIZAR MÁSCARAS ====================
