@@ -35,6 +35,10 @@ class SecureStorage {
 const secureStorage = new SecureStorage('sejaVersatil_v1');
 
 const CartManager = {
+    getSubtotal() {
+    // Calcula o subtotal (soma de todos os itens * quantidade)
+    return this._cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+},
     _cart: [],
     _appliedCoupon: null,
     _couponDiscount: 0,
@@ -5873,6 +5877,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
