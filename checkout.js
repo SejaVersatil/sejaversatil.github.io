@@ -239,40 +239,109 @@ async function initCheckout() {
 }
 // ==================== AUTENTICAÇÃO ====================
 function updateAuthUI(user) {
+    console.log('🔄 Atualizando UI de autenticação:', user ? user.email : 'Guest');
+    
     if (user) {
-        // Usuário logado
-        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
-        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
-        if (CheckoutDOM.formDadosPessoais) CheckoutDOM.formDadosPessoais.style.display = 'block';
+        // ========== USUÁRIO LOGADO ==========
         
-        if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
-        if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
+        // 1. Esconder área de login/cadastro
+        if (CheckoutDOM.authStateGuest) {
+            CheckoutDOM.authStateGuest.style.display = 'none';
+        }
         
-        // Auto-preencher formulário
+        // 2. Mostrar área de usuário logado
+        if (CheckoutDOM.authStateLogged) {
+            CheckoutDOM.authStateLogged.style.display = 'block';
+        }
+        
+        // 3. Atualizar informações do usuário
+        if (CheckoutDOM.loggedUserName) {
+            CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
+        }
+        if (CheckoutDOM.loggedUserEmail) {
+            CheckoutDOM.loggedUserEmail.textContent = user.email || '';
+        }
+        
+        // 4. Mostrar formulário de dados pessoais
+        if (CheckoutDOM.formDadosPessoais) {
+            CheckoutDOM.formDadosPessoais.style.display = 'block';
+        }
+        
+        // 5. Auto-preencher e-mail (desabilitar edição)
         if (CheckoutDOM.inputEmail) {
             CheckoutDOM.inputEmail.value = user.email || '';
             CheckoutDOM.inputEmail.disabled = true;
+            CheckoutDOM.inputEmail.style.backgroundColor = '#f0f0f0';
+            CheckoutDOM.inputEmail.style.cursor = 'not-allowed';
         }
         
-        // Marcar etapa 1 como válida
-        CheckoutState.step1Valid = true;
-        CheckoutState.userData.nome = user.displayName || '';
+        // 6. Salvar nome no estado
+        const nome = user.displayName || '';
+        CheckoutState.userData.nome = nome;
         CheckoutState.userData.email = user.email || '';
         
-        updateColumnStatus(1, 'Completo', 'success');
-        unlockColumn(2);
+        // 7. ✅ NOVO: Verificar se já tem telefone e CPF salvos no Firestore
+        if (user.uid) {
+            db.collection('usuarios').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // Preencher telefone se existir
+                        if (userData.telefone && CheckoutDOM.inputTelefone) {
+                            CheckoutDOM.inputTelefone.value = userData.telefone;
+                            CheckoutState.userData.telefone = userData.telefone;
+                        }
+                        
+                        // Preencher CPF se existir
+                        if (userData.cpf && CheckoutDOM.inputCPF) {
+                            CheckoutDOM.inputCPF.value = userData.cpf;
+                            CheckoutState.userData.cpf = userData.cpf;
+                        }
+                        
+                        // ✅ Se todos os campos estão preenchidos, validar automaticamente
+                        if (userData.telefone && userData.cpf && nome && user.email) {
+                            CheckoutState.step1Valid = true;
+                            updateColumnStatus(1, 'Completo', 'success');
+                            unlockColumn(2);
+                            console.log('✅ Etapa 1 validada automaticamente');
+                        }
+                    }
+                })
+                .catch(err => console.warn('⚠️ Erro ao carregar dados do usuário:', err));
+        }
         
         console.log('✅ Usuário autenticado:', user.email);
         
     } else {
-        // Usuário não logado
-        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
-        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
-        if (CheckoutDOM.formDadosPessoais) CheckoutDOM.formDadosPessoais.style.display = 'none';
+        // ========== USUÁRIO NÃO LOGADO ==========
         
-        if (CheckoutDOM.inputEmail) CheckoutDOM.inputEmail.disabled = false;
+        // 1. Mostrar área de login/cadastro
+        if (CheckoutDOM.authStateGuest) {
+            CheckoutDOM.authStateGuest.style.display = 'block';
+        }
         
+        // 2. Esconder área de usuário logado
+        if (CheckoutDOM.authStateLogged) {
+            CheckoutDOM.authStateLogged.style.display = 'none';
+        }
+        
+        // 3. Esconder formulário de dados pessoais
+        if (CheckoutDOM.formDadosPessoais) {
+            CheckoutDOM.formDadosPessoais.style.display = 'none';
+        }
+        
+        // 4. Reabilitar e-mail
+        if (CheckoutDOM.inputEmail) {
+            CheckoutDOM.inputEmail.disabled = false;
+            CheckoutDOM.inputEmail.style.backgroundColor = '';
+            CheckoutDOM.inputEmail.style.cursor = '';
+        }
+        
+        // 5. Resetar estado
         CheckoutState.step1Valid = false;
+        CheckoutState.userData = { nome: '', email: '', telefone: '', cpf: '' };
+        
         updateColumnStatus(1, 'Obrigatório', 'default');
         lockColumn(2);
         lockColumn(3);
