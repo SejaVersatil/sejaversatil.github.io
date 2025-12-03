@@ -358,7 +358,7 @@ async function handleRegister() {
 if (CheckoutDOM.formDadosPessoais) {
     CheckoutDOM.formDadosPessoais.style.display = 'block';
 }
-        
+        updateAuthUI(result.user);
         showToast('Cadastro realizado', 'Bem-vindo!', 'success');
     } catch (error) {
         console.error('❌ Erro no cadastro:', error);
