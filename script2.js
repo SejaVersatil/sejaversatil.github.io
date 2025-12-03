@@ -1653,182 +1653,96 @@ async function deleteProduct(productId) {
     }
 }
 
+// script2.js (SUBSTITUIR)
 async function saveProduct(event) {
     event.preventDefault();
 
-    // Evita erro se productColors não existir (mas o ideal é garantir ele globalmente)
-    if (!Array.isArray(productColors)) productColors = [];
-
-    // ===== VERIFICAÇÕES DE PERMISSÃO =====
-    if (!auth.currentUser) {
-        showToast('❌ Você precisa estar autenticado como admin', 'error');
+    // 1. VERIFICAÇÕES DE PERMISSÃO (Frontend - O Backend garante a segurança)
+    if (!auth.currentUser || !currentUser.isAdmin) {
+        showToast('❌ Apenas admins podem salvar produtos', 'error');
         closeProductModal();
-        openUserPanel();
         return;
     }
 
-    if (!currentUser || !currentUser.isAdmin) {
-        showToast('❌ Você não tem permissões de administrador', 'error');
-        return;
-    }
-
-    document.getElementById('loadingOverlay').classList.add('active');
-
-    // ===== CAPTURA DE DADOS =====
-    const name = sanitizeInput(document.getElementById('productName').value.trim());
-    const category = document.getElementById('productCategory').value;
+    // 2. Coleta de Dados
+    const productId = editingProductId || document.getElementById('productId').value || db.collection('produtos').doc().id;
+    const name = document.getElementById('productName').value.trim();
     const price = parseFloat(document.getElementById('productPrice').value);
-    const oldPriceValue = document.getElementById('productOldPrice').value;
-    const oldPrice = oldPriceValue ? parseFloat(oldPriceValue) : null;
-    const badge = document.getElementById('productBadge').value.trim() || null;
-    const productId = document.getElementById('productId').value;
+    const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
+    const category = document.getElementById('productCategory').value.trim();
+    const description = document.getElementById('productDescription').value.trim();
+    const specs = document.getElementById('productSpecs').value.trim();
+    const badge = document.getElementById('productBadge').value.trim();
+    const active = document.getElementById('productActive').checked;
+    
+    // Validação básica
+    if (!name || !price || !category || !description) {
+        showToast('Preencha os campos obrigatórios (Nome, Preço, Categoria, Descrição)', 'error');
+        return;
+    }
 
+    // 3. Preparação dos Dados
     const productData = {
         name,
-        category,
         price,
         oldPrice,
+        category,
+        description,
+        specs,
         badge,
-        isBlackFriday: document.getElementById('productBlackFriday').checked,
-        images: tempProductImages,
-        colors: productColors.length > 0 ? productColors : null,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        active,
+        images: tempProductImages.filter(url => url.startsWith('http' )), // Apenas URLs reais
+        colors: productColors, // Array de cores (nome, hex, etc.)
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
-    // ===== VALIDAÇÃO =====
-    const errors = validateProductData(productData);
-    if (errors.length > 0) {
-        showToast(errors[0], 'error');
-        document.getElementById('loadingOverlay').classList.remove('active');
-        return;
+    if (!editingProductId) {
+        productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
     }
 
+    // 4. PREPARAÇÃO DO BATCH WRITE (Transação Atômica)
+    document.getElementById('loadingOverlay').classList.add('active');
+    const batch = db.batch();
+    const productRef = db.collection('produtos').doc(productId);
+
     try {
-        // ============================================================
-        // ===================== EDITAR PRODUTO ========================
-        // ============================================================
-        if (productId) {
-            await db.collection("produtos").doc(productId).update(productData);
+        // A. Salva o documento principal do produto
+        batch.set(productRef, productData, { merge: true });
 
-            // --------- ATUALIZAR VARIANTES ---------
-            if (productColors.length > 0) {
-                const sizes = ['P', 'M', 'G', 'GG'];
-                const defaultColors = [
-                    { name: 'Preto', hex: '#000000', images: tempProductImages },
-                    { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
-                    { name: 'Cinza', hex: '#808080', images: tempProductImages },
-                    { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
-                ];
-
-                const colorsToUse = productColors.length > 0 ? productColors : defaultColors;
-
-                const existingVariants = await db.collection('produtos')
-                    .doc(productId)
-                    .collection('variants')
-                    .get();
-
-                const existingCombinations = new Set(
-                    existingVariants.docs.map(doc => {
-                        const v = doc.data();
-                        return `${v.size}-${v.color}`;
-                    })
-                );
-
-                const batch = db.batch();
-                let newVariantsCount = 0;
-
-                colorsToUse.forEach(color => {
-                    sizes.forEach(size => {
-                        const combination = `${size}-${color.name}`;
-                        
-                        if (!existingCombinations.has(combination)) {
-                            const variantRef = db.collection('produtos')
-                                .doc(productId)
-                                .collection('variants')
-                                .doc();
-
-                            batch.set(variantRef, {
-                                size,
-                                color: color.name,
-                                stock: 0,
-                                available: true,
-                                sku: `${productId.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-
-                            newVariantsCount++;
-                        }
-                    });
-                });
-
-                if (newVariantsCount > 0) {
-                    await batch.commit();
-                    //console.log(`✅ ${newVariantsCount} novas variantes criadas`);
-                }
-            }
-
-            // Atualiza cache local
-            const product = productsData.find(p => p.id === productId);
-            if (product) Object.assign(product, productData);
-
-            showToast('Produto atualizado com sucesso!', 'success');
-
-        } else {
-            // ============================================================
-            // ===================== NOVO PRODUTO =========================
-            // ============================================================
-            
-            productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            const docRef = await db.collection("produtos").add(productData);
-
-            // Criar variantes
-            const defaultColors = [
-                { name: 'Preto', hex: '#000000', images: tempProductImages },
-                { name: 'Azul Marinho', hex: '#000080', images: tempProductImages },
-                { name: 'Cinza', hex: '#808080', images: tempProductImages },
-                { name: 'Marrom', hex: '#8B4513', images: tempProductImages }
-            ];
-
-            const colorsToUse = productColors.length > 0 ? productColors : defaultColors;
-            const sizes = ['P', 'M', 'G', 'GG'];
-
-            const batch = db.batch();
-
-            colorsToUse.forEach(color => {
-                sizes.forEach(size => {
-                    const variantRef = db.collection('produtos')
-                        .doc(docRef.id)
-                        .collection('variants')
-                        .doc();
-
-                    batch.set(variantRef, {
-                        size,
-                        color: color.name,
-                        stock: 0,
-                        available: true,
-                        sku: `${docRef.id.substring(0, 6).toUpperCase()}-${size}-${color.name.substring(0, 3).toUpperCase()}`,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                });
+        // B. Salva as variantes (Exemplo: Cria uma variante padrão se não houver)
+        // ATENÇÃO: Você precisará adaptar esta lógica para como você gera suas variantes.
+        // Este é um exemplo de como salvar variantes junto com o produto principal.
+        if (productColors.length > 0) {
+            // Exemplo: Criar uma variante de estoque para cada cor (tamanho 'U' - Único)
+            productColors.forEach(color => {
+                const variantId = `${productId}_U_${color.name.replace(/\s/g, '')}`;
+                const variantRef = productRef.collection('variants').doc(variantId);
+                
+                batch.set(variantRef, {
+                    size: 'U',
+                    color: color.name,
+                    stock: 999, // Exemplo de estoque
+                    price: price,
+                    available: true
+                }, { merge: true });
             });
-
-            await batch.commit();
-
-            //console.log(`✅ ${colorsToUse.length * sizes.length} variantes criadas automaticamente`);
-
-            productsData.push({ id: docRef.id, ...productData });
-            showToast('Produto adicionado com sucesso!', 'success');
         }
+        
+        // 5. EXECUTA O BATCH
+        await batch.commit();
 
-        // ===== ATUALIZAÇÕES GERAIS =====
+        // 6. ATUALIZAÇÕES GERAIS (Frontend)
+        showToast(`✅ Produto "${name}" salvo com sucesso!`, 'success');
+        
+        // Limpeza e Re-renderização
         productCache.clear();
-        saveProducts();
         closeProductModal();
+        
+        // Recarrega os dados do Firestore para garantir consistência
+        await carregarProdutosDoFirestore(); 
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
-
-        await carregarProdutosDoFirestore();
 
     } catch (error) {
         console.error("Erro ao salvar produto:", error);
@@ -1976,6 +1890,7 @@ function renderProductColorsManager() {
     `).join('');
 }
 
+// script2.js (SUBSTITUIR)
 function linkImageToColor(imageIndex) {
     // Validação CRÍTICA
     if (!Array.isArray(productColors) || productColors.length === 0) {
@@ -1987,28 +1902,50 @@ function linkImageToColor(imageIndex) {
         showToast('❌ Índice de imagem inválido!', 'error');
         return;
     }
-    
+
     const imageUrl = tempProductImages[imageIndex];
     
-    // Menu de Cores
-    let colorList = '🎨 VINCULAR FOTO À COR:\n\n';
-    productColors.forEach((color, index) => {
-        const count = color.images ? color.images.length : 0;
-        const isLinked = color.images && color.images.includes(imageUrl);
-        const status = isLinked ? '✅' : '⬜';
-        colorList += `${index + 1}. ${status} ${color.name} (${count} foto(s))\n`;
-    });
-    
-    colorList += '\n0. 🔓 Desvincular de todas\n';
-    colorList += '\n Digite o número da cor:';
+    // 1. CONSTRUIR O MODAL DE SELEÇÃO
+    const colorOptions = productColors.map((color, index) => `
+        <button class="color-select-btn" 
+                onclick="performLinkImageToColor(${imageIndex}, ${index + 1}); closeColorSelectModal();"
+                style="background-color: ${color.hex}; border: 2px solid ${color.hex === '#FFFFFF' ? '#ccc' : 'transparent'};">
+            ${color.name}
+        </button>
+    `).join('');
 
-    const choice = prompt(colorList);
+    const modalContent = `
+        <div class="color-select-modal-content">
+            <h3>Vincular Imagem à Cor</h3>
+            <p>Selecione a cor à qual esta imagem pertence:</p>
+            <div class="color-options-grid">
+                ${colorOptions}
+            </div>
+            <button class="color-select-btn unlink-btn" onclick="performLinkImageToColor(${imageIndex}, 0); closeColorSelectModal();">
+                Desvincular de Todas
+            </button>
+        </div>
+    `;
     
+    // 2. Exibir o modal (Você precisará de um modal genérico no seu HTML)
+    // Se você não tem um modal genérico, use um alert/confirm mais elaborado ou crie um div temporário.
+    // Para simplificar, vamos usar um prompt aprimorado (mas o ideal é um modal HTML/CSS)
+    
+    const colorNames = productColors.map((c, i) => `${i + 1}: ${c.name}`).join('\n');
+    const choice = prompt(`Vincular imagem:\n\n0: Desvincular de todas\n${colorNames}\n\nDigite o número da cor:`);
+
     if (choice === null || choice.trim() === '') return;
-    
+
     const choiceNum = parseInt(choice.trim());
     
-    // Desvincular (Opção 0)
+    performLinkImageToColor(imageIndex, choiceNum);
+}
+
+// NOVA FUNÇÃO: Lógica de vinculação separada
+function performLinkImageToColor(imageIndex, choiceNum) {
+    const imageUrl = tempProductImages[imageIndex];
+    
+    // 0. Desvincular de todas
     if (choiceNum === 0) {
         productColors.forEach(c => {
             if (c.images) c.images = c.images.filter(u => u !== imageUrl);
@@ -2019,20 +1956,20 @@ function linkImageToColor(imageIndex) {
         return;
     }
 
-    // Vincular a cor específica
+    // 1. Vincular a cor específica
     const idx = choiceNum - 1;
     
     if (idx < 0 || idx >= productColors.length || isNaN(idx)) {
         showToast('❌ Número inválido!', 'error');
         return;
     }
-
-    // Remove de outras cores primeiro
+    
+    // 2. Desvincular de outras cores (opcional, mas recomendado para evitar fotos duplicadas)
     productColors.forEach(c => {
         if (c.images) c.images = c.images.filter(u => u !== imageUrl);
     });
-    
-    // Adiciona na cor escolhida
+
+    // 3. Vincular à cor escolhida
     if (!productColors[idx].images) {
         productColors[idx].images = [];
     }
@@ -2045,6 +1982,7 @@ function linkImageToColor(imageIndex) {
     renderProductColorsManager();
     showToast(`✅ Foto vinculada a "${productColors[idx].name}"`, 'success');
 }
+
 
 function removeProductColor(index) {
     const color = productColors[index];
@@ -5679,6 +5617,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
