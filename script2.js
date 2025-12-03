@@ -4310,176 +4310,126 @@ function setupPaymentListeners() {
 // ==================== 2. SISTEMA DE CHECKOUT APRIMORADO ====================
 
 async function sendToWhatsApp() {
-    // 1. Iniciar Loading Global (Proteção Visual)
+    // ✅ CORREÇÃO: AGUARDA AUTH ESTAR PRONTO
+    if (window.authReady) await window.authReady;
+    
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) loadingOverlay.classList.add('active');
 
     try {
-        // ✅ AGUARDAR AUTH (Garante que o Firebase carregou)
-        if (window.authReady) await window.authReady;
-        
-        // Verificação de segurança
+        // Validação do carrinho
         if (!cart || cart.length === 0) {
             showToast('Carrinho vazio!', 'error');
-            return; // O 'finally' lá embaixo vai tirar o loading
-        }
-
-        // 2. Coleta de Dados do Cliente
-        let customerData = {};
-        
-        if (auth.currentUser) {
-            // Usuário Logado
-            customerData = {
-                name: currentUser?.name || auth.currentUser.displayName || 'Cliente',
-                email: auth.currentUser.email,
-                phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
-                cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
-                uid: auth.currentUser.uid
-            };
-            
-            if (!customerData.phone) {
-                 // Removemos o loading temporariamente para o prompt aparecer limpo
-                 if (loadingOverlay) loadingOverlay.classList.remove('active');
-                 const phone = prompt("Precisamos do seu WhatsApp para confirmar o pedido:");
-                 if (loadingOverlay) loadingOverlay.classList.add('active'); // Volta o loading
-                 
-                 if(!phone) return;
-                 customerData.phone = phone;
-            }
-        } else {
-            // Usuário Visitante
-            if (typeof collectGuestCustomerData === 'function') {
-                closePaymentModal(); 
-                if (loadingOverlay) loadingOverlay.classList.remove('active'); // Remove loading para o modal
-                
-                const guestData = await collectGuestCustomerData(); 
-                
-                if (loadingOverlay) loadingOverlay.classList.add('active'); // Volta loading
-                
-                if (!guestData) {
-                    openPaymentModal(); 
-                    return; 
-                }
-                customerData = guestData;
-            } else {
-                customerData = { name: 'Visitante', email: 'Não informado', phone: 'Não informado' };
-            }
-        }
-
-        // 3. Dados do Pagamento
-        const paymentInput = document.querySelector('input[name="paymentMethod"]:checked');
-        if (!paymentInput) {
-            showToast('Selecione uma forma de pagamento', 'error');
             return;
         }
-        const paymentMethod = paymentInput.value;
 
-        // Lógica de Parcelas
+        // 1. Validar Pagamento
+        const checked = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!checked) {
+            showToast('Selecione a forma de pagamento.', 'error');
+            return;
+        }
+        const paymentMethod = checked.value;
+
         let installments = null;
         if (paymentMethod === 'credito-parcelado') {
             const installmentsSelect = document.getElementById('installmentsSelect');
             if (!installmentsSelect || !installmentsSelect.value) {
                 showToast('Selecione o número de parcelas.', 'error');
-                openPaymentModal();
                 return;
             }
             installments = installmentsSelect.value;
         }
+
+        // 2. Coleta de Dados do Cliente
+        let customerData = {};
         
-        // 4. Cálculos
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        // ✅ CORREÇÃO: USA VARIÁVEL GLOBAL currentUser DO AUTH.JS
+        if (typeof currentUser !== 'undefined' && currentUser) {
+            const phone = await getUserPhone();
+            const cpf = await getUserCPF();
+            
+            if (!phone || !cpf) {
+                showToast('Dados incompletos. Preencha telefone e CPF.', 'error');
+                return;
+            }
+
+            customerData = {
+                name: currentUser.name || 'Cliente',
+                email: currentUser.email,
+                phone: phone,
+                cpf: cpf,
+                uid: currentUser.uid
+            };
+        } else {
+            const guestData = await collectGuestCustomerData();
+            if (!guestData) return;
+            customerData = guestData;
+        }
+
+        // 3. Cálculos Financeiros
+        const subtotal = cart.reduce((s, it) => s + (it.price * it.quantity), 0);
         const discount = couponDiscount || 0;
         const total = Math.max(0, subtotal - discount);
 
-        // 5. Salvar no Firestore (Batch Write)
+        // 4. Salvar Pedido no Firestore
         let orderId = 'PENDENTE';
-        
-        // Preparar dados
-        const orderData = {
-            userId: auth.currentUser ? auth.currentUser.uid : 'guest',
-            customer: customerData,
-            items: cart.map(item => ({
-                id: item.id,
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price,
-                size: item.selectedSize || null,
-                color: item.selectedColor || null
-            })),
-            totals: {
-                subtotal: subtotal,
-                discount: discount,
-                total: total
-            },
-            paymentMethod: paymentMethod,
-            installments: installments,
-            status: 'Pendente WhatsApp',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, value: appliedCoupon.value } : null
-        };
+        try {
+            const orderData = {
+                userId: customerData.uid || 'guest',
+                customer: customerData,
+                items: cart.map(item => ({
+                    id: item.productId || item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    size: item.selectedSize || null,
+                    color: item.selectedColor || null,
+                    image: item.image
+                })),
+                totals: { subtotal, discount, total },
+                paymentMethod,
+                installments: installments,
+                status: 'Pendente WhatsApp',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, value: appliedCoupon.value } : null
+            };
 
-        // Executar Gravação Atômica
-        const batch = db.batch();
-        const orderRef = db.collection('orders').doc();
-        batch.set(orderRef, orderData);
-        orderId = orderRef.id;
+            const docRef = await db.collection('orders').add(orderData);
+            orderId = docRef.id;
 
-        if (appliedCoupon) {
-            const couponRef = db.collection('coupons').doc(appliedCoupon.id);
-            batch.update(couponRef, { usedCount: firebase.firestore.FieldValue.increment(1) });
-            
-            const usageRef = db.collection('coupon_usage').doc();
-            batch.set(usageRef, {
-                couponId: appliedCoupon.id,
-                userId: auth.currentUser ? auth.currentUser.uid : 'guest',
-                usedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                orderValue: total,
-                discountApplied: discount
-            });
+            if (appliedCoupon) {
+                await registerCouponUsage(appliedCoupon.id, total, discount);
+            }
+
+        } catch (error) {
+            console.error('Erro ao salvar pedido:', error);
+            showToast('Erro ao processar, mas vamos tentar enviar o WhatsApp.', 'error');
         }
 
-        await batch.commit();
-
-        // 6. Gerar e Enviar WhatsApp
-        const msg = generateWhatsAppMessage(
-            orderId, 
-            customerData, 
-            cart, 
-            { subtotal, discount, total }, 
-            paymentMethod, 
-            installments
-        );
+        const msg = generateWhatsAppMessage(orderId, customerData, cart, { subtotal, discount, total }, paymentMethod, installments);
 
         const WHATSAPP_NUMBER = '5571991427103'; 
         const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
         window.open(whatsappURL, '_blank');
 
-        // 7. Sucesso e Limpeza
         closePaymentModal();
-        if(typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
+        if (typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
         
         cart = [];
         appliedCoupon = null;
         couponDiscount = 0;
-        saveCart(); 
-        updateCartUI(); 
         
-        showToast('Pedido enviado para o WhatsApp!', 'success');
+        saveCart();
+        updateCartUI();
+        showToast('Pedido realizado com sucesso!', 'success');
 
     } catch (error) {
-        // 🔴 CAPTURA DE ERROS (ERROR BOUNDARY)
         console.error('❌ ERRO CRÍTICO NO CHECKOUT:', error);
-        
-        // Se você tiver Sentry ou outro log, adicione aqui
-        // if (typeof Sentry !== 'undefined') Sentry.captureException(error);
-        
         showToast('Ocorreu um erro ao processar. Por favor, tente novamente.', 'error');
-        
-        // Reabre o modal para o cliente não perder o carrinho e tentar de novo
         openPaymentModal(); 
 
     } finally {
-        // 🏁 FINALIZAÇÃO (Executa sempre, dando erro ou sucesso)
         if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 }
@@ -5773,6 +5723,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
