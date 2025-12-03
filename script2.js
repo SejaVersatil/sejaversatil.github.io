@@ -5738,30 +5738,88 @@ window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
 
+function validateDadosStep() {
+    const nome = document.getElementById('inputNome').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const telefone = document.getElementById('inputTelefone').value.replace(/\D/g, '');
+    const cpf = document.getElementById('inputCPF').value.replace(/\D/g, '');
+    
+    if (!nome || !email || telefone.length < 10 || cpf.length !== 11) {
+        showToast('Preencha todos os campos corretamente', 'error');
+        return false;
+    }
+    
+    // Unlock next section
+    document.getElementById('sectionEndereco').style.opacity = '1';
+    document.getElementById('sectionEndereco').style.pointerEvents = 'auto';
+    showToast('✅ Dados confirmados', 'success');
+    return true;
+}
 
+function validateEnderecoStep() {
+    const cep = document.getElementById('inputCEP').value.replace(/\D/g, '');
+    const rua = document.getElementById('inputRua').value.trim();
+    const numero = document.getElementById('inputNumero').value.trim();
+    const bairro = document.getElementById('inputBairro').value.trim();
+    const cidade = document.getElementById('inputCidade').value.trim();
+    const uf = document.getElementById('inputUF').value;
+    
+    if (cep.length !== 8 || !rua || !numero || !bairro || !cidade || !uf) {
+        showToast('Preencha todos os campos de endereço', 'error');
+        return false;
+    }
+    
+    // Unlock payment section
+    document.getElementById('sectionPagamento').style.opacity = '1';
+    document.getElementById('sectionPagamento').style.pointerEvents = 'auto';
+    document.getElementById('checkoutFormPagamento').style.display = 'block';
+    document.querySelector('#sectionPagamento .checkout-section-subtitle').style.display = 'none';
+    
+    // Enable finalize button
+    document.getElementById('btnFinalizarCompra').disabled = false;
+    document.getElementById('btnFinalizarCompra').textContent = 'FINALIZAR COMPRA';
+    
+    showToast('✅ Endereço confirmado', 'success');
+    return true;
+}
 
+function validatePagamentoStep() {
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!paymentMethod) {
+        showToast('Selecione a forma de pagamento', 'error');
+        return false;
+    }
+    
+    if (paymentMethod.value === 'credito-parcelado') {
+        const installments = document.getElementById('installmentsSelect').value;
+        if (!installments) {
+            showToast('Selecione o número de parcelas', 'error');
+            return false;
+        }
+    }
+    
+    showToast('✅ Pagamento confirmado', 'success');
+    return true;
+}
 
+async function processCheckout() {
+    if (!validateDadosStep() || !validateEnderecoStep() || !validatePagamentoStep()) {
+        return;
+    }
+    
+    // Open payment modal to trigger WhatsApp flow
+    if (typeof openPaymentModal === 'function') {
+        openPaymentModal();
+    } else {
+        // Fallback: Direct WhatsApp
+        if (typeof sendToWhatsApp === 'function') {
+            await sendToWhatsApp();
+        }
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Export functions
+window.validateDadosStep = validateDadosStep;
+window.validateEnderecoStep = validateEnderecoStep;
+window.validatePagamentoStep = validatePagamentoStep;
+window.processCheckout = processCheckout;
