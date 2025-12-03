@@ -2991,6 +2991,14 @@ const saveCart = (() => {
 // ==================== INICIALIZAÇÃO ====================
 // Garante que os elementos são carregados ao iniciar a página
 document.addEventListener('DOMContentLoaded', () => {
+    // ✅ CRITICAL FIX: Só inicializar carrinho se NÃO for checkout
+    const isCheckoutPage = window.location.pathname.includes('checkout.html');
+    
+    if (isCheckoutPage) {
+        console.log('ℹ️ Checkout page - cart UI initialization skipped');
+        return; // Sai da função
+    }
+    
     // Cache dos elementos do carrinho
     window.cartSidebar = document.getElementById('cartSidebar');
     window.cartOverlay = document.getElementById('sidebarOverlay');
@@ -5877,6 +5885,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
