@@ -738,42 +738,63 @@ function buildOrderData() {
         'pix': 'PIX à Vista (10% OFF)',
         'boleto': 'Boleto Bancário',
         'credito-avista': 'Cartão de Crédito à Vista',
-        'credito-parcelado': `Cartão ${CheckoutState.paymentData.installments}x sem juros`
+        'credito-parcelado': `Cartão ${CheckoutState.paymentData.installments || 1}x sem juros`
     };
     
     const cartItems = CartManager ? CartManager.cart : [];
     
+    // ✅ SANITIZE: Remove undefined/null values
+    const cleanData = (obj) => {
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, v]) => v != null)
+        );
+    };
+    
     return {
-        codigo: CheckoutState.cartCode,
+        codigo: CheckoutState.cartCode || generateCartCode(),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        cliente: {
-            nome: CheckoutState.userData.nome,
-            email: CheckoutState.userData.email,
-            telefone: CheckoutState.userData.telefone,
-            cpf: CheckoutState.userData.cpf,
+        
+        cliente: cleanData({
+            nome: CheckoutState.userData.nome || '',
+            email: CheckoutState.userData.email || '',
+            telefone: CheckoutState.userData.telefone || '',
+            cpf: CheckoutState.userData.cpf || '',
             uid: window.currentUser?.uid || null
-        },
-        endereco: CheckoutState.addressData,
-        items: cartItems.map(item => ({
-            id: item.id,
-            name: item.name,
+        }),
+        
+        endereco: cleanData({
+            cep: CheckoutState.addressData.cep || '',
+            rua: CheckoutState.addressData.rua || '',
+            numero: CheckoutState.addressData.numero || '',
+            complemento: CheckoutState.addressData.complemento || '',
+            bairro: CheckoutState.addressData.bairro || '',
+            cidade: CheckoutState.addressData.cidade || '',
+            uf: CheckoutState.addressData.uf || ''
+        }),
+        
+        items: cartItems.map(item => cleanData({
+            id: item.id || item.productId || 'unknown',
+            name: item.name || 'Produto sem nome',
             size: item.selectedSize || item.size || 'M',
             color: item.selectedColor || item.color || 'Padrão',
-            price: item.price,
-            quantity: item.quantity,
-            subtotal: item.price * item.quantity
+            price: parseFloat(item.price) || 0,
+            quantity: parseInt(item.quantity) || 1,
+            subtotal: (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)
         })),
-        pagamento: {
-            metodo: CheckoutState.paymentData.method,
-            metodoNome: paymentMap[CheckoutState.paymentData.method],
-            parcelas: CheckoutState.paymentData.installments
-        },
-        valores: {
-            subtotal: parseFloat(CheckoutState.subtotal.toFixed(2)),
-            desconto: parseFloat(CheckoutState.couponDiscount.toFixed(2)),
-            pixDesconto: parseFloat(CheckoutState.pixDiscount.toFixed(2)),
-            total: parseFloat(CheckoutState.total.toFixed(2))
-        },
+        
+        pagamento: cleanData({
+            metodo: CheckoutState.paymentData.method || 'pix',
+            metodoNome: paymentMap[CheckoutState.paymentData.method] || 'PIX',
+            parcelas: parseInt(CheckoutState.paymentData.installments) || 1
+        }),
+        
+        valores: cleanData({
+            subtotal: parseFloat(CheckoutState.subtotal?.toFixed(2)) || 0,
+            desconto: parseFloat(CheckoutState.couponDiscount?.toFixed(2)) || 0,
+            pixDesconto: parseFloat(CheckoutState.pixDiscount?.toFixed(2)) || 0,
+            total: parseFloat(CheckoutState.total?.toFixed(2)) || 0
+        }),
+        
         status: 'pendente_whatsapp'
     };
 }
