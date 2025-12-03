@@ -473,6 +473,7 @@ function updateTotals() {
     }
 }
 
+
 // ==================== ATUALIZAR UI DO PAGAMENTO ====================
 function updatePaymentUI() {
     const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
