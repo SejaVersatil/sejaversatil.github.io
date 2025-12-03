@@ -244,6 +244,7 @@ function updateAuthUI(user) {
         // Usuário logado
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
+        if (CheckoutDOM.formDadosPessoais) CheckoutDOM.formDadosPessoais.style.display = 'block';
         
         if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
         if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
