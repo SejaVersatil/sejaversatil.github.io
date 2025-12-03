@@ -3587,12 +3587,19 @@ function closeSearch() {
     document.getElementById('searchResults').innerHTML = '';
 }
 
-document.getElementById('searchModal').addEventListener('click', (e) => {
-    if (e.target.id === 'searchModal') {
-        closeSearch();
-    }
-});
+// 1. Primeiro, capture o elemento em uma variável
+const searchModal = document.getElementById('searchModal');
 
+// 2. ✅ VERIFICAÇÃO DE NULIDADE (Segurança)
+// Só tenta adicionar o evento se o elemento realmente existir no HTML
+if (searchModal) {
+    searchModal.addEventListener('click', (e) => {
+        // Verifica se o clique foi no fundo escuro (overlay) e não no conteúdo
+        if (e.target.id === 'searchModal') {
+            closeSearch();
+        }
+    });
+}
 const debouncedSearch = debounce(function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const results = document.getElementById('searchResults');
@@ -5866,6 +5873,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
