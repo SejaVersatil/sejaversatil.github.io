@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.2';
+const CACHE_NAME = 'seja-versatil-v1.0.3'; // Atualizei a versão para forçar atualização
 
 const urlsToCache = [
     '/',
@@ -11,6 +11,7 @@ const urlsToCache = [
 
 // INSTALAÇÃO
 self.addEventListener('install', (event) => {
+    self.skipWaiting(); // Força o SW a ativar imediatamente
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('📦 Cache aberto');
@@ -19,10 +20,9 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// ATIVAÇÃO
+// ATIVAÇÃO (Limpeza de caches antigos)
 self.addEventListener('activate', (event) => {
     const cacheWhitelist = [CACHE_NAME];
-
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
@@ -33,41 +33,45 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim()) // Controla as abas abertas imediatamente
     );
 });
 
-// FETCH — Network First com fallback para cache
+// FETCH — Network First com fallback para Cache (Blindado)
 self.addEventListener('fetch', (event) => {
+    // Ignorar requisições internas do Chrome ou não-http
+    if (!event.request.url.startsWith('http')) return;
 
-    // Ignorar requisições internas do Chrome
-    if (
-        event.request.url.startsWith('chrome-extension://') ||
-        event.request.url.startsWith('chrome://')
-    ) {
-        return;
-    }
-
-    // Ignorar métodos não-GET
-    if (event.request.method !== 'GET') {
-        return;
-    }
+    // Ignorar métodos não-GET (POST, DELETE, etc não devem ser cacheados)
+    if (event.request.method !== 'GET') return;
 
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Apenas cachear respostas válidas
+                // Se a resposta for válida, clona e atualiza o cache
                 if (response && response.status === 200) {
-                    const clone = response.clone();
+                    const responseToCache = response.clone();
                     caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, clone);
+                        cache.put(event.request, responseToCache);
                     });
                 }
                 return response;
             })
             .catch(() => {
-                // Fallback
-                return caches.match(event.request);
+                // 🔴 AQUI ESTAVA O ERRO: O navegador caia aqui sem internet
+                return caches.match(event.request)
+                    .then((cachedResponse) => {
+                        if (cachedResponse) {
+                            return cachedResponse; // Retorna o que tem no cache
+                        }
+                        
+                        // 🔥 CORREÇÃO: Se não tiver no cache, retorna uma resposta de erro válida
+                        // Isso evita o erro "Failed to convert value to 'Response'"
+                        return new Response("Você está offline e este recurso não foi cacheado.", { 
+                            status: 404, 
+                            statusText: "Offline" 
+                        });
+                    });
             })
     );
 });
