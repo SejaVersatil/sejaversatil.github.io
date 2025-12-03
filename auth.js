@@ -18,6 +18,12 @@ window.authReady = new Promise((resolve) => {
     });
 });
 
+
+document.addEventListener('DOMContentLoaded', () => {
+       const overlay = document.getElementById('loadingOverlay');
+       if (overlay) overlay.classList.add('active');
+   });
+
 // Mapeamento de Erros Firebase para PT-BR amigável
 const FIREBASE_ERROR_MAP = {
     'auth/invalid-email': 'O endereço de e-mail está mal formatado.',
