@@ -784,49 +784,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingOverlay.classList.add('active');
     }
 
-    window.cartSidebar = document.getElementById('cartSidebar');
-    window.cartOverlay = document.getElementById('sidebarOverlay');
+    // ✅ CRITICAL FIX: Verificar se estamos no index.html ou checkout.html
+    const isCheckoutPage = window.location.pathname.includes('checkout.html');
     
-    if (!window.cartSidebar) {
-        console.error('❌ CRITICAL: Cart sidebar not found in HTML!');
-    }
-    if (!window.cartOverlay) {
-        console.warn('⚠️ Overlay not found - cart may not close properly');
+    if (!isCheckoutPage) {
+        // Só cachear elementos do carrinho se NÃO for checkout
+        window.cartSidebar = document.getElementById('cartSidebar');
+        window.cartOverlay = document.getElementById('sidebarOverlay');
+        
+        if (!window.cartSidebar) {
+            console.error('❌ CRITICAL: Cart sidebar not found in HTML!');
+        }
+        if (!window.cartOverlay) {
+            console.warn('⚠️ Overlay not found - cart may not close properly');
+        }
+    } else {
+        console.log('ℹ️ Checkout page detected - skipping cart sidebar cache');
     }
     
     try {
         console.log('🚀 Iniciando carregamento do site...');
         
-        // ✅ CORREÇÃO 1: Carrega settings ANTES
         loadSettings();
-
         setupPaymentListeners();
         
         await loadProducts();
-        
-        // ✅ CORREÇÃO 2: Carrega produtos ANTES do carrinho
-        await loadProducts();
         loadCart();
         
-        // ✅ CORREÇÃO 3: SÓ AGORA carrega o carrinho (productsData já existe)
-        loadCart();
-        
-        // ✅ Verifica URL para favoritos
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('ver_favoritos') === 'true') {
-            setTimeout(() => {
-                showFavorites();
-                window.history.replaceState({}, document.title, "index.html");
-            }, 500);
+        // ✅ Só renderizar produtos se NÃO for checkout
+        if (!isCheckoutPage) {
+            renderProducts();
+            renderBestSellers();
+            initHeroCarousel();
+            await loadVideoGrid();
         }
         
-        // ✅ Renderiza tudo
-        renderProducts();
-        renderBestSellers();
         updateCartUI();
         updateFavoritesCount();
-        initHeroCarousel();
-        await loadVideoGrid();
         initBlackFridayCountdown();
         setupConnectionMonitor();
         setupCartAbandonmentTracking();
@@ -5883,6 +5877,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
