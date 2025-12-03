@@ -487,7 +487,10 @@ function updatePaymentUI() {
     } else {
         if (CheckoutDOM.installmentsBox) CheckoutDOM.installmentsBox.style.display = 'none';
     }
-    
+    if (CheckoutDOM.installmentsSelect) {
+    const selectedInstallments = parseInt(CheckoutDOM.installmentsSelect.value) || 1;
+    CheckoutState.paymentData.installments = selectedInstallments;
+}
     // ✅ REMOVIDO: Lógica do cardDetailsBox (não existe mais)
     
     updateTotals();
