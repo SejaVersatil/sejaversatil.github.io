@@ -849,3 +849,37 @@ function isValidCPF(cpf) {
   
   return true;
 }
+
+
+  // Vanilla JS Masks (No dependencies)
+function applyMasks() {
+    const cpfInput = document.getElementById('inputCPF');
+    const telefoneInput = document.getElementById('inputTelefone');
+    const cepInput = document.getElementById('inputCEP');
+    
+    if (cpfInput) {
+        cpfInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            e.target.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        });
+    }
+    
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            e.target.value = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        });
+    }
+    
+    if (cepInput) {
+        cepInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 8) v = v.slice(0, 8);
+            e.target.value = v.replace(/(\d{5})(\d{3})/, '$1-$2');
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', applyMasks);
