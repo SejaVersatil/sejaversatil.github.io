@@ -1,914 +1,995 @@
 // ============================================================================
-// CHECKOUT.JS - SEJA VERSÁTIL
-// Sistema Completo de Checkout com Firebase e LocalStorage
+// CHECKOUT-COMPLETE.JS - SEJA VERSÁTIL
+// Controlador de Checkout com Desbloqueio Progressivo (4 Colunas)
+// SINCRONIZADO COM script2-unified.js
 // ============================================================================
 
-// === CONFIGURAÇÕES ===
-const CONFIG = {
-  WHATSAPP_NUMBER: '5571991427103',
-  CART_STORAGE_KEY: 'sejaVersatilCart',
-  TOAST_DURATION: 5000,
-  REDIRECT_DELAY: 3000,
-  PIX_DISCOUNT: 0.10,
-  MIN_NAME_LENGTH: 3,
-  MIN_PHONE_LENGTH: 10,
-  CPF_LENGTH: 11,
-  CEP_LENGTH: 8
+'use strict';
+
+// ==================== CONFIGURAÇÕES ====================
+const CHECKOUT_CONFIG = {
+    WHATSAPP_NUMBER: '5571991427103',
+    CART_STORAGE_KEY: 'sejaVersatilCart',
+    TOAST_DURATION: 5000,
+    REDIRECT_DELAY: 3000,
+    PIX_DISCOUNT: 0.10,
+    MIN_NAME_LENGTH: 3,
+    MIN_PHONE_LENGTH: 10,
+    CPF_LENGTH: 11,
+    CEP_LENGTH: 8
 };
 
-// === VARIÁVEIS GLOBAIS ===
-let cartItems = [];
-let subtotal = 0;
-let discount = 0;
-let total = 0;
-const cartCode = generateCartCode();
-
-// === CACHE DE ELEMENTOS DOM ===
-const DOM = {
-  authTabs: null,
-  loggedInfo: null,
-  loggedUserName: null,
-  formDados: null,
-  formEndereco: null,
-  formPagamento: null,
-  summaryItems: null,
-  summaryCartCode: null,
-  summarySubtotal: null,
-  summaryPixDiscount: null,
-  summaryInstallmentRow: null,
-  summaryInstallmentValue: null,
-  summaryInstallmentDetail: null,
-  installmentsBox: null,
-  installmentsSelect: null,
-  btnFinalizarCompra: null,
-  loadingOverlay: null,
-  toastContainer: null
+// ==================== ESTADO DO CHECKOUT ====================
+const CheckoutState = {
+    // Etapas de Validação
+    step1Valid: false,  // Dados Pessoais
+    step2Valid: false,  // Endereço
+    step3Valid: false,  // Pagamento
+    
+    // Dados Coletados
+    userData: {
+        nome: '',
+        email: '',
+        telefone: '',
+        cpf: ''
+    },
+    
+    addressData: {
+        cep: '',
+        rua: '',
+        numero: '',
+        complemento: '',
+        bairro: '',
+        cidade: '',
+        uf: ''
+    },
+    
+    paymentData: {
+        method: 'pix',
+        installments: 1
+    },
+    
+    // Totais
+    subtotal: 0,
+    couponDiscount: 0,
+    pixDiscount: 0,
+    total: 0,
+    
+    // Carrinho
+    cartCode: generateCartCode()
 };
 
-// === INICIALIZAÇÃO ===
+// ==================== CACHE DE ELEMENTOS DOM ====================
+const CheckoutDOM = {
+    // Coluna 1: Dados Pessoais
+    authStateGuest: null,
+    authStateLogged: null,
+    authTabsContainer: null,
+    tabLogin: null,
+    tabCadastro: null,
+    formDadosPessoais: null,
+    inputNome: null,
+    inputEmail: null,
+    inputTelefone: null,
+    inputCPF: null,
+    loggedUserName: null,
+    loggedUserEmail: null,
+    col1Status: null,
+    
+    // Coluna 2: Endereço
+    col2Container: null,
+    col2Content: null,
+    formEndereco: null,
+    inputCEP: null,
+    inputRua: null,
+    inputNumero: null,
+    inputComplemento: null,
+    inputBairro: null,
+    inputCidade: null,
+    inputUF: null,
+    col2Status: null,
+    
+    // Coluna 3: Pagamento
+    col3Container: null,
+    col3Content: null,
+    formPagamento: null,
+    paymentOptions: null,
+    installmentsBox: null,
+    installmentsSelect: null,
+    cardDetailsBox: null,
+    col3Status: null,
+    
+    // Coluna 4: Resumo
+    summaryItems: null,
+    summaryCartCode: null,
+    summarySubtotal: null,
+    summaryDiscountRow: null,
+    summaryDiscount: null,
+    summaryPixRow: null,
+    summaryPixDiscount: null,
+    summaryInstallmentRow: null,
+    summaryInstallmentValue: null,
+    summaryInstallmentDetail: null,
+    summaryTotal: null,
+    btnFinalizarCompra: null,
+    
+    // Utilitários
+    loadingOverlay: null,
+    toastContainer: null
+};
+
+// ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', () => {
-  cacheDOMElements();
-  initCheckout();
+    console.log('✅ Checkout-Complete iniciando...');
+    
+    cacheDOMElements();
+    initCheckout();
 });
 
-// === CACHE DE ELEMENTOS DOM (PERFORMANCE) ===
+// ==================== CACHE DE ELEMENTOS DOM ====================
 function cacheDOMElements() {
-  DOM.authTabs = document.getElementById('authTabs');
-  DOM.loggedInfo = document.getElementById('loggedInfo');
-  DOM.loggedUserName = document.getElementById('loggedUserName');
-  DOM.formDados = document.getElementById('checkoutFormDados');
-  DOM.formEndereco = document.getElementById('checkoutFormEndereco');
-  DOM.formPagamento = document.getElementById('checkoutFormPagamento');
-  DOM.summaryItems = document.getElementById('summaryItems');
-  DOM.summaryCartCode = document.getElementById('summaryCartCode');
-  DOM.summarySubtotal = document.getElementById('summarySubtotal');
-  DOM.summaryPixDiscount = document.getElementById('summaryPixDiscount');
-  DOM.summaryInstallmentRow = document.getElementById('summaryInstallmentRow');
-  DOM.summaryInstallmentValue = document.getElementById('summaryInstallmentValue');
-  DOM.summaryInstallmentDetail = document.getElementById('summaryInstallmentDetail');
-  DOM.installmentsBox = document.getElementById('installmentsBox');
-  DOM.installmentsSelect = document.getElementById('installmentsSelect');
-  DOM.btnFinalizarCompra = document.getElementById('btnFinalizarCompra');
-  DOM.loadingOverlay = document.getElementById('checkoutLoadingOverlay');
-  DOM.toastContainer = document.getElementById('checkoutToastContainer');
+    // Coluna 1
+    CheckoutDOM.authStateGuest = document.getElementById('authStateGuest');
+    CheckoutDOM.authStateLogged = document.getElementById('authStateLogged');
+    CheckoutDOM.authTabsContainer = document.querySelector('.auth-tabs');
+    CheckoutDOM.tabLogin = document.getElementById('tabLogin');
+    CheckoutDOM.tabCadastro = document.getElementById('tabCadastro');
+    CheckoutDOM.formDadosPessoais = document.getElementById('formDadosPessoais');
+    CheckoutDOM.inputNome = document.getElementById('inputNome');
+    CheckoutDOM.inputEmail = document.getElementById('inputEmail');
+    CheckoutDOM.inputTelefone = document.getElementById('inputTelefone');
+    CheckoutDOM.inputCPF = document.getElementById('inputCPF');
+    CheckoutDOM.loggedUserName = document.getElementById('loggedUserName');
+    CheckoutDOM.loggedUserEmail = document.getElementById('loggedUserEmail');
+    CheckoutDOM.col1Status = document.getElementById('col1Status');
+    
+    // Coluna 2
+    CheckoutDOM.col2Container = document.getElementById('column2Delivery');
+    CheckoutDOM.col2Content = document.getElementById('col2Content');
+    CheckoutDOM.formEndereco = document.getElementById('formEndereco');
+    CheckoutDOM.inputCEP = document.getElementById('inputCEP');
+    CheckoutDOM.inputRua = document.getElementById('inputRua');
+    CheckoutDOM.inputNumero = document.getElementById('inputNumero');
+    CheckoutDOM.inputComplemento = document.getElementById('inputComplemento');
+    CheckoutDOM.inputBairro = document.getElementById('inputBairro');
+    CheckoutDOM.inputCidade = document.getElementById('inputCidade');
+    CheckoutDOM.inputUF = document.getElementById('inputUF');
+    CheckoutDOM.col2Status = document.getElementById('col2Status');
+    
+    // Coluna 3
+    CheckoutDOM.col3Container = document.getElementById('column3Payment');
+    CheckoutDOM.col3Content = document.getElementById('col3Content');
+    CheckoutDOM.formPagamento = document.getElementById('formPagamento');
+    CheckoutDOM.paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+    CheckoutDOM.installmentsBox = document.getElementById('installmentsBox');
+    CheckoutDOM.installmentsSelect = document.getElementById('installmentsSelect');
+    CheckoutDOM.cardDetailsBox = document.getElementById('cardDetailsBox');
+    CheckoutDOM.col3Status = document.getElementById('col3Status');
+    
+    // Coluna 4
+    CheckoutDOM.summaryItems = document.getElementById('summaryItems');
+    CheckoutDOM.summaryCartCode = document.getElementById('summaryCartCode');
+    CheckoutDOM.summarySubtotal = document.getElementById('summarySubtotal');
+    CheckoutDOM.summaryDiscountRow = document.getElementById('summaryDiscountRow');
+    CheckoutDOM.summaryDiscount = document.getElementById('summaryDiscount');
+    CheckoutDOM.summaryPixRow = document.getElementById('summaryPixRow');
+    CheckoutDOM.summaryPixDiscount = document.getElementById('summaryPixDiscount');
+    CheckoutDOM.summaryInstallmentRow = document.getElementById('summaryInstallmentRow');
+    CheckoutDOM.summaryInstallmentValue = document.getElementById('summaryInstallmentValue');
+    CheckoutDOM.summaryInstallmentDetail = document.getElementById('summaryInstallmentDetail');
+    CheckoutDOM.summaryTotal = document.getElementById('summaryTotal');
+    CheckoutDOM.btnFinalizarCompra = document.getElementById('btnFinalizarCompra');
+    
+    // Utilitários
+    CheckoutDOM.loadingOverlay = document.getElementById('checkoutLoadingOverlay');
+    CheckoutDOM.toastContainer = document.getElementById('checkoutToastContainer');
 }
 
-// === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
+// ==================== INICIALIZAÇÃO PRINCIPAL ====================
 async function initCheckout() {
-  try {
-    // 1. Aguardar Auth State
-    // O auth.js já gerencia isso globalmente, mas aqui garantimos a UI local
-    auth.onAuthStateChanged((user) => {
-    
-        
-        if (user) {
-            // Usuário logado
-            if (DOM.authTabs) DOM.authTabs.style.display = 'none';
-            if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'block';
-            if (DOM.loggedUserName) DOM.loggedUserName.textContent = user.displayName || user.email;
-            
-            // Preencher formulário se os campos existirem
-            const inputNome = document.getElementById('inputNome');
-            const inputEmail = document.getElementById('inputEmail');
-            
-            if (inputNome) inputNome.value = user.displayName || '';
-            if (inputEmail) {
-                inputEmail.value = user.email || '';
-                inputEmail.disabled = true;
-            }
-        } else {
-            // Usuário não logado
-            if (DOM.authTabs) DOM.authTabs.style.display = 'flex';
-            if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'none';
+    try {
+        // 1. Monitorar autenticação
+        if (typeof auth !== 'undefined') {
+            auth.onAuthStateChanged((user) => {
+                updateAuthUI(user);
+            });
         }
-    }); // <--- Fechamento correto do listener
-    
-    // Carregar carrinho
-    loadCart();
-    
-    // Se carrinho vazio, redirecionar
-    if (!cartItems || cartItems.length === 0) {
-      showToast('Carrinho vazio', 'Adicione produtos antes de finalizar a compra', 'warning');
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, CONFIG.REDIRECT_DELAY - 1000);
-      return;
+        
+        // 2. Carregar carrinho (usando CartManager)
+        if (typeof CartManager !== 'undefined') {
+            CartManager.load();
+            CheckoutState.subtotal = CartManager.getSubtotal();
+            CheckoutState.couponDiscount = CartManager.couponDiscount;
+        }
+        
+        // 3. Verificar se carrinho está vazio
+        if (!CartManager || CartManager.cart.length === 0) {
+            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar a compra', 'warning');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, CHECKOUT_CONFIG.REDIRECT_DELAY - 1000);
+            return;
+        }
+        
+        // 4. Renderizar resumo
+        renderSummary();
+        
+        // 5. Inicializar máscaras
+        initMasks();
+        
+        // 6. Inicializar eventos
+        initEvents();
+        
+        // 7. Atualizar código do carrinho
+        if (CheckoutDOM.summaryCartCode) {
+            CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
+        }
+        
+        console.log('✅ Checkout inicializado com sucesso');
+        
+    } catch (error) {
+        console.error('❌ Erro na inicialização do checkout:', error);
+        showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
     }
-    
-    // Renderizar resumo
-    renderSummary();
-    
-    // Inicializar máscaras
-    initMasks();
-    
-    // Inicializar eventos
-    initEvents();
-    
-    // Atualizar código do carrinho
-    if (DOM.summaryCartCode) DOM.summaryCartCode.textContent = `(${cartCode})`;
-    
-  } catch (error) {
-    console.error('Erro na inicialização:', error);
-    showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
-  }
 }
 
-// === CARREGAR CARRINHO ===
-function loadCart() {
-    const saved = localStorage.getItem(CONFIG.CART_STORAGE_KEY);
-    if (!saved) {
-        cartItems = [];
-        discount = 0;
+// ==================== AUTENTICAÇÃO ====================
+function updateAuthUI(user) {
+    if (user) {
+        // Usuário logado
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
+        
+        if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
+        if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
+        
+        // Auto-preencher formulário
+        if (CheckoutDOM.inputNome) CheckoutDOM.inputNome.value = user.displayName || '';
+        if (CheckoutDOM.inputEmail) {
+            CheckoutDOM.inputEmail.value = user.email || '';
+            CheckoutDOM.inputEmail.disabled = true;
+        }
+        
+        // Marcar etapa 1 como válida
+        CheckoutState.step1Valid = true;
+        CheckoutState.userData.nome = user.displayName || '';
+        CheckoutState.userData.email = user.email || '';
+        
+        updateColumnStatus(1, 'Completo', 'success');
+        unlockColumn(2);
+        
+        console.log('✅ Usuário autenticado:', user.email);
+        
+    } else {
+        // Usuário não logado
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
+        
+        if (CheckoutDOM.inputEmail) CheckoutDOM.inputEmail.disabled = false;
+        
+        CheckoutState.step1Valid = false;
+        updateColumnStatus(1, 'Obrigatório', 'default');
+        lockColumn(2);
+        lockColumn(3);
+        
+        console.log('❌ Usuário desconectado');
+    }
+}
+
+// ==================== TROCAR ABA DE AUTENTICAÇÃO ====================
+function switchAuthTab(tab) {
+    // Atualizar botões
+    document.querySelectorAll('.auth-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    
+    // Mostrar/ocultar conteúdo
+    if (CheckoutDOM.tabLogin) CheckoutDOM.tabLogin.style.display = tab === 'login' ? 'block' : 'none';
+    if (CheckoutDOM.tabCadastro) CheckoutDOM.tabCadastro.style.display = tab === 'cadastro' ? 'block' : 'none';
+}
+
+// ==================== HANDLE LOGIN ====================
+async function handleLogin() {
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    
+    if (!email || !password) {
+        showToast('Campos obrigatórios', 'Preencha e-mail e senha', 'warning');
         return;
     }
     
     try {
-        const parsed = JSON.parse(saved);
-        
-        // ✅ COMPATIBILITY WITH BOTH FORMATS
-        if (parsed.items && Array.isArray(parsed.items)) {
-            // NEW FORMAT: {items: [], appliedCoupon: {}, couponDiscount: 0}
-            cartItems = parsed.items.map(item => ({
-                ...item,
-                quantity: item.quantity || 1,
-                price: item.price || 0,
-                size: item.selectedSize || item.size || 'M',
-                color: item.selectedColor || item.color || 'Padrão'
-            }));
-            
-            // ✅ LOAD COUPON DATA IF EXISTS
-            if (parsed.appliedCoupon) {
-                discount = parsed.couponDiscount || 0;
-                console.log('✅ Cupom aplicado carregado:', parsed.appliedCoupon.code, '- R$', discount.toFixed(2));
-            }
-            
-        } else if (Array.isArray(parsed)) {
-            // OLD FORMAT: [{...}, {...}]
-            cartItems = parsed.map(item => ({
-                ...item,
-                quantity: item.quantity || 1,
-                price: item.price || 0,
-                size: item.selectedSize || item.size || 'M',
-                color: item.selectedColor || item.color || 'Padrão'
-            }));
-        } else {
-            cartItems = [];
-        }
-        
-        console.log('✅ Carrinho carregado:', cartItems.length, 'itens');
-        
+        showLoading(true);
+        await auth.signInWithEmailAndPassword(email, password);
+        showToast('Login realizado', 'Bem-vindo de volta!', 'success');
     } catch (error) {
-        console.error('❌ Erro ao carregar carrinho:', error);
-        cartItems = [];
-        discount = 0;
+        console.error('❌ Erro no login:', error);
+        let message = 'Erro ao fazer login';
+        if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado';
+        if (error.code === 'auth/wrong-password') message = 'Senha incorreta';
+        showToast('Erro', message, 'error');
+    } finally {
+        showLoading(false);
     }
 }
 
-// === RENDERIZAR RESUMO (OTIMIZADO COM FRAGMENT) ===
+// ==================== HANDLE CADASTRO ====================
+async function handleRegister() {
+    const name = document.getElementById('registerName')?.value.trim();
+    const email = document.getElementById('registerEmail')?.value.trim();
+    const password = document.getElementById('registerPassword')?.value;
+    const passwordConfirm = document.getElementById('registerPasswordConfirm')?.value;
+    
+    if (!name || !email || !password || !passwordConfirm) {
+        showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
+        return;
+    }
+    
+    if (password !== passwordConfirm) {
+        showToast('Senhas não conferem', 'Verifique as senhas digitadas', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showToast('Senha fraca', 'Use no mínimo 6 caracteres', 'warning');
+        return;
+    }
+    
+    try {
+        showLoading(true);
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        
+        await result.user.updateProfile({ displayName: name });
+        
+        await db.collection('usuarios').doc(result.user.uid).set({
+            nome: name,
+            email: email,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showToast('Cadastro realizado', 'Bem-vindo!', 'success');
+    } catch (error) {
+        console.error('❌ Erro no cadastro:', error);
+        let message = 'Erro ao cadastrar';
+        if (error.code === 'auth/email-already-in-use') message = 'E-mail já cadastrado';
+        if (error.code === 'auth/weak-password') message = 'Senha muito fraca';
+        showToast('Erro', message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== HANDLE LOGOUT ====================
+function handleLogout() {
+    auth.signOut().then(() => {
+        showToast('Logout realizado', 'Você saiu da sua conta', 'success');
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    });
+}
+
+// ==================== RENDERIZAR RESUMO ====================
 function renderSummary() {
     const fragment = document.createDocumentFragment();
-    subtotal = 0;
+    CheckoutState.subtotal = 0;
+    
+    const cartItems = CartManager ? CartManager.cart : [];
     
     cartItems.forEach(item => {
         const itemTotal = item.price * item.quantity;
-        subtotal += itemTotal;
+        CheckoutState.subtotal += itemTotal;
         
-        // ✅ VALIDAÇÃO ROBUSTA DE IMAGEM
         let imageSrc = 'https://via.placeholder.com/60x60/667eea/ffffff?text=SV';
-        
-        if (item.image) {
-            // Verifica se é URL válida
-            if (item.image.startsWith('http://') || item.image.startsWith('https://') || item.image.startsWith('data:image')) {
+        if (item.image ) {
+            if (item.image.startsWith('http://' ) || item.image.startsWith('https://' ) || item.image.startsWith('data:image')) {
                 imageSrc = item.image;
-            }
-            // Se for gradiente CSS, usa placeholder
-            else if (item.image.includes('gradient')) {
-                imageSrc = 'https://via.placeholder.com/60x60/667eea/ffffff?text=' + encodeURIComponent(item.name.substring(0, 2));
+            } else if (item.image.includes('gradient')) {
+                imageSrc = 'https://via.placeholder.com/60x60/667eea/ffffff?text=' + encodeURIComponent(item.name.substring(0, 2 ));
             }
         }
         
         const itemElement = document.createElement('div');
-        itemElement.className = 'checkout-summary-item';
+        itemElement.className = 'summary-item';
         itemElement.innerHTML = `
-          <img src="${imageSrc}" 
-               alt="${escapeHtml(item.name)}" 
-               class="checkout-summary-item-image"
-               loading="lazy"
-               onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=SV'">
-          <div class="checkout-summary-item-info">
-            <div class="checkout-summary-item-name">${escapeHtml(item.name)}</div>
-            <div class="checkout-summary-item-details">
-              Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Padrão')}
+            <img src="${imageSrc}" 
+                 alt="${escapeHtml(item.name)}" 
+                 class="summary-item-image"
+                 loading="lazy"
+                 onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=SV'">
+            <div class="summary-item-info">
+                <div class="summary-item-name">${escapeHtml(item.name )}</div>
+                <div class="summary-item-details">
+                    Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Padrão')}
+                </div>
+                <div class="summary-item-price">
+                    <span class="summary-item-qty">Qtd: ${item.quantity}</span>
+                    <span class="summary-item-total">R$ ${formatCurrency(itemTotal)}</span>
+                </div>
             </div>
-            <div class="checkout-summary-item-price">
-              <span class="checkout-summary-item-qty">Qtd: ${item.quantity}</span>
-              <span class="checkout-summary-item-total">R$ ${formatCurrency(itemTotal)}</span>
-            </div>
-          </div>
         `;
         fragment.appendChild(itemElement);
     });
     
-    DOM.summaryItems.innerHTML = '';
-    DOM.summaryItems.appendChild(fragment);
+    if (CheckoutDOM.summaryItems) {
+        CheckoutDOM.summaryItems.innerHTML = '';
+        CheckoutDOM.summaryItems.appendChild(fragment);
+    }
     
     updateTotals();
 }
 
-// === FUNÇÃO AUXILIAR: ESCAPAR HTML (SEGURANÇA XSS) ===
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// === FUNÇÃO AUXILIAR: FORMATAR MOEDA ===
-function formatCurrency(value) {
-  return value.toFixed(2).replace('.', ',');
-}
-
-// === ATUALIZAR TOTAIS ===
+// ==================== ATUALIZAR TOTAIS ====================
 function updateTotals() {
-  // Subtotal
-  DOM.summarySubtotal.textContent = `R$ ${formatCurrency(subtotal)}`;
-  
-  // ✅ SHOW COUPON DISCOUNT IF EXISTS
-  const discountRow = document.getElementById('summaryDiscountRow');
-  const discountValue = document.getElementById('summaryDiscount');
-  
-  if (discount > 0) {
-    if (discountRow) discountRow.style.display = 'flex';
-    if (discountValue) discountValue.textContent = `-R$ ${formatCurrency(discount)}`;
-  } else {
-    if (discountRow) discountRow.style.display = 'none';
-  }
-  
-  // Desconto PIX (10%)
-  const pixDiscount = (subtotal - discount) * CONFIG.PIX_DISCOUNT;
-  DOM.summaryPixDiscount.textContent = `R$ ${formatCurrency(pixDiscount)}`;
-  
-  // Total (subtotal - coupon discount)
-  total = Math.max(0, subtotal - discount);
-  
-  // Calcular parcelas (sobre o total com desconto)
-  const installmentValue = total / 3;
-  DOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
-}
-
-// === INICIALIZAR MÁSCARAS (OTIMIZADO COM DEBOUNCE) ===
-function initMasks() {
-  // Máscara de Telefone
-  const inputTelefone = document.getElementById('inputTelefone');
-  inputTelefone.addEventListener('input', debounce((e) => {
-    e.target.value = applyPhoneMask(e.target.value);
-  }, 100));
-  
-  // Máscara de CPF
-  const inputCPF = document.getElementById('inputCPF');
-  inputCPF.addEventListener('input', debounce((e) => {
-    e.target.value = applyCPFMask(e.target.value);
-  }, 100));
-  
-  // Máscara de CEP
-  const inputCEP = document.getElementById('inputCEP');
-  inputCEP.addEventListener('input', debounce((e) => {
-    e.target.value = applyCEPMask(e.target.value);
-  }, 100));
-  
-  // Buscar CEP (com debounce maior)
-  inputCEP.addEventListener('blur', debounce(async () => {
-    const cep = inputCEP.value.replace(/\D/g, '');
-    if (cep.length === CONFIG.CEP_LENGTH) {
-      await buscarCEP(cep);
-    }
-  }, 300));
-}
-
-// === FUNÇÕES DE MÁSCARAS (EXTRAÍDAS PARA REUTILIZAÇÃO) ===
-function applyPhoneMask(value) {
-  value = value.replace(/\D/g, '');
-  if (value.length <= 11) {
-    value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-    value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
-    value = value.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
-  }
-  return value;
-}
-
-function applyCPFMask(value) {
-  value = value.replace(/\D/g, '');
-  if (value.length <= CONFIG.CPF_LENGTH) {
-    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
-    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, '$1.$2.$3-$4');
-    value = value.replace(/^(\d{3})(\d{3})(\d{0,3})$/, '$1.$2.$3');
-    value = value.replace(/^(\d{3})(\d{0,3})$/, '$1.$2');
-  }
-  return value;
-}
-
-function applyCEPMask(value) {
-  value = value.replace(/\D/g, '');
-  if (value.length <= CONFIG.CEP_LENGTH) {
-    value = value.replace(/^(\d{5})(\d{3})$/, '$1-$2');
-  }
-  return value;
-}
-
-// === DEBOUNCE (PERFORMANCE) ===
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-// === BUSCAR CEP (ViaCEP API) COM CACHE ===
-const cepCache = new Map();
-
-async function buscarCEP(cep) {
-  // Verificar cache primeiro
-  if (cepCache.has(cep)) {
-    const data = cepCache.get(cep);
-    preencherEndereco(data);
-    return;
-  }
-  
-  try {
-    showLoading(true);
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
-    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error('Erro na resposta da API');
+    // Subtotal
+    if (CheckoutDOM.summarySubtotal) {
+        CheckoutDOM.summarySubtotal.textContent = `R$ ${formatCurrency(CheckoutState.subtotal)}`;
     }
     
-    const data = await response.json();
-    
-    if (data.erro) {
-      showToast('CEP não encontrado', 'Verifique o CEP digitado', 'error');
-      return;
-    }
-    
-    // Salvar no cache
-    cepCache.set(cep, data);
-    
-    // Preencher campos
-    preencherEndereco(data);
-    
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      showToast('Timeout', 'A busca demorou muito. Tente novamente', 'warning');
+    // Desconto de cupom
+    if (CartManager && CartManager.couponDiscount > 0) {
+        CheckoutState.couponDiscount = CartManager.couponDiscount;
+        if (CheckoutDOM.summaryDiscountRow) CheckoutDOM.summaryDiscountRow.style.display = 'flex';
+        if (CheckoutDOM.summaryDiscount) CheckoutDOM.summaryDiscount.textContent = `-R$ ${formatCurrency(CheckoutState.couponDiscount)}`;
     } else {
-      console.error('Erro ao buscar CEP:', error);
-      showToast('Erro ao buscar CEP', 'Tente novamente mais tarde', 'error');
-    }
-  } finally {
-    showLoading(false);
-  }
-}
-
-// === PREENCHER ENDEREÇO (EXTRAÍDO) ===
-function preencherEndereco(data) {
-  document.getElementById('inputRua').value = data.logradouro || '';
-  document.getElementById('inputBairro').value = data.bairro || '';
-  document.getElementById('inputCidade').value = data.localidade || '';
-  document.getElementById('inputUF').value = data.uf || '';
-  document.getElementById('inputComplemento').value = data.complemento || '';
-  
-  // Focar no número
-  document.getElementById('inputNumero').focus();
-  
-  // Validar formulário após preencher
-  validateForm();
-}
-
-// === INICIALIZAR EVENTOS ===
-function initEvents() {
-  // Tabs de Login/Cadastro
-  const authTabs = document.querySelectorAll('.checkout-auth-tab');
-  authTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      authTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
-  
-  // Validação de formulários
-  const formDados = document.getElementById('checkoutFormDados');
-  formDados.addEventListener('submit', (e) => {
-    e.preventDefault();
-  });
-  
-  const formEndereco = document.getElementById('checkoutFormEndereco');
-  formEndereco.addEventListener('submit', (e) => {
-    e.preventDefault();
-  });
-  
-  // Mudança de método de pagamento
-  const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
-  paymentMethods.forEach(method => {
-    method.addEventListener('change', handlePaymentMethodChange);
-  });
-  
-  // Mudança de parcelas
-  const installmentsSelect = document.getElementById('installmentsSelect');
-  installmentsSelect.addEventListener('change', updateInstallmentDisplay);
-  
-  // Validação em tempo real dos formulários
-  const allInputs = document.querySelectorAll('.checkout-form input, .checkout-form select');
-  allInputs.forEach(input => {
-    input.addEventListener('blur', validateForm);
-    input.addEventListener('input', validateForm);
-  });
-  
-  // Botão Finalizar
-  const btnFinalizarCompra = document.getElementById('btnFinalizarCompra');
-  btnFinalizarCompra.addEventListener('click', finalizarCompra);
-}
-
-// === VALIDAR FORMULÁRIO (OTIMIZADO COM VALIDAÇÕES VISUAIS) ===
-function validateForm() {
-  // Validar Dados Pessoais
-  const nome = document.getElementById('inputNome');
-  const email = document.getElementById('inputEmail');
-  const telefone = document.getElementById('inputTelefone');
-  const cpf = document.getElementById('inputCPF');
-  
-  const nomeValido = validateField(nome, nome.value.trim().length >= CONFIG.MIN_NAME_LENGTH);
-  const emailValido = validateField(email, isValidEmail(email.value.trim()));
-  const telefoneValido = validateField(telefone, telefone.value.replace(/\D/g, '').length >= CONFIG.MIN_PHONE_LENGTH);
-  const cpfValido = validateField(cpf, isValidCPF(cpf.value));
-  
-  const dadosValidos = nomeValido && emailValido && telefoneValido && cpfValido;
-  
-  // Validar Endereço
-  const cep = document.getElementById('inputCEP');
-  const rua = document.getElementById('inputRua');
-  const numero = document.getElementById('inputNumero');
-  const bairro = document.getElementById('inputBairro');
-  const cidade = document.getElementById('inputCidade');
-  const uf = document.getElementById('inputUF');
-  
-  const cepValido = validateField(cep, cep.value.replace(/\D/g, '').length === CONFIG.CEP_LENGTH);
-  const ruaValida = validateField(rua, rua.value.trim().length > 0);
-  const numeroValido = validateField(numero, numero.value.trim().length > 0);
-  const bairroValido = validateField(bairro, bairro.value.trim().length > 0);
-  const cidadeValida = validateField(cidade, cidade.value.trim().length > 0);
-  const ufValido = validateField(uf, uf.value.length > 0);
-  
-  const enderecoValido = cepValido && ruaValida && numeroValido && bairroValido && cidadeValida && ufValido;
-  
-  // Mostrar seção de pagamento se dados e endereço válidos
-  if (dadosValidos && enderecoValido) {
-    DOM.formPagamento.style.display = 'block';
-    document.querySelector('#sectionPagamento .checkout-section-subtitle').style.display = 'none';
-    
-    // Habilitar botão de finalizar
-    DOM.btnFinalizarCompra.disabled = false;
-    DOM.btnFinalizarCompra.textContent = 'FINALIZAR COMPRA';
-  } else {
-    DOM.formPagamento.style.display = 'none';
-    document.querySelector('#sectionPagamento .checkout-section-subtitle').style.display = 'block';
-    
-    // Desabilitar botão
-    DOM.btnFinalizarCompra.disabled = true;
-    DOM.btnFinalizarCompra.textContent = 'CONTINUAR COMPRANDO';
-  }
-}
-
-// === VALIDAR CAMPO INDIVIDUAL (FEEDBACK VISUAL) ===
-function validateField(element, isValid) {
-  if (element.value.trim() === '') {
-    element.classList.remove('error', 'success');
-    return false;
-  }
-  
-  if (isValid) {
-    element.classList.remove('error');
-    element.classList.add('success');
-    return true;
-  } else {
-    element.classList.remove('success');
-    element.classList.add('error');
-    return false;
-  }
-}
-
-// === MANIPULAR MUDANÇA DE MÉTODO DE PAGAMENTO ===
-function handlePaymentMethodChange(e) {
-  const method = e.target.value;
-  
-  if (method === 'credito-parcelado') {
-    DOM.installmentsBox.style.display = 'block';
-    DOM.summaryInstallmentRow.style.display = 'flex';
-  } else {
-    DOM.installmentsBox.style.display = 'none';
-    DOM.summaryInstallmentRow.style.display = 'none';
-  }
-  
-  updateTotals();
-}
-
-// === ATUALIZAR EXIBIÇÃO DE PARCELAS ===
-function updateInstallmentDisplay() {
-  const installments = DOM.installmentsSelect.value;
-  if (installments) {
-    const installmentValue = subtotal / parseInt(installments);
-    DOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
-    DOM.summaryInstallmentDetail.textContent = `EM ${installments}X SEM JUROS`;
-  }
-}
-
-// === FINALIZAR COMPRA (OTIMIZADA COM VALIDAÇÃO RIGOROSA) ===
-async function finalizarCompra() {
-  // Prevenir múltiplos cliques
-  if (DOM.btnFinalizarCompra.disabled) return;
-  
-  // Coletar e validar dados
-  const orderData = collectOrderData();
-  
-  if (!orderData) {
-    showToast('Dados inválidos', 'Verifique todos os campos', 'error');
-    return;
-  }
-  
-  try {
-    DOM.btnFinalizarCompra.disabled = true;
-    showLoading(true);
-    
-    // Criar objeto do pedido
-    const order = createOrderObject(orderData);
-    
-    // Salvar no Firestore
-    const docRef = await db.collection('pedidos').add(order);
-    console.log('Pedido salvo:', docRef.id);
-    
-    // Enviar para WhatsApp
-    enviarWhatsApp(order);
-    
-    // Limpar carrinho
-    localStorage.removeItem(CONFIG.CART_STORAGE_KEY);
-    
-    showToast('Pedido realizado!', 'Você será redirecionado para o WhatsApp', 'success');
-    
-  } catch (error) {
-    console.error('❌ Erro ao finalizar compra:', error);
-    
-    let errorMessage = 'Erro ao processar pedido';
-    
-    if (error.code === 'permission-denied') {
-        errorMessage = 'Erro de permissão. Entre em contato com o suporte.';
-        console.error('🔒 Regras do Firestore bloqueando a criação do pedido');
-    } else if (error.code === 'unavailable') {
-        errorMessage = 'Sem conexão com o servidor. Verifique sua internet.';
-    } else if (error.message) {
-        errorMessage = error.message;
+        CheckoutState.couponDiscount = 0;
+        if (CheckoutDOM.summaryDiscountRow) CheckoutDOM.summaryDiscountRow.style.display = 'none';
     }
     
-    showToast('Erro ao finalizar', errorMessage, 'error');
-    DOM.btnFinalizarCompra.disabled = false;
-} finally {
-    showLoading(false);
-}
-} 
-// === COLETAR DADOS DO PEDIDO ===
-function collectOrderData() {
-  const nome = document.getElementById('inputNome').value.trim();
-  const email = document.getElementById('inputEmail').value.trim();
-  const telefone = document.getElementById('inputTelefone').value;
-  const cpf = document.getElementById('inputCPF').value;
-  
-  const cep = document.getElementById('inputCEP').value;
-  const rua = document.getElementById('inputRua').value.trim();
-  const numero = document.getElementById('inputNumero').value.trim();
-  const complemento = document.getElementById('inputComplemento').value.trim();
-  const bairro = document.getElementById('inputBairro').value.trim();
-  const cidade = document.getElementById('inputCidade').value.trim();
-  const uf = document.getElementById('inputUF').value;
-  
-  const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
-  if (!paymentMethodElement) {
-    showToast('Selecione o pagamento', 'Escolha uma forma de pagamento', 'warning');
-    return null;
-  }
-  
-  const paymentMethod = paymentMethodElement.value;
-  let installments = 1;
-  
-  if (paymentMethod === 'credito-parcelado') {
-    installments = parseInt(DOM.installmentsSelect.value) || 0;
-    if (installments === 0) {
-      showToast('Selecione as parcelas', 'Escolha o número de parcelas', 'warning');
-      return null;
-    }
-  }
-  
-  // Validações finais
-  if (!isValidEmail(email)) {
-    showToast('Email inválido', 'Verifique o email digitado', 'error');
-    return null;
-  }
-  
-  if (!isValidCPF(cpf)) {
-    showToast('CPF inválido', 'Verifique o CPF digitado', 'error');
-    return null;
-  }
-  
-  return {
-    nome, email, telefone, cpf,
-    cep, rua, numero, complemento, bairro, cidade, uf,
-    paymentMethod, installments
-  };
-}
-
-// === CRIAR OBJETO DO PEDIDO ===
-function createOrderObject(data) {
-  let finalTotal = subtotal;
-  let paymentMethodName = '';
-  
-  switch (data.paymentMethod) {
-    case 'pix':
-      finalTotal = subtotal * (1 - CONFIG.PIX_DISCOUNT);
-      paymentMethodName = 'PIX à Vista (10% OFF)';
-      break;
-    case 'boleto':
-      paymentMethodName = 'Boleto Bancário';
-      break;
-    case 'credito-avista':
-      paymentMethodName = 'Cartão de Crédito à Vista';
-      break;
-    case 'credito-parcelado':
-      paymentMethodName = `Cartão de Crédito ${data.installments}x sem juros`;
-      break;
-  }
-  
-  return {
-    codigo: cartCode,
-    data: new Date().toISOString(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    cliente: {
-      nome: data.nome,
-      email: data.email,
-      telefone: data.telefone,
-      cpf: data.cpf,
-      uid: currentUser ? currentUser.uid : null
-    },
-    endereco: {
-      cep: data.cep,
-      rua: data.rua,
-      numero: data.numero,
-      complemento: data.complemento,
-      bairro: data.bairro,
-      cidade: data.cidade,
-      uf: data.uf
-    },
-    items: cartItems.map(item => ({
-      ...item,
-      subtotal: item.price * item.quantity
-    })),
-    pagamento: {
-      metodo: data.paymentMethod,
-      metodoNome: paymentMethodName,
-      parcelas: data.installments
-    },
-    valores: {
-      subtotal: parseFloat(subtotal.toFixed(2)),
-      desconto: parseFloat((subtotal - finalTotal).toFixed(2)),
-      total: parseFloat(finalTotal.toFixed(2))
-    },
-    status: 'pendente'
-  };
-}
-
-// === ENVIAR PARA WHATSAPP (OTIMIZADA) ===
-function enviarWhatsApp(order) {
-  const message = buildWhatsAppMessage(order);
-  const encodedMessage = encodeURIComponent(message);
-  const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodedMessage}`;
-  
-  // Abrir WhatsApp em nova aba
-  window.open(whatsappURL, '_blank');
-  
-  // Redirecionar para home após delay
-  setTimeout(() => {
-    window.location.href = 'index.html';
-  }, CONFIG.REDIRECT_DELAY);
-}
-
-// === CONSTRUIR MENSAGEM DO WHATSAPP ===
-function buildWhatsAppMessage(order) {
-  let msg = `*🛍️ NOVO PEDIDO - ${order.codigo}*\n\n`;
-  
-  msg += `*👤 CLIENTE*\n`;
-  msg += `Nome: ${order.cliente.nome}\n`;
-  msg += `Email: ${order.cliente.email}\n`;
-  msg += `Telefone: ${order.cliente.telefone}\n`;
-  msg += `CPF: ${order.cliente.cpf}\n\n`;
-  
-  msg += `*📍 ENDEREÇO DE ENTREGA*\n`;
-  msg += `${order.endereco.rua}, ${order.endereco.numero}`;
-  if (order.endereco.complemento) {
-    msg += ` - ${order.endereco.complemento}`;
-  }
-  msg += `\n${order.endereco.bairro} - ${order.endereco.cidade}/${order.endereco.uf}\n`;
-  msg += `CEP: ${order.endereco.cep}\n\n`;
-  
-  msg += `*🛒 PRODUTOS*\n`;
-  order.items.forEach(item => {
-    msg += `- ${item.name} (${item.size || 'M'}/${item.color || 'Laranja'})\n`;
-    msg += `  Qtd: ${item.quantity} x R$ ${formatCurrency(item.price)} = R$ ${formatCurrency(item.price * item.quantity)}\n`;
-  });
-  
-  msg += `\n*💳 PAGAMENTO*\n`;
-  msg += `Método: ${order.pagamento.metodoNome}\n\n`;
-  
-  msg += `*💰 VALORES*\n`;
-  msg += `Subtotal: R$ ${formatCurrency(order.valores.subtotal)}\n`;
-  if (order.valores.desconto > 0) {
-    msg += `Desconto: R$ ${formatCurrency(order.valores.desconto)}\n`;
-  }
-  msg += `*TOTAL: R$ ${formatCurrency(order.valores.total)}*\n`;
-  
-  return msg;
-}
-
-// === LOGOUT ===
-function logoutCheckout() {
-  auth.signOut().then(() => {
-    showToast('Logout realizado', 'Você saiu da sua conta', 'success');
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
-  });
-}
-
-// === GERAR CÓDIGO DO CARRINHO ===
-function generateCartCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-// === MOSTRAR/OCULTAR LOADING ===
-function showLoading(show) {
-  const overlay = document.getElementById('checkoutLoadingOverlay');
-  if (show) {
-    overlay.classList.add('active');
-  } else {
-    overlay.classList.remove('active');
-  }
-}
-
-// === MOSTRAR TOAST (OTIMIZADA COM QUEUE) ===
-const toastQueue = [];
-let isShowingToast = false;
-
-function showToast(title, message, type = 'success') {
-  toastQueue.push({ title, message, type });
-  
-  if (!isShowingToast) {
-    processToastQueue();
-  }
-}
-
-function processToastQueue() {
-  if (toastQueue.length === 0) {
-    isShowingToast = false;
-    return;
-  }
-  
-  isShowingToast = true;
-  const { title, message, type } = toastQueue.shift();
-  
-  const icons = {
-    success: '✓',
-    error: '✕',
-    warning: '⚠'
-  };
-  
-  const toast = document.createElement('div');
-  toast.className = `checkout-toast ${type}`;
-  toast.innerHTML = `
-    <div class="toast-icon">${icons[type]}</div>
-    <div class="toast-content">
-      <div class="toast-title">${escapeHtml(title)}</div>
-      <div class="toast-message">${escapeHtml(message)}</div>
-    </div>
-  `;
-  
-  DOM.toastContainer.appendChild(toast);
-  
-  // Remover após duração configurada
-  setTimeout(() => {
-    toast.style.animation = 'toastSlideIn 0.3s ease-out reverse';
-    setTimeout(() => {
-      if (DOM.toastContainer.contains(toast)) {
-        DOM.toastContainer.removeChild(toast);
-      }
-      processToastQueue();
-    }, 300);
-  }, CONFIG.TOAST_DURATION);
-}
-
-// === VALIDAÇÃO DE EMAIL (RFC 5322 SIMPLIFICADA) ===
-function isValidEmail(email) {
-  const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  return re.test(email) && email.length <= 254;
-}
-
-// === VALIDAÇÃO DE CPF ===
-function isValidCPF(cpf) {
-  cpf = cpf.replace(/\D/g, '');
-  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-  
-  let sum = 0;
-  let remainder;
-  
-  for (let i = 1; i <= 9; i++) {
-    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-  }
-  
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.substring(9, 10))) return false;
-  
-  sum = 0;
-  for (let i = 1; i <= 10; i++) {
-    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-  }
-  
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.substring(10, 11))) return false;
-  
-  return true;
-}
-
-
-  // Vanilla JS Masks (No dependencies)
-function applyMasks() {
-    const cpfInput = document.getElementById('inputCPF');
-    const telefoneInput = document.getElementById('inputTelefone');
-    const cepInput = document.getElementById('inputCEP');
+    // Total com desconto
+    const totalComDesconto = CheckoutState.subtotal - CheckoutState.couponDiscount;
     
-    if (cpfInput) {
-        cpfInput.addEventListener('input', (e) => {
+    // Desconto PIX (10%)
+    if (CheckoutState.paymentData.method === 'pix') {
+        CheckoutState.pixDiscount = totalComDesconto * CHECKOUT_CONFIG.PIX_DISCOUNT;
+        if (CheckoutDOM.summaryPixRow) CheckoutDOM.summaryPixRow.style.display = 'flex';
+        if (CheckoutDOM.summaryPixDiscount) CheckoutDOM.summaryPixDiscount.textContent = `-R$ ${formatCurrency(CheckoutState.pixDiscount)}`;
+    } else {
+        CheckoutState.pixDiscount = 0;
+        if (CheckoutDOM.summaryPixRow) CheckoutDOM.summaryPixRow.style.display = 'none';
+    }
+    
+    // Total final
+    CheckoutState.total = Math.max(0, totalComDesconto - CheckoutState.pixDiscount);
+    
+    // Parcelamento
+    if (CheckoutState.paymentData.method === 'credito-parcelado' && CheckoutState.paymentData.installments > 1) {
+        const installmentValue = CheckoutState.total / CheckoutState.paymentData.installments;
+        if (CheckoutDOM.summaryInstallmentValue) CheckoutDOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
+        if (CheckoutDOM.summaryInstallmentDetail) CheckoutDOM.summaryInstallmentDetail.textContent = `EM ${CheckoutState.paymentData.installments}X SEM JUROS`;
+        if (CheckoutDOM.summaryInstallmentRow) CheckoutDOM.summaryInstallmentRow.style.display = 'flex';
+    } else {
+        if (CheckoutDOM.summaryInstallmentRow) CheckoutDOM.summaryInstallmentRow.style.display = 'none';
+    }
+    
+    // Total final
+    if (CheckoutDOM.summaryTotal) {
+        CheckoutDOM.summaryTotal.textContent = `R$ ${formatCurrency(CheckoutState.total)}`;
+    }
+}
+
+// ==================== ATUALIZAR UI DO PAGAMENTO ====================
+function updatePaymentUI() {
+    const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!selectedMethod) return;
+    
+    CheckoutState.paymentData.method = selectedMethod.value;
+    
+    // Mostrar/ocultar box de parcelas
+    if (CheckoutState.paymentData.method === 'credito-parcelado') {
+        if (CheckoutDOM.installmentsBox) CheckoutDOM.installmentsBox.style.display = 'block';
+    } else {
+        if (CheckoutDOM.installmentsBox) CheckoutDOM.installmentsBox.style.display = 'none';
+    }
+    
+    // Mostrar/ocultar dados do cartão
+    if (CheckoutState.paymentData.method.includes('credito')) {
+        if (CheckoutDOM.cardDetailsBox) CheckoutDOM.cardDetailsBox.style.display = 'block';
+    } else {
+        if (CheckoutDOM.cardDetailsBox) CheckoutDOM.cardDetailsBox.style.display = 'none';
+    }
+    
+    updateTotals();
+}
+
+// ==================== DESBLOQUEAR/BLOQUEAR COLUNAS ====================
+function unlockColumn(columnNumber) {
+    const columnId = `column${columnNumber}${['', 'Identity', 'Delivery', 'Payment', 'Summary'][columnNumber]}`;
+    const column = document.getElementById(columnId);
+    if (!column) return;
+    
+    const content = column.querySelector('.column-content');
+    if (!content) return;
+    
+    content.classList.remove('column-locked');
+    
+    const form = content.querySelector('form');
+    if (form) form.style.display = 'block';
+    
+    const lockMessage = content.querySelector('.lock-message');
+    if (lockMessage) lockMessage.style.display = 'none';
+}
+
+function lockColumn(columnNumber) {
+    const columnId = `column${columnNumber}${['', 'Identity', 'Delivery', 'Payment', 'Summary'][columnNumber]}`;
+    const column = document.getElementById(columnId);
+    if (!column) return;
+    
+    const content = column.querySelector('.column-content');
+    if (!content) return;
+    
+    content.classList.add('column-locked');
+    
+    const form = content.querySelector('form');
+    if (form) form.style.display = 'none';
+    
+    const lockMessage = content.querySelector('.lock-message');
+    if (lockMessage) lockMessage.style.display = 'flex';
+}
+
+function updateColumnStatus(columnNumber, status, type = 'default') {
+    const statusElement = document.getElementById(`col${columnNumber}Status`);
+    if (!statusElement) return;
+    
+    statusElement.textContent = status;
+    statusElement.className = `column-status status-${type}`;
+}
+
+// ==================== VALIDAÇÃO ETAPA 1: DADOS PESSOAIS ====================
+function validateDadosStep() {
+    const nome = CheckoutDOM.inputNome?.value.trim();
+    const email = CheckoutDOM.inputEmail?.value.trim();
+    const telefone = CheckoutDOM.inputTelefone?.value.trim();
+    const cpf = CheckoutDOM.inputCPF?.value.trim();
+    
+    if (!nome || nome.length < CHECKOUT_CONFIG.MIN_NAME_LENGTH) {
+        showToast('Nome inválido', 'Use no mínimo 3 caracteres', 'warning');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        showToast('E-mail inválido', 'Verifique o e-mail digitado', 'error');
+        return;
+    }
+    
+    if (!isValidCPF(cpf)) {
+        showToast('CPF inválido', 'Verifique o CPF digitado', 'error');
+        return;
+    }
+    
+    // Salvar dados
+    CheckoutState.userData.nome = nome;
+    CheckoutState.userData.email = email;
+    CheckoutState.userData.telefone = telefone;
+    CheckoutState.userData.cpf = cpf;
+    
+    CheckoutState.step1Valid = true;
+    updateColumnStatus(1, 'Completo', 'success');
+    unlockColumn(2);
+    
+    showToast('Dados validados', 'Prossiga para o endereço', 'success');
+}
+
+// ==================== VALIDAÇÃO ETAPA 2: ENDEREÇO ====================
+function validateEnderecoStep() {
+    const cep = CheckoutDOM.inputCEP?.value.trim();
+    const rua = CheckoutDOM.inputRua?.value.trim();
+    const numero = CheckoutDOM.inputNumero?.value.trim();
+    const bairro = CheckoutDOM.inputBairro?.value.trim();
+    const cidade = CheckoutDOM.inputCidade?.value.trim();
+    const uf = CheckoutDOM.inputUF?.value;
+    
+    if (!cep || !rua || !numero || !bairro || !cidade || !uf) {
+        showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
+        return;
+    }
+    
+    // Salvar dados
+    CheckoutState.addressData.cep = cep;
+    CheckoutState.addressData.rua = rua;
+    CheckoutState.addressData.numero = numero;
+    CheckoutState.addressData.complemento = CheckoutDOM.inputComplemento?.value.trim() || '';
+    CheckoutState.addressData.bairro = bairro;
+    CheckoutState.addressData.cidade = cidade;
+    CheckoutState.addressData.uf = uf;
+    
+    CheckoutState.step2Valid = true;
+    updateColumnStatus(2, 'Completo', 'success');
+    unlockColumn(3);
+    
+    showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
+}
+
+// ==================== VALIDAÇÃO ETAPA 3: PAGAMENTO ====================
+function validatePagamentoStep() {
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    
+    if (!paymentMethod) {
+        showToast('Selecione o pagamento', 'Escolha uma forma de pagamento', 'warning');
+        return;
+    }
+    
+    CheckoutState.paymentData.method = paymentMethod.value;
+    
+    if (CheckoutState.paymentData.method === 'credito-parcelado') {
+        const installments = CheckoutDOM.installmentsSelect?.value;
+        if (!installments) {
+            showToast('Selecione as parcelas', 'Escolha o número de parcelas', 'warning');
+            return;
+        }
+        CheckoutState.paymentData.installments = parseInt(installments);
+    } else {
+        CheckoutState.paymentData.installments = 1;
+    }
+    
+    CheckoutState.step3Valid = true;
+    updateColumnStatus(3, 'Completo', 'success');
+    
+    if (CheckoutDOM.btnFinalizarCompra) CheckoutDOM.btnFinalizarCompra.disabled = false;
+    
+    showToast('Pagamento validado', 'Pronto para finalizar', 'success');
+}
+
+// ==================== INICIALIZAR MÁSCARAS ====================
+function initMasks() {
+    if (CheckoutDOM.inputCPF) {
+        CheckoutDOM.inputCPF.addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 11) v = v.slice(0, 11);
             e.target.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         });
     }
     
-    if (telefoneInput) {
-        telefoneInput.addEventListener('input', (e) => {
+    if (CheckoutDOM.inputTelefone) {
+        CheckoutDOM.inputTelefone.addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 11) v = v.slice(0, 11);
             e.target.value = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         });
     }
     
-    if (cepInput) {
-        cepInput.addEventListener('input', (e) => {
+    if (CheckoutDOM.inputCEP) {
+        CheckoutDOM.inputCEP.addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, '');
             if (v.length > 8) v = v.slice(0, 8);
             e.target.value = v.replace(/(\d{5})(\d{3})/, '$1-$2');
+            
+            if (v.length === 8) {
+                loadAddressFromViaCEP(v);
+            }
         });
     }
 }
 
-document.addEventListener('DOMContentLoaded', applyMasks);
+// ==================== CARREGAR ENDEREÇO DO VIACEP ====================
+async function loadAddressFromViaCEP(cep) {
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/` );
+        const data = await response.json();
+        
+        if (data.erro) {
+            showToast('CEP não encontrado', 'Verifique o CEP digitado', 'warning');
+            return;
+        }
+        
+        if (CheckoutDOM.inputRua) CheckoutDOM.inputRua.value = data.logradouro || '';
+        if (CheckoutDOM.inputBairro) CheckoutDOM.inputBairro.value = data.bairro || '';
+        if (CheckoutDOM.inputCidade) CheckoutDOM.inputCidade.value = data.localidade || '';
+        if (CheckoutDOM.inputUF) CheckoutDOM.inputUF.value = data.uf || '';
+        
+        showToast('Endereço carregado', 'Verifique os dados', 'success');
+    } catch (error) {
+        console.error('❌ Erro ao carregar CEP:', error);
+        showToast('Erro ao buscar CEP', 'Tente novamente', 'error');
+    }
+}
+
+// ==================== INICIALIZAR EVENTOS ====================
+function initEvents() {
+    // Formulário de dados pessoais
+    if (CheckoutDOM.formDadosPessoais) {
+        CheckoutDOM.formDadosPessoais.addEventListener('submit', (e) => {
+            e.preventDefault();
+            validateDadosStep();
+        });
+    }
+    
+    // Formulário de endereço
+    if (CheckoutDOM.formEndereco) {
+        CheckoutDOM.formEndereco.addEventListener('submit', (e) => {
+            e.preventDefault();
+            validateEnderecoStep();
+        });
+    }
+    
+    // Formulário de pagamento
+    if (CheckoutDOM.formPagamento) {
+        CheckoutDOM.formPagamento.addEventListener('submit', (e) => {
+            e.preventDefault();
+            validatePagamentoStep();
+        });
+    }
+    
+    // Mudança de método de pagamento
+    CheckoutDOM.paymentOptions.forEach(option => {
+        option.addEventListener('change', updatePaymentUI);
+    });
+    
+    // Mudança de parcelas
+    if (CheckoutDOM.installmentsSelect) {
+        CheckoutDOM.installmentsSelect.addEventListener('change', updateTotals);
+    }
+    
+    // Botão Finalizar Compra
+    if (CheckoutDOM.btnFinalizarCompra) {
+        CheckoutDOM.btnFinalizarCompra.addEventListener('click', processCheckout);
+    }
+}
+
+// ==================== FINALIZAR COMPRA ====================
+async function processCheckout() {
+    if (!CheckoutState.step1Valid || !CheckoutState.step2Valid || !CheckoutState.step3Valid) {
+        showToast('Validação incompleta', 'Complete todas as etapas', 'error');
+        return;
+    }
+    
+    if (CheckoutDOM.btnFinalizarCompra.disabled) return;
+    
+    try {
+        CheckoutDOM.btnFinalizarCompra.disabled = true;
+        showLoading(true);
+        
+        const order = createOrderObject();
+        
+        const docRef = await db.collection('pedidos').add(order);
+        console.log('✅ Pedido salvo:', docRef.id);
+        
+        enviarWhatsApp(order);
+        
+        if (CartManager) CartManager.clear();
+        
+        showToast('Pedido realizado!', 'Você será redirecionado para o WhatsApp', 'success');
+        
+    } catch (error) {
+        console.error('❌ Erro ao finalizar compra:', error);
+        
+        let errorMessage = 'Erro ao processar pedido';
+        if (error.code === 'permission-denied') {
+            errorMessage = 'Erro de permissão. Entre em contato com o suporte.';
+        } else if (error.code === 'unavailable') {
+            errorMessage = 'Sem conexão com o servidor. Verifique sua internet.';
+        }
+        
+        showToast('Erro ao finalizar', errorMessage, 'error');
+        CheckoutDOM.btnFinalizarCompra.disabled = false;
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== CRIAR OBJETO DO PEDIDO ====================
+function createOrderObject() {
+    let paymentMethodName = '';
+    
+    switch (CheckoutState.paymentData.method) {
+        case 'pix':
+            paymentMethodName = 'PIX à Vista (10% OFF)';
+            break;
+        case 'boleto':
+            paymentMethodName = 'Boleto Bancário';
+            break;
+        case 'credito-avista':
+            paymentMethodName = 'Cartão de Crédito à Vista';
+            break;
+        case 'credito-parcelado':
+            paymentMethodName = `Cartão de Crédito ${CheckoutState.paymentData.installments}x sem juros`;
+            break;
+    }
+    
+    const cartItems = CartManager ? CartManager.cart : [];
+    
+    return {
+        codigo: CheckoutState.cartCode,
+        data: new Date().toISOString(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        cliente: {
+            nome: CheckoutState.userData.nome,
+            email: CheckoutState.userData.email,
+            telefone: CheckoutState.userData.telefone,
+            cpf: CheckoutState.userData.cpf,
+            uid: typeof window.currentUser !== 'undefined' ? window.currentUser?.uid : null
+        },
+        endereco: {
+            cep: CheckoutState.addressData.cep,
+            rua: CheckoutState.addressData.rua,
+            numero: CheckoutState.addressData.numero,
+            complemento: CheckoutState.addressData.complemento,
+            bairro: CheckoutState.addressData.bairro,
+            cidade: CheckoutState.addressData.cidade,
+            uf: CheckoutState.addressData.uf
+        },
+        items: cartItems.map(item => ({
+            ...item,
+            subtotal: item.price * item.quantity
+        })),
+        pagamento: {
+            metodo: CheckoutState.paymentData.method,
+            metodoNome: paymentMethodName,
+            parcelas: CheckoutState.paymentData.installments
+        },
+        valores: {
+            subtotal: parseFloat(CheckoutState.subtotal.toFixed(2)),
+            desconto: parseFloat(CheckoutState.couponDiscount.toFixed(2)),
+            pixDesconto: parseFloat(CheckoutState.pixDiscount.toFixed(2)),
+            total: parseFloat(CheckoutState.total.toFixed(2))
+        },
+        status: 'pendente'
+    };
+}
+
+// ==================== ENVIAR PARA WHATSAPP ====================
+function enviarWhatsApp(order) {
+    const message = buildWhatsAppMessage(order);
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${CHECKOUT_CONFIG.WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    
+    window.open(whatsappURL, '_blank' );
+    
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, CHECKOUT_CONFIG.REDIRECT_DELAY);
+}
+
+// ==================== CONSTRUIR MENSAGEM DO WHATSAPP ====================
+function buildWhatsAppMessage(order) {
+    let msg = `*🛍️ NOVO PEDIDO - ${order.codigo}*\n\n`;
+    
+    msg += `*👤 CLIENTE*\n`;
+    msg += `Nome: ${order.cliente.nome}\n`;
+    msg += `Email: ${order.cliente.email}\n`;
+    msg += `Telefone: ${order.cliente.telefone}\n`;
+    msg += `CPF: ${order.cliente.cpf}\n\n`;
+    
+    msg += `*📍 ENDEREÇO DE ENTREGA*\n`;
+    msg += `${order.endereco.rua}, ${order.endereco.numero}`;
+    if (order.endereco.complemento) {
+        msg += ` - ${order.endereco.complemento}`;
+    }
+    msg += `\n${order.endereco.bairro} - ${order.endereco.cidade}/${order.endereco.uf}\n`;
+    msg += `CEP: ${order.endereco.cep}\n\n`;
+    
+    msg += `*🛒 PRODUTOS*\n`;
+    order.items.forEach(item => {
+        msg += `- ${item.name} (${item.size || 'M'}/${item.color || 'Padrão'})\n`;
+        msg += `  Qtd: ${item.quantity} x R$ ${formatCurrency(item.price)} = R$ ${formatCurrency(item.price * item.quantity)}\n`;
+    });
+    
+    msg += `\n*💳 PAGAMENTO*\n`;
+    msg += `Método: ${order.pagamento.metodoNome}\n\n`;
+    
+    msg += `*💰 VALORES*\n`;
+    msg += `Subtotal: R$ ${formatCurrency(order.valores.subtotal)}\n`;
+    if (order.valores.desconto > 0) {
+        msg += `Desconto (Cupom): R$ ${formatCurrency(order.valores.desconto)}\n`;
+    }
+    if (order.valores.pixDesconto > 0) {
+        msg += `Desconto (PIX): R$ ${formatCurrency(order.valores.pixDesconto)}\n`;
+    }
+    msg += `*TOTAL: R$ ${formatCurrency(order.valores.total)}*\n`;
+    
+    return msg;
+}
+
+// ==================== FUNÇÕES UTILITÁRIAS ====================
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatCurrency(value) {
+    return value.toFixed(2).replace('.', ',');
+}
+
+function generateCartCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
+
+function isValidEmail(email) {
+    const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return re.test(email) && email.length <= 254;
+}
+
+function isValidCPF(cpf) {
+    cpf = cpf.replace(/\D/g, '');
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    
+    let sum = 0;
+    let remainder;
+    
+    for (let i = 1; i <= 9; i++) {
+        sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    }
+    
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+    
+    sum = 0;
+    for (let i = 1; i <= 10; i++) {
+        sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    }
+    
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+    
+    return true;
+}
+
+function showLoading(show) {
+    if (CheckoutDOM.loadingOverlay) {
+        if (show) {
+            CheckoutDOM.loadingOverlay.classList.add('active');
+        } else {
+            CheckoutDOM.loadingOverlay.classList.remove('active');
+        }
+    }
+}
+
+// ==================== TOAST NOTIFICATIONS ====================
+const toastQueue = [];
+let isShowingToast = false;
+
+function showToast(title, message, type = 'success') {
+    toastQueue.push({ title, message, type });
+    
+    if (!isShowingToast) {
+        processToastQueue();
+    }
+}
+
+function processToastQueue() {
+    if (toastQueue.length === 0) {
+        isShowingToast = false;
+        return;
+    }
+    
+    isShowingToast = true;
+    const { title, message, type } = toastQueue.shift();
+    
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = `checkout-toast ${type}`;
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type]}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(title)}</div>
+            <div class="toast-message">${escapeHtml(message)}</div>
+        </div>
+    `;
+    
+    if (CheckoutDOM.toastContainer) {
+        CheckoutDOM.toastContainer.appendChild(toast);
+    }
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideIn 0.3s ease-out reverse';
+        setTimeout(() => {
+            if (CheckoutDOM.toastContainer && CheckoutDOM.toastContainer.contains(toast)) {
+                CheckoutDOM.toastContainer.removeChild(toast);
+            }
+            processToastQueue();
+        }, 300);
+    }, CHECKOUT_CONFIG.TOAST_DURATION);
+}
