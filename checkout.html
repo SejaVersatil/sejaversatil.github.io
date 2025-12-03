@@ -290,114 +290,98 @@
           </div>
         </section>
 
-        <!-- ==================== COLUNA 3: PAGAMENTO ==================== -->
-        <section class="checkout-column column-3-payment" id="column3Payment">
-          <div class="column-header">
-            <div class="column-number">3</div>
-            <h2 class="column-title">Forma de Pagamento</h2>
-            <span class="column-status" id="col3Status">Bloqueado</span>
-          </div>
-          
-          <div class="column-content column-locked" id="col3Content">
-            <div class="lock-message">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+       <!-- ==================== COLUNA 3: PAGAMENTO ==================== -->
+<section class="checkout-column column-3-payment" id="column3Payment">
+  <div class="column-header">
+    <div class="column-number">3</div>
+    <h2 class="column-title">Forma de Pagamento</h2>
+    <span class="column-status" id="col3Status">Bloqueado</span>
+  </div>
+  
+  <div class="column-content column-locked" id="col3Content">
+    <div class="lock-message">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <p>Complete o endereço de entrega para desbloquear esta seção</p>
+    </div>
+
+    <form id="formPagamento" class="form-pagamento" style="display: none;" onsubmit="event.preventDefault(); validatePagamentoStep();">
+      <div class="payment-options">
+        
+        <!-- Opção PIX -->
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="pix" checked onchange="updatePaymentUI()">
+          <div class="payment-option-content">
+            <div class="payment-option-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
               </svg>
-              <p>Complete o endereço de entrega para desbloquear esta seção</p>
             </div>
-
-            <form id="formPagamento" class="form-pagamento" style="display: none;" onsubmit="event.preventDefault( ); validatePagamentoStep();">
-              <div class="payment-options">
-                
-                <!-- Opção PIX -->
-                <label class="payment-option">
-                  <input type="radio" name="paymentMethod" value="pix" checked onchange="updatePaymentUI()">
-                  <div class="payment-option-content">
-                    <div class="payment-option-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                        <line x1="1" y1="10" x2="23" y2="10"/>
-                      </svg>
-                    </div>
-                    <div class="payment-option-info">
-                      <strong>PIX</strong>
-                      <small>Aprovação imediata + 10% OFF</small>
-                    </div>
-                    <div class="payment-option-check"></div>
-                  </div>
-                </label>
-                
-                <!-- Opção Cartão à Vista -->
-                <label class="payment-option">
-                  <input type="radio" name="paymentMethod" value="credito-avista" onchange="updatePaymentUI()">
-                  <div class="payment-option-content">
-                    <div class="payment-option-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="4" width="22" height="16" rx="2"/>
-                        <line x1="1" y1="10" x2="23" y2="10"/>
-                      </svg>
-                    </div>
-                    <div class="payment-option-info">
-                      <strong>Cartão de Crédito</strong>
-                      <small>À vista</small>
-                    </div>
-                    <div class="payment-option-check"></div>
-                  </div>
-                </label>
-                
-                <!-- Opção Cartão Parcelado -->
-                <label class="payment-option">
-                  <input type="radio" name="paymentMethod" value="credito-parcelado" onchange="updatePaymentUI()">
-                  <div class="payment-option-content">
-                    <div class="payment-option-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="4" width="22" height="16" rx="2"/>
-                        <line x1="1" y1="10" x2="23" y2="10"/>
-                      </svg>
-                    </div>
-                    <div class="payment-option-info">
-                      <strong>Cartão Parcelado</strong>
-                      <small>Em até 3x</small>
-                    </div>
-                    <div class="payment-option-check"></div>
-                  </div>
-                </label>
-                
-              </div>
-              
-              <!-- Box de Parcelas -->
-              <div class="installments-box" id="installmentsBox" style="display: none;">
-                <label for="installmentsSelect">Número de Parcelas:</label>
-                <select id="installmentsSelect" onchange="updatePaymentUI()">
-                  <option value="">Selecione</option>
-                  <option value="2">2x sem juros</option>
-                  <option value="3">3x sem juros</option>
-                </select>
-              </div>
-
-              <!-- Dados do Cartão -->
-              <div class="card-details-box" id="cardDetailsBox" style="display: none;">
-                <div class="form-group full">
-                  <label for="cardNumber">NÚMERO DO CARTÃO *</label>
-                  <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
-                </div>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="cardExpiry">VALIDADE *</label>
-                    <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5">
-                  </div>
-                  <div class="form-group">
-                    <label for="cardCVV">CVV *</label>
-                    <input type="text" id="cardCVV" placeholder="000" maxlength="3">
-                  </div>
-                </div>
-              </div>
-
-              <button type="submit" class="btn-primary btn-block">CONFIRMAR PAGAMENTO</button>
-            </form>
+            <div class="payment-option-info">
+              <strong>PIX</strong>
+              <small>Aprovação imediata + 10% OFF</small>
+            </div>
+            <div class="payment-option-check"></div>
           </div>
-        </section>
+        </label>
+        
+        <!-- Opção Cartão à Vista -->
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-avista" onchange="updatePaymentUI()">
+          <div class="payment-option-content">
+            <div class="payment-option-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div class="payment-option-info">
+              <strong>Cartão de Crédito à Vista</strong>
+              <small>Pagamento único</small>
+            </div>
+            <div class="payment-option-check"></div>
+          </div>
+        </label>
+        
+        <!-- Opção Cartão Parcelado -->
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="credito-parcelado" onchange="updatePaymentUI()">
+          <div class="payment-option-content">
+            <div class="payment-option-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div class="payment-option-info">
+              <strong>Cartão Parcelado</strong>
+              <small>Em até 3x sem juros</small>
+            </div>
+            <div class="payment-option-check"></div>
+          </div>
+        </label>
+        
+      </div>
+      
+      <!-- ✅ APENAS Box de Parcelas (SEM campos de cartão) -->
+      <div class="installments-box" id="installmentsBox" style="display: none;">
+        <label for="installmentsSelect">Número de Parcelas:</label>
+        <select id="installmentsSelect" onchange="updatePaymentUI()">
+          <option value="">Selecione</option>
+          <option value="2">2x sem juros</option>
+          <option value="3">3x sem juros</option>
+        </select>
+      </div>
+
+      <!-- ✅ REMOVIDO: cardDetailsBox -->
+
+      <button type="submit" class="btn-primary btn-block">CONFIRMAR PAGAMENTO</button>
+    </form>
+  </div>
+</section>
 
         <!-- ==================== COLUNA 4: RESUMO DO PEDIDO ==================== -->
         <aside class="checkout-column column-4-summary" id="column4Summary">
