@@ -223,6 +223,7 @@ auth.onAuthStateChanged(async (user) => {
     
     // 3. Atualizar a UI
     updateUI(currentUser);
+if (typeof updateCartUI === 'function') updateCartUI();
 });
 
 // ==================== 3. FUNÇÕES DE AUTENTICAÇÃO REESCRITAS ====================
