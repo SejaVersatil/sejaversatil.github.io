@@ -2805,6 +2805,33 @@ function updateQuantity(cartItemId, change) {
                 showAppliedCouponBadge(appliedCoupon, newDiscount);
             }
         }
+
+        if (appliedCoupon && couponDiscount > 0) {
+    const newSubtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    
+    if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
+        removeCoupon();
+        showToast(`❌ Cupom removido: valor mínimo R$ ${appliedCoupon.minValue.toFixed(2)}`, 'error');
+    } else {
+        let newDiscount = 0;
+        
+        if (appliedCoupon.type === 'percentage') {
+            newDiscount = (newSubtotal * appliedCoupon.value) / 100;
+            if (appliedCoupon.maxDiscount && newDiscount > appliedCoupon.maxDiscount) {
+                newDiscount = appliedCoupon.maxDiscount;
+            }
+        } else if (appliedCoupon.type === 'fixed') {
+            newDiscount = appliedCoupon.value;
+        }
+        
+        if (newDiscount > newSubtotal) {
+            newDiscount = newSubtotal;
+        }
+        
+        couponDiscount = newDiscount;
+        showAppliedCouponBadge(appliedCoupon, newDiscount);
+    }
+}
         
         saveCart();
         updateCartUI();
@@ -5626,6 +5653,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
