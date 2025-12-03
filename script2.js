@@ -2970,13 +2970,11 @@ const saveCart = (() => {
     let timeout;
     
     return () => {
-        // Cancela o salvamento anterior se o usuário clicou de novo em menos de 300ms
         clearTimeout(timeout);
         
-        // Agenda um novo salvamento
         timeout = setTimeout(() => {
             try {
-                // ✅ Usa o formato novo com suporte a cupons
+                // ✅ ALWAYS save in NEW format
                 const cartData = {
                     items: cart || [],
                     appliedCoupon: appliedCoupon || null,
@@ -2984,14 +2982,21 @@ const saveCart = (() => {
                 };
                 
                 localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+                
+                // ✅ SYNC with global scope
+                if (typeof window.cart !== 'undefined') {
+                    window.cart = cart;
+                    window.appliedCoupon = appliedCoupon;
+                    window.couponDiscount = couponDiscount;
+                }
+                
                 console.log('💾 Carrinho salvo (Debounced)');
             } catch (err) {
                 console.warn('❌ Erro ao salvar carrinho:', err);
             }
-        }, 300); // Espera 300ms após o último clique para salvar
+        }, 300);
     };
 })();
-
 
 // ==================== INICIALIZAÇÃO ====================
 // Garante que os elementos são carregados ao iniciar a página
@@ -5864,4 +5869,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
