@@ -2721,11 +2721,17 @@ function updateCartUI() {
     const cartFooter = document.getElementById('cartFooter');
     const cartTotal = document.getElementById('cartTotal');
     
+    // ✅ CRITICAL FIX: Verificar ANTES de usar requestAnimationFrame
+    if (!cartCount || !cartItems || !cartFooter) {
+        // Silenciosamente retorna se elementos não existirem (normal no checkout.html)
+        return;
+    }
+    
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     
-    // ✅ Batch de atualizações DOM usando requestAnimationFrame
+    // ✅ Agora é seguro usar requestAnimationFrame
     requestAnimationFrame(() => {
-        // Atualizar contador
+        // Atualizar contador (AGORA É SEGURO)
         cartCount.textContent = totalItems;
         cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         
@@ -2752,7 +2758,7 @@ function updateCartUI() {
         <div style="font-size: 0.75rem; color: #666; margin-top: 0.3rem;">
             ${item.selectedSize ? `Tamanho: <strong>${sanitizeInput(item.selectedSize)}</strong>` : ''}
             ${item.selectedSize && item.selectedColor ? ' | ' : ''}
-            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''} <!-- ✅ ADICIONE sanitizeInput -->
+            ${item.selectedColor ? `Cor: <strong>${sanitizeInput(item.selectedColor)}</strong>` : ''}
         </div>
     ` : ''}
                         
@@ -2774,30 +2780,30 @@ function updateCartUI() {
             cartItems.appendChild(fragment);
 
             
-const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
-const discount = Math.min(
-    typeof couponDiscount === 'number' && !isNaN(couponDiscount) ? couponDiscount : 0,
-    subtotal
-);
-const total = Math.max(0, subtotal - discount);
+            const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+            const discount = Math.min(
+                typeof couponDiscount === 'number' && !isNaN(couponDiscount) ? couponDiscount : 0,
+                subtotal
+            );
+            const total = Math.max(0, subtotal - discount);
 
-// Atualizar UI de valores
-const cartSubtotalEl = document.getElementById('cartSubtotal');
-const discountBreakdownEl = document.getElementById('discountBreakdown');
-const discountValueEl = document.getElementById('discountValue');
-const cartTotalEl = document.getElementById('cartTotal');
+            // Atualizar UI de valores (com null checks adicionais)
+            const cartSubtotalEl = document.getElementById('cartSubtotal');
+            const discountBreakdownEl = document.getElementById('discountBreakdown');
+            const discountValueEl = document.getElementById('discountValue');
+            const cartTotalEl = document.getElementById('cartTotal');
 
-if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
-if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
+            if (cartSubtotalEl) cartSubtotalEl.textContent = `R$ ${subtotal.toFixed(2)}`;
+            if (cartTotalEl) cartTotalEl.textContent = `R$ ${total.toFixed(2)}`;
 
-if (discount > 0 && discountBreakdownEl && discountValueEl) {
-    discountBreakdownEl.style.display = 'flex';
-    discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
-} else if (discountBreakdownEl) {
-    discountBreakdownEl.style.display = 'none';
-}
+            if (discount > 0 && discountBreakdownEl && discountValueEl) {
+                discountBreakdownEl.style.display = 'flex';
+                discountValueEl.textContent = `- R$ ${discount.toFixed(2)}`;
+            } else if (discountBreakdownEl) {
+                discountBreakdownEl.style.display = 'none';
+            }
 
-cartFooter.style.display = 'block';
+            cartFooter.style.display = 'block';
         }
     });
 }
@@ -5885,6 +5891,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
