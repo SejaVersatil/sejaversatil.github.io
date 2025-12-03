@@ -895,4 +895,3 @@ function applyMasks() {
 }
 
 document.addEventListener('DOMContentLoaded', applyMasks);
-}
