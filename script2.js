@@ -52,6 +52,8 @@ let selectedSize = 'M';
 let selectedColor = null;
 let selectedQuantity = 1;
 let currentProductDetails = null;
+let appliedCoupon = null;
+let couponDiscount = 0;
 // ==================== FUNÇÕES UTILITÁRIAS DE IMAGEM ====================
 function getProductImage(product) {
 
@@ -2973,11 +2975,6 @@ function loadCart() {
     }
 }
 
-// ==================== SISTEMA DE CUPONS ====================
-
-let appliedCoupon = null;
-let couponDiscount = 0;
-
 // Aplicar cupom
 async function applyCoupon() {
     const input = document.getElementById('couponInput');
@@ -5619,6 +5616,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
