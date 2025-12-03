@@ -135,7 +135,6 @@ function cacheDOMElements() {
     CheckoutDOM.tabLogin = document.getElementById('tabLogin');
     CheckoutDOM.tabCadastro = document.getElementById('tabCadastro');
     CheckoutDOM.formDadosPessoais = document.getElementById('formDadosPessoais');
-    CheckoutDOM.inputNome = document.getElementById('inputNome');
     CheckoutDOM.inputEmail = document.getElementById('inputEmail');
     CheckoutDOM.inputTelefone = document.getElementById('inputTelefone');
     CheckoutDOM.inputCPF = document.getElementById('inputCPF');
@@ -250,7 +249,6 @@ function updateAuthUI(user) {
         if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
         
         // Auto-preencher formulário
-        if (CheckoutDOM.inputNome) CheckoutDOM.inputNome.value = user.displayName || '';
         if (CheckoutDOM.inputEmail) {
             CheckoutDOM.inputEmail.value = user.email || '';
             CheckoutDOM.inputEmail.disabled = true;
@@ -553,7 +551,8 @@ function updateColumnStatus(columnNumber, status, type = 'default') {
 
 // ==================== VALIDAÇÃO ETAPA 1: DADOS PESSOAIS ====================
 function validateDadosStep() {
-    const nome = CheckoutDOM.inputNome?.value.trim();
+    const nome = window.currentUser?.displayName || 
+             document.getElementById('registerName')?.value.trim() || '';
     const email = CheckoutDOM.inputEmail?.value.trim();
     const telefone = CheckoutDOM.inputTelefone?.value.trim();
     const cpf = CheckoutDOM.inputCPF?.value.trim();
