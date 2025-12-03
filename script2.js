@@ -4295,19 +4295,10 @@ function setupPaymentListeners() {
 // ==================== 2. SISTEMA DE CHECKOUT APRIMORADO ====================
 
 async function sendToWhatsApp() {
-    await window.authReady;
-    // ✅ WAIT FOR AUTH STATE
-    await new Promise(resolve => {
-        if (auth.currentUser !== undefined) {
-            resolve();
-        } else {
-            const unsubscribe = auth.onAuthStateChanged(() => {
-                unsubscribe();
-                resolve();
-            });
-        }
-    });
+    // ✅ WAIT FOR AUTH STATE (Garante que o Firebase carregou)
+    if (window.authReady) await window.authReady;
     
+    // Verificação extra de segurança
     if (!cart || cart.length === 0) {
         showToast('Carrinho vazio!', 'error');
         return;
@@ -4319,7 +4310,7 @@ async function sendToWhatsApp() {
     if (auth.currentUser) {
         // Usuário Logado
         customerData = {
-            name: currentUser?.name || auth.currentUser.displayName,
+            name: currentUser?.name || auth.currentUser.displayName || 'Cliente', // Proteção contra null
             email: auth.currentUser.email,
             phone: (typeof getUserPhone === 'function') ? await getUserPhone() : '',
             cpf: (typeof getUserCPF === 'function') ? await getUserCPF() : '',
@@ -4332,22 +4323,18 @@ async function sendToWhatsApp() {
              customerData.phone = phone;
         }
     } else {
-        // Usuário Visitante: DEVE coletar dados antes de prosseguir
+        // Usuário Visitante
         if (typeof collectGuestCustomerData === 'function') {
-            // Fecha o modal de pagamento para abrir o de dados
             closePaymentModal(); 
             
-            // collectGuestCustomerData é assíncrona e retorna os dados ou null se cancelado
             const guestData = await collectGuestCustomerData(); 
             
             if (!guestData) {
-                // Se cancelou, reabre o modal de pagamento e interrompe
                 openPaymentModal(); 
                 return; 
             }
             customerData = guestData;
         } else {
-            // Fallback caso a função não exista
             customerData = { name: 'Visitante', email: 'Não informado', phone: 'Não informado' };
         }
     }
@@ -4360,23 +4347,24 @@ async function sendToWhatsApp() {
     }
     const paymentMethod = paymentInput.value;
 
-let installments = null;
-if (paymentMethod === 'credito-parcelado') {
-    const installmentsSelect = document.getElementById('installmentsSelect');
-    if (!installmentsSelect || !installmentsSelect.value) {
-        showToast('Selecione o número de parcelas.', 'error');
-        openPaymentModal(); // ← REABRE MODAL
-        return;
+    // Lógica de Parcelas
+    let installments = null;
+    if (paymentMethod === 'credito-parcelado') {
+        const installmentsSelect = document.getElementById('installmentsSelect');
+        if (!installmentsSelect || !installmentsSelect.value) {
+            showToast('Selecione o número de parcelas.', 'error');
+            openPaymentModal();
+            return;
+        }
+        installments = installmentsSelect.value;
     }
-    installments = installmentsSelect.value; // ← CAPTURA AQUI
-}
     
     // 3. Cálculos
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = couponDiscount || 0;
     const total = Math.max(0, subtotal - discount);
 
-    // 4. Salvar no Firestore (Lógica melhorada do arquivo enviado)
+    // 4. Salvar no Firestore (Com Batch Write para segurança)
     let orderId = 'PENDENTE';
     
     try {
@@ -4397,32 +4385,51 @@ if (paymentMethod === 'credito-parcelado') {
                 total: total
             },
             paymentMethod: paymentMethod,
+            installments: installments, // Salva parcelas no banco
             status: 'Pendente WhatsApp',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, value: appliedCoupon.value } : null
         };
 
-        const docRef = await db.collection('orders').add(orderData);
-        orderId = docRef.id;
+        const batch = db.batch();
+        const orderRef = db.collection('orders').doc();
+        batch.set(orderRef, orderData);
+        orderId = orderRef.id;
 
-        // Registrar uso do cupom se houver
+        // Registrar uso do cupom no mesmo lote
         if (appliedCoupon) {
-            // Chama sua função existente ou usa a lógica direta
-            if(typeof registerCouponUsage === 'function') {
-                await registerCouponUsage(appliedCoupon.id, total, discount);
-            }
+            const couponRef = db.collection('coupons').doc(appliedCoupon.id);
+            batch.update(couponRef, { usedCount: firebase.firestore.FieldValue.increment(1) });
+            
+            const usageRef = db.collection('coupon_usage').doc();
+            batch.set(usageRef, {
+                couponId: appliedCoupon.id,
+                userId: auth.currentUser ? auth.currentUser.uid : 'guest',
+                usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                orderValue: total,
+                discountApplied: discount
+            });
         }
+
+        await batch.commit();
 
     } catch (error) {
         console.error('Erro ao salvar pedido:', error);
-        showToast('Erro ao processar pedido, mas vamos tentar enviar o WhatsApp.', 'error');
+        showToast('Erro ao salvar, mas enviaremos para o WhatsApp.', 'warning');
     }
 
-    // 5. Gerar Mensagem WhatsApp (Layout Profissional)
-    const msg = generateWhatsAppMessage(orderId, customerData, cart, { subtotal, discount, total }, paymentMethod);
+    // 5. Gerar Mensagem WhatsApp (Agora passando installments!)
+    const msg = generateWhatsAppMessage(
+        orderId, 
+        customerData, 
+        cart, 
+        { subtotal, discount, total }, 
+        paymentMethod, 
+        installments // ✅ CORREÇÃO IMPORTANTE AQUI
+    );
 
     // 6. Enviar
-    const WHATSAPP_NUMBER = '5571991427103'; // Confirme se este é o número correto
+    const WHATSAPP_NUMBER = '5571991427103'; 
     const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(whatsappURL, '_blank');
 
@@ -4434,8 +4441,8 @@ if (paymentMethod === 'credito-parcelado') {
     cart = [];
     appliedCoupon = null;
     couponDiscount = 0;
-    saveCart(); // Sua função de salvar no localStorage
-    updateCartUI(); // Sua função de atualizar UI
+    saveCart(); 
+    updateCartUI(); 
     
     showToast('Pedido enviado para o WhatsApp!', 'success');
 }
@@ -5729,6 +5736,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
