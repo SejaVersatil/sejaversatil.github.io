@@ -351,6 +351,10 @@ async function handleRegister() {
             email: email,
             criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+if (CheckoutDOM.formDadosPessoais) {
+    CheckoutDOM.formDadosPessoais.style.display = 'block';
+}
         
         showToast('Cadastro realizado', 'Bem-vindo!', 'success');
     } catch (error) {
