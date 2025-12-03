@@ -397,32 +397,34 @@
 }
 
 .btn-finish {
-    background: var(--color-secondary);
-    color: #fff;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+    color: #FFFFFF;
     border: none;
-    padding: 15px 20px;
-    border-radius: 4px;
+    padding: 18px 24px; /* ✅ Maior */
+    border-radius: 16px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: var(--spacing-lg);
+    box-shadow: 0 6px 20px rgba(212, 184, 200, 0.35);
 }
 
 .btn-finish:hover:not(:disabled) {
-    background: #5e3a80;
-    box-shadow: var(--shadow-heavy);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(212, 184, 200, 0.45);
 }
 
 /* ==================== ESTADO FINALIZADO ==================== */
 .btn-finish:disabled {
-    background: #6c757d !important;
+    background: #9E9E9E !important;
     cursor: not-allowed !important;
     opacity: 0.7;
     transform: none !important;
+    box-shadow: none !important;
 }
 
 .btn-finish:disabled:hover {
@@ -791,11 +793,19 @@
     font-weight: 700;
 }
 
+.summary-totals {
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-md);
+}
+
 .summary-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 12px;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    font-size: 14px; /* ✅ MAIOR: era 12px */
     font-weight: 600;
 }
 
@@ -809,11 +819,12 @@
 }
 
 .summary-row.total {
-    font-size: 16px;
-    font-weight: 700;
-    padding-top: 8px;
-    margin-top: 8px;
-    border-top: 1px dashed var(--color-border);
+    font-size: 20px; /* ✅ MAIOR: era 16px */
+    font-weight: 800;
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    border-top: 2px solid var(--color-primary);
+    color: var(--color-primary);
 }
 
 .installment-info {
