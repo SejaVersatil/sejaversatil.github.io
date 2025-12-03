@@ -2843,6 +2843,7 @@ function removeFromCart(identifier) {
     
     const lengthBefore = cart.length;
     
+    // Filtra o item removido
     cart = cart.filter(item => {
         const itemId = item.cartItemId || item.id;
         return itemId !== identifier;
@@ -2859,6 +2860,7 @@ function removeFromCart(identifier) {
     
     console.log('✅ Item removido. Carrinho agora:', cart.length, 'itens');
     
+    // 1. Se o carrinho ficou vazio
     if (cart.length === 0) {
         if (appliedCoupon) {
             removeCoupon();
@@ -2867,17 +2869,19 @@ function removeFromCart(identifier) {
         saveCart();
         updateCartUI();
         showToast('Carrinho vazio', 'info');
-        return;
+        return; // Sai da função aqui
     }
     
-    // ✅ RECALCULAR CUPOM
+    // 2. Se ainda tem itens, recalcula o cupom (se houver)
     if (appliedCoupon && couponDiscount > 0) {
         const newSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         
+        // Verifica se ainda atinge o valor mínimo
         if (appliedCoupon.minValue && newSubtotal < appliedCoupon.minValue) {
             removeCoupon();
             showToast(`❌ Cupom removido: valor mínimo R$ ${appliedCoupon.minValue.toFixed(2)}`, 'error');
         } else {
+            // Recalcula o valor do desconto
             let newDiscount = 0;
             
             if (appliedCoupon.type === 'percentage') {
@@ -2889,6 +2893,7 @@ function removeFromCart(identifier) {
                 newDiscount = appliedCoupon.value;
             }
             
+            // Garante que o desconto não é maior que o total
             if (newDiscount > newSubtotal) {
                 newDiscount = newSubtotal;
             }
@@ -2898,12 +2903,11 @@ function removeFromCart(identifier) {
         }
     }
     
-    // ✅ SALVA OBRIGATORIAMENTE
+    // ✅ SALVA OBRIGATORIAMENTE O ESTADO FINAL
     saveCart();
     updateCartUI();
     showToast('Item removido do carrinho', 'info');
 }
-
 function toggleCart() {
     const sidebar = document.getElementById('cartSidebar');
     const overlay = document.getElementById('cartOverlay');
@@ -5653,6 +5657,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
