@@ -1,650 +1,449 @@
-/* ============================================================================
-   CHECKOUT-REFACTORED.CSS - SEJA VERSÁTIL
-   Estilos para o Layout de 4 Colunas com Desbloqueio Progressivo
-   ============================================================================ */
-
-/* Variáveis CSS */
-:root {
-    --color-primary: #667eea;
-    --color-secondary: #764ba2;
-    --color-text: #333;
-    --color-light-gray: #f4f4f4;
-    --color-border: #ddd;
-    --color-success: #28a745;
-    --color-error: #dc3545;
-    --color-warning: #ffc107;
-    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f8f8f8;
-    color: var(--color-text);
-    line-height: 1.6;
-}
-
-.checkout-main {
-    padding: 20px 0;
-}
-
-.checkout-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-/* ==================== GRID DE 4 COLUNAS ==================== */
-.checkout-grid-4col {
-    display: grid;
-    /* 3 colunas de conteúdo + 1 coluna de resumo */
-    grid-template-columns: repeat(3, 1fr) 1.2fr; 
-    gap: 20px;
-}
-
-/* Responsividade para telas menores */
-@media (max-width: 1200px) {
-    .checkout-grid-4col {
-        /* 2 colunas de conteúdo + 1 coluna de resumo */
-        grid-template-columns: repeat(2, 1fr) 1.2fr; 
-    }
-    .column-3-payment {
-        grid-column: 1 / 3; /* Coluna 3 ocupa 2 espaços */
-    }
-}
-
-@media (max-width: 992px) {
-    .checkout-grid-4col {
-        /* 1 coluna de conteúdo + 1 coluna de resumo */
-        grid-template-columns: 1fr 300px; 
-    }
-    .column-2-delivery, .column-3-payment {
-        grid-column: 1 / 2; /* Colunas 2 e 3 voltam para 1 espaço */
-    }
-}
-
-@media (max-width: 768px) {
-    .checkout-grid-4col {
-        /* 1 coluna para tudo, resumo no final */
-        grid-template-columns: 1fr; 
-    }
-    .column-4-summary {
-        order: 4; /* Move o resumo para o final */
-    }
-}
-
-/* ==================== ESTILOS DAS COLUNAS ==================== */
-.checkout-column {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-    padding: 20px;
-    transition: all 0.3s ease;
-}
-
-.column-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 10px;
-}
-
-.column-number {
-    background: var(--color-primary);
-    color: #fff;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
-    margin-right: 10px;
-}
-
-.column-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-    flex-grow: 1;
-}
-
-.column-status {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.status-default {
-    background: var(--color-light-gray);
-    color: var(--color-text);
-}
-
-.status-success {
-    background: var(--color-success);
-    color: #fff;
-}
-
-.status-locked {
-    background: var(--color-error);
-    color: #fff;
-}
-
-/* ==================== ESTADO BLOQUEADO ==================== */
-.column-content.column-locked {
-    position: relative;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.column-content.column-locked::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(2px);
-    z-index: 10;
-    border-radius: 8px;
-}
-
-.column-content.column-locked .lock-message {
-    z-index: 20;
-    color: var(--color-text);
-}
-
-.lock-message svg {
-    color: var(--color-error);
-    margin-bottom: 10px;
-}
-
-/* ==================== FORMULÁRIOS E BOTÕES ==================== */
-.form-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.form-group {
-    flex: 1;
-    margin-bottom: 15px;
-}
-
-.form-group.full {
-    flex: 0 0 100%;
-}
-
-.form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.2s;
-}
-
-.form-group input:focus, .form-group select:focus {
-    border-color: var(--color-primary);
-    outline: none;
-}
-
-.btn-primary {
-    background: var(--color-primary);
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-primary:hover {
-    background: var(--color-secondary);
-}
-
-.btn-primary:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-.btn-block {
-    width: 100%;
-    margin-top: 15px;
-}
-
-/* ==================== COLUNA 1: AUTENTICAÇÃO ==================== */
-.auth-tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-border);
-}
-
-.auth-tab {
-    flex: 1;
-    padding: 10px 0;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    font-size: 14px;
-    font-weight: 600;
-    color: #999;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.auth-tab.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-}
-
-.auth-state-logged {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-    background: var(--color-light-gray);
-    border-radius: 4px;
-    margin-bottom: 20px;
-}
-
-.logged-user-info {
-    display: flex;
-    align-items: center;
-}
-
-.user-avatar svg {
-    width: 40px;
-    height: 40px;
-    color: var(--color-primary);
-    margin-right: 10px;
-}
-
-.user-details .user-greeting {
-    font-size: 12px;
-    margin: 0;
-    color: #666;
-}
-
-.user-details .user-name {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.user-details .user-email {
-    font-size: 12px;
-    margin: 0;
-    color: #999;
-}
-
-.btn-secondary {
-    background: #fff;
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-secondary:hover {
-    background: var(--color-light-gray);
-}
-
-/* ==================== COLUNA 3: PAGAMENTO ==================== */
-.payment-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.payment-option {
-    display: block;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.payment-option:hover {
-    border-color: var(--color-primary);
-}
-
-.payment-option input[type="radio"] {
-    display: none;
-}
-
-.payment-option input[type="radio"]:checked + .payment-option-content {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary);
-}
-
-.payment-option-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.payment-option-icon {
-    margin-right: 15px;
-    color: var(--color-primary);
-}
-
-.payment-option-info {
-    flex-grow: 1;
-}
-
-.payment-option-info strong {
-    display: block;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.payment-option-info small {
-    color: #666;
-    font-size: 12px;
-}
-
-.payment-option-check {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--color-border);
-    border-radius: 50%;
-    position: relative;
-}
-
-.payment-option input[type="radio"]:checked + .payment-option-content .payment-option-check {
-    border-color: var(--color-primary);
-}
-
-.payment-option input[type="radio"]:checked + .payment-option-content .payment-option-check::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 6px;
-    height: 6px;
-    background: var(--color-primary);
-    border-radius: 50%;
-}
-
-.installments-box {
-    padding: 15px;
-    background: var(--color-light-gray);
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-.card-details-box {
-    padding: 15px;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-/* ==================== COLUNA 4: RESUMO ==================== */
-.column-4-summary {
-    position: relative;
-}
-
-.column-summary-sticky {
-    position: sticky;
-    top: 20px; /* Ajuste conforme o header */
-}
-
-.summary-header {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--color-border);
-}
-
-.summary-header h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0;
-}
-
-.summary-items {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 10px;
-    margin-bottom: 20px;
-}
-
-.summary-item {
-    display: flex;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed var(--color-border);
-}
-
-.summary-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.summary-item-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-right: 10px;
-}
-
-.summary-item-info {
-    flex-grow: 1;
-}
-
-.summary-item-name {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
-.summary-item-details {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.summary-item-price {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.summary-item-qty {
-    color: #999;
-}
-
-/* Totais */
-.summary-totals {
-    padding-top: 10px;
-    border-top: 1px solid var(--color-border);
-    margin-bottom: 20px;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.summary-row strong {
-    font-weight: 600;
-}
-
-.summary-row.discount span, .summary-row.pix-discount span {
-    color: var(--color-success);
-}
-
-.summary-row.discount strong, .summary-row.pix-discount strong {
-    color: var(--color-success);
-}
-
-.summary-row.total {
-    font-size: 18px;
-    font-weight: 700;
-    padding-top: 10px;
-    border-top: 2px dashed var(--color-border);
-}
-
-.installment-info {
-    text-align: right;
-}
-
-.installment-info small {
-    display: block;
-    font-size: 12px;
-    color: var(--color-primary);
-}
-
-.btn-finish {
-    background: var(--color-secondary);
-    color: #fff;
-    border: none;
-    padding: 15px 20px;
-    border-radius: 4px;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-}
-
-.btn-finish:hover {
-    background: #5e3a80;
-}
-
-.btn-finish:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-/* ==================== TOAST E LOADING ==================== */
-.checkout-loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-}
-
-.checkout-loading-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.loading-spinner {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.loading-dot {
-    width: 12px;
-    height: 12px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out both;
-}
-
-.loading-dot:nth-child(1) { animation-delay: -0.32s; }
-.loading-dot:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes bounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1.0); }
-}
-
-#checkoutToastContainer {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 10px;
-}
-
-.checkout-toast {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: var(--shadow-medium);
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    min-width: 300px;
-    animation: toastSlideIn 0.3s ease-out forwards;
-}
-
-.checkout-toast.success { border-left: 5px solid var(--color-success); }
-.checkout-toast.error { border-left: 5px solid var(--color-error); }
-.checkout-toast.warning { border-left: 5px solid var(--color-warning); }
-
-.toast-icon {
-    font-size: 20px;
-    margin-right: 10px;
-    font-weight: 700;
-}
-
-.checkout-toast.success .toast-icon { color: var(--color-success); }
-.checkout-toast.error .toast-icon { color: var(--color-error); }
-.checkout-toast.warning .toast-icon { color: var(--color-warning); }
-
-.toast-title {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.toast-message {
-    font-size: 12px;
-    color: #666;
-}
-
-@keyframes toastSlideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Finalize sua compra - Seja Versátil">
+  <title>Finalizar Compra - Seja Versátil</title>
+  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Base -->
+  <link rel="stylesheet" href="css2.css">
+  <!-- CSS Refatorado do Checkout -->
+  <link rel="stylesheet" href="checkout.css">
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+      authDomain: "seja-versatil.firebaseapp.com",
+      projectId: "seja-versatil",
+      storageBucket: "seja-versatil.firebasestorage.app",
+      messagingSenderId: "102339207381",
+      appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+      measurementId: "G-86E5CX4S3T"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+  </script>
+  <!-- NOVO MÓDULO DE AUTENTICAÇÃO CENTRALIZADO -->
+<script src="auth.js"></script>
+
+</head>
+
+<body class="checkout-page">
+  
+  <header class="checkout-header">
+    <div class="checkout-header-container">
+      <a href="index.html" class="checkout-logo">
+      <svg width="120" height="30" viewBox="0 0 120 30">
+          <text x="0" y="24" font-family="Poppins, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Seja Versátil</text>
+        </svg>
+      </a>
+      <div class="checkout-security">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>COMPRA 100% SEGURA</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="checkout-breadcrumb">
+    <div class="checkout-container">
+      <a href="index.html">Início</a>
+      <span class="breadcrumb-separator">›</span>
+      <a href="index.html#produtos">Produtos</a>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-current">FINALIZAR</span>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="checkout-main">
+    <div class="checkout-container">
+      
+      <!-- Grid de 2 Colunas -->
+      <div class="checkout-grid">
+        
+        <!-- ===================== COLUNA ESQUERDA ===================== -->
+        <div class="checkout-left-column">
+          
+          <!-- Seção 1: Dados Pessoais -->
+          <section class="checkout-section" id="sectionDados">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">1</div>
+              <h2 class="checkout-section-title">Dados Pessoais</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <!-- Tabs Login/Cadastro -->
+              <div class="checkout-auth-tabs" id="authTabs">
+                <button class="checkout-auth-tab active" data-tab="login">LOGIN</button>
+                <button class="checkout-auth-tab" data-tab="cadastro">CADASTRO</button>
+              </div>
+              
+              <!-- Mensagem se logado -->
+              <div class="checkout-logged-info" id="loggedInfo" style="display: none;">
+                <p>Bem-vindo(a), <strong id="loggedUserName"></strong>!</p>
+                <button type="button" class="checkout-btn-logout" onclick="logoutCheckout()">Sair da conta</button>
+              </div>
+              
+              <!-- Formulário de Dados -->
+              <form id="checkoutFormDados" class="checkout-form" onsubmit="event.preventDefault(); validateDadosStep();">
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group full">
+                    <label for="inputNome">NOME COMPLETO *</label>
+                    <input type="text" id="inputNome" required minlength="3" placeholder="Digite seu nome">
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputEmail">E-MAIL *</label>
+                    <input type="email" id="inputEmail" required placeholder="Digite seu e-mail">
+                  </div>
+                  <div class="checkout-form-group">
+                    <label for="inputTelefone">TELEFONE *</label>
+                    <input type="tel" id="inputTelefone" placeholder="(00) 00000-0000" required>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputCPF">CPF *</label>
+                    <input type="text" id="inputCPF" placeholder="000.000.000-00" required>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+          
+          <section class="checkout-section" id="sectionEndereco">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">2</div>
+              <h2 class="checkout-section-title">Endereço de Entrega</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <p class="checkout-section-subtitle">Preencha seus dados para continuar</p>
+              
+              <form id="checkoutFormEndereco" class="checkout-form" onsubmit="event.preventDefault(); validateEnderecoStep();">
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group small">
+                    <label for="inputCEP">CEP *</label>
+                    <input type="text" id="inputCEP" placeholder="00000-000" required>
+                    <small class="form-helper">
+                      <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">
+                        Não sei meu CEP
+                      </a>
+                    </small>
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group large">
+                    <label for="inputRua">RUA *</label>
+                    <input type="text" id="inputRua" required placeholder="Digite o nome da rua">
+                  </div>
+                  <div class="checkout-form-group small">
+                    <label for="inputNumero">NÚMERO *</label>
+                    <input type="text" id="inputNumero" required placeholder="Nº">
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputComplemento">COMPLEMENTO</label>
+                    <input type="text" id="inputComplemento" placeholder="Apto, Bloco, etc">
+                  </div>
+                  <div class="checkout-form-group">
+                    <label for="inputBairro">BAIRRO *</label>
+                    <input type="text" id="inputBairro" required placeholder="Digite o bairro">
+                  </div>
+                </div>
+                
+                <div class="checkout-form-row">
+                  <div class="checkout-form-group">
+                    <label for="inputCidade">CIDADE *</label>
+                    <input type="text" id="inputCidade" required placeholder="Digite a cidade">
+                  </div>
+                  <div class="checkout-form-group small">
+                    <label for="inputUF">UF *</label>
+                    <select id="inputUF" required>
+                      <option value="">--</option>
+                      <option value="AC">AC</option>
+                      <option value="AL">AL</option>
+                      <option value="AP">AP</option>
+                      <option value="AM">AM</option>
+                      <option value="BA">BA</option>
+                      <option value="CE">CE</option>
+                      <option value="DF">DF</option>
+                      <option value="ES">ES</option>
+                      <option value="GO">GO</option>
+                      <option value="MA">MA</option>
+                      <option value="MT">MT</option>
+                      <option value="MS">MS</option>
+                      <option value="MG">MG</option>
+                      <option value="PA">PA</option>
+                      <option value="PB">PB</option>
+                      <option value="PR">PR</option>
+                      <option value="PE">PE</option>
+                      <option value="PI">PI</option>
+                      <option value="RJ">RJ</option>
+                      <option value="RN">RN</option>
+                      <option value="RS">RS</option>
+                      <option value="RO">RO</option>
+                      <option value="RR">RR</option>
+                      <option value="SC">SC</option>
+                      <option value="SP">SP</option>
+                      <option value="SE">SE</option>
+                      <option value="TO">TO</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+          
+          <section class="checkout-section" id="sectionPagamento">
+            <div class="checkout-section-header">
+              <div class="checkout-section-number">3</div>
+              <h2 class="checkout-section-title">Forma de Pagamento</h2>
+            </div>
+            
+            <div class="checkout-section-content">
+              <p class="checkout-section-subtitle">Aguardando o preenchimento das etapas anteriores.</p>
+              
+              <form id="checkoutFormPagamento" class="checkout-form" onsubmit="event.preventDefault(); validatePagamentoStep();">
+                <div class="checkout-payment-options">
+                  
+                  <!-- Opção PIX -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="pix" checked>
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+    <line x1="1" y1="10" x2="23" y2="10"/>
+  </svg>
+</div>
+                      <div class="payment-option-info">
+                        <strong>PIX</strong>
+                        <small>Aprovação imediata</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Boleto -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="boleto">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="2" y="3" width="20" height="18" rx="2"/>
+                          <line x1="2" y1="9" x2="22" y2="9"/>
+                        </svg>
+                      </div>
+                      <div class="payment-option-info">
+                        <strong>Boleto Bancário</strong>
+                        <small>Vencimento em 3 dias</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Cartão à Vista -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="credito-avista">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="1" y="4" width="22" height="16" rx="2"/>
+                          <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                      </div>
+                      <div class="payment-option-info">
+                        <strong>Cartão de Crédito</strong>
+                        <small>À vista</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                  <!-- Opção Cartão Parcelado -->
+                  <label class="checkout-payment-option">
+                    <input type="radio" name="paymentMethod" value="credito-parcelado">
+                    <div class="payment-option-content">
+                      <div class="payment-option-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="1" y="4" width="22" height="16" rx="2"/>
+                          <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                      </div>
+                      <div class="payment-option-info">
+                        <strong>Cartão Parcelado</strong>
+                        <small>Em até 3x sem juros</small>
+                      </div>
+                      <div class="payment-option-check"></div>
+                    </div>
+                  </label>
+                  
+                </div>
+                
+                <!-- Box de Parcelas (oculto inicialmente) -->
+                <div class="checkout-installments-box" id="installmentsBox" style="display: none;">
+                  <label for="installmentsSelect">Número de Parcelas:</label>
+                  <select id="installmentsSelect">
+                    <option value="">Selecione</option>
+                    <option value="2">2x sem juros</option>
+                    <option value="3">3x sem juros</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+          </section>
+          
+        </div>
+        
+        <!-- ===================== COLUNA DIREITA (RESUMO) ===================== -->
+        <aside class="checkout-right-column">
+          <div class="checkout-summary-sticky">
+            
+            <div class="checkout-summary-header">
+              <h3>CARRINHO <span id="summaryCartCode">(KUJKG3YE)</span></h3>
+            </div>
+            
+            <!-- Lista de Produtos -->
+            <div class="checkout-summary-items" id="summaryItems">
+              <!-- Será preenchido dinamicamente -->
+            </div>
+            
+            <!-- Totais -->
+            <div class="checkout-summary-totals">
+              <div class="summary-total-row">
+                <span>VALOR TOTAL:</span>
+                <strong id="summarySubtotal">R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row discount" id="summaryDiscountRow" style="display: none;">
+                <span>DESCONTO:</span>
+                <strong id="summaryDiscount">-R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row pix-discount">
+                <span>10% OFF NO PIX À VISTA</span>
+                <strong id="summaryPixDiscount">R$0,00</strong>
+              </div>
+              
+              <div class="summary-total-row installment" id="summaryInstallmentRow" style="display: none;">
+                <span>OPÇÕES DE <strong>PARCELAMENTO:</strong></span>
+                <div class="installment-info">
+                  <strong id="summaryInstallmentValue">R$0,00</strong>
+                  <small id="summaryInstallmentDetail">EM ATÉ 3X SEM JUROS</small>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Botão Finalizar -->
+            <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" onclick="processCheckout()" disabled>
+  FINALIZAR COMPRA
+</button>
+            
+            <!-- Selo de Segurança -->
+            <div class="checkout-security-badges">
+              <div class="security-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+                <span>Site Seguro</span>
+              </div>
+            </div>
+            
+          </div>
+        </aside>
+        
+      </div>
+      
+    </div>
+  </main>
+  
+  <!-- Footer Minimalista -->
+  <footer class="checkout-footer">
+    <div class="checkout-container">
+      <div class="checkout-footer-content">
+        <div class="footer-contact">
+          <h4>FALE COMIGO</h4>
+          <p>📞 (71) 991427103</p>
+          <p>📱 (71) 991427103</p>
+          <p>✉️ sejaversatill@gmail.com</p>
+        </div>
+        
+        <div class="footer-security">
+          <h4>SEGURANÇA & QUALIDADE</h4>
+          <div class="footer-badges">
+  <img src="https://placehold.co/60x36/28a745/ffffff?text=SSL" alt="SSL" loading="lazy">
+  <img src="https://placehold.co/60x36/007bff/ffffff?text=SAFE" alt="Site Seguro">
+</div>
+        </div>
+        
+        <div class="footer-payment">
+          <h4>FORMAS DE PAGAMENTO</h4>
+          <div class="footer-payment-icons">
+            <span>💳 Visa</span>
+            <span>💳 Mastercard</span>
+            <span>💳 Elo</span>
+            <span>📱 PIX</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="checkout-footer-bottom">
+        <p>V.D.S. FITNESS LTDA | CNPJ: 30.998.103/0001-53</p>
+        <p>Endereço: Rua Urbano Bachiré, 130 - Córrego D'Antas - 28630-230, Nova Friburgo - RJ</p>
+        <p>Preços e condições de pagamento exclusivos para compras via internet. Ofertas válidas até o término de nossos estoques.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Loading Overlay -->
+  <div class="checkout-loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <p>Processando seu pedido...</p>
+</div>
+  
+  <!-- Toast Notifications -->
+  <div id="checkoutToastContainer"></div>
+  
+  <!-- Scripts -->
+  <script src="checkout.js"></script>
+
+    <script>
+   window.addEventListener('error', (e) => {
+       console.error('🚨 Global Error:', e.error);
+       showToast('Erro inesperado', 'Recarregue a página', 'error');
+   });
+   </script>
+  
+</body>
+</html>
