@@ -18,7 +18,6 @@ const CONFIG = {
 
 // === VARIÁVEIS GLOBAIS ===
 let cartItems = [];
-let currentUser = null;
 let subtotal = 0;
 let discount = 0;
 let total = 0;
