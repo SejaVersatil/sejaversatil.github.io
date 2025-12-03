@@ -270,6 +270,7 @@ function updateAuthUI(user) {
         // Usuário não logado
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
+        if (CheckoutDOM.formDadosPessoais) CheckoutDOM.formDadosPessoais.style.display = 'none';
         
         if (CheckoutDOM.inputEmail) CheckoutDOM.inputEmail.disabled = false;
         
