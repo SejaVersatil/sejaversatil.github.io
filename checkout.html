@@ -16,7 +16,7 @@
   <!-- CSS Base -->
   <link rel="stylesheet" href="css2.css">
   <!-- CSS Refatorado do Checkout -->
-  <link rel="stylesheet" href="checkout.css">
+  <link rel="stylesheet" href="checkout-refactored.css">
   
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -40,7 +40,7 @@
     const storage = firebase.storage();
   </script>
   <!-- NOVO MÓDULO DE AUTENTICAÇÃO CENTRALIZADO -->
-<script src="auth.js"></script>
+  <script src="auth.js"></script>
 
 </head>
 
@@ -49,7 +49,7 @@
   <header class="checkout-header">
     <div class="checkout-header-container">
       <a href="index.html" class="checkout-logo">
-      <svg width="120" height="30" viewBox="0 0 120 30">
+        <svg width="120" height="30" viewBox="0 0 120 30">
           <text x="0" y="24" font-family="Poppins, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Seja Versátil</text>
         </svg>
       </a>
@@ -77,373 +77,273 @@
   <main class="checkout-main">
     <div class="checkout-container">
       
-      <!-- Grid de 2 Colunas -->
-      <div class="checkout-grid">
+      <!-- Grid de 4 Colunas (Responsivo) -->
+      <div class="checkout-grid-4col">
         
-        <!-- ===================== COLUNA ESQUERDA ===================== -->
-        <div class="checkout-left-column">
+        <!-- ==================== COLUNA 1: DADOS PESSOAIS ==================== -->
+        <section class="checkout-column column-1-identity" id="column1Identity">
+          <div class="column-header">
+            <div class="column-number">1</div>
+            <h2 class="column-title">Dados Pessoais</h2>
+            <span class="column-status" id="col1Status">Obrigatório</span>
+          </div>
           
-          <!-- Seção 1: Dados Pessoais -->
-          <section class="checkout-section" id="sectionDados">
-            <div class="checkout-section-header">
-              <div class="checkout-section-number">1</div>
-              <h2 class="checkout-section-title">Dados Pessoais</h2>
+          <div class="column-content">
+            <!-- STATE A: GUEST (Inicialmente visível) -->
+            <div class="auth-state-guest" id="authStateGuest">
+              <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">
+                  LOGIN
+                </button>
+                <button class="auth-tab" data-tab="cadastro" onclick="switchAuthTab('cadastro')">
+                  CADASTRO
+                </button>
+              </div>
+
+              <!-- Tab: Login -->
+              <div class="auth-tab-content active" id="tabLogin">
+                <form onsubmit="event.preventDefault(); handleLogin();">
+                  <div class="form-group">
+                    <label for="loginEmail">E-MAIL *</label>
+                    <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="loginPassword">SENHA *</label>
+                    <input type="password" id="loginPassword" required placeholder="Sua senha">
+                  </div>
+                  <button type="submit" class="btn-primary btn-block">ENTRAR</button>
+                  <p class="form-helper">
+                    <a href="#" onclick="event.preventDefault(); showForgotPassword();">Esqueceu a senha?</a>
+                  </p>
+                </form>
+              </div>
+
+              <!-- Tab: Cadastro -->
+              <div class="auth-tab-content" id="tabCadastro">
+                <form onsubmit="event.preventDefault(); handleRegister();">
+                  <div class="form-group">
+                    <label for="registerName">NOME COMPLETO *</label>
+                    <input type="text" id="registerName" required minlength="3" placeholder="Seu nome completo">
+                  </div>
+                  <div class="form-group">
+                    <label for="registerEmail">E-MAIL *</label>
+                    <input type="email" id="registerEmail" required placeholder="seu@email.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="registerPassword">SENHA *</label>
+                    <input type="password" id="registerPassword" required minlength="6" placeholder="Mínimo 6 caracteres">
+                  </div>
+                  <div class="form-group">
+                    <label for="registerPasswordConfirm">CONFIRMAR SENHA *</label>
+                    <input type="password" id="registerPasswordConfirm" required minlength="6" placeholder="Confirme sua senha">
+                  </div>
+                  <button type="submit" class="btn-primary btn-block">CRIAR CONTA</button>
+                </form>
+              </div>
             </div>
-            
-            <div class="checkout-section-content">
-              <!-- Tabs Login/Cadastro -->
-              <div class="checkout-auth-tabs" id="authTabs">
-                <button class="checkout-auth-tab active" data-tab="login">LOGIN</button>
-                <button class="checkout-auth-tab" data-tab="cadastro">CADASTRO</button>
+
+            <!-- STATE B: LOGGED IN (Inicialmente oculto) -->
+            <div class="auth-state-logged" id="authStateLogged" style="display: none;">
+              <div class="logged-user-info">
+                <div class="user-avatar">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div class="user-details">
+                  <p class="user-greeting">Bem-vindo(a),</p>
+                  <p class="user-name" id="loggedUserName">---</p>
+                  <p class="user-email" id="loggedUserEmail">---</p>
+                </div>
+              </div>
+              <button type="button" class="btn-secondary btn-block" onclick="handleLogout()">
+                SAIR DA CONTA
+              </button>
+            </div>
+
+            <!-- Formulário de Dados Pessoais (sempre presente) -->
+            <form id="formDadosPessoais" class="form-dados-pessoais" onsubmit="event.preventDefault(); validateDadosStep();">
+              <div class="form-group full">
+                <label for="inputNome">NOME COMPLETO *</label>
+                <input type="text" id="inputNome" required minlength="3" placeholder="Digite seu nome completo">
               </div>
               
-              <!-- Mensagem se logado -->
-              <div class="checkout-logged-info" id="loggedInfo" style="display: none;">
-                <p>Bem-vindo(a), <strong id="loggedUserName"></strong>!</p>
-                <button type="button" class="checkout-btn-logout" onclick="logoutCheckout()">Sair da conta</button>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="inputEmail">E-MAIL *</label>
+                  <input type="email" id="inputEmail" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                  <label for="inputTelefone">TELEFONE *</label>
+                  <input type="tel" id="inputTelefone" placeholder="(00) 00000-0000" required>
+                </div>
               </div>
               
-              <!-- Formulário de Dados -->
-              <form id="checkoutFormDados" class="checkout-form" onsubmit="event.preventDefault(); validateDadosStep();">
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group full">
-                    <label for="inputNome">NOME COMPLETO *</label>
-                    <input type="text" id="inputNome" required minlength="3" placeholder="Digite seu nome">
-                  </div>
-                </div>
-                
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="inputEmail">E-MAIL *</label>
-                    <input type="email" id="inputEmail" required placeholder="Digite seu e-mail">
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="inputTelefone">TELEFONE *</label>
-                    <input type="tel" id="inputTelefone" placeholder="(00) 00000-0000" required>
-                  </div>
-                </div>
-                
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="inputCPF">CPF *</label>
-                    <input type="text" id="inputCPF" placeholder="000.000.000-00" required>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </section>
+              <div class="form-group">
+                <label for="inputCPF">CPF *</label>
+                <input type="text" id="inputCPF" placeholder="000.000.000-00" required>
+              </div>
+
+              <button type="submit" class="btn-primary btn-block">CONTINUAR PARA ENDEREÇO</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== COLUNA 2: ENDEREÇO DE ENTREGA ==================== -->
+        <section class="checkout-column column-2-delivery" id="column2Delivery">
+          <div class="column-header">
+            <div class="column-number">2</div>
+            <h2 class="column-title">Endereço de Entrega</h2>
+            <span class="column-status" id="col2Status">Bloqueado</span>
+          </div>
           
-          <section class="checkout-section" id="sectionEndereco">
-            <div class="checkout-section-header">
-              <div class="checkout-section-number">2</div>
-              <h2 class="checkout-section-title">Endereço de Entrega</h2>
+          <div class="column-content column-locked" id="col2Content">
+            <div class="lock-message">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <p>Complete seus dados pessoais para desbloquear esta seção</p>
             </div>
-            
-            <div class="checkout-section-content">
-              <p class="checkout-section-subtitle">Preencha seus dados para continuar</p>
+
+            <form id="formEndereco" class="form-endereco" style="display: none;" onsubmit="event.preventDefault(); validateEnderecoStep();">
+              <div class="form-group small">
+                <label for="inputCEP">CEP *</label>
+                <input type="text" id="inputCEP" placeholder="00000-000" required>
+                <small class="form-helper">
+                  <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">
+                    Não sei meu CEP
+                  </a>
+                </small>
+              </div>
               
-              <form id="checkoutFormEndereco" class="checkout-form" onsubmit="event.preventDefault(); validateEnderecoStep();">
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group small">
-                    <label for="inputCEP">CEP *</label>
-                    <input type="text" id="inputCEP" placeholder="00000-000" required>
-                    <small class="form-helper">
-                      <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">
-                        Não sei meu CEP
-                      </a>
-                    </small>
-                  </div>
+              <div class="form-row">
+                <div class="form-group large">
+                  <label for="inputRua">RUA *</label>
+                  <input type="text" id="inputRua" required placeholder="Digite o nome da rua">
                 </div>
-                
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group large">
-                    <label for="inputRua">RUA *</label>
-                    <input type="text" id="inputRua" required placeholder="Digite o nome da rua">
-                  </div>
-                  <div class="checkout-form-group small">
-                    <label for="inputNumero">NÚMERO *</label>
-                    <input type="text" id="inputNumero" required placeholder="Nº">
-                  </div>
+                <div class="form-group small">
+                  <label for="inputNumero">NÚMERO *</label>
+                  <input type="text" id="inputNumero" required placeholder="Nº">
                 </div>
-                
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="inputComplemento">COMPLEMENTO</label>
-                    <input type="text" id="inputComplemento" placeholder="Apto, Bloco, etc">
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="inputBairro">BAIRRO *</label>
-                    <input type="text" id="inputBairro" required placeholder="Digite o bairro">
-                  </div>
-                </div>
-                
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="inputCidade">CIDADE *</label>
-                    <input type="text" id="inputCidade" required placeholder="Digite a cidade">
-                  </div>
-                  <div class="checkout-form-group small">
-                    <label for="inputUF">UF *</label>
-                    <select id="inputUF" required>
-                      <option value="">--</option>
-                      <option value="AC">AC</option>
-                      <option value="AL">AL</option>
-                      <option value="AP">AP</option>
-                      <option value="AM">AM</option>
-                      <option value="BA">BA</option>
-                      <option value="CE">CE</option>
-                      <option value="DF">DF</option>
-                      <option value="ES">ES</option>
-                      <option value="GO">GO</option>
-                      <option value="MA">MA</option>
-                      <option value="MT">MT</option>
-                      <option value="MS">MS</option>
-                      <option value="MG">MG</option>
-                      <option value="PA">PA</option>
-                      <option value="PB">PB</option>
-                      <option value="PR">PR</option>
-                      <option value="PE">PE</option>
-                      <option value="PI">PI</option>
-                      <option value="RJ">RJ</option>
-                      <option value="RN">RN</option>
-                      <option value="RS">RS</option>
-                      <option value="RO">RO</option>
-                      <option value="RR">RR</option>
-                      <option value="SC">SC</option>
-                      <option value="SP">SP</option>
-                      <option value="SE">SE</option>
-                      <option value="TO">TO</option>
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </section>
-          
-          <section class="checkout-section" id="sectionPagamento">
-            <div class="checkout-section-header">
-              <div class="checkout-section-number">3</div>
-              <h2 class="checkout-section-title">Forma de Pagamento</h2>
-            </div>
-            
-            <div class="checkout-section-content">
-              <p class="checkout-section-subtitle">Aguardando o preenchimento das etapas anteriores.</p>
+              </div>
               
-              <form id="checkoutFormPagamento" class="checkout-form" onsubmit="event.preventDefault(); validatePagamentoStep();">
-                <div class="checkout-payment-options">
-                  
-                  <!-- Opção PIX -->
-                  <label class="checkout-payment-option">
-                    <input type="radio" name="paymentMethod" value="pix" checked>
-                    <div class="payment-option-content">
-                      <div class="payment-option-icon">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-    <line x1="1" y1="10" x2="23" y2="10"/>
-  </svg>
-</div>
-                      <div class="payment-option-info">
-                        <strong>PIX</strong>
-                        <small>Aprovação imediata</small>
-                      </div>
-                      <div class="payment-option-check"></div>
-                    </div>
-                  </label>
-                  
-                  <!-- Opção Boleto -->
-                  <label class="checkout-payment-option">
-                    <input type="radio" name="paymentMethod" value="boleto">
-                    <div class="payment-option-content">
-                      <div class="payment-option-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <rect x="2" y="3" width="20" height="18" rx="2"/>
-                          <line x1="2" y1="9" x2="22" y2="9"/>
-                        </svg>
-                      </div>
-                      <div class="payment-option-info">
-                        <strong>Boleto Bancário</strong>
-                        <small>Vencimento em 3 dias</small>
-                      </div>
-                      <div class="payment-option-check"></div>
-                    </div>
-                  </label>
-                  
-                  <!-- Opção Cartão à Vista -->
-                  <label class="checkout-payment-option">
-                    <input type="radio" name="paymentMethod" value="credito-avista">
-                    <div class="payment-option-content">
-                      <div class="payment-option-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <rect x="1" y="4" width="22" height="16" rx="2"/>
-                          <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                      </div>
-                      <div class="payment-option-info">
-                        <strong>Cartão de Crédito</strong>
-                        <small>À vista</small>
-                      </div>
-                      <div class="payment-option-check"></div>
-                    </div>
-                  </label>
-                  
-                  <!-- Opção Cartão Parcelado -->
-                  <label class="checkout-payment-option">
-                    <input type="radio" name="paymentMethod" value="credito-parcelado">
-                    <div class="payment-option-content">
-                      <div class="payment-option-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <rect x="1" y="4" width="22" height="16" rx="2"/>
-                          <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                      </div>
-                      <div class="payment-option-info">
-                        <strong>Cartão Parcelado</strong>
-                        <small>Em até 3x sem juros</small>
-                      </div>
-                      <div class="payment-option-check"></div>
-                    </div>
-                  </label>
-                  
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="inputComplemento">COMPLEMENTO</label>
+                  <input type="text" id="inputComplemento" placeholder="Apto, Bloco, etc">
                 </div>
-                
-                <!-- Box de Parcelas (oculto inicialmente) -->
-                <div class="checkout-installments-box" id="installmentsBox" style="display: none;">
-                  <label for="installmentsSelect">Número de Parcelas:</label>
-                  <select id="installmentsSelect">
-                    <option value="">Selecione</option>
-                    <option value="2">2x sem juros</option>
-                    <option value="3">3x sem juros</option>
+                <div class="form-group">
+                  <label for="inputBairro">BAIRRO *</label>
+                  <input type="text" id="inputBairro" required placeholder="Digite o bairro">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="inputCidade">CIDADE *</label>
+                  <input type="text" id="inputCidade" required placeholder="Digite a cidade">
+                </div>
+                <div class="form-group small">
+                  <label for="inputUF">UF *</label>
+                  <select id="inputUF" required>
+                    <option value="">--</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
                   </select>
                 </div>
-              </form>
-            </div>
-          </section>
-          
-        </div>
-        
-        <!-- ===================== COLUNA DIREITA (RESUMO) ===================== -->
-        <aside class="checkout-right-column">
-          <div class="checkout-summary-sticky">
-            
-            <div class="checkout-summary-header">
-              <h3>CARRINHO <span id="summaryCartCode">(KUJKG3YE)</span></h3>
-            </div>
-            
-            <!-- Lista de Produtos -->
-            <div class="checkout-summary-items" id="summaryItems">
-              <!-- Será preenchido dinamicamente -->
-            </div>
-            
-            <!-- Totais -->
-            <div class="checkout-summary-totals">
-              <div class="summary-total-row">
-                <span>VALOR TOTAL:</span>
-                <strong id="summarySubtotal">R$0,00</strong>
               </div>
-              
-              <div class="summary-total-row discount" id="summaryDiscountRow" style="display: none;">
-                <span>DESCONTO:</span>
-                <strong id="summaryDiscount">-R$0,00</strong>
-              </div>
-              
-              <div class="summary-total-row pix-discount">
-                <span>10% OFF NO PIX À VISTA</span>
-                <strong id="summaryPixDiscount">R$0,00</strong>
-              </div>
-              
-              <div class="summary-total-row installment" id="summaryInstallmentRow" style="display: none;">
-                <span>OPÇÕES DE <strong>PARCELAMENTO:</strong></span>
-                <div class="installment-info">
-                  <strong id="summaryInstallmentValue">R$0,00</strong>
-                  <small id="summaryInstallmentDetail">EM ATÉ 3X SEM JUROS</small>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Botão Finalizar -->
-            <button type="button" class="checkout-btn-finish" id="btnFinalizarCompra" onclick="processCheckout()" disabled>
-  FINALIZAR COMPRA
-</button>
-            
-            <!-- Selo de Segurança -->
-            <div class="checkout-security-badges">
-              <div class="security-badge">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="M9 12l2 2 4-4"/>
-                </svg>
-                <span>Site Seguro</span>
-              </div>
-            </div>
-            
-          </div>
-        </aside>
-        
-      </div>
-      
-    </div>
-  </main>
-  
-  <!-- Footer Minimalista -->
-  <footer class="checkout-footer">
-    <div class="checkout-container">
-      <div class="checkout-footer-content">
-        <div class="footer-contact">
-          <h4>FALE COMIGO</h4>
-          <p>📞 (71) 991427103</p>
-          <p>📱 (71) 991427103</p>
-          <p>✉️ sejaversatill@gmail.com</p>
-        </div>
-        
-        <div class="footer-security">
-          <h4>SEGURANÇA & QUALIDADE</h4>
-          <div class="footer-badges">
-  <img src="https://placehold.co/60x36/28a745/ffffff?text=SSL" alt="SSL" loading="lazy">
-  <img src="https://placehold.co/60x36/007bff/ffffff?text=SAFE" alt="Site Seguro">
-</div>
-        </div>
-        
-        <div class="footer-payment">
-          <h4>FORMAS DE PAGAMENTO</h4>
-          <div class="footer-payment-icons">
-            <span>💳 Visa</span>
-            <span>💳 Mastercard</span>
-            <span>💳 Elo</span>
-            <span>📱 PIX</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="checkout-footer-bottom">
-        <p>V.D.S. FITNESS LTDA | CNPJ: 30.998.103/0001-53</p>
-        <p>Endereço: Rua Urbano Bachiré, 130 - Córrego D'Antas - 28630-230, Nova Friburgo - RJ</p>
-        <p>Preços e condições de pagamento exclusivos para compras via internet. Ofertas válidas até o término de nossos estoques.</p>
-      </div>
-    </div>
-  </footer>
-  
-  <!-- Loading Overlay -->
-  <div class="checkout-loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner">
-    <div class="loading-dot"></div>
-    <div class="loading-dot"></div>
-    <div class="loading-dot"></div>
-  </div>
-  <p>Processando seu pedido...</p>
-</div>
-  
-  <!-- Toast Notifications -->
-  <div id="checkoutToastContainer"></div>
-  
-  <!-- Scripts -->
-  <script src="checkout.js"></script>
 
-    <script>
-   window.addEventListener('error', (e) => {
-       console.error('🚨 Global Error:', e.error);
-       showToast('Erro inesperado', 'Recarregue a página', 'error');
-   });
-   </script>
-  
-</body>
-</html>
+              <button type="submit" class="btn-primary btn-block">CONTINUAR PARA PAGAMENTO</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== COLUNA 3: PAGAMENTO ==================== -->
+        <section class="checkout-column column-3-payment" id="column3Payment">
+          <div class="column-header">
+            <div class="column-number">3</div>
+            <h2 class="column-title">Forma de Pagamento</h2>
+            <span class="column-status" id="col3Status">Bloqueado</span>
+          </div>
+          
+          <div class="column-content column-locked" id="col3Content">
+            <div class="lock-message">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <p>Complete o endereço de entrega para desbloquear esta seção</p>
+            </div>
+
+            <form id="formPagamento" class="form-pagamento" style="display: none;" onsubmit="event.preventDefault(); validatePagamentoStep();">
+              <div class="payment-options">
+                
+                <!-- Opção PIX -->
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="pix" checked onchange="updatePaymentUI()">
+                  <div class="payment-option-content">
+                    <div class="payment-option-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                      </svg>
+                    </div>
+                    <div class="payment-option-info">
+                      <strong>PIX</strong>
+                      <small>Aprovação imediata + 10% OFF</small>
+                    </div>
+                    <div class="payment-option-check"></div>
+                  </div>
+                </label>
+                
+                <!-- Opção Cartão à Vista -->
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="credito-avista" onchange="updatePaymentUI()">
+                  <div class="payment-option-content">
+                    <div class="payment-option-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                      </svg>
+                    </div>
+                    <div class="payment-option-info">
+                      <strong>Cartão de Crédito</strong>
+                      <small>À vista</small>
+                    </div>
+                    <div class="payment-option-check"></div>
+                  </div>
+                </label>
+                
+                <!-- Opção Cartão Parcelado -->
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="credito-parcelado" onchange="updatePaymentUI()">
+                  <div class="payment-option-content">
+                    <div class="payment-optio
+(Content truncated due to size limit. Use page ranges or line ranges to read remaining content)
