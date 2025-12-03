@@ -4117,32 +4117,47 @@ document.addEventListener('keydown', (e) => {
 });
 
 function checkout() {
-    // ✅ FORÇA SALVAMENTO IMEDIATO
-    saveCart();
-    
+    // ✅ COMPREHENSIVE VALIDATION
     const rawCart = localStorage.getItem('sejaVersatilCart');
+    
     if (!rawCart) {
-        showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'error');
+        showToast('Carrinho vazio', 'error');
         return;
     }
     
-    let cartData;
     try {
-        cartData = JSON.parse(rawCart);
+        const parsed = JSON.parse(rawCart);
+        const items = parsed.items || [];
+        
+        if (items.length === 0) {
+            showToast('Carrinho vazio', 'error');
+            return;
+        }
+        
+        // Validate items have required fields
+        const invalidItems = items.filter(item => 
+            !item.name || !item.price || !item.quantity
+        );
+        
+        if (invalidItems.length > 0) {
+            console.error('❌ Invalid cart items:', invalidItems);
+            showToast('Erro no carrinho. Recarregue a página.', 'error');
+            return;
+        }
+        
+        // Validate minimum cart value (e.g., R$ 10)
+        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        if (total < 10) {
+            showToast('Valor mínimo: R$ 10,00', 'error');
+            return;
+        }
+        
+        window.location.href = 'checkout.html';
+        
     } catch (error) {
-        console.error('❌ Erro ao parsear carrinho:', error);
-        showToast('Erro no carrinho', 'Tente recarregar a página', 'error');
-        return;
+        console.error('❌ Checkout validation error:', error);
+        showToast('Erro ao validar carrinho', 'error');
     }
-    
-    // ✅ VALIDA ESTRUTURA NOVA (objeto com .items)
-    const items = cartData.items || [];
-    if (items.length === 0) {
-        showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'error');
-        return;
-    }
-    
-    window.location.href = 'checkout.html';
 }
 
 // ==================== CHECKOUT VIA WHATSAPP ====================
@@ -5758,6 +5773,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
