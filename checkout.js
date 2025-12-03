@@ -864,7 +864,7 @@ async function processCheckout() {
         
         // ✅ CRITICAL: Use setTimeout to ensure state updates before redirect
         setTimeout(() => {
-            window.location.href = url; // ✅ REPLACE window.open with location.href
+            window.open(url, '_blank'); // ✅ REPLACE window.open with location.href
         }, 1500);
         
     } catch (error) {
