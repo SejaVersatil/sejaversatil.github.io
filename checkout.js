@@ -584,7 +584,7 @@ async function finalizarCompra() {
 } finally {
     showLoading(false);
 }
-
+}
 // === COLETAR DADOS DO PEDIDO ===
 function collectOrderData() {
   const nome = document.getElementById('inputNome').value.trim();
