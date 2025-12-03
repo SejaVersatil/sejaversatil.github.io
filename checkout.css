@@ -396,10 +396,18 @@
     box-shadow: var(--shadow-heavy);
 }
 
+/* ==================== ESTADO FINALIZADO ==================== */
 .btn-finish:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    opacity: 0.6;
+    background: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+    transform: none !important;
+}
+
+.btn-finish:disabled:hover {
+    background: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 /* ==================== AUTENTICAÇÃO ====================*/
