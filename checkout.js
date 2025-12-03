@@ -998,3 +998,17 @@ function processToastQueue() {
         }, 300);
     }, CHECKOUT_CONFIG.TOAST_DURATION);
 }
+
+// ==================== EXPORT GLOBAL FUNCTIONS ====================
+// Required for HTML inline event handlers
+window.switchAuthTab = switchAuthTab;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.handleLogout = handleLogout;
+window.validateDadosStep = validateDadosStep;
+window.validateEnderecoStep = validateEnderecoStep;
+window.validatePagamentoStep = validatePagamentoStep;
+window.processCheckout = processCheckout;
+window.updatePaymentUI = updatePaymentUI;
+
+console.log('✅ Checkout functions exported to global scope');
