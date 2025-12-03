@@ -1150,13 +1150,15 @@ function setupPaymentListeners() {
 }
 
 async function sendToWhatsApp() {
+    // ✅ AGUARDA AUTH
+    if (window.authReady) await window.authReady;
+    
     // Validação do carrinho usando 'state.cart'
     if (!state.cart || state.cart.length === 0) {
         showToast('Carrinho vazio!', 'error');
         return;
     }
 
-    // 1. Validar Pagamento
     const checked = document.querySelector('input[name="paymentMethod"]:checked');
     if (!checked) {
         showToast('Selecione a forma de pagamento.', 'error');
@@ -1164,22 +1166,20 @@ async function sendToWhatsApp() {
     }
     const paymentMethod = checked.value;
 
-    // ✅ CORREÇÃO 1: Validar parcelas ANTES de processar
     let installments = null;
     if (paymentMethod === 'credito-parcelado') {
         const installmentsSelect = document.getElementById('installmentsSelect');
         if (!installmentsSelect || !installmentsSelect.value) {
             showToast('Selecione o número de parcelas.', 'error');
-            return; // ← Interrompe AQUI
+            return;
         }
-        installments = installmentsSelect.value; // ← Captura o valor
+        installments = installmentsSelect.value;
     }
 
-    // 2. Coleta de Dados do Cliente
     let customerData = {};
     
-
-    if (currentUser) {
+    // ✅ USA currentUser DO AUTH.JS
+    if (typeof currentUser !== 'undefined' && currentUser) {
         const phone = await getUserPhone();
         const cpf = await getUserCPF();
         
@@ -1189,7 +1189,7 @@ async function sendToWhatsApp() {
         }
 
         customerData = {
-            name: currentUser.displayName || 'Cliente',
+            name: currentUser.name || 'Cliente',
             email: currentUser.email,
             phone: phone,
             cpf: cpf,
@@ -1201,12 +1201,10 @@ async function sendToWhatsApp() {
         customerData = guestData;
     }
 
-    // 3. Cálculos Financeiros
     const subtotal = state.cart.reduce((s, it) => s + (safeNumber(it.price) * safeNumber(it.quantity)), 0);
     const discount = state.couponDiscount || 0;
     const total = Math.max(0, subtotal - discount);
 
-    // 4. Salvar Pedido no Firestore
     let orderId = 'PENDENTE';
     try {
         const orderData = {
@@ -1223,7 +1221,7 @@ async function sendToWhatsApp() {
             })),
             totals: { subtotal, discount, total },
             paymentMethod,
-            installments: installments, // ✅ Salva no banco
+            installments: installments,
             status: 'Pendente WhatsApp',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             appliedCoupon: state.appliedCoupon ? { code: state.appliedCoupon.code, value: state.appliedCoupon.value } : null
@@ -1241,15 +1239,12 @@ async function sendToWhatsApp() {
         showToast('Erro ao processar, mas vamos tentar enviar o WhatsApp.', 'error');
     }
 
-    // ✅ CORREÇÃO 2: Passa installments como parâmetro
     const msg = generateWhatsAppMessage(orderId, customerData, state.cart, { subtotal, discount, total }, paymentMethod, installments);
 
-    // 6. Enviar
     const WHATSAPP_NUMBER = '5571991427103'; 
     const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(whatsappURL, '_blank');
 
-    // 7. Limpeza e Reset
     closePaymentModal();
     if (typeof closeCustomerDataModal === 'function') closeCustomerDataModal();
     
@@ -2039,6 +2034,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
