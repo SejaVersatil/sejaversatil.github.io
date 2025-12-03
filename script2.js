@@ -34,6 +34,56 @@ class SecureStorage {
 
 const secureStorage = new SecureStorage('sejaVersatil_v1');
 
+const CartManager = {
+    _cart: [],
+    _appliedCoupon: null,
+    _couponDiscount: 0,
+    
+    get cart() { return this._cart; },
+    set cart(val) { 
+        this._cart = val; 
+        this.save();
+    },
+    
+    get appliedCoupon() { return this._appliedCoupon; },
+    set appliedCoupon(val) { 
+        this._appliedCoupon = val; 
+        this.save();
+    },
+    
+    get couponDiscount() { return this._couponDiscount; },
+    set couponDiscount(val) { 
+        this._couponDiscount = val; 
+        this.save();
+    },
+    
+    save() {
+        try {
+            localStorage.setItem('sejaVersatilCart', JSON.stringify({
+                items: this._cart,
+                appliedCoupon: this._appliedCoupon,
+                couponDiscount: this._couponDiscount
+            }));
+        } catch (err) {
+            console.error('❌ Save failed:', err);
+        }
+    },
+    
+    load() {
+        try {
+            const raw = localStorage.getItem('sejaVersatilCart');
+            if (!raw) return;
+            
+            const parsed = JSON.parse(raw);
+            this._cart = parsed.items || [];
+            this._appliedCoupon = parsed.appliedCoupon || null;
+            this._couponDiscount = parsed.couponDiscount || 0;
+        } catch (err) {
+            console.error('❌ Load failed:', err);
+        }
+    }
+};
+
 // ==================== VARIÁVEIS GLOBAIS ====================
 let productsData = [];
 let cart = [];
@@ -5658,6 +5708,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
