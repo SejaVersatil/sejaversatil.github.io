@@ -3029,6 +3029,11 @@ function loadCart() {
         cart = [];
         appliedCoupon = null;
         couponDiscount = 0;
+        
+        // ✅ SYNC WITH GLOBAL
+        window.cart = cart;
+        window.appliedCoupon = appliedCoupon;
+        window.couponDiscount = couponDiscount;
         return;
     }
     
@@ -3057,6 +3062,11 @@ function loadCart() {
             couponDiscount = 0;
         }
         
+        // ✅ SEMPRE SINCRONIZA COM WINDOW
+        window.cart = cart;
+        window.appliedCoupon = appliedCoupon;
+        window.couponDiscount = couponDiscount;
+        
         console.log('✅ Carrinho carregado:', cart.length, 'itens');
         
     } catch (error) {
@@ -3064,6 +3074,10 @@ function loadCart() {
         cart = [];
         appliedCoupon = null;
         couponDiscount = 0;
+        
+        window.cart = cart;
+        window.appliedCoupon = appliedCoupon;
+        window.couponDiscount = couponDiscount;
     }
 }
 
@@ -5723,6 +5737,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
