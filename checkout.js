@@ -566,7 +566,6 @@ async function finalizarCompra() {
   } catch (error) {
     console.error('❌ Erro ao finalizar compra:', error);
     
-    // ✅ MENSAGENS DE ERRO ESPECÍFICAS
     let errorMessage = 'Erro ao processar pedido';
     
     if (error.code === 'permission-denied') {
@@ -583,7 +582,7 @@ async function finalizarCompra() {
 } finally {
     showLoading(false);
 }
-}
+} 
 // === COLETAR DADOS DO PEDIDO ===
 function collectOrderData() {
   const nome = document.getElementById('inputNome').value.trim();
