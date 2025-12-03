@@ -627,27 +627,27 @@ function updateColumnStatus(columnNumber, status, type = 'default') {
 
 // ==================== VALIDAÇÃO ETAPA 1: DADOS PESSOAIS ====================
 function validateDadosStep() {
-    const nome = window.currentUser?.displayName || 
-             document.getElementById('registerName')?.value.trim() || '';
+    // ✅ Pegar nome do usuário autenticado
+    const user = auth.currentUser;
+    const nome = user?.displayName || CheckoutState.userData.nome || '';
     const email = CheckoutDOM.inputEmail?.value.trim();
     const telefone = CheckoutDOM.inputTelefone?.value.trim();
     const cpf = CheckoutDOM.inputCPF?.value.trim();
     
-    // ✅ Validação: Nome completo (mínimo 3 caracteres)
+    // Validação: Nome
     if (!nome || nome.length < CHECKOUT_CONFIG.MIN_NAME_LENGTH) {
-        showToast('Nome inválido', 'Digite seu nome completo (mínimo 3 caracteres)', 'warning');
-        CheckoutDOM.inputNome?.focus();
+        showToast('Nome inválido', 'Faça login ou cadastro primeiro', 'warning');
         return false;
     }
     
-    // ✅ Validação: E-mail obrigatório e válido
+    // Validação: E-mail
     if (!email || !isValidEmail(email)) {
         showToast('E-mail inválido', 'Digite um e-mail válido', 'error');
         CheckoutDOM.inputEmail?.focus();
         return false;
     }
     
-    // ✅ Validação: Telefone obrigatório (mínimo 10 dígitos)
+    // Validação: Telefone
     const telefoneLimpo = telefone.replace(/\D/g, '');
     if (!telefone || telefoneLimpo.length < CHECKOUT_CONFIG.MIN_PHONE_LENGTH) {
         showToast('Telefone inválido', 'Digite um telefone válido com DDD', 'warning');
@@ -655,14 +655,23 @@ function validateDadosStep() {
         return false;
     }
     
-    // ✅ Validação: CPF obrigatório e válido
+    // Validação: CPF
     if (!cpf || !isValidCPF(cpf)) {
         showToast('CPF inválido', 'Digite um CPF válido', 'error');
         CheckoutDOM.inputCPF?.focus();
         return false;
     }
     
-    // Salvar dados
+    // ✅ Salvar dados no Firestore para próxima vez
+    if (user?.uid) {
+        db.collection('usuarios').doc(user.uid).update({
+            telefone: telefone,
+            cpf: cpf,
+            atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(err => console.warn('⚠️ Erro ao salvar dados:', err));
+    }
+    
+    // Salvar no estado
     CheckoutState.userData.nome = nome;
     CheckoutState.userData.email = email;
     CheckoutState.userData.telefone = telefone;
