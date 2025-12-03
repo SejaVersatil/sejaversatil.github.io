@@ -1692,8 +1692,6 @@ function renderSearchDropdown(products, query) {
 /* SISTEMA DE LOGIN / USUÁRIO (ADICIONADO PARA PÁGINA DE PRODUTO)       */
 /* =================================================================== */
 
-let currentUser = null;
-
 function openUserPanel() {
     const panel = document.getElementById('userPanel');
     if (panel) panel.classList.add('active');
@@ -2037,6 +2035,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
