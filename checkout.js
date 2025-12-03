@@ -687,12 +687,14 @@ function validateDadosStep() {
 
 // ==================== VALIDAÇÃO ETAPA 2: ENDEREÇO ====================
 function validateEnderecoStep() {
-    const cep = CheckoutDOM.inputCEP?.value.trim();
-    const rua = CheckoutDOM.inputRua?.value.trim();
-    const numero = CheckoutDOM.inputNumero?.value.trim();
-    const bairro = CheckoutDOM.inputBairro?.value.trim();
-    const cidade = CheckoutDOM.inputCidade?.value.trim();
-    const uf = CheckoutDOM.inputUF?.value;
+    // ✅ CORREÇÃO 1: Proteção contra crash ao usar .trim()
+    // Se o elemento não existir, retorna string vazia ''
+    const cep = CheckoutDOM.inputCEP?.value?.trim() || '';
+    const rua = CheckoutDOM.inputRua?.value?.trim() || '';
+    const numero = CheckoutDOM.inputNumero?.value?.trim() || '';
+    const bairro = CheckoutDOM.inputBairro?.value?.trim() || '';
+    const cidade = CheckoutDOM.inputCidade?.value?.trim() || '';
+    const uf = CheckoutDOM.inputUF?.value || ''; // Selects geralmente não precisam de trim
     
     // ✅ Validação: CEP obrigatório (8 dígitos)
     const cepLimpo = cep.replace(/\D/g, '');
@@ -737,11 +739,11 @@ function validateEnderecoStep() {
         return false;
     }
     
-    // Salvar dados
+    // Salvar dados no Estado Global
     CheckoutState.addressData.cep = cep;
     CheckoutState.addressData.rua = rua;
     CheckoutState.addressData.numero = numero;
-    CheckoutState.addressData.complemento = CheckoutDOM.inputComplemento?.value.trim() || '';
+    CheckoutState.addressData.complemento = CheckoutDOM.inputComplemento?.value?.trim() || '';
     CheckoutState.addressData.bairro = bairro;
     CheckoutState.addressData.cidade = cidade;
     CheckoutState.addressData.uf = uf;
@@ -752,22 +754,27 @@ function validateEnderecoStep() {
     
     showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
 
-    // ✅ Salvar endereço no Firestore
-const user = auth.currentUser;
-if (user?.uid) {
-    db.collection('usuarios').doc(user.uid).update({
-        endereco: {
-            cep: cep,
-            rua: rua,
-            numero: numero,
-            complemento: CheckoutDOM.inputComplemento?.value.trim() || '',
-            bairro: bairro,
-            cidade: cidade,
-            uf: uf
-        },
-        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(err => console.warn('⚠️ Erro ao salvar endereço:', err));
-}
+    // ✅ CORREÇÃO 2: Salvar endereço no Firestore com segurança (Merge)
+    const user = auth.currentUser;
+    if (user?.uid) {
+        const addressData = {
+            endereco: {
+                cep: cep,
+                rua: rua,
+                numero: numero,
+                complemento: CheckoutState.addressData.complemento,
+                bairro: bairro,
+                cidade: cidade,
+                uf: uf
+            },
+            atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        // Usa set com merge para criar o doc se não existir, ou atualizar se existir
+        db.collection('usuarios').doc(user.uid).set(addressData, { merge: true })
+            .catch(err => console.warn('⚠️ Erro ao salvar endereço (backup):', err));
+    }
+    
     return true;
 }
 
