@@ -75,7 +75,6 @@ function cacheDOMElements() {
 }
 
 // === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
-// === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
 async function initCheckout() {
   try {
     // 1. Aguardar Auth State
@@ -103,7 +102,7 @@ async function initCheckout() {
             if (DOM.authTabs) DOM.authTabs.style.display = 'flex';
             if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'none';
         }
-    });
+    }); // <--- Fechamento correto do listener
     
     // Carregar carrinho
     loadCart();
