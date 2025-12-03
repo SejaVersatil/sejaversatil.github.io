@@ -4428,20 +4428,28 @@ if (paymentMethod === 'credito-parcelado') {
     showToast('Pedido enviado para o WhatsApp!', 'success');
 }
 
+
+function sanitizeForWhatsApp(str) {
+    return String(str || '')
+        .replace(/[*_~`]/g, '') // Remove WhatsApp formatting
+        .replace(/[<>]/g, '')   // Remove HTML tags
+        .slice(0, 500);         // Limit length
+}
+
 // Função Auxiliar para formatar a mensagem (Baseada no arquivo enviado)
 function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod, installments = null) {
     let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     
     msg += `*👤 CLIENTE:*\n`;
-    msg += `Nome: ${customer.name}\n`;
+    msg += `Nome: ${sanitizeForWhatsApp(customer.name)}\n`;
     if(customer.phone) msg += `Tel: ${customer.phone}\n`;
     if(customer.cpf) msg += `CPF: ${customer.cpf}\n`;
     msg += `\n`;
 
     msg += `*📦 PRODUTOS:*\n`;
     items.forEach((item, index) => {
-        msg += `${index + 1}. *${item.name}*\n`;
+        msg += `${index + 1}. *${sanitizeForWhatsApp(item.name)}*\n`;
         msg += `   ${item.quantity}x R$ ${item.price.toFixed(2)} | Tam: ${item.selectedSize || '-'} Cor: ${item.selectedColor || '-'}\n`;
     });
     msg += `\n`;
@@ -5709,6 +5717,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
