@@ -458,14 +458,24 @@ function updateTotals() {
     CheckoutState.total = Math.max(0, totalComDesconto - CheckoutState.pixDiscount);
     
     // Parcelamento
-    if (CheckoutState.paymentData.method === 'credito-parcelado' && CheckoutState.paymentData.installments > 1) {
-        const installmentValue = CheckoutState.total / CheckoutState.paymentData.installments;
-        if (CheckoutDOM.summaryInstallmentValue) CheckoutDOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
-        if (CheckoutDOM.summaryInstallmentDetail) CheckoutDOM.summaryInstallmentDetail.textContent = `EM ${CheckoutState.paymentData.installments}X SEM JUROS`;
+if (CheckoutState.paymentData.method === 'credito-parcelado') {
+    const installments = parseInt(CheckoutState.paymentData.installments) || 1;
+    
+    if (installments > 1) {
+        const installmentValue = CheckoutState.total / installments;
+        if (CheckoutDOM.summaryInstallmentValue) {
+            CheckoutDOM.summaryInstallmentValue.textContent = `${installments}x de R$ ${formatCurrency(installmentValue)}`;
+        }
+        if (CheckoutDOM.summaryInstallmentDetail) {
+            CheckoutDOM.summaryInstallmentDetail.textContent = `TOTAL: R$ ${formatCurrency(CheckoutState.total)}`;
+        }
         if (CheckoutDOM.summaryInstallmentRow) CheckoutDOM.summaryInstallmentRow.style.display = 'flex';
     } else {
         if (CheckoutDOM.summaryInstallmentRow) CheckoutDOM.summaryInstallmentRow.style.display = 'none';
     }
+} else {
+    if (CheckoutDOM.summaryInstallmentRow) CheckoutDOM.summaryInstallmentRow.style.display = 'none';
+}
     
     // Total final
     if (CheckoutDOM.summaryTotal) {
