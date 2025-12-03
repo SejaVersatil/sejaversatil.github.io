@@ -75,29 +75,41 @@ function cacheDOMElements() {
 }
 
 // === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
+// === FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ===
 async function initCheckout() {
   try {
-        // Usuário logado
-        DOM.authTabs.style.display = 'none';
-        DOM.loggedInfo.style.display = 'block';
-        DOM.loggedUserName.textContent = user.displayName || user.email;
+    // 1. Aguardar Auth State
+    // O auth.js já gerencia isso globalmente, mas aqui garantimos a UI local
+    auth.onAuthStateChanged((user) => {
+        currentUser = user; // Atualiza a variável global local
         
-        // Preencher formulário
-        document.getElementById('inputNome').value = user.displayName || '';
-        document.getElementById('inputEmail').value = user.email || '';
-        document.getElementById('inputEmail').disabled = true;
-      } else {
-        // Usuário não logado
-        DOM.authTabs.style.display = 'flex';
-        DOM.loggedInfo.style.display = 'none';
-      }
+        if (user) {
+            // Usuário logado
+            if (DOM.authTabs) DOM.authTabs.style.display = 'none';
+            if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'block';
+            if (DOM.loggedUserName) DOM.loggedUserName.textContent = user.displayName || user.email;
+            
+            // Preencher formulário se os campos existirem
+            const inputNome = document.getElementById('inputNome');
+            const inputEmail = document.getElementById('inputEmail');
+            
+            if (inputNome) inputNome.value = user.displayName || '';
+            if (inputEmail) {
+                inputEmail.value = user.email || '';
+                inputEmail.disabled = true;
+            }
+        } else {
+            // Usuário não logado
+            if (DOM.authTabs) DOM.authTabs.style.display = 'flex';
+            if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'none';
+        }
     });
     
     // Carregar carrinho
     loadCart();
     
     // Se carrinho vazio, redirecionar
-    if (cartItems.length === 0) {
+    if (!cartItems || cartItems.length === 0) {
       showToast('Carrinho vazio', 'Adicione produtos antes de finalizar a compra', 'warning');
       setTimeout(() => {
         window.location.href = 'index.html';
@@ -115,7 +127,7 @@ async function initCheckout() {
     initEvents();
     
     // Atualizar código do carrinho
-    DOM.summaryCartCode.textContent = `(${cartCode})`;
+    if (DOM.summaryCartCode) DOM.summaryCartCode.textContent = `(${cartCode})`;
     
   } catch (error) {
     console.error('Erro na inicialização:', error);
