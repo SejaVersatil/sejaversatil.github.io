@@ -138,15 +138,16 @@ function loadCart() {
     const saved = localStorage.getItem(CONFIG.CART_STORAGE_KEY);
     if (!saved) {
         cartItems = [];
+        discount = 0;
         return;
     }
     
     try {
         const parsed = JSON.parse(saved);
         
-        // ✅ COMPATIBILIDADE COM FORMATO NOVO E LEGADO
+        // ✅ COMPATIBILITY WITH BOTH FORMATS
         if (parsed.items && Array.isArray(parsed.items)) {
-            // Formato: {items: [], appliedCoupon: {}, couponDiscount: 0}
+            // NEW FORMAT: {items: [], appliedCoupon: {}, couponDiscount: 0}
             cartItems = parsed.items.map(item => ({
                 ...item,
                 quantity: item.quantity || 1,
@@ -154,8 +155,15 @@ function loadCart() {
                 size: item.selectedSize || item.size || 'M',
                 color: item.selectedColor || item.color || 'Padrão'
             }));
+            
+            // ✅ LOAD COUPON DATA IF EXISTS
+            if (parsed.appliedCoupon) {
+                discount = parsed.couponDiscount || 0;
+                console.log('✅ Cupom aplicado carregado:', parsed.appliedCoupon.code, '- R$', discount.toFixed(2));
+            }
+            
         } else if (Array.isArray(parsed)) {
-            // Formato antigo: [{...}, {...}]
+            // OLD FORMAT: [{...}, {...}]
             cartItems = parsed.map(item => ({
                 ...item,
                 quantity: item.quantity || 1,
@@ -172,6 +180,7 @@ function loadCart() {
     } catch (error) {
         console.error('❌ Erro ao carregar carrinho:', error);
         cartItems = [];
+        discount = 0;
     }
 }
 
