@@ -2804,14 +2804,6 @@ cartFooter.style.display = 'block';
     });
 }
 
-window.addEventListener('storage', (e) => {
-    if (e.key === 'sejaVersatilCart' && e.newValue !== e.oldValue) {
-        console.log('🔄 Carrinho atualizado em outra aba');
-        loadCart();
-        updateCartUI();
-    }
-});
-
 function updateQuantity(cartItemId, change) {
     const item = cart.find(i => {
         const itemId = i.cartItemId || i.id;
@@ -5874,6 +5866,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
