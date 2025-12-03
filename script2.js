@@ -2966,19 +2966,31 @@ function toggleCart() {
     overlay.classList.toggle('active');
 }
 
-function saveCart() {
-    try {
-        const cartData = {
-            items: cart || [],
-            appliedCoupon: appliedCoupon || null,
-            couponDiscount: couponDiscount || 0
-        };
-        localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
-        console.log('💾 Carrinho salvo:', cart.length, 'itens');
-    } catch (err) {
-        console.warn('⚠️ Erro ao salvar carrinho:', err);
-    }
-}
+const saveCart = (() => {
+    let timeout;
+    
+    return () => {
+        // Cancela o salvamento anterior se o usuário clicou de novo em menos de 300ms
+        clearTimeout(timeout);
+        
+        // Agenda um novo salvamento
+        timeout = setTimeout(() => {
+            try {
+                // ✅ Usa o formato novo com suporte a cupons
+                const cartData = {
+                    items: cart || [],
+                    appliedCoupon: appliedCoupon || null,
+                    couponDiscount: couponDiscount || 0
+                };
+                
+                localStorage.setItem('sejaVersatilCart', JSON.stringify(cartData));
+                console.log('💾 Carrinho salvo (Debounced)');
+            } catch (err) {
+                console.warn('❌ Erro ao salvar carrinho:', err);
+            }
+        }, 300); // Espera 300ms após o último clique para salvar
+    };
+})();
 
 
 // ==================== INICIALIZAÇÃO ====================
@@ -5717,6 +5729,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
