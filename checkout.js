@@ -880,18 +880,6 @@ function buildWhatsAppMessage(order) {
     
     return msg;
 }
-// ==================== ENVIAR PARA WHATSAPP ====================
-function enviarWhatsApp(order) {
-    const message = buildWhatsAppMessage(order);
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/${CHECKOUT_CONFIG.WHATSAPP_NUMBER}?text=${encodedMessage}`;
-    
-    window.open(whatsappURL, '_blank' );
-    
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, CHECKOUT_CONFIG.REDIRECT_DELAY);
-}
 
 // ==================== FUNÇÕES UTILITÁRIAS ====================
 function escapeHtml(text) {
