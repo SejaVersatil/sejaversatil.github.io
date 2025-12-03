@@ -10,6 +10,13 @@
 let currentUser = null;
 let isAdminLoggedIn = false;
 
+window.authReady = new Promise(resolve => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+        unsubscribe();
+        resolve(user);
+    });
+});
+
 // Mapeamento de Erros Firebase para PT-BR amigável
 const FIREBASE_ERROR_MAP = {
     'auth/invalid-email': 'O endereço de e-mail está mal formatado.',
