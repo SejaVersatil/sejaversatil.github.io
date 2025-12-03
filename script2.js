@@ -4090,7 +4090,7 @@ document.addEventListener('keydown', (e) => {
             return;
         }
         
-        // Fechar carrinho
+        // Fechar carrinho (Verificação de nulidade reforçada)
         const cartSidebar = document.getElementById('cartSidebar');
         if (cartSidebar && cartSidebar.classList.contains('active')) {
             toggleCart();
@@ -5873,6 +5873,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
