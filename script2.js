@@ -4297,15 +4297,16 @@ async function sendToWhatsApp() {
     }
     const paymentMethod = paymentInput.value;
 
+let installments = null;
 if (paymentMethod === 'credito-parcelado') {
-        const installmentsSelect = document.getElementById('installmentsSelect');
-        if (!installmentsSelect || !installmentsSelect.value) {
-            showToast('Selecione o número de parcelas.', 'error');
-            // Reabre o modal de pagamento se estiver fechado (caso tenha vindo do fluxo de visitante)
-            openPaymentModal(); 
-            return;
-        }
+    const installmentsSelect = document.getElementById('installmentsSelect');
+    if (!installmentsSelect || !installmentsSelect.value) {
+        showToast('Selecione o número de parcelas.', 'error');
+        openPaymentModal(); // ← REABRE MODAL
+        return;
     }
+    installments = installmentsSelect.value; // ← CAPTURA AQUI
+}
     
     // 3. Cálculos
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -5657,6 +5658,7 @@ window.getUserCPF = getUserCPF;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.checkout = checkout;
+
 
 
 
