@@ -252,15 +252,26 @@ function updateTotals() {
   // Subtotal
   DOM.summarySubtotal.textContent = `R$ ${formatCurrency(subtotal)}`;
   
+  // ✅ SHOW COUPON DISCOUNT IF EXISTS
+  const discountRow = document.getElementById('summaryDiscountRow');
+  const discountValue = document.getElementById('summaryDiscount');
+  
+  if (discount > 0) {
+    if (discountRow) discountRow.style.display = 'flex';
+    if (discountValue) discountValue.textContent = `-R$ ${formatCurrency(discount)}`;
+  } else {
+    if (discountRow) discountRow.style.display = 'none';
+  }
+  
   // Desconto PIX (10%)
-  const pixDiscount = subtotal * CONFIG.PIX_DISCOUNT;
+  const pixDiscount = (subtotal - discount) * CONFIG.PIX_DISCOUNT;
   DOM.summaryPixDiscount.textContent = `R$ ${formatCurrency(pixDiscount)}`;
   
-  // Total
-  total = subtotal;
+  // Total (subtotal - coupon discount)
+  total = Math.max(0, subtotal - discount);
   
-  // Calcular parcelas
-  const installmentValue = subtotal / 3;
+  // Calcular parcelas (sobre o total com desconto)
+  const installmentValue = total / 3;
   DOM.summaryInstallmentValue.textContent = `R$ ${formatCurrency(installmentValue)}`;
 }
 
