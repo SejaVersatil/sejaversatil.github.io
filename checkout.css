@@ -4,17 +4,17 @@
    ============================================================================ */
 
 :root {
-    /* Tons Pastel Minimalistas */
-    --color-primary: #B8A7D4;
-    --color-secondary: #D4B8C8;
-    --color-text: #4A4A4A;
-    --color-light-gray: #F9F7FC;
-    --color-border: #E8E4F0;
-    --color-success: #A8D5BA;
-    --color-error: #F5B7B1;
-    --color-warning: #F9E79F;
-    --color-accent: #C5CAE9;
-    --color-background: #FDFCFF;
+    /* Tons Laranja Metálico Escuro */
+    --color-primary: #C76D3F;
+    --color-secondary: #A8523A;
+    --color-text: #2D2D2D;
+    --color-light-gray: #FBF8F5;
+    --color-border: #E5DDD6;
+    --color-success: #88B17A;
+    --color-error: #D97D6F;
+    --color-warning: #E8B86D;
+    --color-accent: #D98F5F;
+    --color-background: #FFFDFB;
     
     /* Sombras Suaves */
     --shadow-light: 0 2px 8px rgba(184, 167, 212, 0.08);
@@ -31,7 +31,7 @@
 
 /* ==================== RESET & BASE ====================*/
 .checkout-page {
-    background: linear-gradient(135deg, #FDFCFF 0%, #F9F7FC 100%);
+    background: #FFFFFF; /* ✅ Fundo branco puro para melhor contraste */
     font-family: 'Poppins', sans-serif;
     color: var(--color-text);
     min-height: 100vh;
@@ -166,15 +166,15 @@
 /* ==================== COLUNA BASE ====================*/
 .checkout-column {
     background: #FFFFFF;
-    border-radius: 16px; /* ✅ Bordas mais arredondadas */
-    box-shadow: var(--shadow-light);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(199, 109, 63, 0.12); /* ✅ Sombra mais definida */
     padding: var(--spacing-lg);
     transition: all 0.3s ease;
     border: 1px solid var(--color-border);
 }
 
 .checkout-column:hover {
-    box-shadow: var(--shadow-medium);
+    box-shadow: 0 4px 20px rgba(199, 109, 63, 0.18);
 }
 
 .column-header {
@@ -720,15 +720,17 @@
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     padding: var(--spacing-md);
-    background: var(--color-light-gray);
+    background: #FAF8F6; /* ✅ Fundo mais claro e definido */
     border-radius: 12px;
     transition: all 0.3s ease;
+    border: 1px solid #F0EBE6; /* ✅ Borda sutil para definir melhor */
 }
 
 .summary-item:hover {
     background: #FFFFFF;
-    box-shadow: var(--shadow-light);
+    box-shadow: 0 4px 16px rgba(199, 109, 63, 0.12);
     transform: translateY(-2px);
+    border-color: var(--color-primary);
 }
 
 .summary-item:last-child {
@@ -736,13 +738,19 @@
 }
 
 .summary-item-image {
-    width: 90px; /* ✅ AMPLIADO de 50px para 90px */
-    height: 90px;
+    width: 126px; /* ✅ AMPLIADO +40%: 90px × 1.4 = 126px */
+    height: 126px;
     object-fit: cover;
     border-radius: 12px;
     flex-shrink: 0;
-    border: 2px solid var(--color-border);
-    box-shadow: var(--shadow-light);
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 4px 16px rgba(199, 109, 63, 0.15);
+    transition: all 0.3s ease;
+}
+
+.summary-item:hover .summary-item-image {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(199, 109, 63, 0.25);
 }
 
 .summary-item-info {
@@ -754,10 +762,10 @@
 }
 
 .summary-item-name {
-    font-size: 14px; /* ✅ MAIOR: era 12px */
+    font-size: 14px;
     font-weight: 700;
     margin-bottom: 6px;
-    color: var(--color-text);
+    color: #1A1A1A; /* ✅ Texto mais escuro para melhor contraste */
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
