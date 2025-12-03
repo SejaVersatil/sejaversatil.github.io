@@ -5823,3 +5823,45 @@ window.validateDadosStep = validateDadosStep;
 window.validateEnderecoStep = validateEnderecoStep;
 window.validatePagamentoStep = validatePagamentoStep;
 window.processCheckout = processCheckout;
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const cepInput = document.getElementById('inputCEP');
+    if (!cepInput) return;
+    
+    cepInput.addEventListener('blur', async function() {
+        const cep = this.value.replace(/\D/g, '');
+        
+        if (cep.length !== 8) return;
+        
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) loadingOverlay.classList.add('active');
+        
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+            
+            if (data.erro) {
+                showToast('CEP não encontrado', 'error');
+                return;
+            }
+            
+            document.getElementById('inputRua').value = data.logradouro || '';
+            document.getElementById('inputBairro').value = data.bairro || '';
+            document.getElementById('inputCidade').value = data.localidade || '';
+            document.getElementById('inputUF').value = data.uf || '';
+            
+            // Focus on number input
+            document.getElementById('inputNumero').focus();
+            
+            showToast('✅ Endereço preenchido automaticamente', 'success');
+            
+        } catch (error) {
+            console.error('Erro ao buscar CEP:', error);
+            showToast('Erro ao buscar CEP. Preencha manualmente.', 'error');
+        } finally {
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+        }
+    });
+});
+
