@@ -79,7 +79,7 @@ async function initCheckout() {
     // 1. Aguardar Auth State
     // O auth.js já gerencia isso globalmente, mas aqui garantimos a UI local
     auth.onAuthStateChanged((user) => {
-        currentUser = user; // Atualiza a variável global local
+    
         
         if (user) {
             // Usuário logado
