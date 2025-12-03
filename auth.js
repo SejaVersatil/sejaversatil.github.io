@@ -10,10 +10,11 @@
 let currentUser = null;
 let isAdminLoggedIn = false;
 
-window.authReady = new Promise(resolve => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-        unsubscribe();
-        resolve(user);
+// ✅ CREATE RESOLVABLE PROMISE
+window.authReady = new Promise((resolve) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+        unsubscribe(); // Stop listening after first event
+        resolve(user); // Resolve promise with user object
     });
 });
 
