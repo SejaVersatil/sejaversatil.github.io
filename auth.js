@@ -438,14 +438,14 @@ async function userRegister(event) {
 
     // VALIDAÇÃO: EMAIL
     if (!validateEmail(email)) {
-        if (errorMsgEl) {
-            errorMsgEl.textContent = 'E-mail inválido.';
-            errorMsgEl.classList.add('active');
-        }
-        emailInput.classList.add('input-error');
-        showToast('E-mail inválido', 'error');
-        return;
+    if (errorMsgEl) {
+        errorMsgEl.textContent = 'E-mail inválido ou domínio não permitido.';
+        errorMsgEl.classList.add('active');
     }
+    emailInput.classList.add('input-error');
+    showToast('E-mail inválido ou domínio temporário', 'error');
+    return;
+}
 
     // VALIDAÇÃO: SENHAS COINCIDEM
     if (password !== confirmPassword) {
