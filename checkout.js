@@ -217,6 +217,7 @@ async function initCheckout() {
             console.log('⏳ Aguardando auth estar pronto...');
             const user = await window.authReady;
             console.log('✅ Auth pronto. User:', user ? user.email : 'null');
+            handleCheckoutAuthUpdate(user);
             
             // Chama a função de atualização
             if (typeof updateAuthUI === 'function') {
