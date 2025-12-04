@@ -176,7 +176,7 @@ function updateUserPanelTabs(user) {
 }
 
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
-function updateUI(user) {
+ function updateUI(user) {
     const userPanel = document.getElementById('userPanel');
     const userStatusText = document.getElementById('userStatusText');
     const loggedInView = document.getElementById('loggedInView');
@@ -193,6 +193,12 @@ function updateUI(user) {
         // ✅ VERIFICAR SE E-MAIL FOI CONFIRMADO
         if (!user.emailVerified) {
             showToast('⚠️ Por favor, verifique seu e-mail antes de continuar', 'error');
+
+            await user.reload();
+            
+            localStorage.removeItem('sejaVersatilCurrentUser');
+            currentUser = null;
+            window.currentUser = null;
 
             // Mostrar botão para reenviar
             if (userStatusText) {
