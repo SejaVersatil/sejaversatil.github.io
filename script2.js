@@ -5711,4 +5711,18 @@ window.addEventListener('authStateUpdated', (e) => {
 });
 
 
+// ==================== LISTENER DE AUTH CENTRALIZADO ====================
+// Ouve o evento customizado disparado por auth.js para manter a sincronia.
+window.addEventListener('authStateChanged', (event) => {
+    const { user } = event.detail;
+    console.log('Sincronização de Auth recebida em script2.js:', user ? user.email : 'Visitante');
 
+    // Atualiza as variáveis globais de script2.js com base no evento
+    currentUser = user;
+    isAdminLoggedIn = user ? user.isAdmin : false;
+
+    // Se houver outras funções em script2.js que dependam do estado de login,
+    // elas podem ser chamadas aqui. Ex:
+    // updateFavoritesUI();
+    // renderPersonalizedContent();
+});
