@@ -203,11 +203,32 @@ async function initCheckout() {
             }
         }
         
-        // 1. Auth monitoring
-        if (window.authReady) {
-            const user = await window.authReady;
-            updateAuthUI(user);
+        // ==================== LÓGICA DE UI DO CHECKOUT (Adicionar no final do checkout.js) ====================
+function handleCheckoutAuthUpdate(user) {
+    // Atualiza variável local
+    currentUser = user; 
+    
+    if (user) {
+        // LOGADO: Esconde abas de login, Mostra nome do usuário
+        if (DOM.authTabs) DOM.authTabs.style.display = 'none';
+        if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'block';
+        if (DOM.loggedUserName) DOM.loggedUserName.textContent = user.displayName || user.name || user.email;
+        
+        // Preenche inputs automaticamente
+        const inputNome = document.getElementById('inputNome');
+        const inputEmail = document.getElementById('inputEmail');
+        
+        if (inputNome && !inputNome.value) inputNome.value = user.displayName || user.name || '';
+        if (inputEmail) {
+            inputEmail.value = user.email || '';
+            inputEmail.disabled = true; // Bloqueia edição do email
         }
+    } else {
+        // DESLOGADO: Mostra abas de login/cadastro
+        if (DOM.authTabs) DOM.authTabs.style.display = 'flex';
+        if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'none';
+    }
+}
         
         // 2. Load cart
         CartManager.load();
