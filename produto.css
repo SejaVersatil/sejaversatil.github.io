@@ -557,15 +557,15 @@ body, .short-desc-text, .model-info-text {
     
     /* 3. Coluna de Informações (Sticky/Fixa ao rolar) */
     .product-info-section {
-        position: sticky !important;
-        top: 85px !important;
-        height: fit-content !important;
-        max-height: none !important; 
-        overflow-y: visible !important;
-        padding: 0 20px 0 0 !important;
-        background: transparent !important;
-        z-index: 10 !important;
-    }
+    position: sticky !important;
+    top: 145px !important; /* ← MUDANÇA: banner 55px + header 90px = 145px */
+    height: fit-content !important;
+    max-height: none !important; 
+    overflow-y: visible !important;
+    padding: 0 20px 0 0 !important;
+    background: transparent !important;
+    z-index: 10 !important;
+}
     
     .product-info-section::-webkit-scrollbar { display: none; }
 
@@ -1083,4 +1083,5 @@ body, .short-desc-text, .model-info-text {
         display: flex !important; 
     }
 }
+
 
