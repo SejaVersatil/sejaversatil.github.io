@@ -118,30 +118,56 @@ function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
 
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
 function updateUI(user) {
+    
     const userPanel = document.getElementById('userPanel');
     const userStatusText = document.getElementById('userStatusText');
     const loggedInView = document.getElementById('loggedInView');
     const loggedOutView = document.getElementById('loggedOutView');
     const adminAccessBtn = document.getElementById('adminAccessBtn');
+    
+    // ✅ CHECKOUT-SPECIFIC ELEMENTS (null-safe)
+    const checkoutAuthStateGuest = document.getElementById('authStateGuest');
+    const checkoutAuthStateLogged = document.getElementById('authStateLogged');
+    const checkoutUserName = document.getElementById('loggedUserName');
+    const checkoutUserEmail = document.getElementById('loggedUserEmail');
 
     if (user) {
-        // USUÁRIO LOGADO
+        // ========== HOME PAGE UI ==========
         if (userStatusText) userStatusText.textContent = `Olá, ${currentUser?.name || user.email}!`;
         if (loggedInView) loggedInView.style.display = 'block';
         if (loggedOutView) loggedOutView.style.display = 'none';
-        
-        if (adminAccessBtn) {
-            adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
-        }
-
+        if (adminAccessBtn) adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
         if (userPanel) userPanel.classList.remove('active');
+        
+        // ========== CHECKOUT PAGE UI ==========
+        if (checkoutAuthStateGuest) checkoutAuthStateGuest.style.display = 'none';
+        if (checkoutAuthStateLogged) checkoutAuthStateLogged.style.display = 'block';
+        if (checkoutUserName) checkoutUserName.textContent = currentUser?.name || 'Usuário';
+        if (checkoutUserEmail) checkoutUserEmail.textContent = user.email || '';
+        
+        // ✅ Trigger checkout-specific validation (if function exists)
+        if (typeof window.updateAuthUICheckout === 'function') {
+            window.updateAuthUICheckout(user);
+        }
+        
     } else {
-        // USUÁRIO DESLOGADO
+        // ========== HOME PAGE UI (Logged Out) ==========
         if (userStatusText) userStatusText.textContent = 'Minha Conta';
         if (loggedInView) loggedInView.style.display = 'none';
         if (loggedOutView) loggedOutView.style.display = 'block';
         if (adminAccessBtn) adminAccessBtn.style.display = 'none';
+        
+        // ========== CHECKOUT PAGE UI (Logged Out) ==========
+        if (checkoutAuthStateGuest) checkoutAuthStateGuest.style.display = 'block';
+        if (checkoutAuthStateLogged) checkoutAuthStateLogged.style.display = 'none';
     }
+    
+    // ✅ CROSS-PAGE: Update cart UI (if function exists)
+    if (typeof window.updateCartUIAfterAuth === 'function') {
+        window.updateCartUIAfterAuth();
+    }
+    
+    console.log('✅ UI updated universally:', user ? user.email : 'Guest');
 }
 
 // ==================== AUTH STATE LISTENER (CORAÇÃO DO SISTEMA) ====================
