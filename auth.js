@@ -1035,6 +1035,11 @@ async function resetPassword() {
     }
 }
 
+// Dispatch custom event for other scripts to listen
+window.dispatchEvent(new CustomEvent('authStateUpdated', { 
+    detail: { user: currentUser, isAdmin: isAdminLoggedIn }
+}));
+
 // ==================== EXPORTS GLOBAIS (Mantidos do original) ====================
 window.userLogin = userLogin;
 window.userRegister = userRegister;
