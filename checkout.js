@@ -328,15 +328,48 @@ async function handleLogin() {
         return;
     }
     
-    showLoading(true);
-    
     try {
-        await auth.signInWithEmailAndPassword(email, password);
+        showLoading(true);
+        
+        // ✅ FIX: Aguardar login completar
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        console.log('✅ Login realizado:', user.email);
+        
+        // ✅ FIX: Aguardar auth state se propagar
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // ✅ FIX: Forçar atualização da UI imediatamente
+        updateAuthUI(user);
+        
+        // ✅ FIX: Preencher formulário de dados pessoais
+        if (CheckoutDOM.inputNome && user.displayName) {
+            CheckoutDOM.inputNome.value = user.displayName;
+        }
+        if (CheckoutDOM.inputEmail) {
+            CheckoutDOM.inputEmail.value = user.email;
+            CheckoutDOM.inputEmail.disabled = true;
+        }
+        
+        // ✅ FIX: Marcar etapa 1 como completa
+        CheckoutState.step1Valid = true;
+        CheckoutState.userData.nome = user.displayName || '';
+        CheckoutState.userData.email = user.email;
+        
+        updateColumnStatus(1, 'Completo', 'success');
+        unlockColumn(2);
+        
         showToast('Login realizado', 'Bem-vindo de volta!', 'success');
+        
     } catch (error) {
-        const errorCode = error.code;
-        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
-        showToast('Erro', friendlyMessage, 'error');
+        console.error('❌ Erro no login:', error);
+        let message = 'Erro ao fazer login';
+        if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado';
+        if (error.code === 'auth/wrong-password') message = 'Senha incorreta';
+        if (error.code === 'auth/invalid-email') message = 'E-mail inválido';
+        if (error.code === 'auth/too-many-requests') message = 'Muitas tentativas. Aguarde alguns minutos';
+        showToast('Erro', message, 'error');
     } finally {
         showLoading(false);
     }
