@@ -338,31 +338,6 @@ nav {
     transform: translateX(-100%);
     z-index: 0;
 }
-/* Indicadores (opcional) */
-.banner-dots {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 6px;
-    z-index: 2;
-}
-
-.banner-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.banner-dot.active {
-    background: rgba(255, 255, 255, 0.9);
-    width: 20px;
-    border-radius: 3px;
-}
 
 /* Animação do ticker */
 @keyframes tickerScroll {
@@ -3101,6 +3076,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
