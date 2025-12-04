@@ -1,0 +1,242 @@
+/* =================================================================
+// meus_pedidos_styles.css - Estilos para a página Meus Pedidos
+// CRIADO POR: MANUS - ENGENHEIRO DE SOFTWARE SÊNIOR
+// ================================================================= */
+
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --text-dark: #333;
+    --text-light: #666;
+    --border-color: #e5e5e5;
+    --background-light: #f8f9fa;
+    --status-pending: #f39c12;
+    --status-shipped: #3498db;
+    --status-delivered: #27ae60;
+    --status-canceled: #e74c3c;
+}
+
+.orders-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.orders-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.orders-header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.orders-header p {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+#ordersContent {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.order-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--background-light);
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.order-info strong {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.order-info span {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-left: 10px;
+}
+
+.order-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+/* Cores dinâmicas para o status */
+.status-pending { background-color: var(--status-pending); }
+.status-shipped { background-color: var(--status-shipped); }
+.status-delivered { background-color: var(--status-delivered); }
+.status-canceled { background-color: var(--status-canceled); }
+
+.order-card-body {
+    padding: 20px;
+}
+
+.order-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.order-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.order-item:first-child {
+    padding-top: 0;
+}
+
+.item-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.item-details h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 5px;
+}
+
+.item-details p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--background-light);
+    border-top: 1px solid var(--border-color);
+}
+
+.order-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.order-total span {
+    font-weight: 500;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.order-actions .btn-details {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.order-actions .btn-details:hover {
+    background: var(--secondary-color);
+}
+
+/* Mensagens de estado */
+.no-orders-message, .auth-required-message {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--background-light);
+    border-radius: 12px;
+}
+.no-orders-message h2, .auth-required-message h2 {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+.no-orders-message p, .auth-required-message p {
+    color: var(--text-light);
+    margin-bottom: 25px;
+}
+.no-orders-message .btn-shop, .auth-required-message .btn-login {
+    display: inline-block;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background 0.3s;
+}
+.no-orders-message .btn-shop:hover, .auth-required-message .btn-login:hover {
+    background: var(--secondary-color);
+}
+
+/* Skeleton Loading */
+.order-card-skeleton {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+.skeleton-line {
+    height: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite ease-in-out;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+.skeleton-line.header { width: 60%; }
+.skeleton-line.item { width: 90%; }
+.skeleton-line.item.short { width: 70%; }
+.skeleton-line.footer { width: 40%; margin-bottom: 0; }
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+    .orders-header h1 { font-size: 2rem; }
+    .order-card-header { flex-direction: column; align-items: flex-start; }
+}
