@@ -113,82 +113,60 @@
   </div>
 
  <div class="top-banner">
-    <!-- PRIMEIRO BLOCO (ORIGINAL) -->
-    <div class="ticker-content">
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-            </svg>
-            ALTA TECNOLOGIA
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 7h-9"/>
-                <path d="M14 3v4"/>
-                <path d="M6 12H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                <path d="M6 12v7c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-7"/>
-                <path d="M10 12h4"/>
-            </svg>
-            FRETE GRÁTIS ACIMA DE R$ 399,00
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item ticker-highlight">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                <line x1="1" y1="10" x2="23" y2="10"/>
-            </svg>
-            10% OFF NO PIX À VISTA
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-            ATENDIMENTO PERSONALIZADO
-        </span>
-        <span class="ticker-separator">•</span>
-    </div>
-    
-    <!-- SEGUNDO BLOCO (CÓPIA PARA LOOP INFINITO) -->
-    <div class="ticker-content" aria-hidden="true">
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-            </svg>
-            ALTA TECNOLOGIA
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 7h-9"/>
-                <path d="M14 3v4"/>
-                <path d="M6 12H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                <path d="M6 12v7c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-7"/>
-                <path d="M10 12h4"/>
-            </svg>
-            FRETE GRÁTIS ACIMA DE R$ 399,00
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item ticker-highlight">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                <line x1="1" y1="10" x2="23" y2="10"/>
-            </svg>
-            10% OFF NO PIX À VISTA
-        </span>
-        <span class="ticker-separator">•</span>
-        <span class="ticker-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-            ATENDIMENTO PERSONALIZADO
-        </span>
-        <span class="ticker-separator">•</span>
+    <div class="banner-slider">
+        <!-- Slide 1: Alta Tecnologia -->
+        <div class="banner-slide active">
+            <div class="banner-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                ALTA TECNOLOGIA
+            </div>
+        </div>
+
+        <!-- Slide 2: Frete Grátis -->
+        <div class="banner-slide">
+            <div class="banner-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 3h5v13h-5z"/>
+                    <path d="M3 7h13v10H3z"/>
+                    <circle cx="5.5" cy="19.5" r="2.5"/>
+                    <circle cx="18.5" cy="19.5" r="2.5"/>
+                </svg>
+                FRETE GRÁTIS ACIMA DE R$ 399,00
+            </div>
+        </div>
+
+        <!-- Slide 3: 10% OFF PIX (Destacado) -->
+        <div class="banner-slide">
+            <div class="banner-item highlight">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                10% OFF NO PIX À VISTA
+            </div>
+        </div>
+
+        <!-- Slide 4: Atendimento -->
+        <div class="banner-slide">
+            <div class="banner-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                ATENDIMENTO PERSONALIZADO
+            </div>
+        </div>
+
+        <!-- Indicadores (bolinhas) - opcional -->
+        <div class="banner-dots">
+            <span class="banner-dot active" data-slide="0"></span>
+            <span class="banner-dot" data-slide="1"></span>
+            <span class="banner-dot" data-slide="2"></span>
+            <span class="banner-dot" data-slide="3"></span>
+        </div>
     </div>
 </div>
 
