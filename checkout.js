@@ -185,7 +185,6 @@ function cacheDOMElements() {
 }
 
 // ==================== INICIALIZAÇÃO PRINCIPAL ====================
-// ==================== INICIALIZAÇÃO PRINCIPAL ====================
 async function initCheckout() {
     try {
         // [PARTE 1: CÓDIGO EXISTENTE - Proteção do CartManager]
@@ -402,9 +401,6 @@ window.handleLogin = async function() {
         
         // ✅ FIX: Aguardar auth state se propagar
         await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // ✅ FIX: Forçar atualização da UI imediatamente
-        updateAuthUI(user);
         
         // ✅ FIX: Preencher formulário de dados pessoais
         if (CheckoutDOM.inputNome && user.displayName) {
