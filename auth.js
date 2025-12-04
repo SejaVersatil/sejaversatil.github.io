@@ -44,8 +44,24 @@ const FIREBASE_ERROR_MAP = {
 
 // ==================== VALIDATION HELPERS ====================
 function validateEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+    // REGEX mais restritivo - requer pelo menos 2 caracteres antes do @
+    const re = /^[a-zA-Z0-9][a-zA-Z0-9._-]{1,}@[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    // Validação adicional: bloquear domínios suspeitos
+    const suspiciousDomains = [
+        'tempmail', 'throwaway', 'guerrillamail', '10minutemail', 
+        'mailinator', 'trashmail', 'f31ed211.com'
+    ];
+    
+    const isValid = re.test(String(email).toLowerCase());
+    
+    if (!isValid) return false;
+    
+    // Verificar se contém domínio suspeito
+    const domain = email.split('@')[1];
+    const isSuspicious = suspiciousDomains.some(sus => domain.includes(sus));
+    
+    return !isSuspicious;
 }
 
 function validatePasswordStrength(password) {
