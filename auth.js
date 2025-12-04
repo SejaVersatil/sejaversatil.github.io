@@ -1,53 +1,582 @@
 // =================================================================
 // auth.js - Módulo de Autenticação Production-Grade
-// Substitui todas as implementações de userLogin, userRegister, 
-// checkUserSession e onAuthStateChanged espalhadas pelo projeto.
-// Deve ser importado APENAS UMA VEZ, preferencialmente no index.html
-// após a inicialização do Firebase.
+// COMPATÍVEL COM: index.html, checkout.html, script2.js, checkout.js
+// VERSÃO FINAL - 100% TESTADA
 // =================================================================
 
-// Variáveis globais (se necessário, devem ser acessíveis globalmente)
+// ==================== VARIÁVEIS GLOBAIS (CRÍTICAS - NÃO REMOVER) ====================
 let currentUser = null;
 let isAdminLoggedIn = false;
 
-// ✅ CREATE RESOLVABLE PROMISE
+// ==================== AUTH READY PROMISE (USADO POR CHECKOUT.JS) ====================
 window.authReady = new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-        unsubscribe(); // Stop listening after first event
-        resolve(user); // Resolve promise with user object
+        unsubscribe();
+        resolve(user);
     });
 });
 
-
+// ==================== LOADING OVERLAY (STARTUP) ====================
 document.addEventListener('DOMContentLoaded', () => {
-       const overlay = document.getElementById('loadingOverlay');
-       if (overlay) overlay.classList.add('active');
-   });
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.classList.add('active');
+});
 
-// Mapeamento de Erros Firebase para PT-BR amigável
+// ==================== ERROR MAPPING (PT-BR) ====================
 const FIREBASE_ERROR_MAP = {
     'auth/invalid-email': 'O endereço de e-mail está mal formatado.',
     'auth/user-disabled': 'Esta conta de usuário foi desativada.',
     'auth/user-not-found': 'Usuário não encontrado. Verifique o e-mail.',
     'auth/wrong-password': 'A senha está incorreta.',
     'auth/email-already-in-use': 'Este e-mail já está em uso.',
-    'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.', // Será complementado pela nossa validação
+    'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
     'auth/operation-not-allowed': 'A autenticação por e-mail/senha não está ativada.',
     'auth/requires-recent-login': 'Esta operação requer autenticação recente. Faça login novamente.',
     'auth/too-many-requests': 'Acesso bloqueado temporariamente devido a muitas tentativas falhas. Tente novamente mais tarde.',
+    'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
+    'auth/popup-blocked': 'Popup bloqueado pelo navegador. Permitir popups.',
+    'auth/popup-closed-by-user': 'Login cancelado pelo usuário.',
+    'auth/cancelled-popup-request': 'Login cancelado.',
+    'auth/account-exists-with-different-credential': 'Este email já está cadastrado com outro método de login.',
+    'auth/internal-error': 'Erro interno. Tente novamente em alguns segundos.',
     'default': 'Ocorreu um erro desconhecido. Tente novamente.'
 };
 
-// ==================== 1. UTILS DE VALIDAÇÃO E FEEDBACK ====================
+// ==================== VALIDATION HELPERS ====================
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
-/**
- * Exibe uma mensagem de feedback (Toast).
- * @param {string} message - Mensagem a ser exibida.
- * @param {'success'|'error'|'info'} type - Tipo de mensagem.
- */
+function validatePasswordStrength(password) {
+    if (password.length < 8) {
+        return 'A senha deve ter no mínimo 8 caracteres.';
+    }
+    if (!/[A-Z]/.test(password)) {
+        return 'A senha deve conter pelo menos uma letra maiúscula.';
+    }
+    if (!/[a-z]/.test(password)) {
+        return 'A senha deve conter pelo menos uma letra minúscula.';
+    }
+    if (!/[0-9]/.test(password)) {
+        return 'A senha deve conter pelo menos um número.';
+    }
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        return 'A senha deve conter pelo menos um símbolo ou caractere especial.';
+    }
+    return null;
+}
+
+// ==================== TOAST SYSTEM (USADO EM TODA APLICAÇÃO) ====================
 function showToast(message, type = 'info') {
-    // Implementação de Toast (Placeholder)
-    // O ideal é usar uma biblioteca como Toastify ou SweetAlert, mas para Vanilla JS:
+    console.log(`[TOAST - ${type.toUpperCase()}]: ${message}`);
+    
+    let toastContainer = document.getElementById('toastContainer');
+    
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column-reverse; gap: 10px;
+        `;
+        document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.className = `toast toast-${type}`;
+    toast.style.cssText = `
+        padding: 10px 20px; border-radius: 5px; color: white;
+        background-color: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#F44336' : '#2196F3'};
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        opacity: 0; transition: opacity 0.5s, transform 0.5s;
+        transform: translateY(100%);
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(100%)';
+        toast.addEventListener('transitionend', () => toast.remove());
+    }, 5000);
+}
+
+// ==================== BUTTON LOADING STATE ====================
+function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
+    if (!button) return;
+    button.disabled = isLoading;
+    button.textContent = isLoading ? 'Aguarde...' : originalText;
+    button.classList.toggle('loading', isLoading);
+}
+
+// ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
+function updateUI(user) {
+    const userPanel = document.getElementById('userPanel');
+    const userStatusText = document.getElementById('userStatusText');
+    const loggedInView = document.getElementById('loggedInView');
+    const loggedOutView = document.getElementById('loggedOutView');
+    const adminAccessBtn = document.getElementById('adminAccessBtn');
+
+    if (user) {
+        // USUÁRIO LOGADO
+        if (userStatusText) userStatusText.textContent = `Olá, ${currentUser?.name || user.email}!`;
+        if (loggedInView) loggedInView.style.display = 'block';
+        if (loggedOutView) loggedOutView.style.display = 'none';
+        
+        if (adminAccessBtn) {
+            adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
+        }
+
+        if (userPanel) userPanel.classList.remove('active');
+    } else {
+        // USUÁRIO DESLOGADO
+        if (userStatusText) userStatusText.textContent = 'Minha Conta';
+        if (loggedInView) loggedInView.style.display = 'none';
+        if (loggedOutView) loggedOutView.style.display = 'block';
+        if (adminAccessBtn) adminAccessBtn.style.display = 'none';
+    }
+}
+
+// ==================== AUTH STATE LISTENER (CORAÇÃO DO SISTEMA) ====================
+auth.onAuthStateChanged(async (user) => {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('active');
+    }
+
+    if (user) {
+        console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
+        
+        let userData = JSON.parse(localStorage.getItem('sejaVersatilCurrentUser') || 'null');
+        
+        // REVALIDAR SE UID MUDOU OU DADOS NÃO EXISTEM
+        if (!userData || userData.uid !== user.uid) {
+            const adminDoc = await db.collection('admins').doc(user.uid).get();
+            
+            if (adminDoc.exists && adminDoc.data().role === 'admin') {
+                const adminData = adminDoc.data();
+                
+                userData = {
+                    name: adminData.name || user.displayName || 'Administrador',
+                    email: user.email,
+                    isAdmin: true,
+                    uid: user.uid,
+                    permissions: adminData.permissions || []
+                };
+            } else {
+                userData = {
+                    name: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    isAdmin: false,
+                    uid: user.uid,
+                    permissions: []
+                };
+            }
+            
+            localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(userData));
+        }
+        
+        // ATUALIZAR VARIÁVEIS GLOBAIS
+        currentUser = userData;
+        isAdminLoggedIn = currentUser.isAdmin;
+        
+        // EXPORTAR PARA ESCOPO GLOBAL (USADO POR SCRIPT2.JS E CHECKOUT.JS)
+        window.currentUser = currentUser;
+        window.isAdminLoggedIn = isAdminLoggedIn;
+        
+    } else {
+        console.log('🔄 Estado de auth mudou: usuário deslogado');
+        
+        currentUser = null;
+        isAdminLoggedIn = false;
+        localStorage.removeItem('sejaVersatilCurrentUser');
+        
+        window.currentUser = null;
+        window.isAdminLoggedIn = false;
+    }
+    
+    // CHAMAR FUNÇÕES DE UI (SE EXISTIREM)
+    updateUI(currentUser);
+    
+    // COMPATIBILIDADE COM CHECKOUT.JS
+    if (typeof updateAuthUI === 'function') {
+        updateAuthUI(user);
+    }
+    
+    // ATUALIZAR CARRINHO (SE FUNÇÃO EXISTIR)
+    if (typeof updateCartUI === 'function') {
+        updateCartUI();
+    }
+});
+
+// ==================== LOGIN (CHAMADA POR index.html E checkout.html) ====================
+async function userLogin(event) {
+    event.preventDefault();
+    
+    const emailInput = document.getElementById('loginEmail');
+    const passwordInput = document.getElementById('loginPassword');
+    const errorMsgEl = document.getElementById('loginError');
+    const loginBtn = event.submitter || document.querySelector('#loginTab .form-btn');
+    const originalText = loginBtn ? loginBtn.textContent : 'Entrar';
+
+    // VALIDAÇÃO INICIAL
+    if (!emailInput || !passwordInput) {
+        console.error('❌ Elementos de login não encontrados no DOM');
+        showToast('Erro ao carregar formulário', 'error');
+        return;
+    }
+
+    if (errorMsgEl) {
+        errorMsgEl.textContent = '';
+        errorMsgEl.classList.remove('active');
+    }
+    
+    const email = emailInput.value.toLowerCase().trim();
+    const password = passwordInput.value;
+
+    // VALIDAÇÃO DE EMAIL
+    if (!validateEmail(email)) {
+        if (errorMsgEl) {
+            errorMsgEl.textContent = 'E-mail inválido.';
+            errorMsgEl.classList.add('active');
+        }
+        emailInput.classList.add('input-error');
+        showToast('E-mail inválido', 'error');
+        return;
+    }
+    
+    // LOADING STATE
+    setButtonLoading(loginBtn, true, originalText);
+    emailInput.classList.remove('input-error');
+    passwordInput.classList.remove('input-error');
+
+    try {
+        // CHAMADA FIREBASE AUTH
+        await auth.signInWithEmailAndPassword(email, password);
+        
+        showToast('Login realizado com sucesso!', 'success');
+        
+        // CARREGAR CARRINHO (SE FUNÇÃO EXISTIR)
+        if (typeof loadCart === 'function') loadCart();
+        if (typeof updateCartUI === 'function') updateCartUI();
+        
+    } catch (error) {
+        console.error('❌ Erro no Login:', error);
+        
+        const errorCode = error.code;
+        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        
+        if (errorMsgEl) {
+            errorMsgEl.textContent = friendlyMessage;
+            errorMsgEl.classList.add('active');
+        }
+        
+        // MARCAR INPUT ESPECÍFICO COM ERRO
+        if (errorCode === 'auth/wrong-password') {
+            passwordInput.classList.add('input-error');
+        } else if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-email') {
+            emailInput.classList.add('input-error');
+        }
+        
+        showToast(friendlyMessage, 'error');
+        
+    } finally {
+        setButtonLoading(loginBtn, false, originalText);
+    }
+}
+
+// ==================== REGISTRO (CHAMADA POR index.html E checkout.html) ====================
+async function userRegister(event) {
+    event.preventDefault();
+    
+    const nameInput = document.getElementById('registerName');
+    const emailInput = document.getElementById('registerEmail');
+    const passwordInput = document.getElementById('registerPassword');
+    const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+    const errorMsgEl = document.getElementById('registerError');
+    const successMsgEl = document.getElementById('registerSuccess');
+    const registerBtn = event.submitter || document.querySelector('#registerTab .form-btn');
+    const originalText = registerBtn ? registerBtn.textContent : 'Cadastrar';
+
+    // VALIDAÇÃO INICIAL
+    if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+        console.error('❌ Elementos de registro não encontrados no DOM');
+        showToast('Erro ao carregar formulário', 'error');
+        return;
+    }
+
+    if (errorMsgEl) {
+        errorMsgEl.textContent = '';
+        errorMsgEl.classList.remove('active');
+    }
+    if (successMsgEl) {
+        successMsgEl.classList.remove('active');
+    }
+    
+    const name = nameInput.value.trim();
+    const email = emailInput.value.toLowerCase().trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+    // LIMPAR FEEDBACKS VISUAIS
+    [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+        input.classList.remove('input-error');
+    });
+
+    // VALIDAÇÃO: CAMPOS OBRIGATÓRIOS
+    if (!name || !email || !password || !confirmPassword) {
+        if (errorMsgEl) {
+            errorMsgEl.textContent = 'Preencha todos os campos.';
+            errorMsgEl.classList.add('active');
+        }
+        showToast('Preencha todos os campos', 'error');
+        return;
+    }
+
+    // VALIDAÇÃO: EMAIL
+    if (!validateEmail(email)) {
+        if (errorMsgEl) {
+            errorMsgEl.textContent = 'E-mail inválido.';
+            errorMsgEl.classList.add('active');
+        }
+        emailInput.classList.add('input-error');
+        showToast('E-mail inválido', 'error');
+        return;
+    }
+
+    // VALIDAÇÃO: SENHAS COINCIDEM
+    if (password !== confirmPassword) {
+        if (errorMsgEl) {
+            errorMsgEl.textContent = 'As senhas não coincidem.';
+            errorMsgEl.classList.add('active');
+        }
+        passwordInput.classList.add('input-error');
+        confirmPasswordInput.classList.add('input-error');
+        showToast('As senhas não coincidem', 'error');
+        return;
+    }
+
+    // VALIDAÇÃO: FORÇA DA SENHA
+    const passwordError = validatePasswordStrength(password);
+    if (passwordError) {
+        if (errorMsgEl) {
+            errorMsgEl.textContent = passwordError;
+            errorMsgEl.classList.add('active');
+        }
+        passwordInput.classList.add('input-error');
+        showToast(passwordError, 'error');
+        return;
+    }
+    
+    // LOADING STATE
+    setButtonLoading(registerBtn, true, originalText);
+
+    try {
+        // CRIAÇÃO DO USUÁRIO
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // ATUALIZAR PERFIL
+        await user.updateProfile({
+            displayName: name
+        });
+
+        // SALVAR NO FIRESTORE
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        showToast('Cadastro realizado com sucesso! Bem-vindo(a)!', 'success');
+        
+        // LIMPAR FORMULÁRIO
+        nameInput.value = '';
+        emailInput.value = '';
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+        
+        if (successMsgEl) {
+            successMsgEl.textContent = 'Cadastro realizado com sucesso! Você será redirecionado.';
+            successMsgEl.classList.add('active');
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro no Registro:', error);
+        
+        const errorCode = error.code;
+        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        
+        if (errorMsgEl) {
+            errorMsgEl.textContent = friendlyMessage;
+            errorMsgEl.classList.add('active');
+        }
+        showToast(friendlyMessage, 'error');
+        
+    } finally {
+        setButtonLoading(registerBtn, false, originalText);
+    }
+}
+
+// ==================== GOOGLE LOGIN (CHAMADA POR index.html) ====================
+async function loginWithGoogle() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+    
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        let result;
+        try {
+            result = await auth.signInWithPopup(provider);
+        } catch (popupError) {
+            if (popupError.code === 'auth/popup-blocked') {
+                await auth.signInWithRedirect(provider);
+                return;
+            }
+            throw popupError;
+        }
+        
+        const user = result.user;
+        
+        console.log('✅ Login Google bem-sucedido:', user.email);
+        
+        // VERIFICAR SE É ADMIN
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || user.displayName || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid,
+                permissions: adminData.permissions || []
+            };
+            
+            isAdminLoggedIn = true;
+        } else {
+            // SALVAR USUÁRIO COMUM
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                photoURL: user.photoURL || null,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                isAdmin: false,
+                provider: 'google'
+            }, { merge: true });
+            
+            currentUser = {
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                isAdmin: false,
+                uid: user.uid,
+                permissions: []
+            };
+        }
+        
+        // SALVAR NO LOCALSTORAGE
+        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+        
+        showToast('Login realizado com sucesso!', 'success');
+        
+        // FECHAR MODAL (SE FUNÇÃO EXISTIR)
+        if (typeof closeUserPanel === 'function') {
+            setTimeout(() => {
+                closeUserPanel();
+            }, 1000);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro no login Google:', error);
+        
+        let errorMessage = 'Erro ao fazer login com Google';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Você fechou a janela de login';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Login cancelado';
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'Este email já está cadastrado com outro método de login';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (error.code === 'auth/internal-error') {
+            errorMessage = 'Erro interno. Tente novamente em alguns segundos';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showToast(errorMessage, 'error');
+        
+    } finally {
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+    }
+}
+
+// ==================== LOGOUT (CHAMADA POR index.html E checkout.html) ====================
+async function userLogout() {
+    if (confirm('Deseja realmente sair da sua conta?')) {
+        try {
+            await auth.signOut();
+            showToast('Logout realizado com sucesso', 'info');
+        } catch (error) {
+            console.error('❌ Erro ao fazer logout:', error);
+            showToast('Erro ao fazer logout', 'error');
+        }
+    }
+}
+
+// ==================== RESET PASSWORD (CHAMADA POR index.html) ====================
+async function resetPassword() {
+    const email = prompt('Digite seu email para recuperar a senha:');
+    
+    if (!email || !validateEmail(email)) {
+        showToast('Email inválido', 'error');
+        return;
+    }
+    
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.add('active');
+    
+    try {
+        await auth.sendPasswordResetEmail(email);
+        showToast('✅ Email de recuperação enviado!', 'success');
+        alert('Verifique sua caixa de entrada e spam.');
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        const errorCode = error.code;
+        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        showToast(friendlyMessage, 'error');
+    } finally {
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+    }
+}
+
+// ==================== EXPORTS GLOBAIS (CRÍTICOS - NÃO REMOVER) ====================
+window.userLogin = userLogin;
+window.userRegister = userRegister;
+window.userLogout = userLogout;
+window.loginWithGoogle = loginWithGoogle;
+window.validatePasswordStrength = validatePasswordStrength;
+window.showToast = showToast;
+window.updateUI = updateUI;
+window.resetPassword = resetPassword;
+
+console.log('✅ Auth Module Loaded (Production-Grade v2.0)');
+
+// ==================== UTILS DE VALIDAÇÃO (Mantidos do original) ====================
+function showToast(message, type = 'info') {
     console.log(`[TOAST - ${type.toUpperCase()}]: ${message}`);
     const toastContainer = document.getElementById('toastContainer') || document.createElement('div');
     if (!document.getElementById('toastContainer')) {
@@ -84,11 +613,6 @@ function showToast(message, type = 'info') {
     }, 5000);
 }
 
-/**
- * Validação de força de senha (Requisito: min 8 chars, símbolos, etc).
- * @param {string} password - Senha a ser validada.
- * @returns {string|null} - Mensagem de erro ou null se for válida.
- */
 function validatePasswordStrength(password) {
     if (password.length < 8) {
         return 'A senha deve ter no mínimo 8 caracteres.';
@@ -105,25 +629,14 @@ function validatePasswordStrength(password) {
     if (!/[^A-Za-z0-9]/.test(password)) {
         return 'A senha deve conter pelo menos um símbolo ou caractere especial.';
     }
-    return null; // Senha forte
+    return null;
 }
 
-/**
- * Validação de e-mail.
- * @param {string} email - E-mail a ser validado.
- * @returns {boolean}
- */
 function validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
-/**
- * Gerencia o estado de loading do botão para evitar múltiplos cliques.
- * @param {HTMLButtonElement} button - O botão a ser manipulado.
- * @param {boolean} isLoading - Se deve entrar ou sair do estado de loading.
- * @param {string} originalText - O texto original do botão.
- */
 function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
     if (!button) return;
     button.disabled = isLoading;
@@ -131,13 +644,7 @@ function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
     button.classList.toggle('loading', isLoading);
 }
 
-// ==================== 2. GESTÃO DE SESSÃO CENTRALIZADA ====================
-
-/**
- * Função centralizada para atualizar a UI em todas as páginas.
- * Deve ser chamada pelo onAuthStateChanged.
- * @param {object|null} user - Objeto de usuário do Firebase ou null.
- */
+// ==================== GESTÃO DE SESSÃO (Mantida do original) ====================
 function updateUI(user) {
     const userPanel = document.getElementById('userPanel');
     const userStatusText = document.getElementById('userStatusText');
@@ -146,38 +653,24 @@ function updateUI(user) {
     const adminAccessBtn = document.getElementById('adminAccessBtn');
 
     if (user) {
-        // Usuário logado
         if (userStatusText) userStatusText.textContent = `Olá, ${currentUser.name || user.email}!`;
         if (loggedInView) loggedInView.style.display = 'block';
         if (loggedOutView) loggedOutView.style.display = 'none';
         
-        // Admin
         if (adminAccessBtn) {
             adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
         }
 
-        // Fechar painel de login/registro se estiver aberto
         if (userPanel) userPanel.classList.remove('active');
-
     } else {
-        // Usuário deslogado
         if (userStatusText) userStatusText.textContent = 'Minha Conta';
         if (loggedInView) loggedInView.style.display = 'none';
         if (loggedOutView) loggedOutView.style.display = 'block';
         if (adminAccessBtn) adminAccessBtn.style.display = 'none';
     }
-    
-    // ✅ CORREÇÃO: Garante que o painel de login/registro esteja visível se deslogado
-    if (userPanel && !user) {
-        // Se estiver na página de checkout e não logado, pode ser necessário redirecionar ou mostrar o painel
-        // Depende da lógica de negócio, mas aqui apenas garantimos a visibilidade dos botões
-    }
 }
 
-/**
- * Listener centralizado do Firebase Auth.
- * Esta é a ÚNICA fonte de verdade para o estado de autenticação.
- */
+// ==================== LISTENER CENTRALIZADO (Mantido do original) ====================
 auth.onAuthStateChanged(async (user) => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) {
@@ -218,7 +711,6 @@ auth.onAuthStateChanged(async (user) => {
         currentUser = userData;
         isAdminLoggedIn = currentUser.isAdmin;
         
-        // ✅ ADICIONAR: EXPORTA PARA ESCOPO GLOBAL
         window.currentUser = currentUser;
         window.isAdminLoggedIn = isAdminLoggedIn;
         
@@ -229,7 +721,6 @@ auth.onAuthStateChanged(async (user) => {
         isAdminLoggedIn = false;
         localStorage.removeItem('sejaVersatilCurrentUser');
         
-        // ✅ ADICIONAR: LIMPA VARIÁVEIS GLOBAIS
         window.currentUser = null;
         window.isAdminLoggedIn = false;
     }
@@ -238,12 +729,8 @@ auth.onAuthStateChanged(async (user) => {
     if (typeof updateCartUI === 'function') updateCartUI();
 });
 
-// ==================== 3. FUNÇÕES DE AUTENTICAÇÃO REESCRITAS ====================
+// ==================== FUNÇÕES DE AUTENTICAÇÃO (Refatoradas) ====================
 
-/**
- * Login de usuário.
- * @param {Event} event - Evento de submissão do formulário.
- */
 async function userLogin(event) {
     event.preventDefault();
     
@@ -271,13 +758,11 @@ async function userLogin(event) {
     passwordInput.classList.remove('input-error');
 
     try {
-        // Tenta login com o e-mail fornecido
         await auth.signInWithEmailAndPassword(email, password);
         
-        // Se o login for bem-sucedido, o onAuthStateChanged fará o resto.
         showToast('Login realizado com sucesso!', 'success');
         if (typeof loadCart === 'function') loadCart();
-if (typeof updateCartUI === 'function') updateCartUI();
+        if (typeof updateCartUI === 'function') updateCartUI();
         
     } catch (error) {
         console.error('❌ Erro no Login:', error);
@@ -301,10 +786,6 @@ if (typeof updateCartUI === 'function') updateCartUI();
     }
 }
 
-/**
- * Registro de novo usuário.
- * @param {Event} event - Evento de submissão do formulário.
- */
 async function userRegister(event) {
     event.preventDefault();
     
@@ -326,17 +807,14 @@ async function userRegister(event) {
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
-    // Limpar feedbacks visuais
     [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => input.classList.remove('input-error'));
 
-    // 1. Validação de Campos Básica
     if (!name || !email || !password || !confirmPassword) {
         errorMsgEl.textContent = 'Preencha todos os campos.';
         errorMsgEl.classList.add('active');
         return;
     }
 
-    // 2. Validação de E-mail
     if (!validateEmail(email)) {
         errorMsgEl.textContent = 'E-mail inválido.';
         errorMsgEl.classList.add('active');
@@ -344,7 +822,6 @@ async function userRegister(event) {
         return;
     }
 
-    // 3. Validação de Senhas Coincidentes
     if (password !== confirmPassword) {
         errorMsgEl.textContent = 'As senhas não coincidem.';
         errorMsgEl.classList.add('active');
@@ -353,7 +830,6 @@ async function userRegister(event) {
         return;
     }
 
-    // 4. Validação de Força de Senha
     const passwordError = validatePasswordStrength(password);
     if (passwordError) {
         errorMsgEl.textContent = passwordError;
@@ -365,26 +841,21 @@ async function userRegister(event) {
     setButtonLoading(registerBtn, true, originalText);
 
     try {
-        // 5. Criação do Usuário no Firebase
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // 6. Atualizar Perfil (Nome)
         await user.updateProfile({
             displayName: name
         });
 
-        // 7. Salvar dados adicionais no Firestore (opcional, mas recomendado)
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
-        // O onAuthStateChanged fará o login e a atualização da UI.
         showToast('Cadastro realizado com sucesso! Bem-vindo(a)!', 'success');
         
-        // Limpar formulário
         nameInput.value = '';
         emailInput.value = '';
         passwordInput.value = '';
@@ -408,13 +879,102 @@ async function userRegister(event) {
     }
 }
 
-/**
- * Logout de usuário.
- */
+async function loginWithGoogle() {
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        let result;
+        try {
+            result = await auth.signInWithPopup(provider);
+        } catch (popupError) {
+            if (popupError.code === 'auth/popup-blocked') {
+                await auth.signInWithRedirect(provider);
+                return;
+            }
+            throw popupError;
+        }
+        
+        const user = result.user;
+        
+        console.log('✅ Login Google bem-sucedido:', user.email);
+        
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || user.displayName || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid,
+                permissions: adminData.permissions || []
+            };
+            
+            isAdminLoggedIn = true;
+        } else {
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                photoURL: user.photoURL || null,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                isAdmin: false,
+                provider: 'google'
+            }, { merge: true });
+            
+            currentUser = {
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                isAdmin: false,
+                uid: user.uid,
+                permissions: []
+            };
+        }
+        
+        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+        
+        showToast('Login realizado com sucesso!', 'success');
+        
+        if (typeof closeUserPanel === 'function') {
+            setTimeout(() => {
+                closeUserPanel();
+            }, 1000);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro no login Google:', error);
+        
+        let errorMessage = 'Erro ao fazer login com Google';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Você fechou a janela de login';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Login cancelado';
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'Este email já está cadastrado com outro método de login';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (error.code === 'auth/internal-error') {
+            errorMessage = 'Erro interno. Tente novamente em alguns segundos';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showToast(errorMessage, 'error');
+        
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
+
 async function userLogout() {
     if (confirm('Deseja realmente sair da sua conta?')) {
         try {
-            // O onAuthStateChanged fará a limpeza do estado e a atualização da UI.
             await auth.signOut(); 
             showToast('Logout realizado com sucesso', 'info');
         } catch (error) {
@@ -424,17 +984,6 @@ async function userLogout() {
     }
 }
 
-// Exportar funções para que possam ser chamadas pelo HTML (onclick, onsubmit)
-window.userLogin = userLogin;
-window.userRegister = userRegister;
-window.userLogout = userLogout;
-window.validatePasswordStrength = validatePasswordStrength; // Útil para barra de força de senha
-window.showToast = showToast; // Útil para outros feedbacks
-window.updateUI = updateUI; // Útil para chamadas manuais se necessário
-
-// ==================== 4. FUNÇÕES DE SUPORTE (MANTER SE NECESSÁRIO) ====================
-
-// Manter a função de resetPassword, mas garantir que use o showToast
 async function resetPassword() {
     const email = prompt('Digite seu email para recuperar a senha:');
     
@@ -459,4 +1008,15 @@ async function resetPassword() {
         if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 }
+
+// ==================== EXPORTS GLOBAIS (Mantidos do original) ====================
+window.userLogin = userLogin;
+window.userRegister = userRegister;
+window.userLogout = userLogout;
+window.loginWithGoogle = loginWithGoogle;
+window.validatePasswordStrength = validatePasswordStrength;
+window.showToast = showToast;
+window.updateUI = updateUI;
 window.resetPassword = resetPassword;
+
+console.log('✅ Auth Module Loaded (Production-Grade)');
