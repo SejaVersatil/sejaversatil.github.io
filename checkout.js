@@ -1299,4 +1299,3 @@ window.buildWhatsAppMessage = buildWhatsAppMessage;
 
 
 console.log('✅ Checkout functions exported to global scope');
-}
