@@ -372,25 +372,21 @@ async function handleLogin() {
         return;
     }
     
-    try {
-        showLoading(true);
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        
-        // ✅ Atualizar UI imediatamente após login
-        updateAuthUI(userCredential.user);
-        
+    showLoading(true);
+    
+    // Call centralized auth service
+    const result = await window.authService.login(email, password);
+    
+    showLoading(false);
+    
+    if (result.success) {
+        // Update checkout UI
+        updateAuthUI(result.user);
         showToast('Login realizado', 'Bem-vindo de volta!', 'success');
-    } catch (error) {
-        console.error('❌ Erro no login:', error);
-        let message = 'Erro ao fazer login';
-        if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado';
-        if (error.code === 'auth/wrong-password') message = 'Senha incorreta';
-        if (error.code === 'auth/invalid-email') message = 'E-mail inválido';
-        showToast('Erro', message, 'error');
-    } finally {
-        showLoading(false);
+    } else {
+        showToast('Erro', result.error, 'error');
     }
-} // ✅ FECHAMENTO CORRIGIDO
+}// ✅ FECHAMENTO CORRIGIDO
 // ==================== HANDLE CADASTRO ====================
 async function handleRegister() {
     const name = document.getElementById('registerName')?.value.trim();
@@ -398,6 +394,7 @@ async function handleRegister() {
     const password = document.getElementById('registerPassword')?.value;
     const passwordConfirm = document.getElementById('registerPasswordConfirm')?.value;
     
+    // Client-side validation
     if (!name || !email || !password || !passwordConfirm) {
         showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
         return;
@@ -413,30 +410,19 @@ async function handleRegister() {
         return;
     }
     
-    try {
-        showLoading(true);
-        const result = await auth.createUserWithEmailAndPassword(email, password);
-        
-        await result.user.updateProfile({ displayName: name });
-        
-        await db.collection('usuarios').doc(result.user.uid).set({
-            nome: name,
-            email: email,
-            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        // ✅ Atualizar UI imediatamente após cadastro
-        updateAuthUI(result.user);
-        
+    showLoading(true);
+    
+    // Call centralized auth service
+    const result = await window.authService.register({ name, email, password });
+    
+    showLoading(false);
+    
+    if (result.success) {
+        // Update checkout UI
+        updateAuthUI(auth.currentUser); // Will be set by auth.js
         showToast('Cadastro realizado', 'Bem-vindo!', 'success');
-    } catch (error) {
-        console.error('❌ Erro no cadastro:', error);
-        let message = 'Erro ao cadastrar';
-        if (error.code === 'auth/email-already-in-use') message = 'E-mail já cadastrado';
-        if (error.code === 'auth/weak-password') message = 'Senha muito fraca';
-        showToast('Erro', message, 'error');
-    } finally {
-        showLoading(false);
+    } else {
+        showToast('Erro', result.error, 'error');
     }
 }
 
@@ -627,56 +613,44 @@ function updateColumnStatus(columnNumber, status, type = 'default') {
 
 // ==================== VALIDAÇÃO ETAPA 1: DADOS PESSOAIS ====================
 function validateDadosStep() {
-    // ✅ Pegar nome do usuário autenticado
-    const user = auth.currentUser;
-    const nome = user?.displayName || CheckoutState.userData.nome || '';
-    const email = CheckoutDOM.inputEmail?.value.trim();
-    const telefone = CheckoutDOM.inputTelefone?.value.trim();
-    const cpf = CheckoutDOM.inputCPF?.value.trim();
+    // ✅ Single source of truth: window.currentUser (managed by auth.js)
+    const nome = window.currentUser?.name || '';
+    const email = document.getElementById('inputEmail')?.value.trim() || window.currentUser?.email || '';
+    const telefone = document.getElementById('inputTelefone')?.value.trim();
+    const cpf = document.getElementById('inputCPF')?.value.trim();
     
-    // Validação: Nome
-    if (!nome || nome.length < CHECKOUT_CONFIG.MIN_NAME_LENGTH) {
+    // Validation
+    if (!nome || nome.length < 3) {
         showToast('Nome inválido', 'Faça login ou cadastro primeiro', 'warning');
         return false;
     }
     
-    // Validação: E-mail
-    if (!email || !isValidEmail(email)) {
+    if (!email || !window.validateEmail(email)) {
         showToast('E-mail inválido', 'Digite um e-mail válido', 'error');
-        CheckoutDOM.inputEmail?.focus();
         return false;
     }
     
-    // Validação: Telefone
     const telefoneLimpo = telefone.replace(/\D/g, '');
-    if (!telefone || telefoneLimpo.length < CHECKOUT_CONFIG.MIN_PHONE_LENGTH) {
+    if (telefoneLimpo.length < 10) {
         showToast('Telefone inválido', 'Digite um telefone válido com DDD', 'warning');
-        CheckoutDOM.inputTelefone?.focus();
         return false;
     }
     
-    // Validação: CPF
     if (!cpf || !isValidCPF(cpf)) {
         showToast('CPF inválido', 'Digite um CPF válido', 'error');
-        CheckoutDOM.inputCPF?.focus();
         return false;
     }
     
-    // ✅ Salvar dados no Firestore para próxima vez
-    if (user?.uid) {
-        db.collection('usuarios').doc(user.uid).update({
+    // ✅ Save to Firestore for next time (if logged in)
+    if (window.currentUser?.uid) {
+        db.collection('usuarios').doc(window.currentUser.uid).update({
             telefone: telefone,
             cpf: cpf,
             atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(err => console.warn('⚠️ Erro ao salvar dados:', err));
     }
     
-    // Salvar no estado
-    CheckoutState.userData.nome = nome;
-    CheckoutState.userData.email = email;
-    CheckoutState.userData.telefone = telefone;
-    CheckoutState.userData.cpf = cpf;
-    
+    // ✅ Mark step as valid
     CheckoutState.step1Valid = true;
     updateColumnStatus(1, 'Completo', 'success');
     unlockColumn(2);
