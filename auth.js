@@ -684,6 +684,34 @@ async function resetPassword() {
     }
 }
 
+
+// ==================== REENVIAR E-MAIL DE VERIFICAÇÃO ====================
+async function resendVerificationEmail() {
+    const user = auth.currentUser;
+    
+    if (!user) {
+        showToast('Nenhum usuário logado', 'error');
+        return;
+    }
+    
+    if (user.emailVerified) {
+        showToast('Seu e-mail já está verificado!', 'success');
+        location.reload();
+        return;
+    }
+    
+    try {
+        await user.sendEmailVerification();
+        showToast('✅ E-mail de verificação reenviado!', 'success');
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        showToast('Erro ao reenviar e-mail. Tente novamente em 1 minuto.', 'error');
+    }
+}
+
+// Exportar
+window.resendVerificationEmail = resendVerificationEmail;
+
 // ==================== EXPORTS GLOBAIS (CRÍTICOS - NÃO REMOVER) ====================
 window.userLogin = userLogin;
 window.userRegister = userRegister;
