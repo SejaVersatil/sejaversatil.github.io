@@ -176,7 +176,7 @@ function updateUserPanelTabs(user) {
 }
 
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
- function updateUI(user) {
+async function updateUI(user) {
     const userPanel = document.getElementById('userPanel');
     const userStatusText = document.getElementById('userStatusText');
     const loggedInView = document.getElementById('loggedInView');
