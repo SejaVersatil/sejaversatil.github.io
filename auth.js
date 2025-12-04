@@ -379,6 +379,7 @@ async function userLogin(event) {
     try {
         // CHAMADA FIREBASE AUTH
         await auth.signInWithEmailAndPassword(email, password);
+        await auth.currentUser.reload();
 
         // ✅ ADICIONAR ESTE BLOCO COMPLETO AQUI:
     const user = auth.currentUser;
