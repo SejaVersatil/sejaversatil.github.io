@@ -101,7 +101,7 @@ header {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     position: fixed;
-    top: 80px; /* ← MUDANÇA AQUI (altura aproximada do banner promo) */
+    top: 55px; /* ← MUDANÇA: de 80px para 55px */
     left: 0;
     right: 0;
     z-index: 1001;
@@ -294,16 +294,16 @@ nav {
     background: linear-gradient(90deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     color: white;
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 0.8rem 1rem; /* ← MUDANÇA: de 2rem para 0.8rem */
     font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    position: fixed; /* ← MUDANÇA AQUI */
-    top: 0; /* ← ADICIONE ESTA LINHA */
-    left: 0; /* ← ADICIONE ESTA LINHA */
-    right: 0; /* ← ADICIONE ESTA LINHA */
-    z-index: 1002; /* ← MUDANÇA AQUI (maior que o header) */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1002;
     overflow: hidden;
 }
 
@@ -318,23 +318,42 @@ nav {
 .bf-content { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 .bf-label {
     font-family: 'Century Gothic', sans-serif !important;
-    font-size: 1.7rem !important;
-    font-weight: 700; text-transform: uppercase; letter-spacing: 2px !important;
+    font-size: 1.2rem !important; /* ← MUDANÇA: de 1.7rem para 1.2rem */
+    font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px !important; /* ← REDUZIDO */
     background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    animation: glow 2s ease-in-out infinite; margin-right: 10px;
+    animation: glow 2s ease-in-out infinite; margin-right: 8px; /* ← REDUZIDO */
 }
 .bf-separator { color: rgba(255,255,255,0.3); font-size: 1.2rem; }
 .bf-countdown-label { font-size: 0.8rem !important; color: rgba(255,255,255,0.7); text-transform: lowercase; margin-right: 8px; }
 .bf-countdown { display: flex; align-items: center; gap: 0.3rem; }
 .bf-time-unit {
     display: flex; flex-direction: column; align-items: center;
-    background: rgba(255,255,255,0.1); padding: 0.35rem 0.5rem !important;
-    border-radius: 6px; min-width: 55px !important; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1); 
+    padding: 0.25rem 0.4rem !important; /* ← MUDANÇA: reduzido */
+    border-radius: 4px; /* ← MUDANÇA: de 6px para 4px */
+    min-width: 48px !important; /* ← MUDANÇA: de 55px para 48px */
+    border: 1px solid rgba(255,255,255,0.2);
 }
-.bf-time-value { font-family: 'Century Gothic', sans-serif !important; font-size: 2.1rem !important; font-weight: 700; color: #FFD700; line-height: 1; }
-.bf-time-label { font-size: 0.55rem !important; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.2rem; }
-.bf-colon { color: #FFD700; font-size: 1.8rem !important; font-weight: 700; animation: blink 1s infinite; margin: 0 3px; }
+.bf-time-value { 
+    font-family: 'Century Gothic', sans-serif !important; 
+    font-size: 1.5rem !important; /* ← MUDANÇA: de 2.1rem para 1.5rem */
+    font-weight: 700; color: #FFD700; line-height: 1; 
+}
+.bf-time-label { 
+    font-size: 0.5rem !important; /* ← MUDANÇA: de 0.55rem para 0.5rem */
+    color: rgba(255,255,255,0.6); 
+    text-transform: uppercase; 
+    letter-spacing: 0.4px; /* ← REDUZIDO */
+    margin-top: 0.15rem; /* ← REDUZIDO */
+}
+.bf-colon { 
+    color: #FFD700; 
+    font-size: 1.3rem !important; /* ← MUDANÇA: de 1.8rem para 1.3rem */
+    font-weight: 700; 
+    animation: blink 1s infinite; 
+    margin: 0 2px; /* ← REDUZIDO */
+}
 
 /* Hero Carousel */
 .hero-section { 
@@ -343,8 +362,8 @@ nav {
     height: 85vh; 
     min-height: 600px; 
     overflow: hidden;
-    margin-top: -170px; /* ← MUDANÇA AQUI (banner 80px + header 90px) */
-    padding-top: 170px; /* ← MUDANÇA AQUI */
+    margin-top: -145px; /* ← MUDANÇA: banner 55px + header 90px = 145px */
+    padding-top: 145px; /* ← MUDANÇA */
 }
 .hero-carousel { width: 100%; height: 100%; position: relative; }
 .hero-slide {
@@ -3173,6 +3192,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
