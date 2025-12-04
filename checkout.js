@@ -359,7 +359,7 @@ function switchAuthTab(tab) {
 }
 
 // ==================== HANDLE LOGIN ====================
-async function handleLogin() {
+window.handleLogin = async function() {
     const email = document.getElementById('loginEmail')?.value.trim();
     const password = document.getElementById('loginPassword')?.value;
     
@@ -415,7 +415,7 @@ async function handleLogin() {
     }
 }
 // ==================== HANDLE CADASTRO ====================
-async function handleRegister() {
+window.handleRegister = async function() {
     const name = document.getElementById('registerName')?.value.trim();
     const email = document.getElementById('registerEmail')?.value.trim();
     const password = document.getElementById('registerPassword')?.value;
@@ -459,7 +459,7 @@ async function handleRegister() {
 }
 
 // ==================== HANDLE LOGOUT ====================
-function handleLogout() {
+window.handleLogout = function() {
     auth.signOut().then(() => {
         showToast('Logout realizado', 'Você saiu da sua conta', 'success');
         setTimeout(() => {
@@ -1266,5 +1266,6 @@ window.processCheckout = processCheckout; // ✅ NOW TRIGGERS WHATSAPP
 window.updatePaymentUI = updatePaymentUI;
 window.buildOrderData = buildOrderData;
 window.buildWhatsAppMessage = buildWhatsAppMessage;
+
 
 console.log('✅ Checkout functions exported to global scope');
