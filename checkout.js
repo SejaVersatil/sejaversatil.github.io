@@ -813,6 +813,8 @@ function validateEnderecoStep() {
     unlockColumn(3);
     
     showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
+    return true;
+}
 
    // ✅ Salvar endereço no Firestore com segurança (Merge)
 const user = auth.currentUser;
