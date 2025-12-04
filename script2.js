@@ -5175,36 +5175,38 @@ console.log('✅ Sistema de estoque integrado ao site');
         const slideInterval = 4000; // 4 segundos por slide
 
         function showSlide(index) {
-    // Valida o índice
-    if (index < 0 || index >= totalSlides) return;
+            // Valida o índice
+            if (index < 0 || index >= totalSlides) return;
 
-    // Adiciona classe de saída ao slide atual
-    const currentActiveSlide = document.querySelector('.banner-slide.active');
-    if (currentActiveSlide) {
-        currentActiveSlide.classList.add('slide-out');
-        
-        // Remove as classes após a animação
-        setTimeout(() => {
-            currentActiveSlide.classList.remove('active', 'slide-out');
-        }, 600);
+            // Adiciona classe de saída ao slide atual
+            const currentActiveSlide = document.querySelector('.banner-slide.active');
+            if (currentActiveSlide) {
+                currentActiveSlide.classList.add('slide-out');
+                
+                // Remove as classes após a animação
+                setTimeout(() => {
+                    currentActiveSlide.classList.remove('active', 'slide-out');
+                }, 600);
+            }
+
+            // Remove active dos dots
+            dots.forEach(dot => {
+                if (dot) dot.classList.remove('active');
+            });
+
+            // Adiciona active no novo slide (com delay para sincronizar)
+            setTimeout(() => {
+                if (slides[index]) {
+                    slides[index].classList.add('active');
+                }
+                
+                if (dots[index]) {
+                    dots[index].classList.add('active');
+                }
+            }, 100);
+        }
     }
-
-    // Remove active dos dots
-    dots.forEach(dot => {
-        if (dot) dot.classList.remove('active');
-    });
-
-    // Adiciona active no novo slide (com delay para sincronizar)
-    setTimeout(() => {
-        if (slides[index]) {
-            slides[index].classList.add('active');
-        }
-        
-        if (dots[index]) {
-            dots[index].classList.add('active');
-        }
-    }, 100);
-}
+})();
         
 // MARCAR PRODUTOS COMO BLACK FRIDAY
 // ================================================================
@@ -5871,9 +5873,4 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
-
-
-
-
-
 
