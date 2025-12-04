@@ -880,31 +880,6 @@ function switchUserTab(tab) {
     }
 }
 
-function showLoggedInView() {
-    document.getElementById('userPanelTabs').style.display = 'none';
-    document.getElementById('loginTab').classList.remove('active');
-    document.getElementById('registerTab').classList.remove('active');
-    document.getElementById('userLoggedTab').classList.add('active');
-    
-    document.getElementById('userName').textContent = currentUser.name;
-    document.getElementById('userEmail').textContent = currentUser.email;
-    
-    if (currentUser.isAdmin) {
-        document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
-        document.getElementById('adminAccessBtn').style.display = 'block';
-        isAdminLoggedIn = true;
-    } else {
-        document.getElementById('userStatus').textContent = 'Cliente';
-        document.getElementById('adminAccessBtn').style.display = 'none';
-    }
-}
-
-function hideLoggedInView() {
-    document.getElementById('userPanelTabs').style.display = 'flex';
-    document.getElementById('userLoggedTab').classList.remove('active');
-    switchUserTab('login');
-}
-
 
 // ==================== FIRESTORE ====================
 
@@ -5734,5 +5709,6 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
