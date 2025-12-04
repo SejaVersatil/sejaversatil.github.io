@@ -811,10 +811,6 @@ function validateEnderecoStep() {
     CheckoutState.step2Valid = true;
     updateColumnStatus(2, 'Completo', 'success');
     unlockColumn(3);
-    
-    showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
-    return true;
-}
 
    // ✅ Salvar endereço no Firestore com segurança (Merge)
 const user = auth.currentUser;
@@ -835,6 +831,10 @@ if (user?.uid && typeof db !== 'undefined') {
     // Usa set com merge para criar o doc se não existir, ou atualizar se existir
     db.collection('users').doc(user.uid).set(addressData, { merge: true })
         .catch(err => console.warn('⚠️ Erro ao salvar endereço (backup):', err));
+}
+    
+    showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
+    return true;
 }
 
 // ==================== VALIDAÇÃO ETAPA 3: PAGAMENTO ====================
