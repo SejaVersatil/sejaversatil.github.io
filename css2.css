@@ -287,9 +287,7 @@ nav {
 .hamburger-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
 .hamburger-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-/* ==========================================================================
-   BANNER BLACK FRIDAY & HERO
-   ========================================================================== */
+/* ==================== TOP BANNER =================== */
 .top-banner {
     background: linear-gradient(90deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     color: white;
@@ -307,36 +305,62 @@ nav {
     height: 40px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
+.banner-track {
+    display: flex;
+    width: fit-content;
+    animation: scroll-left 30s linear infinite;
+    will-change: transform;
+}
 
-/* ==================== BANNER SWIPE SYSTEM ==================== */
-.banner-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.banner-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    white-space: nowrap;
+    padding-right: 4rem;
+}
+
+.banner-item {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
     padding: 0 2rem;
+    position: relative;
 }
 
-.banner-slide.active {
-    opacity: 1;
-    transform: translateX(0);
-    z-index: 1;
+.banner-item:not(:last-child)::after {
+    content: '•';
+    position: absolute;
+    right: 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.2rem;
 }
 
-.banner-slide.slide-out {
-    opacity: 0;
-    transform: translateX(-100%);
-    z-index: 0;
+.banner-item.highlight {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pausa ao hover */
+.top-banner:hover .banner-track {
+    animation-play-state: paused;
 }
 
 /* Hero Carousel */
@@ -3061,6 +3085,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
