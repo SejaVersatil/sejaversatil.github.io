@@ -5152,52 +5152,58 @@ document.head.appendChild(styleSheet);
 
 console.log('✅ Sistema de estoque integrado ao site');
 
-// ==================== BLACK FRIDAY COUNTDOWN ====================
+// ==================== BANNER SWIPE AUTOMÁTICO ====================
+(function() {
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.banner-dot');
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+    const slideInterval = 4000; // 4 segundos por slide
 
-function initBlackFridayCountdown() {
-    const blackFridayEnd = new Date(2025, 10, 30, 23, 59, 59);
-    let countdownInterval; 
-    
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = blackFridayEnd - now;
-        
-        if (distance < 0) {
-            // ✅ CORREÇÃO: Verificação de nulidade antes de manipular o HTML
-            const topBanner = document.querySelector('.top-banner');
-            if (topBanner) {
-                topBanner.innerHTML = `...`;
-            }
-            
-            clearInterval(countdownInterval); 
-            return;
+    function showSlide(index) {
+        // Remove active de todos
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Adiciona active no slide atual
+        slides[index].classList.add('active');
+        if (dots[index]) {
+            dots[index].classList.add('active');
         }
-        
-        // Calcular tempo restante
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        // Atualizar elementos (com zero à esquerda)
-        const daysEl = document.getElementById('bfDays');
-        const hoursEl = document.getElementById('bfHours');
-        const minutesEl = document.getElementById('bfMinutes');
-        const secondsEl = document.getElementById('bfSeconds');
-        
-        // As verificações abaixo já existiam no seu código e estão corretas
-        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
-        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
     }
-    
-    // Atualizar imediatamente
-    updateCountdown();
-    
-    // Atualizar a cada segundo
-    countdownInterval = setInterval(updateCountdown, 1000); 
-}
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    // Auto swipe a cada 4 segundos
+    let autoSlide = setInterval(nextSlide, slideInterval);
+
+    // Clique nos dots (opcional)
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+            
+            // Reinicia o timer
+            clearInterval(autoSlide);
+            autoSlide = setInterval(nextSlide, slideInterval);
+        });
+    });
+
+    // Pausa ao passar o mouse (opcional)
+    const banner = document.querySelector('.top-banner');
+    if (banner) {
+        banner.addEventListener('mouseenter', () => {
+            clearInterval(autoSlide);
+        });
+
+        banner.addEventListener('mouseleave', () => {
+            autoSlide = setInterval(nextSlide, slideInterval);
+        });
+    }
+})();
 // ==================== FIM BLACK FRIDAY COUNTDOWN ====================
 // MARCAR PRODUTOS COMO BLACK FRIDAY
 // ================================================================
@@ -5864,5 +5870,6 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
