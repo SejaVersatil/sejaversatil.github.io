@@ -841,28 +841,25 @@ function validateEnderecoStep() {
     
     showToast('Endereço validado', 'Prossiga para o pagamento', 'success');
 
-    // ✅ CORREÇÃO 2: Salvar endereço no Firestore com segurança (Merge)
-    const user = auth.currentUser;
-    if (user?.uid) {
-        const addressData = {
-            endereco: {
-                cep: cep,
-                rua: rua,
-                numero: numero,
-                complemento: CheckoutState.addressData.complemento,
-                bairro: bairro,
-                cidade: cidade,
-                uf: uf
-            },
-            atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-        };
+   // ✅ Salvar endereço no Firestore com segurança (Merge)
+const user = auth.currentUser;
+if (user?.uid && typeof db !== 'undefined') {
+    const addressData = {
+        endereco: {
+            cep: cep,
+            rua: rua,
+            numero: numero,
+            complemento: CheckoutState.addressData.complemento,
+            bairro: bairro,
+            cidade: cidade,
+            uf: uf
+        },
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
-        // Usa set com merge para criar o doc se não existir, ou atualizar se existir
-        db.collection('usuarios').doc(user.uid).set(addressData, { merge: true })
-            .catch(err => console.warn('⚠️ Erro ao salvar endereço (backup):', err));
-    }
-    
-    return true;
+    // Usa set com merge para criar o doc se não existir, ou atualizar se existir
+    db.collection('users').doc(user.uid).set(addressData, { merge: true })
+        .catch(err => console.warn('⚠️ Erro ao salvar endereço (backup):', err));
 }
 
 // ==================== VALIDAÇÃO ETAPA 3: PAGAMENTO ====================
