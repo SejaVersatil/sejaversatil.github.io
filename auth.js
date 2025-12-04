@@ -1040,6 +1040,13 @@ window.dispatchEvent(new CustomEvent('authStateUpdated', {
     detail: { user: currentUser, isAdmin: isAdminLoggedIn }
 }));
 
+// ✅ Exportar updateUI para uso no checkout
+if (typeof window !== 'undefined') {
+    window.updateAuthUIGlobal = updateUI;
+}
+
+console.log('✅ auth.js carregado completamente');
+
 // ==================== EXPORTS GLOBAIS (Mantidos do original) ====================
 window.userLogin = userLogin;
 window.userRegister = userRegister;
