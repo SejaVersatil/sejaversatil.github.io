@@ -1692,42 +1692,58 @@ async function deleteProduct(productId) {
 async function saveProduct(event) {
     event.preventDefault();
 
-    // 1. VERIFICAÇÕES DE PERMISSÃO (Frontend - O Backend garante a segurança)
+    // 1. VERIFICAÇÕES DE PERMISSÃO
     if (!auth.currentUser || !currentUser.isAdmin) {
         showToast('❌ Apenas admins podem salvar produtos', 'error');
         closeProductModal();
         return;
     }
 
-    // 2. Coleta de Dados
-    const productId = editingProductId || document.getElementById('productId').value || db.collection('produtos').doc().id;
-    const name = document.getElementById('productName').value.trim();
-    const price = parseFloat(document.getElementById('productPrice').value);
-    const oldPrice = document.getElementById('productOldPrice').value ? parseFloat(document.getElementById('productOldPrice').value) : null;
-    const category = document.getElementById('productCategory').value.trim();
-    const description = document.getElementById('productDescription').value.trim();
-    const specs = document.getElementById('productSpecs').value.trim();
-    const badge = document.getElementById('productBadge').value.trim();
-    const active = document.getElementById('productActive').checked;
+    // 2. COLETA DE DADOS COM NULL CHECKS
+    const productId = editingProductId || document.getElementById('productId')?.value || db.collection('produtos').doc().id;
+    
+    const nameEl = document.getElementById('productName');
+    const priceEl = document.getElementById('productPrice');
+    const oldPriceEl = document.getElementById('productOldPrice');
+    const categoryEl = document.getElementById('productCategory');
+    const badgeEl = document.getElementById('productBadge');
+    const blackFridayEl = document.getElementById('productBlackFriday');
+    
+    // Validação crítica
+    if (!nameEl || !priceEl || !categoryEl) {
+        showToast('❌ Campos essenciais não encontrados no formulário', 'error');
+        console.error('Elementos faltando:', { nameEl, priceEl, categoryEl });
+        return;
+    }
+    
+    const name = nameEl.value.trim();
+    const price = parseFloat(priceEl.value);
+    const oldPrice = oldPriceEl?.value ? parseFloat(oldPriceEl.value) : null;
+    const category = categoryEl.value.trim();
+    const badge = badgeEl?.value.trim() || '';
+    const isBlackFriday = blackFridayEl?.checked || false;
     
     // Validação básica
-    if (!name || !price || !category || !description) {
-        showToast('Preencha os campos obrigatórios (Nome, Preço, Categoria, Descrição)', 'error');
+    if (!name || !price || !category) {
+        showToast('Preencha os campos obrigatórios (Nome, Preço, Categoria)', 'error');
         return;
     }
 
-    // 3. Preparação dos Dados
+    if (price <= 0) {
+        showToast('❌ Preço deve ser maior que zero', 'error');
+        return;
+    }
+
+    // 3. PREPARAÇÃO DOS DADOS
     const productData = {
         name,
         price,
         oldPrice,
         category,
-        description,
-        specs,
         badge,
-        active,
-        images: tempProductImages.filter(url => url.startsWith('http' )), // Apenas URLs reais
-        colors: productColors, // Array de cores (nome, hex, etc.)
+        isBlackFriday,
+        images: tempProductImages.filter(url => url.startsWith('http')),
+        colors: productColors || [],
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -1735,20 +1751,17 @@ async function saveProduct(event) {
         productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
     }
 
-    // 4. PREPARAÇÃO DO BATCH WRITE (Transação Atômica)
-    document.getElementById('loadingOverlay').classList.add('active');
+    // 4. SALVAR NO FIRESTORE
+    document.getElementById('loadingOverlay')?.classList.add('active');
     const batch = db.batch();
     const productRef = db.collection('produtos').doc(productId);
 
     try {
-        // A. Salva o documento principal do produto
+        // A. Salvar documento principal
         batch.set(productRef, productData, { merge: true });
 
-        // B. Salva as variantes (Exemplo: Cria uma variante padrão se não houver)
-        // ATENÇÃO: Você precisará adaptar esta lógica para como você gera suas variantes.
-        // Este é um exemplo de como salvar variantes junto com o produto principal.
-        if (productColors.length > 0) {
-            // Exemplo: Criar uma variante de estoque para cada cor (tamanho 'U' - Único)
+        // B. Salvar variantes (se houver cores)
+        if (productColors && productColors.length > 0) {
             productColors.forEach(color => {
                 const variantId = `${productId}_U_${color.name.replace(/\s/g, '')}`;
                 const variantRef = productRef.collection('variants').doc(variantId);
@@ -1756,34 +1769,32 @@ async function saveProduct(event) {
                 batch.set(variantRef, {
                     size: 'U',
                     color: color.name,
-                    stock: 999, // Exemplo de estoque
+                    stock: 999,
                     price: price,
                     available: true
                 }, { merge: true });
             });
         }
         
-        // 5. EXECUTA O BATCH
+        // 5. EXECUTAR BATCH
         await batch.commit();
 
-        // 6. ATUALIZAÇÕES GERAIS (Frontend)
         showToast(`✅ Produto "${name}" salvo com sucesso!`, 'success');
         
-        // Limpeza e Re-renderização
+        // Limpeza
         productCache.clear();
         closeProductModal();
         
-        // Recarrega os dados do Firestore para garantir consistência
         await carregarProdutosDoFirestore(); 
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
 
     } catch (error) {
-        console.error("Erro ao salvar produto:", error);
-        showToast('Erro ao salvar produto: ' + error.message, 'error');
+        console.error("❌ Erro ao salvar produto:", error);
+        showToast('Erro ao salvar: ' + error.message, 'error');
     } finally {
-        document.getElementById('loadingOverlay').classList.remove('active');
+        document.getElementById('loadingOverlay')?.classList.remove('active');
     }
 }
 
@@ -5853,3 +5864,4 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
