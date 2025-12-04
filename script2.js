@@ -5151,62 +5151,6 @@ document.head.appendChild(styleSheet);
 
 console.log('✅ Sistema de estoque integrado ao site');
 
-// ==================== BANNER SWIPE AUTOMÁTICO ====================
-(function() {
-    // Aguarda o DOM estar pronto
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBannerSwipe);
-    } else {
-        initBannerSwipe();
-    }
-
-    function initBannerSwipe() {
-        const slides = document.querySelectorAll('.banner-slide');
-        const dots = document.querySelectorAll('.banner-dot');
-        
-        // Verifica se os elementos existem
-        if (!slides || slides.length === 0) {
-            console.warn('⚠️ Banner slides não encontrados');
-            return;
-        }
-
-        let currentSlide = 0;
-        const totalSlides = slides.length;
-        const slideInterval = 4000; // 4 segundos por slide
-
-        function showSlide(index) {
-            // Valida o índice
-            if (index < 0 || index >= totalSlides) return;
-
-            // Adiciona classe de saída ao slide atual
-            const currentActiveSlide = document.querySelector('.banner-slide.active');
-            if (currentActiveSlide) {
-                currentActiveSlide.classList.add('slide-out');
-                
-                // Remove as classes após a animação
-                setTimeout(() => {
-                    currentActiveSlide.classList.remove('active', 'slide-out');
-                }, 600);
-            }
-
-            // Remove active dos dots
-            dots.forEach(dot => {
-                if (dot) dot.classList.remove('active');
-            });
-
-            // Adiciona active no novo slide (com delay para sincronizar)
-            setTimeout(() => {
-                if (slides[index]) {
-                    slides[index].classList.add('active');
-                }
-                
-                if (dots[index]) {
-                    dots[index].classList.add('active');
-                }
-            }, 100);
-        }
-    }
-})();
         
 // MARCAR PRODUTOS COMO BLACK FRIDAY
 // ================================================================
@@ -5873,4 +5817,5 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
