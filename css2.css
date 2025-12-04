@@ -287,14 +287,13 @@ nav {
 .hamburger-btn.active .hamburger-line:nth-child(2) { opacity: 0; }
 .hamburger-btn.active .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-/* ==========================================================================
-   BANNER BLACK FRIDAY & HERO
-   ========================================================================== */
+/* ==================== BLOCO DESATIVADO (Black Friday Banner) ====================
+
 .top-banner {
     background: linear-gradient(90deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     color: white;
     text-align: center;
-    padding: 0.5rem 1rem; /* ← MUDANÇA: de 0.8rem para 0.5rem */
+    padding: 0.5rem 1rem;  (← MUDANÇA: de 0.8rem para 0.5rem)
     font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -318,16 +317,16 @@ nav {
 .bf-content { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 .bf-label {
     font-family: 'Century Gothic', sans-serif !important;
-    font-size: 1rem !important; /* ← MUDANÇA: de 1.2rem para 1rem */
+    font-size: 1rem !important; (← MUDANÇA: de 1.2rem para 1rem)
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.2px !important; /* ← MUDANÇA: de 1.5px para 1.2px */
+    letter-spacing: 1.2px !important; (← MUDANÇA: de 1.5px para 1.2px)
     background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: glow 2s ease-in-out infinite;
-    margin-right: 6px; /* ← MUDANÇA: de 8px para 6px */
+    margin-right: 6px; (← MUDANÇA: de 8px para 6px)
 }
 .bf-separator { color: rgba(255,255,255,0.3); font-size: 1.2rem; }
 .bf-countdown-label { font-size: 0.8rem !important; color: rgba(255,255,255,0.7); text-transform: lowercase; margin-right: 8px; }
@@ -337,32 +336,34 @@ nav {
     flex-direction: column;
     align-items: center;
     background: rgba(255,255,255,0.1);
-    padding: 0.2rem 0.35rem !important; /* ← MUDANÇA: de 0.25/0.4 para 0.2/0.35 */
-    border-radius: 3px; /* ← MUDANÇA: de 4px para 3px */
-    min-width: 42px !important; /* ← MUDANÇA: de 48px para 42px */
+    padding: 0.2rem 0.35rem !important; (← MUDANÇA: de 0.25/0.4 para 0.2/0.35)
+    border-radius: 3px; (← MUDANÇA: de 4px para 3px)
+    min-width: 42px !important; (← MUDANÇA: de 48px para 42px)
     border: 1px solid rgba(255,255,255,0.2);
 }
 .bf-time-value {
     font-family: 'Century Gothic', sans-serif !important;
-    font-size: 1.3rem !important; /* ← MUDANÇA: de 1.5rem para 1.3rem */
+    font-size: 1.3rem !important; (← MUDANÇA: de 1.5rem para 1.3rem)
     font-weight: 700;
     color: #FFD700;
     line-height: 1;
 }
 .bf-time-label {
-    font-size: 0.45rem !important; /* ← MUDANÇA: de 0.5rem para 0.45rem */
+    font-size: 0.45rem !important; (← MUDANÇA: de 0.5rem para 0.45rem)
     color: rgba(255,255,255,0.6);
     text-transform: uppercase;
-    letter-spacing: 0.3px; /* ← MUDANÇA: de 0.4px para 0.3px */
-    margin-top: 0.1rem; /* ← MUDANÇA: de 0.15rem para 0.1rem */
+    letter-spacing: 0.3px; (← MUDANÇA: de 0.4px para 0.3px)
+    margin-top: 0.1rem; (← MUDANÇA: de 0.15rem para 0.1rem)
 }
 .bf-colon {
     color: #FFD700;
-    font-size: 1.1rem !important; /* ← MUDANÇA: de 1.3rem para 1.1rem */
+    font-size: 1.1rem !important; (← MUDANÇA: de 1.3rem para 1.1rem)
     font-weight: 700;
     animation: blink 1s infinite;
-    margin: 0 1px; /* ← MUDANÇA: de 2px para 1px */
+    margin: 0 1px; (← MUDANÇA: de 2px para 1px)
 }
+
+==================== FIM DO BLOCO ==================== */
 
 /* Hero Carousel */
 .hero-section { 
@@ -3201,6 +3202,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
