@@ -239,34 +239,6 @@ async function initCheckout() {
             }
         }
 
-        // 2. Load cart
-        CartManager.load();
-        CheckoutState.subtotal = CartManager.getSubtotal();
-        CheckoutState.couponDiscount = CartManager.couponDiscount || 0;
-        
-        // 3. Verify cart not empty
-        if (!CartManager.cart || CartManager.cart.length === 0) {
-            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'warning');
-            setTimeout(() => window.location.href = 'index.html', 2000);
-            return;
-        }
-        
-        // Continue initialization...
-        renderSummary();
-        initMasks();
-        initEvents();
-        
-        if (CheckoutDOM.summaryCartCode) {
-            CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
-        }
-        
-        console.log('✅ Checkout inicializado com sucesso');
-        
-    } catch (error) {
-        console.error('❌ Erro na inicialização:', error);
-        showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
-    }
-}
         
 // ==================== LÓGICA DE UI DO CHECKOUT ====================
 function handleCheckoutAuthUpdate(user) {
