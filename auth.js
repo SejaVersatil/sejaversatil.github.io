@@ -774,3 +774,48 @@ window.updateUI = updateUI;
 window.resetPassword = resetPassword;
 
 console.log('✅ Auth Module Loaded (Production-Grade v2.0)');
+
+
+
+// ==================== VERIFICAR E-MAIL MANUALMENTE (EMERGÊNCIA) ====================
+async function forceVerifyEmail() {
+    const user = auth.currentUser;
+    
+    if (!user) {
+        showToast('Você precisa estar logado', 'error');
+        return;
+    }
+    
+    if (user.emailVerified) {
+        showToast('Seu e-mail já está verificado!', 'success');
+        location.reload();
+        return;
+    }
+    
+    const confirm = window.confirm('Deseja receber um novo e-mail de verificação?');
+    
+    if (!confirm) return;
+    
+    try {
+        await user.sendEmailVerification();
+        showToast('✅ E-mail enviado! Verifique sua caixa de entrada.', 'success');
+        
+        alert('📧 E-mail de verificação enviado!\n\n' +
+              '1️⃣ Verifique sua caixa de entrada\n' +
+              '2️⃣ Verifique a pasta de SPAM/Lixo Eletrônico\n' +
+              '3️⃣ Clique no link de confirmação\n' +
+              '4️⃣ Volte aqui e faça login novamente');
+              
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        
+        if (error.code === 'auth/too-many-requests') {
+            showToast('⏰ Aguarde 1 minuto antes de solicitar novamente', 'error');
+        } else {
+            showToast('Erro ao enviar e-mail: ' + error.message, 'error');
+        }
+    }
+}
+
+// Exportar
+window.forceVerifyEmail = forceVerifyEmail;
