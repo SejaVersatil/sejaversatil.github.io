@@ -638,26 +638,6 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Validação de Email
-function validateEmail(email) {
-    // ✅ Regex profissional que valida domínios reais
-    const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    
-    if (!re.test(email.trim().toLowerCase())) {
-        return false;
-    }
-    
-    // ✅ Validar domínios suspeitos
-    const suspiciousDomains = ['tempmail', 'throwaway', '10minutemail', 'guerrillamail'];
-    const domain = email.split('@')[1]?.toLowerCase();
-    
-    if (suspiciousDomains.some(sus => domain?.includes(sus))) {
-        showToast('⚠️ Use um email permanente', 'error');
-        return false;
-    }
-    
-    return true;
-}
 
 // Sanitização de Input
 function sanitizeInput(input) {
@@ -4602,38 +4582,6 @@ function collectGuestCustomerData() {
   });
 }
 
-function isValidCPF(cpf) {
-  // Remove caracteres não numéricos
-  cpf = cpf.replace(/\D/g, '');
-  
-  // Verifica se tem 11 dígitos
-  if (cpf.length !== 11) return false;
-  
-  // Verifica se todos os dígitos são iguais
-  if (/^(\d)\1+$/.test(cpf)) return false;
-  
-  let soma = 0;
-  let resto;
-  
-  for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-  resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
-  if (resto !== parseInt(cpf.substring(9, 10))) return false;
-  
-  soma = 0;
-  for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-  resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
-  if (resto !== parseInt(cpf.substring(10, 11))) return false;
-  
-  return true;
-}
-
-function closeCustomerDataModal() {
-  const modal = document.getElementById('customerDataModal');
-  if (modal) modal.classList.remove('active');
-}
-
 async function getUserPhone() {
   try {
     if (!auth.currentUser) return null;
@@ -5705,12 +5653,6 @@ function validateCPF(cpf) {
     return true;
 }
 
-// Validação de Email com feedback visual
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
 // Aplicar validação visual a inputs
 function applyVisualValidation(inputElement, validationFn) {
     if (!inputElement) return;
@@ -5891,6 +5833,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
 
 
