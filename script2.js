@@ -5834,15 +5834,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ==================== LISTENER DE AUTH CENTRALIZADO (Adicionar no final do script2.js) ====================
+window.addEventListener('authStateUpdated', (e) => {
+    const { user, isAdmin } = e.detail;
+    console.log('🔐 Auth Update na Home:', user ? user.email : 'Visitante');
 
+    // 1. Sincroniza variáveis globais locais
+    if (typeof currentUser !== 'undefined') currentUser = user;
+    if (typeof isAdminLoggedIn !== 'undefined') isAdminLoggedIn = isAdmin;
 
+    // 2. Atualiza a UI (Ícone do usuário no Header)
+    if (typeof updateUI === 'function') {
+        updateUI(user);
+    }
 
-
-
-
-
-
-
-
-
-
+    // 3. Se estiver na página de produto, atualiza status de favoritos
+    if (typeof updateFavoriteStatus === 'function') {
+        updateFavoriteStatus();
+    }
+});
