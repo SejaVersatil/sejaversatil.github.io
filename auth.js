@@ -118,7 +118,6 @@ function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
 
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
 function updateUI(user) {
-    
     const userPanel = document.getElementById('userPanel');
     const userStatusText = document.getElementById('userStatusText');
     const loggedInView = document.getElementById('loggedInView');
@@ -132,8 +131,18 @@ function updateUI(user) {
     const checkoutUserEmail = document.getElementById('loggedUserEmail');
 
     if (user) {
+        // Garantir que currentUser está sincronizado
+        if (typeof currentUser === 'undefined' || !currentUser) {
+            currentUser = {
+                name: user.displayName || user.email.split('@')[0],
+                email: user.email,
+                uid: user.uid,
+                isAdmin: isAdminLoggedIn || false
+            };
+        }
+        
         // ========== HOME PAGE UI ==========
-        if (userStatusText) userStatusText.textContent = `Olá, ${currentUser?.name || user.email}!`;
+        if (userStatusText) userStatusText.textContent = `Olá, ${currentUser.name || user.email}!`;
         if (loggedInView) loggedInView.style.display = 'block';
         if (loggedOutView) loggedOutView.style.display = 'none';
         if (adminAccessBtn) adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
@@ -142,7 +151,7 @@ function updateUI(user) {
         // ========== CHECKOUT PAGE UI ==========
         if (checkoutAuthStateGuest) checkoutAuthStateGuest.style.display = 'none';
         if (checkoutAuthStateLogged) checkoutAuthStateLogged.style.display = 'block';
-        if (checkoutUserName) checkoutUserName.textContent = currentUser?.name || 'Usuário';
+        if (checkoutUserName) checkoutUserName.textContent = currentUser.name || 'Usuário';
         if (checkoutUserEmail) checkoutUserEmail.textContent = user.email || '';
         
         // ✅ Trigger checkout-specific validation (if function exists)
