@@ -5153,57 +5153,88 @@ console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== BANNER SWIPE AUTOMÁTICO ====================
 (function() {
-    const slides = document.querySelectorAll('.banner-slide');
-    const dots = document.querySelectorAll('.banner-dot');
-    let currentSlide = 0;
-    const totalSlides = slides.length;
-    const slideInterval = 4000; // 4 segundos por slide
+    // Aguarda o DOM estar pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBannerSwipe);
+    } else {
+        initBannerSwipe();
+    }
 
-    function showSlide(index) {
-        // Remove active de todos
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-
-        // Adiciona active no slide atual
-        slides[index].classList.add('active');
-        if (dots[index]) {
-            dots[index].classList.add('active');
+    function initBannerSwipe() {
+        const slides = document.querySelectorAll('.banner-slide');
+        const dots = document.querySelectorAll('.banner-dot');
+        
+        // Verifica se os elementos existem
+        if (!slides || slides.length === 0) {
+            console.warn('⚠️ Banner slides não encontrados');
+            return;
         }
-    }
 
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        showSlide(currentSlide);
-    }
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        const slideInterval = 4000; // 4 segundos por slide
 
-    // Auto swipe a cada 4 segundos
-    let autoSlide = setInterval(nextSlide, slideInterval);
+        function showSlide(index) {
+            // Valida o índice
+            if (index < 0 || index >= totalSlides) return;
 
-    // Clique nos dots (opcional)
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentSlide = index;
-            showSlide(currentSlide);
+            // Remove active de todos
+            slides.forEach(slide => {
+                if (slide) slide.classList.remove('active');
+            });
             
-            // Reinicia o timer
-            clearInterval(autoSlide);
-            autoSlide = setInterval(nextSlide, slideInterval);
-        });
-    });
+            dots.forEach(dot => {
+                if (dot) dot.classList.remove('active');
+            });
 
-    // Pausa ao passar o mouse (opcional)
-    const banner = document.querySelector('.top-banner');
-    if (banner) {
-        banner.addEventListener('mouseenter', () => {
-            clearInterval(autoSlide);
+            // Adiciona active no slide atual
+            if (slides[index]) {
+                slides[index].classList.add('active');
+            }
+            
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        // Auto swipe a cada 4 segundos
+        let autoSlide = setInterval(nextSlide, slideInterval);
+
+        // Clique nos dots (opcional)
+        dots.forEach((dot, index) => {
+            if (dot) {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                    
+                    // Reinicia o timer
+                    clearInterval(autoSlide);
+                    autoSlide = setInterval(nextSlide, slideInterval);
+                });
+            }
         });
 
-        banner.addEventListener('mouseleave', () => {
-            autoSlide = setInterval(nextSlide, slideInterval);
-        });
+        // Pausa ao passar o mouse (opcional)
+        const banner = document.querySelector('.top-banner');
+        if (banner) {
+            banner.addEventListener('mouseenter', () => {
+                clearInterval(autoSlide);
+            });
+
+            banner.addEventListener('mouseleave', () => {
+                autoSlide = setInterval(nextSlide, slideInterval);
+            });
+        }
+
+        console.log('✅ Banner swipe inicializado com sucesso!');
     }
 })();
-// ==================== FIM BLACK FRIDAY COUNTDOWN ====================
+
 // MARCAR PRODUTOS COMO BLACK FRIDAY
 // ================================================================
 async function marcarProdutosBlackFriday() {
@@ -5869,6 +5900,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
