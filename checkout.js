@@ -330,19 +330,17 @@ async function handleLogin() {
     
     showLoading(true);
     
-    // Call centralized auth service
-    const result = await window.authService.login(email, password);
-    
-    showLoading(false);
-    
-    if (result.success) {
-        // Update checkout UI
-        updateAuthUI(result.user);
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
         showToast('Login realizado', 'Bem-vindo de volta!', 'success');
-    } else {
-        showToast('Erro', result.error, 'error');
+    } catch (error) {
+        const errorCode = error.code;
+        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        showToast('Erro', friendlyMessage, 'error');
+    } finally {
+        showLoading(false);
     }
-}// ✅ FECHAMENTO CORRIGIDO
+}
 // ==================== HANDLE CADASTRO ====================
 async function handleRegister() {
     const name = document.getElementById('registerName')?.value.trim();
