@@ -116,6 +116,49 @@ function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
     button.classList.toggle('loading', isLoading);
 }
 
+
+// ==================== UPDATE USER PANEL TABS ====================
+function updateUserPanelTabs(user) {
+    const userPanelTabs = document.getElementById('userPanelTabs');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loggedTab = document.getElementById('userLoggedTab');
+    
+    if (user) {
+        // Esconder abas de login/cadastro
+        if (userPanelTabs) userPanelTabs.style.display = 'none';
+        if (loginTab) loginTab.classList.remove('active');
+        if (registerTab) registerTab.classList.remove('active');
+        
+        // Mostrar aba logada
+        if (loggedTab) {
+            loggedTab.classList.add('active');
+            
+            // Preencher dados
+            const userName = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+            const userStatus = document.getElementById('userStatus');
+            const adminBtn = document.getElementById('adminAccessBtn');
+            
+            if (userName) userName.textContent = user.name || user.email;
+            if (userEmail) userEmail.textContent = user.email;
+            
+            if (user.isAdmin) {
+                if (userStatus) userStatus.innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+                if (adminBtn) adminBtn.style.display = 'block';
+            } else {
+                if (userStatus) userStatus.textContent = 'Cliente';
+                if (adminBtn) adminBtn.style.display = 'none';
+            }
+        }
+    } else {
+        // Mostrar abas de login
+        if (userPanelTabs) userPanelTabs.style.display = 'flex';
+        if (loggedTab) loggedTab.classList.remove('active');
+        if (loginTab) loginTab.classList.add('active');
+    }
+}
+
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
 function updateUI(user) {
     const userPanel = document.getElementById('userPanel');
@@ -239,6 +282,7 @@ auth.onAuthStateChanged(async (user) => {
     
     // CHAMAR FUNÇÕES DE UI (SE EXISTIREM)
     updateUI(currentUser);
+    updateUserPanelTabs(currentUser);
     
     // COMPATIBILIDADE COM CHECKOUT.JS
     if (typeof updateAuthUI === 'function') {
@@ -297,6 +341,7 @@ async function userLogin(event) {
         await auth.signInWithEmailAndPassword(email, password);
         
         showToast('Login realizado com sucesso!', 'success');
+        updateUserPanelTabs(currentUser);
         
         // CARREGAR CARRINHO (SE FUNÇÃO EXISTIR)
         if (typeof loadCart === 'function') loadCart();
