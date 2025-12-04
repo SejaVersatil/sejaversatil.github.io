@@ -484,38 +484,45 @@ async function userRegister(event) {
             displayName: name
         });
 
-        // SALVAR NO FIRESTORE
+      // SALVAR NO FIRESTORE
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
-        showToast('Cadastro realizado com sucesso! Bem-vindo(a)!', 'success');
-        
+        // ✅ NOVO CÓDIGO - ENVIAR E-MAIL DE VERIFICAÇÃO
+        try {
+            await user.sendEmailVerification();
+            showToast('✅ Cadastro realizado! Verifique seu e-mail para ativar a conta.', 'success');
+            // Mostrar mensagem especial
+            if (successMsgEl) {
+                successMsgEl.textContent = '📧 E-mail de verificação enviado! Verifique sua caixa de entrada e spam.';
+                successMsgEl.classList.add('active');
+            }
+        } catch (emailError) {
+            console.error('❌ Erro ao enviar e-mail:', emailError);
+            showToast('Conta criada, mas erro ao enviar e-mail de verificação', 'error');
+        }
+
         // LIMPAR FORMULÁRIO
         nameInput.value = '';
         emailInput.value = '';
         passwordInput.value = '';
         confirmPasswordInput.value = '';
-        
-        if (successMsgEl) {
-            successMsgEl.textContent = 'Cadastro realizado com sucesso! Você será redirecionado.';
-            successMsgEl.classList.add('active');
-        }
-        
+
     } catch (error) {
         console.error('❌ Erro no Registro:', error);
-        
+
         const errorCode = error.code;
         const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
-        
+
         if (errorMsgEl) {
             errorMsgEl.textContent = friendlyMessage;
             errorMsgEl.classList.add('active');
         }
         showToast(friendlyMessage, 'error');
-        
+
     } finally {
         setButtonLoading(registerBtn, false, originalText);
     }
