@@ -340,13 +340,12 @@ function handleCheckoutAuthUpdate(user) {
 window.updateAuthUICheckout = function(user) {
     console.log('🔄 Checkout UI updating for:', user ? user.email : 'Guest');
     
-    // Original checkout logic (keep existing code)
     if (user) {
         // Show logged-in state
-        CheckoutDOM.authStateGuest.style.display = 'none';
-        CheckoutDOM.authStateLogged.style.display = 'block';
-        CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
-        CheckoutDOM.loggedUserEmail.textContent = user.email || '';
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
+        if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
+        if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
         
         // Auto-fill email
         if (CheckoutDOM.inputEmail) {
@@ -354,31 +353,44 @@ window.updateAuthUICheckout = function(user) {
             CheckoutDOM.inputEmail.disabled = true;
         }
         
-        // ✅ NEW: Check Firestore for saved data
-        if (user.uid) {
-            db.collection('usuarios').doc(user.uid).get()
+        // ✅ Check Firestore for saved data (COLEÇÃO CORRETA: 'users')
+        if (user.uid && typeof db !== 'undefined') {
+            db.collection('users').doc(user.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        if (userData.telefone && CheckoutDOM.inputTelefone) {
-                            CheckoutDOM.inputTelefone.value = userData.telefone;
+                        
+                        // Preencher telefone
+                        if (userData.phone && CheckoutDOM.inputTelefone) {
+                            CheckoutDOM.inputTelefone.value = userData.phone;
                         }
+                        
+                        // Preencher CPF
                         if (userData.cpf && CheckoutDOM.inputCPF) {
                             CheckoutDOM.inputCPF.value = userData.cpf;
                         }
+                        
                         // Auto-validate if all fields present
-                        if (userData.telefone && userData.cpf) {
+                        if (userData.phone && userData.cpf) {
                             CheckoutState.step1Valid = true;
                             updateColumnStatus(1, 'Completo', 'success');
                             unlockColumn(2);
+                            
+                            // Mostrar formulário de dados pessoais já preenchido
+                            if (CheckoutDOM.formDadosPessoais) {
+                                CheckoutDOM.formDadosPessoais.style.display = 'block';
+                            }
                         }
                     }
+                })
+                .catch(err => {
+                    console.warn('⚠️ Erro ao carregar dados do usuário:', err);
                 });
         }
     } else {
         // Show guest state
-        CheckoutDOM.authStateGuest.style.display = 'block';
-        CheckoutDOM.authStateLogged.style.display = 'none';
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
         CheckoutState.step1Valid = false;
         lockColumn(2);
         lockColumn(3);
