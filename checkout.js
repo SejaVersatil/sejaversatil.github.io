@@ -19,6 +19,17 @@ const CHECKOUT_CONFIG = {
     CEP_LENGTH: 8
 };
 
+
+const FIREBASE_ERROR_MAP = {
+    'auth/invalid-email': 'E-mail inválido',
+    'auth/user-not-found': 'Usuário não encontrado',
+    'auth/wrong-password': 'Senha incorreta',
+    'auth/email-already-in-use': 'E-mail já cadastrado',
+    'auth/weak-password': 'Senha muito fraca',
+    'default': 'Erro desconhecido'
+};
+
+
 // ==================== ESTADO DO CHECKOUT ====================
 const CheckoutState = {
     // Etapas de Validação
@@ -348,7 +359,6 @@ async function handleRegister() {
     const password = document.getElementById('registerPassword')?.value;
     const passwordConfirm = document.getElementById('registerPasswordConfirm')?.value;
     
-    // Client-side validation
     if (!name || !email || !password || !passwordConfirm) {
         showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
         return;
@@ -366,17 +376,23 @@ async function handleRegister() {
     
     showLoading(true);
     
-    // Call centralized auth service
-    const result = await window.authService.register({ name, email, password });
-    
-    showLoading(false);
-    
-    if (result.success) {
-        // Update checkout UI
-        updateAuthUI(auth.currentUser); // Will be set by auth.js
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.updateProfile({ displayName: name });
+        
+        await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
         showToast('Cadastro realizado', 'Bem-vindo!', 'success');
-    } else {
-        showToast('Erro', result.error, 'error');
+    } catch (error) {
+        const errorCode = error.code;
+        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        showToast('Erro', friendlyMessage, 'error');
+    } finally {
+        showLoading(false);
     }
 }
 
