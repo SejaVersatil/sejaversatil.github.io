@@ -19,17 +19,6 @@ const CHECKOUT_CONFIG = {
     CEP_LENGTH: 8
 };
 
-
-const FIREBASE_ERROR_MAP = {
-    'auth/invalid-email': 'E-mail inválido',
-    'auth/user-not-found': 'Usuário não encontrado',
-    'auth/wrong-password': 'Senha incorreta',
-    'auth/email-already-in-use': 'E-mail já cadastrado',
-    'auth/weak-password': 'Senha muito fraca',
-    'default': 'Erro desconhecido'
-};
-
-
 // ==================== ESTADO DO CHECKOUT ====================
 const CheckoutState = {
     // Etapas de Validação
