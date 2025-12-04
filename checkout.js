@@ -730,7 +730,9 @@ function validateDadosStep() {
         return false;
     }
     
-    if (!email || !window.validateEmail(email)) {
+    // Validação de email (inline para não depender de função externa)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
         showToast('E-mail inválido', 'Digite um e-mail válido', 'error');
         return false;
     }
@@ -746,14 +748,20 @@ function validateDadosStep() {
         return false;
     }
     
-    // ✅ Save to Firestore for next time (if logged in)
-    if (window.currentUser?.uid) {
-        db.collection('usuarios').doc(window.currentUser.uid).update({
-            telefone: telefone,
+    // ✅ Save to Firestore for next time (if logged in) - COLEÇÃO CORRETA
+    if (window.currentUser?.uid && typeof db !== 'undefined') {
+        db.collection('users').doc(window.currentUser.uid).set({
+            phone: telefoneLimpo,
             cpf: cpf,
             atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(err => console.warn('⚠️ Erro ao salvar dados:', err));
+        }, { merge: true }).catch(err => console.warn('⚠️ Erro ao salvar dados:', err));
     }
+    
+    // ✅ Salvar no CheckoutState
+    CheckoutState.userData.nome = nome;
+    CheckoutState.userData.email = email;
+    CheckoutState.userData.telefone = telefoneLimpo;
+    CheckoutState.userData.cpf = cpf;
     
     // ✅ Mark step as valid
     CheckoutState.step1Valid = true;
