@@ -299,6 +299,7 @@ nav {
     font-weight: 600;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
@@ -315,7 +316,14 @@ nav {
     animation: shine 3s infinite;
 }
 
-.bf-content { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.bf-content { 
+    display: inline-flex; /* ← MUDAR de flex para inline-flex */
+    align-items: center; 
+    gap: 1rem;
+    white-space: nowrap; /* ← ADICIONAR */
+    animation: tickerScroll 25s linear infinite; /* ← ADICIONAR */
+    padding-right: 100%; /* ← ADICIONAR (cria espaço para loop) */
+}
 .bf-label {
     font-family: 'Century Gothic', sans-serif !important;
     font-size: 1rem !important; /* ← MUDANÇA: de 1.2rem para 1rem */
@@ -2190,6 +2198,14 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
 @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes tickerScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
 /* ==========================================================================
@@ -3201,4 +3217,5 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
