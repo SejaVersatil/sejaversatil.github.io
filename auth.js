@@ -526,48 +526,71 @@ async function userRegister(event) {
             displayName: name
         });
 
-      // SALVAR NO FIRESTORE
-        await db.collection('users').doc(user.uid).set({
-            name: name,
-            email: email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+// SALVAR NO FIRESTORE
+await db.collection('users').doc(user.uid).set({
+    name: name,
+    email: email,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true });
 
-        // ✅ NOVO CÓDIGO - ENVIAR E-MAIL DE VERIFICAÇÃO
-        try {
-            await user.sendEmailVerification();
-            showToast('✅ Cadastro realizado! Verifique seu e-mail para ativar a conta.', 'success');
-            // Mostrar mensagem especial
-            if (successMsgEl) {
-                successMsgEl.textContent = '📧 E-mail de verificação enviado! Verifique sua caixa de entrada e spam.';
-                successMsgEl.classList.add('active');
-            }
-        } catch (emailError) {
-            console.error('❌ Erro ao enviar e-mail:', emailError);
-            showToast('Conta criada, mas erro ao enviar e-mail de verificação', 'error');
-        }
-
-        // LIMPAR FORMULÁRIO
-        nameInput.value = '';
-        emailInput.value = '';
-        passwordInput.value = '';
-        confirmPasswordInput.value = '';
-
-    } catch (error) {
-        console.error('❌ Erro no Registro:', error);
-
-        const errorCode = error.code;
-        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
-
-        if (errorMsgEl) {
-            errorMsgEl.textContent = friendlyMessage;
-            errorMsgEl.classList.add('active');
-        }
-        showToast(friendlyMessage, 'error');
-
-    } finally {
-        setButtonLoading(registerBtn, false, originalText);
+// ✅ ENVIAR E-MAIL DE VERIFICAÇÃO + LOGOUT FORÇADO
+try {
+    await user.sendEmailVerification();
+    
+    // ⚠️ CRÍTICO: Força logout ANTES de qualquer atualização de UI
+    await auth.signOut();
+    
+    showToast('✅ Conta criada! Verifique seu e-mail para ativar.', 'success');
+    
+    // Mostrar mensagem com link para login
+    if (successMsgEl) {
+        successMsgEl.innerHTML = '📧 E-mail de verificação enviado! Verifique sua caixa de entrada e spam. <a href="#" onclick="switchUserTab(\'login\'); return false;" style="color: var(--primary); text-decoration: underline; font-weight: 600;">Fazer Login</a>';
+        successMsgEl.classList.add('active');
     }
+    
+    // Travar campos (não limpar para evitar reenvio acidental)
+    nameInput.disabled = true;
+    emailInput.disabled = true;
+    passwordInput.disabled = true;
+    confirmPasswordInput.disabled = true;
+    
+    // Esconder mensagem de erro (se houver)
+    if (errorMsgEl) {
+        errorMsgEl.classList.remove('active');
+    }
+    
+} catch (emailError) {
+    console.error('❌ Erro ao enviar e-mail:', emailError);
+    
+    // Mesmo com erro no e-mail, força logout
+    await auth.signOut();
+    
+    showToast('Conta criada, mas erro ao enviar e-mail. Tente fazer login.', 'error');
+    
+    if (errorMsgEl) {
+        errorMsgEl.innerHTML = 'Conta criada, mas não foi possível enviar o e-mail. <a href="#" onclick="switchUserTab(\'login\'); return false;" style="color: var(--primary);">Tente fazer login</a>';
+        errorMsgEl.classList.add('active');
+    }
+}
+
+// ⚠️ NÃO LIMPAR FORMULÁRIO - Campos ficam travados como confirmação visual
+
+} catch (error) {
+    console.error('❌ Erro no Registro:', error);
+    
+    const errorCode = error.code;
+    const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+    
+    if (errorMsgEl) {
+        errorMsgEl.textContent = friendlyMessage;
+        errorMsgEl.classList.add('active');
+    }
+    
+    showToast(friendlyMessage, 'error');
+    
+} finally {
+    setButtonLoading(registerBtn, false, originalText);
+}
 }
 
 // ==================== GOOGLE LOGIN (CHAMADA POR index.html) ====================
