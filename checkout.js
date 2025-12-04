@@ -562,20 +562,43 @@ function updatePaymentUI() {
 
 // ==================== DESBLOQUEAR/BLOQUEAR COLUNAS ====================
 function unlockColumn(columnNumber) {
-    const columnId = `column${columnNumber}${['', 'Identity', 'Delivery', 'Payment', 'Summary'][columnNumber]}`;
+    const columnMap = {
+        1: 'column1Identity',
+        2: 'column2Delivery',
+        3: 'column3Payment',
+        4: 'column4Summary'
+    };
+    
+    const columnId = columnMap[columnNumber];
     const column = document.getElementById(columnId);
-    if (!column) return;
+    
+    if (!column) {
+        console.error(`❌ Coluna ${columnNumber} (${columnId}) não encontrada`);
+        return;
+    }
     
     const content = column.querySelector('.column-content');
-    if (!content) return;
+    if (!content) {
+        console.error(`❌ .column-content não encontrado na coluna ${columnNumber}`);
+        return;
+    }
     
+    // ✅ Remover lock visual
     content.classList.remove('column-locked');
     
+    // ✅ Mostrar formulário
     const form = content.querySelector('form');
-    if (form) form.style.display = 'block';
+    if (form) {
+        form.style.display = 'block';
+    }
     
+    // ✅ Esconder mensagem de bloqueio
     const lockMessage = content.querySelector('.lock-message');
-    if (lockMessage) lockMessage.style.display = 'none';
+    if (lockMessage) {
+        lockMessage.style.display = 'none';
+    }
+    
+    console.log(`✅ Coluna ${columnNumber} desbloqueada`);
 }
 
 function lockColumn(columnNumber) {
