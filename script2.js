@@ -801,7 +801,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         updateCartUI();
         updateFavoritesCount();
-        initBlackFridayCountdown();
         setupConnectionMonitor();
         setupCartAbandonmentTracking();
         setupPushNotifications();
@@ -5870,6 +5869,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
