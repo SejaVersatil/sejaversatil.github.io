@@ -190,6 +190,24 @@ function updateUI(user) {
     const checkoutUserEmail = document.getElementById('loggedUserEmail');
 
     if (user) {
+        // ✅ VERIFICAR SE E-MAIL FOI CONFIRMADO
+        if (!user.emailVerified) {
+            showToast('⚠️ Por favor, verifique seu e-mail antes de continuar', 'error');
+
+            // Mostrar botão para reenviar
+            if (userStatusText) {
+                userStatusText.innerHTML = `
+                    <span style="color: #e74c3c;">E-mail não verificado</span>
+                    <button onclick="resendVerificationEmail()" style="margin-left: 1rem; padding: 0.3rem 0.8rem; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Reenviar E-mail
+                    </button>
+                `;
+            }
+
+            // Bloquear ações sensíveis
+            return;
+        }
+
         // Garantir que currentUser está sincronizado
         if (typeof currentUser === 'undefined' || !currentUser) {
             currentUser = {
