@@ -1,807 +1,411 @@
-// =================================================================
-// auth.js - Módulo de Autenticação Production-Grade
-// COMPATÍVEL COM: index.html, checkout.html, script2.js, checkout.js
-// VERSÃO FINAL - 100% TESTADA
-// =================================================================
-
-// ==================== VARIÁVEIS GLOBAIS (CRÍTICAS - NÃO REMOVER) ====================
+// ==================== VARIÁVEIS GLOBAIS DE ESTADO ====================
 let currentUser = null;
 let isAdminLoggedIn = false;
 
-// ==================== AUTH READY PROMISE (USADO POR CHECKOUT.JS) ====================
+// ==================== PROMISE DE SINCRONIZAÇÃO ====================
+// Garante que outros scripts possam aguardar a verificação inicial do auth.
 window.authReady = new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-        unsubscribe();
+        unsubscribe(); // Executa apenas uma vez na carga inicial
         resolve(user);
     });
 });
 
-// ==================== LOADING OVERLAY (STARTUP) ====================
-document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.classList.add('active');
-});
-
-// ==================== ERROR MAPPING (PT-BR) ====================
+// ==================== MAPA DE ERROS CENTRALIZADO (PT-BR) ====================
 const FIREBASE_ERROR_MAP = {
-    'auth/invalid-email': 'O endereço de e-mail está mal formatado.',
+    'auth/invalid-email': 'O formato do e-mail é inválido.',
     'auth/user-disabled': 'Esta conta de usuário foi desativada.',
-    'auth/user-not-found': 'Usuário não encontrado. Verifique o e-mail.',
-    'auth/wrong-password': 'A senha está incorreta.',
-    'auth/email-already-in-use': 'Este e-mail já está em uso.',
-    'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
-    'auth/operation-not-allowed': 'A autenticação por e-mail/senha não está ativada.',
+    'auth/user-not-found': 'Nenhum usuário encontrado com este e-mail.',
+    'auth/wrong-password': 'A senha está incorreta. Tente novamente.',
+    'auth/email-already-in-use': 'Este e-mail já está cadastrado. Tente fazer login.',
+    'auth/weak-password': 'A senha é muito fraca. Use pelo menos 8 caracteres com letras, números e símbolos.',
     'auth/requires-recent-login': 'Esta operação requer autenticação recente. Faça login novamente.',
-    'auth/too-many-requests': 'Acesso bloqueado temporariamente devido a muitas tentativas falhas. Tente novamente mais tarde.',
+    'auth/too-many-requests': 'Acesso bloqueado temporariamente devido a muitas tentativas. Tente mais tarde.',
     'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
-    'auth/popup-blocked': 'Popup bloqueado pelo navegador. Permitir popups.',
-    'auth/popup-closed-by-user': 'Login cancelado pelo usuário.',
-    'auth/cancelled-popup-request': 'Login cancelado.',
-    'auth/account-exists-with-different-credential': 'Este email já está cadastrado com outro método de login.',
-    'auth/internal-error': 'Erro interno. Tente novamente em alguns segundos.',
-    'default': 'Ocorreu um erro desconhecido. Tente novamente.'
+    'auth/popup-blocked': 'O popup de login foi bloqueado pelo navegador.',
+    'auth/popup-closed-by-user': 'A janela de login foi fechada por você.',
+    'auth/account-exists-with-different-credential': 'Uma conta já existe com este e-mail, mas com um método de login diferente.',
+    'default': 'Ocorreu um erro inesperado. Por favor, tente novamente.'
 };
 
-// ==================== VALIDATION HELPERS ====================
+// ==================== FUNÇÕES DE VALIDAÇÃO (HELPERS) ====================
+
+/**
+ * Valida um endereço de e-mail usando regex e uma blacklist de domínios temporários.
+ * @param {string} email - O e-mail a ser validado.
+ * @returns {boolean} - True se o e-mail for válido, false caso contrário.
+ */
 function validateEmail(email) {
-    // REGEX mais restritivo - requer pelo menos 2 caracteres antes do @
-    const re = /^[a-zA-Z0-9][a-zA-Z0-9._-]{1,}@[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    
-    // Validação adicional: bloquear domínios suspeitos
-    const suspiciousDomains = [
-        'tempmail', 'throwaway', 'guerrillamail', '10minutemail', 
-        'mailinator', 'trashmail', 'f31ed211.com'
-    ];
-    
-    const isValid = re.test(String(email).toLowerCase());
-    
-    if (!isValid) return false;
-    
-    // Verificar se contém domínio suspeito
+    if (!email) return false;
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!re.test(String(email).toLowerCase())) return false;
+
+    const suspiciousDomains = ['tempmail', '10minutemail', 'mailinator'];
     const domain = email.split('@')[1];
-    const isSuspicious = suspiciousDomains.some(sus => domain.includes(sus));
-    
-    return !isSuspicious;
+    return !suspiciousDomains.some(d => domain.includes(d));
 }
 
+/**
+ * Valida a força de uma senha com base em múltiplos critérios. [1, 3, 6]
+ * @param {string} password - A senha a ser validada.
+ * @returns {string|null} - Uma mensagem de erro se a senha for fraca, ou null se for forte.
+ */
 function validatePasswordStrength(password) {
-    if (password.length < 8) {
-        return 'A senha deve ter no mínimo 8 caracteres.';
-    }
-    if (!/[A-Z]/.test(password)) {
-        return 'A senha deve conter pelo menos uma letra maiúscula.';
-    }
-    if (!/[a-z]/.test(password)) {
-        return 'A senha deve conter pelo menos uma letra minúscula.';
-    }
-    if (!/[0-9]/.test(password)) {
-        return 'A senha deve conter pelo menos um número.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-        return 'A senha deve conter pelo menos um símbolo ou caractere especial.';
-    }
-    return null;
+    if (!password || password.length < 8) return 'A senha deve ter no mínimo 8 caracteres.';
+    if (!/[A-Z]/.test(password)) return 'Deve conter pelo menos uma letra maiúscula.';
+    if (!/[a-z]/.test(password)) return 'Deve conter pelo menos uma letra minúscula.';
+    if (!/\d/.test(password)) return 'Deve conter pelo menos um número.';
+    if (!/[^A-Za-z0-9]/.test(password)) return 'Deve conter pelo menos um símbolo (ex: !@#$).';
+    return null; // Senha forte
 }
 
-// ==================== TOAST SYSTEM (USADO EM TODA APLICAÇÃO) ====================
+// ==================== CONTROLE DE UI (FEEDBACK VISUAL) ====================
+
+/**
+ * Exibe uma notificação toast na tela.
+ * @param {string} message - A mensagem a ser exibida.
+ * @param {'success'|'error'|'info'} type - O tipo de notificação.
+ */
 function showToast(message, type = 'info') {
-    console.log(`[TOAST - ${type.toUpperCase()}]: ${message}`);
-    
-    let toastContainer = document.getElementById('toastContainer');
-    
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toastContainer';
-        toastContainer.style.cssText = `
-            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
-            display: flex; flex-direction: column-reverse; gap: 10px;
-        `;
-        document.body.appendChild(toastContainer);
+    // Esta função já existe em script2.js e é bem implementada.
+    // Apenas garantimos que ela seja chamada corretamente.
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+    } else {
+        console.warn(`[Toast Fallback - ${type}]: ${message}`);
+        alert(message);
     }
-
-    const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.className = `toast toast-${type}`;
-    toast.style.cssText = `
-        padding: 10px 20px; border-radius: 5px; color: white;
-        background-color: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#F44336' : '#2196F3'};
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        opacity: 0; transition: opacity 0.5s, transform 0.5s;
-        transform: translateY(100%);
-    `;
-    
-    toastContainer.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
-    }, 10);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(100%)';
-        toast.addEventListener('transitionend', () => toast.remove());
-    }, 5000);
 }
 
-// ==================== BUTTON LOADING STATE ====================
-function setButtonLoading(button, isLoading, originalText = 'Aguarde...') {
+/**
+ * Controla o estado de carregamento de um botão.
+ * @param {HTMLButtonElement} button - O elemento do botão.
+ * @param {boolean} isLoading - Define se o estado é de carregamento.
+ * @param {string} originalText - O texto original do botão para restaurar.
+ */
+function setButtonLoading(button, isLoading, originalText) {
     if (!button) return;
     button.disabled = isLoading;
-    button.textContent = isLoading ? 'Aguarde...' : originalText;
-    button.classList.toggle('loading', isLoading);
+    if (isLoading) {
+        button.innerHTML = '<span class="btn-spinner"></span> Carregando...';
+        button.classList.add('loading');
+    } else {
+        button.innerHTML = originalText;
+        button.classList.remove('loading');
+    }
 }
 
+/**
+ * Exibe uma mensagem de erro ou sucesso em um formulário. [9, 10]
+ * @param {string} formType - 'login' ou 'register'.
+ * @param {string} message - A mensagem a ser exibida.
+ * @param {'error'|'success'} type - O tipo de mensagem.
+ */
+function showFormMessage(formType, message, type) {
+    const errorEl = document.getElementById(`${formType}Error`);
+    const successEl = document.getElementById(`${formType}Success`);
 
-// ==================== UPDATE USER PANEL TABS ====================
-function updateUserPanelTabs(user) {
+    if (errorEl) {
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+    }
+    if (successEl) {
+        successEl.textContent = '';
+        successEl.style.display = 'none';
+    }
+
+    if (type === 'error' && errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+    } else if (type === 'success' && successEl) {
+        successEl.innerHTML = message; // Usa innerHTML para permitir links
+        successEl.style.display = 'block';
+    }
+}
+
+// ==================== LÓGICA DE AUTENTICAÇÃO PRINCIPAL ====================
+
+/**
+ * Listener central que reage a mudanças no estado de autenticação do Firebase.
+ * É o coração do sistema, sincronizando o estado da UI e das variáveis globais.
+ */
+auth.onAuthStateChanged(async (user) => {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.classList.remove('active');
+
+    if (user && user.emailVerified) {
+        // Usuário logado E verificado
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        let userData;
+
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            isAdminLoggedIn = true;
+            userData = {
+                uid: user.uid,
+                name: adminDoc.data().name || user.displayName,
+                email: user.email,
+                isAdmin: true,
+            };
+        } else {
+            isAdminLoggedIn = false;
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            userData = {
+                uid: user.uid,
+                name: userDoc.exists() ? userDoc.data().name : user.displayName,
+                email: user.email,
+                isAdmin: false,
+            };
+        }
+        currentUser = userData;
+        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+
+    } else {
+        // Usuário não logado ou não verificado
+        if (user && !user.emailVerified) {
+            // Se o usuário existe mas não verificou o e-mail, força o logout para evitar estado inconsistente.
+            await auth.signOut();
+        }
+        currentUser = null;
+        isAdminLoggedIn = false;
+        localStorage.removeItem('sejaVersatilCurrentUser');
+    }
+
+    // Sincroniza o estado com o escopo global para outros scripts
+    window.currentUser = currentUser;
+    window.isAdminLoggedIn = isAdminLoggedIn;
+
+    // Dispara um evento customizado para que outros scripts (como script2.js) possam reagir
+    document.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user: currentUser } }));
+    
+    // Atualiza a UI do painel de usuário
+    updateUserPanelUI(currentUser);
+});
+
+/**
+ * Atualiza a interface do painel de usuário (Minha Conta).
+ * @param {object|null} user - O objeto do usuário logado ou null.
+ */
+function updateUserPanelUI(user) {
     const userPanelTabs = document.getElementById('userPanelTabs');
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
     const loggedTab = document.getElementById('userLoggedTab');
-    
+
     if (user) {
-        // Esconder abas de login/cadastro
+        // Usuário LOGADO
         if (userPanelTabs) userPanelTabs.style.display = 'none';
         if (loginTab) loginTab.classList.remove('active');
         if (registerTab) registerTab.classList.remove('active');
-        
-        // Mostrar aba logada
+
         if (loggedTab) {
             loggedTab.classList.add('active');
-            
-            // Preencher dados
-            const userName = document.getElementById('userName');
-            const userEmail = document.getElementById('userEmail');
-            const userStatus = document.getElementById('userStatus');
-            const adminBtn = document.getElementById('adminAccessBtn');
-            
-            if (userName) userName.textContent = user.name || user.email;
-            if (userEmail) userEmail.textContent = user.email;
-            
-            if (user.isAdmin) {
-                if (userStatus) userStatus.innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
-                if (adminBtn) adminBtn.style.display = 'block';
-            } else {
-                if (userStatus) userStatus.textContent = 'Cliente';
-                if (adminBtn) adminBtn.style.display = 'none';
-            }
+            document.getElementById('userName').textContent = user.name || 'Usuário';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('adminAccessBtn').style.display = user.isAdmin ? 'block' : 'none';
+            document.getElementById('userStatus').innerHTML = user.isAdmin ? 'Administrador <span class="admin-badge">ADMIN</span>' : 'Cliente';
         }
     } else {
-        // Mostrar abas de login
+        // Usuário DESLOGADO
         if (userPanelTabs) userPanelTabs.style.display = 'flex';
         if (loggedTab) loggedTab.classList.remove('active');
-        if (loginTab) loginTab.classList.add('active');
+        // Garante que a aba de login seja a padrão ao abrir
+        if (typeof switchUserTab === 'function') {
+            switchUserTab('login');
+        }
     }
 }
 
-// ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
-async function updateUI(user) {
-    const userPanel = document.getElementById('userPanel');
-    const userStatusText = document.getElementById('userStatusText');
-    const loggedInView = document.getElementById('loggedInView');
-    const loggedOutView = document.getElementById('loggedOutView');
-    const adminAccessBtn = document.getElementById('adminAccessBtn');
-    
-    // ✅ CHECKOUT-SPECIFIC ELEMENTS (null-safe)
-    const checkoutAuthStateGuest = document.getElementById('authStateGuest');
-    const checkoutAuthStateLogged = document.getElementById('authStateLogged');
-    const checkoutUserName = document.getElementById('loggedUserName');
-    const checkoutUserEmail = document.getElementById('loggedUserEmail');
-
-    if (user) {
-        // ✅ VERIFICAR SE E-MAIL FOI CONFIRMADO
-        if (!user.emailVerified) {
-            showToast('⚠️ Por favor, verifique seu e-mail antes de continuar', 'error');
-
-            await user.reload();
-            
-            localStorage.removeItem('sejaVersatilCurrentUser');
-            currentUser = null;
-            window.currentUser = null;
-
-            // Mostrar botão para reenviar
-            if (userStatusText) {
-                userStatusText.innerHTML = `
-                    <span style="color: #e74c3c;">E-mail não verificado</span>
-                    <button onclick="resendVerificationEmail()" style="margin-left: 1rem; padding: 0.3rem 0.8rem; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Reenviar E-mail
-                    </button>
-                `;
-            }
-
-            // Bloquear ações sensíveis
-            return;
-        }
-
-        // Garantir que currentUser está sincronizado
-        if (typeof currentUser === 'undefined' || !currentUser) {
-            currentUser = {
-                name: user.displayName || user.email.split('@')[0],
-                email: user.email,
-                uid: user.uid,
-                isAdmin: isAdminLoggedIn || false
-            };
-        }
-        
-        // ========== HOME PAGE UI ==========
-        if (userStatusText) userStatusText.textContent = `Olá, ${currentUser.name || user.email}!`;
-        if (loggedInView) loggedInView.style.display = 'block';
-        if (loggedOutView) loggedOutView.style.display = 'none';
-        if (adminAccessBtn) adminAccessBtn.style.display = isAdminLoggedIn ? 'block' : 'none';
-        if (userPanel) userPanel.classList.remove('active');
-        
-        // ========== CHECKOUT PAGE UI ==========
-        if (checkoutAuthStateGuest) checkoutAuthStateGuest.style.display = 'none';
-        if (checkoutAuthStateLogged) checkoutAuthStateLogged.style.display = 'block';
-        if (checkoutUserName) checkoutUserName.textContent = currentUser.name || 'Usuário';
-        if (checkoutUserEmail) checkoutUserEmail.textContent = user.email || '';
-        
-        // ✅ Trigger checkout-specific validation (if function exists)
-        if (typeof window.updateAuthUICheckout === 'function') {
-            window.updateAuthUICheckout(user);
-        }
-        
-    } else {
-        // ========== HOME PAGE UI (Logged Out) ==========
-        if (userStatusText) userStatusText.textContent = 'Minha Conta';
-        if (loggedInView) loggedInView.style.display = 'none';
-        if (loggedOutView) loggedOutView.style.display = 'block';
-        if (adminAccessBtn) adminAccessBtn.style.display = 'none';
-        
-        // ========== CHECKOUT PAGE UI (Logged Out) ==========
-        if (checkoutAuthStateGuest) checkoutAuthStateGuest.style.display = 'block';
-        if (checkoutAuthStateLogged) checkoutAuthStateLogged.style.display = 'none';
-    }
-    
-    // ✅ CROSS-PAGE: Update cart UI (if function exists)
-    if (typeof window.updateCartUIAfterAuth === 'function') {
-        window.updateCartUIAfterAuth();
-    }
-    
-    console.log('✅ UI updated universally:', user ? user.email : 'Guest');
-}
-
-// ==================== AUTH STATE LISTENER (CORAÇÃO DO SISTEMA) ====================
-auth.onAuthStateChanged(async (user) => {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.remove('active');
-    }
-
-    if (user) {
-        console.log('🔄 Estado de auth mudou: usuário logado -', user.email);
-        
-        let userData = JSON.parse(localStorage.getItem('sejaVersatilCurrentUser') || 'null');
-        
-        // REVALIDAR SE UID MUDOU OU DADOS NÃO EXISTEM
-        if (!userData || userData.uid !== user.uid) {
-            const adminDoc = await db.collection('admins').doc(user.uid).get();
-            
-            if (adminDoc.exists && adminDoc.data().role === 'admin') {
-                const adminData = adminDoc.data();
-                
-                userData = {
-                    name: adminData.name || user.displayName || 'Administrador',
-                    email: user.email,
-                    isAdmin: true,
-                    uid: user.uid,
-                    permissions: adminData.permissions || []
-                };
-            } else {
-                userData = {
-                    name: user.displayName || user.email.split('@')[0],
-                    email: user.email,
-                    isAdmin: false,
-                    uid: user.uid,
-                    permissions: []
-                };
-            }
-            
-            localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(userData));
-        }
-        
-        // ATUALIZAR VARIÁVEIS GLOBAIS
-        currentUser = userData;
-        isAdminLoggedIn = currentUser.isAdmin;
-        
-        // EXPORTAR PARA ESCOPO GLOBAL (USADO POR SCRIPT2.JS E CHECKOUT.JS)
-        window.currentUser = currentUser;
-        window.isAdminLoggedIn = isAdminLoggedIn;
-        
-    } else {
-        console.log('🔄 Estado de auth mudou: usuário deslogado');
-        
-        currentUser = null;
-        isAdminLoggedIn = false;
-        localStorage.removeItem('sejaVersatilCurrentUser');
-        
-        window.currentUser = null;
-        window.isAdminLoggedIn = false;
-    }
-    
-    // CHAMAR FUNÇÕES DE UI (SE EXISTIREM)
-    updateUI(currentUser);
-    updateUserPanelTabs(currentUser);
-    
-    // COMPATIBILIDADE COM CHECKOUT.JS
-    if (typeof updateAuthUI === 'function') {
-        updateAuthUI(user);
-    }
-    
-    // ATUALIZAR CARRINHO (SE FUNÇÃO EXISTIR)
-    if (typeof updateCartUI === 'function') {
-        updateCartUI();
-    }
-});
-
-// ==================== LOGIN (CHAMADA POR index.html E checkout.html) ====================
+/**
+ * Processa a tentativa de login com e-mail and senha.
+ */
 async function userLogin(event) {
     event.preventDefault();
-    
-    const emailInput = document.getElementById('loginEmail');
-    const passwordInput = document.getElementById('loginPassword');
-    const errorMsgEl = document.getElementById('loginError');
-    const loginBtn = event.submitter || document.querySelector('#loginTab .form-btn');
-    const originalText = loginBtn ? loginBtn.textContent : 'Entrar';
-
-    // VALIDAÇÃO INICIAL
-    if (!emailInput || !passwordInput) {
-        console.error('❌ Elementos de login não encontrados no DOM');
-        showToast('Erro ao carregar formulário', 'error');
-        return;
-    }
-
-    if (errorMsgEl) {
-        errorMsgEl.textContent = '';
-        errorMsgEl.classList.remove('active');
-    }
-    
-    const email = emailInput.value.toLowerCase().trim();
-    const password = passwordInput.value;
-
-    // VALIDAÇÃO DE EMAIL
-    if (!validateEmail(email)) {
-        if (errorMsgEl) {
-            errorMsgEl.textContent = 'E-mail inválido.';
-            errorMsgEl.classList.add('active');
-        }
-        emailInput.classList.add('input-error');
-        showToast('E-mail inválido', 'error');
-        return;
-    }
-    
-    // LOADING STATE
+    const loginBtn = event.submitter;
+    const originalText = loginBtn.textContent;
     setButtonLoading(loginBtn, true, originalText);
-    emailInput.classList.remove('input-error');
-    passwordInput.classList.remove('input-error');
+
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
     try {
-        // CHAMADA FIREBASE AUTH
-        await auth.signInWithEmailAndPassword(email, password);
-        await auth.currentUser.reload();
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        await userCredential.user.reload(); // Recarrega dados do usuário para pegar o status de verificação
 
-        // ✅ ADICIONAR ESTE BLOCO COMPLETO AQUI:
-    const user = auth.currentUser;
-    
-    if (user && !user.emailVerified) {
-        // Forçar logout
-        await auth.signOut();
-        
-        if (errorMsgEl) {
-            errorMsgEl.innerHTML = '⚠️ E-mail não verificado. <a href="#" onclick="resendVerificationFromLogin(\'' + email + '\'); return false;" style="color: var(--primary); text-decoration: underline;">Clique aqui para reenviar</a>';
-            errorMsgEl.classList.add('active');
+        if (!userCredential.user.emailVerified) {
+            await auth.signOut(); // Força logout
+            const message = 'E-mail não verificado. <a href="#" onclick="resendVerificationEmail(\'' + email + '\')">Reenviar e-mail de verificação?</a>';
+            showFormMessage('login', message, 'error');
+            showToast('Verifique seu e-mail para ativar a conta.', 'error');
+        } else {
+            showToast('Login realizado com sucesso!', 'success');
+            if (typeof closeUserPanel === 'function') closeUserPanel();
         }
-        
-        showToast('Por favor, verifique seu e-mail antes de fazer login', 'error');
-        
-        // Interromper execução
-        return;
-    }
-        
-        showToast('Login realizado com sucesso!', 'success');
-        updateUserPanelTabs(currentUser);
-        
-        // CARREGAR CARRINHO (SE FUNÇÃO EXISTIR)
-        if (typeof loadCart === 'function') loadCart();
-        if (typeof updateCartUI === 'function') updateCartUI();
-        
     } catch (error) {
-        console.error('❌ Erro no Login:', error);
-        
-        const errorCode = error.code;
-        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
-        
-        if (errorMsgEl) {
-            errorMsgEl.textContent = friendlyMessage;
-            errorMsgEl.classList.add('active');
-        }
-        
-        // MARCAR INPUT ESPECÍFICO COM ERRO
-        if (errorCode === 'auth/wrong-password') {
-            passwordInput.classList.add('input-error');
-        } else if (errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-email') {
-            emailInput.classList.add('input-error');
-        }
-        
-        showToast(friendlyMessage, 'error');
-        
+        const friendlyMessage = FIREBASE_ERROR_MAP[error.code] || FIREBASE_ERROR_MAP['default'];
+        showFormMessage('login', friendlyMessage, 'error');
     } finally {
         setButtonLoading(loginBtn, false, originalText);
     }
 }
 
-// ==================== REGISTRO (CHAMADA POR index.html E checkout.html) ====================
+/**
+ * Processa o registro de um novo usuário. [2, 7, 12]
+ */
 async function userRegister(event) {
     event.preventDefault();
-    
-    const nameInput = document.getElementById('registerName');
-    const emailInput = document.getElementById('registerEmail');
-    const passwordInput = document.getElementById('registerPassword');
-    const confirmPasswordInput = document.getElementById('registerConfirmPassword');
-    const errorMsgEl = document.getElementById('registerError');
-    const successMsgEl = document.getElementById('registerSuccess');
-    const registerBtn = event.submitter || document.querySelector('#registerTab .form-btn');
-    const originalText = registerBtn ? registerBtn.textContent : 'Cadastrar';
+    const registerBtn = event.submitter;
+    const originalText = registerBtn.textContent;
 
-    // VALIDAÇÃO INICIAL
-    if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
-        console.error('❌ Elementos de registro não encontrados no DOM');
-        showToast('Erro ao carregar formulário', 'error');
-        return;
-    }
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
 
-    if (errorMsgEl) {
-        errorMsgEl.textContent = '';
-        errorMsgEl.classList.remove('active');
-    }
-    if (successMsgEl) {
-        successMsgEl.classList.remove('active');
-    }
-    
-    const name = nameInput.value.trim();
-    const email = emailInput.value.toLowerCase().trim();
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-
-    // LIMPAR FEEDBACKS VISUAIS
-    [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
-        input.classList.remove('input-error');
-    });
-
-    // VALIDAÇÃO: CAMPOS OBRIGATÓRIOS
-    if (!name || !email || !password || !confirmPassword) {
-        if (errorMsgEl) {
-            errorMsgEl.textContent = 'Preencha todos os campos.';
-            errorMsgEl.classList.add('active');
-        }
-        showToast('Preencha todos os campos', 'error');
-        return;
-    }
-
-    // VALIDAÇÃO: EMAIL
-    if (!validateEmail(email)) {
-    if (errorMsgEl) {
-        errorMsgEl.textContent = 'E-mail inválido ou domínio não permitido.';
-        errorMsgEl.classList.add('active');
-    }
-    emailInput.classList.add('input-error');
-    showToast('E-mail inválido ou domínio temporário', 'error');
-    return;
-}
-
-    // VALIDAÇÃO: SENHAS COINCIDEM
+    // Validações Front-end
     if (password !== confirmPassword) {
-        if (errorMsgEl) {
-            errorMsgEl.textContent = 'As senhas não coincidem.';
-            errorMsgEl.classList.add('active');
-        }
-        passwordInput.classList.add('input-error');
-        confirmPasswordInput.classList.add('input-error');
-        showToast('As senhas não coincidem', 'error');
-        return;
+        return showFormMessage('register', 'As senhas não coincidem.', 'error');
     }
-
-    // VALIDAÇÃO: FORÇA DA SENHA
     const passwordError = validatePasswordStrength(password);
     if (passwordError) {
-        if (errorMsgEl) {
-            errorMsgEl.textContent = passwordError;
-            errorMsgEl.classList.add('active');
-        }
-        passwordInput.classList.add('input-error');
-        showToast(passwordError, 'error');
-        return;
+        return showFormMessage('register', passwordError, 'error');
     }
-    
-    // LOADING STATE
+    if (!validateEmail(email)) {
+        return showFormMessage('register', 'O formato do e-mail é inválido.', 'error');
+    }
+
     setButtonLoading(registerBtn, true, originalText);
 
     try {
-        // CRIAÇÃO DO USUÁRIO
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // ATUALIZAR PERFIL
-        await user.updateProfile({
-            displayName: name
-        });
-
-// SALVAR NO FIRESTORE
-await db.collection('users').doc(user.uid).set({
-    name: name,
-    email: email,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true });
-
-// ✅ ENVIAR E-MAIL DE VERIFICAÇÃO + LOGOUT FORÇADO
-try {
-    await user.sendEmailVerification();
-    
-    // ⚠️ CRÍTICO: Força logout ANTES de qualquer atualização de UI
-    await auth.signOut();
-    
-    showToast('✅ Conta criada! Verifique seu e-mail para ativar.', 'success');
-    
-    // Mostrar mensagem com link para login
-    if (successMsgEl) {
-        successMsgEl.innerHTML = '📧 E-mail de verificação enviado! Verifique sua caixa de entrada e spam. <a href="#" onclick="switchUserTab(\'login\'); return false;" style="color: var(--primary); text-decoration: underline; font-weight: 600;">Fazer Login</a>';
-        successMsgEl.classList.add('active');
-    }
-    
-    // Travar campos (não limpar para evitar reenvio acidental)
-    nameInput.disabled = true;
-    emailInput.disabled = true;
-    passwordInput.disabled = true;
-    confirmPasswordInput.disabled = true;
-    
-    // Esconder mensagem de erro (se houver)
-    if (errorMsgEl) {
-        errorMsgEl.classList.remove('active');
-    }
-    
-} catch (emailError) {
-    console.error('❌ Erro ao enviar e-mail:', emailError);
-    
-    // Mesmo com erro no e-mail, força logout
-    await auth.signOut();
-    
-    showToast('Conta criada, mas erro ao enviar e-mail. Tente fazer login.', 'error');
-    
-    if (errorMsgEl) {
-        errorMsgEl.innerHTML = 'Conta criada, mas não foi possível enviar o e-mail. <a href="#" onclick="switchUserTab(\'login\'); return false;" style="color: var(--primary);">Tente fazer login</a>';
-        errorMsgEl.classList.add('active');
-    }
-}
-
-// ⚠️ NÃO LIMPAR FORMULÁRIO - Campos ficam travados como confirmação visual
-
-} catch (error) {
-    console.error('❌ Erro no Registro:', error);
-    
-    const errorCode = error.code;
-    const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
-    
-    if (errorMsgEl) {
-        errorMsgEl.textContent = friendlyMessage;
-        errorMsgEl.classList.add('active');
-    }
-    
-    showToast(friendlyMessage, 'error');
-    
-} finally {
-    setButtonLoading(registerBtn, false, originalText);
-}
-}
-
-// ==================== GOOGLE LOGIN (CHAMADA POR index.html) ====================
-async function loginWithGoogle() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) loadingOverlay.classList.add('active');
-    
-    try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({
-            prompt: 'select_account'
+        // Salva dados no Firestore
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        let result;
-        try {
-            result = await auth.signInWithPopup(provider);
-        } catch (popupError) {
-            if (popupError.code === 'auth/popup-blocked') {
-                await auth.signInWithRedirect(provider);
-                return;
-            }
-            throw popupError;
+        // Atualiza o perfil do Firebase Auth
+        await user.updateProfile({ displayName: name });
+
+        // Envia e-mail de verificação
+        await user.sendEmailVerification();
+
+        // Força o logout para obrigar a verificação
+        await auth.signOut();
+
+        const successMessage = 'Conta criada! Um e-mail de verificação foi enviado. Por favor, verifique sua caixa de entrada (e spam) para ativar sua conta.';
+        showFormMessage('register', successMessage, 'success');
+        showToast('Verifique seu e-mail para concluir o cadastro!', 'success');
+        
+        // Desabilita o formulário para prevenir reenvio
+        event.target.querySelectorAll('input, button').forEach(el => el.disabled = true);
+
+    } catch (error) {
+        const friendlyMessage = FIREBASE_ERROR_MAP[error.code] || FIREBASE_ERROR_MAP['default'];
+        showFormMessage('register', friendlyMessage, 'error');
+    } finally {
+        // Não reativa o botão em caso de sucesso para evitar múltiplos cadastros
+        if (!document.getElementById('registerSuccess').textContent) {
+            setButtonLoading(registerBtn, false, originalText);
         }
-        
+    }
+}
+
+/**
+ * Processa o login via Google.
+ */
+async function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+        const result = await auth.signInWithPopup(provider);
         const user = result.user;
-        
-        console.log('✅ Login Google bem-sucedido:', user.email);
-        
-        // VERIFICAR SE É ADMIN
-        const adminDoc = await db.collection('admins').doc(user.uid).get();
-        
-        if (adminDoc.exists && adminDoc.data().role === 'admin') {
-            const adminData = adminDoc.data();
-            
-            currentUser = {
-                name: adminData.name || user.displayName || 'Administrador',
-                email: user.email,
-                isAdmin: true,
-                uid: user.uid,
-                permissions: adminData.permissions || []
-            };
-            
-            isAdminLoggedIn = true;
-        } else {
-            // SALVAR USUÁRIO COMUM
+        const isNewUser = result.additionalUserInfo.isNewUser;
+
+        if (isNewUser) {
+            // Se é um novo usuário, cria o documento no Firestore
             await db.collection('users').doc(user.uid).set({
-                name: user.displayName || 'Usuário',
+                name: user.displayName,
                 email: user.email,
-                photoURL: user.photoURL || null,
-                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                isAdmin: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 provider: 'google'
             }, { merge: true });
-            
-            currentUser = {
-                name: user.displayName || 'Usuário',
-                email: user.email,
-                isAdmin: false,
-                uid: user.uid,
-                permissions: []
-            };
         }
         
-        // SALVAR NO LOCALSTORAGE
-        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
-        
-        showToast('Login realizado com sucesso!', 'success');
-        
-        // FECHAR MODAL (SE FUNÇÃO EXISTIR)
-        if (typeof closeUserPanel === 'function') {
-            setTimeout(() => {
-                closeUserPanel();
-            }, 1000);
-        }
-        
+        showToast(`Bem-vindo(a), ${user.displayName}!`, 'success');
+        if (typeof closeUserPanel === 'function') closeUserPanel();
+
     } catch (error) {
-        console.error('❌ Erro no login Google:', error);
-        
-        let errorMessage = 'Erro ao fazer login com Google';
-        
-        if (error.code === 'auth/popup-closed-by-user') {
-            errorMessage = 'Você fechou a janela de login';
-        } else if (error.code === 'auth/cancelled-popup-request') {
-            errorMessage = 'Login cancelado';
-        } else if (error.code === 'auth/account-exists-with-different-credential') {
-            errorMessage = 'Este email já está cadastrado com outro método de login';
-        } else if (error.code === 'auth/network-request-failed') {
-            errorMessage = 'Erro de conexão. Verifique sua internet';
-        } else if (error.code === 'auth/internal-error') {
-            errorMessage = 'Erro interno. Tente novamente em alguns segundos';
-        } else if (error.message) {
-            errorMessage = error.message;
+        // Trata o caso de popup bloqueado com redirecionamento
+        if (error.code === 'auth/popup-blocked') {
+            auth.signInWithRedirect(provider);
+        } else {
+            const friendlyMessage = FIREBASE_ERROR_MAP[error.code] || FIREBASE_ERROR_MAP['default'];
+            showToast(friendlyMessage, 'error');
         }
-        
-        showToast(errorMessage, 'error');
-        
-    } finally {
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 }
 
-// ==================== LOGOUT (CHAMADA POR index.html E checkout.html) ====================
+/**
+ * Processa o logout do usuário.
+ */
 async function userLogout() {
-    if (confirm('Deseja realmente sair da sua conta?')) {
-        try {
-            await auth.signOut();
-            showToast('Logout realizado com sucesso', 'info');
-        } catch (error) {
-            console.error('❌ Erro ao fazer logout:', error);
-            showToast('Erro ao fazer logout', 'error');
-        }
+    try {
+        await auth.signOut();
+        showToast('Você saiu da sua conta.', 'info');
+    } catch (error) {
+        showToast('Erro ao tentar sair da conta.', 'error');
     }
 }
 
-// ==================== RESET PASSWORD (CHAMADA POR index.html) ====================
+/**
+ * Envia um e-mail de redefinição de senha.
+ */
 async function resetPassword() {
-    const email = prompt('Digite seu email para recuperar a senha:');
-    
-    if (!email || !validateEmail(email)) {
-        showToast('Email inválido', 'error');
+    const email = prompt("Digite o e-mail da sua conta para enviarmos o link de recuperação:");
+    if (!validateEmail(email)) {
+        if (email) showToast('E-mail inválido.', 'error'); // Só mostra toast se o usuário digitou algo
         return;
     }
-    
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) loadingOverlay.classList.add('active');
-    
+
     try {
         await auth.sendPasswordResetEmail(email);
-        showToast('✅ Email de recuperação enviado!', 'success');
-        alert('Verifique sua caixa de entrada e spam.');
+        alert('Link de recuperação enviado! Verifique sua caixa de entrada e pasta de spam.');
     } catch (error) {
-        console.error('❌ Erro:', error);
-        const errorCode = error.code;
-        const friendlyMessage = FIREBASE_ERROR_MAP[errorCode] || FIREBASE_ERROR_MAP['default'];
+        const friendlyMessage = FIREBASE_ERROR_MAP[error.code] || FIREBASE_ERROR_MAP['default'];
         showToast(friendlyMessage, 'error');
-    } finally {
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
     }
 }
 
+/**
+ * Reenvia o e-mail de verificação para um usuário que tentou logar sem estar verificado.
+ * @param {string} email - O e-mail do usuário.
+ */
+async function resendVerificationEmail(email) {
+    const password = prompt("Para reenviar, por favor, confirme sua senha:");
+    if (!password) return;
 
-// ==================== REENVIAR E-MAIL DE VERIFICAÇÃO ====================
-async function resendVerificationEmail() {
-    const user = auth.currentUser;
-    
-    if (!user) {
-        showToast('Nenhum usuário logado', 'error');
-        return;
-    }
-    
-    if (user.emailVerified) {
-        showToast('Seu e-mail já está verificado!', 'success');
-        location.reload();
-        return;
-    }
-    
     try {
-        await user.sendEmailVerification();
-        showToast('✅ E-mail de verificação reenviado!', 'success');
+        // Tenta logar temporariamente para obter o objeto do usuário
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        await userCredential.user.sendEmailVerification();
+        await auth.signOut(); // Desloga imediatamente após o envio
+        alert('E-mail de verificação reenviado com sucesso! Verifique sua caixa de entrada.');
     } catch (error) {
-        console.error('❌ Erro:', error);
-        showToast('Erro ao reenviar e-mail. Tente novamente em 1 minuto.', 'error');
+        showToast('Senha incorreta ou erro ao reenviar. Tente novamente.', 'error');
     }
 }
 
-// ==================== REENVIAR VERIFICAÇÃO NO LOGIN ====================
-async function resendVerificationFromLogin(email) {
-    const tempPassword = prompt('Digite sua senha para reenviar o e-mail de verificação:');
-    
-    if (!tempPassword) {
-        showToast('Operação cancelada', 'info');
-        return;
-    }
-    
-    try {
-        // Login temporário
-        const userCredential = await auth.signInWithEmailAndPassword(email, tempPassword);
-        const user = userCredential.user;
-        
-        if (user.emailVerified) {
-            showToast('Seu e-mail já está verificado! Faça login novamente.', 'success');
-            await auth.signOut();
-            return;
-        }
-        
-        // Reenviar verificação
-        await user.sendEmailVerification();
-        showToast('✅ E-mail de verificação reenviado!', 'success');
-        
-        // Logout automático
-        await auth.signOut();
-        
-    } catch (error) {
-        console.error('❌ Erro:', error);
-        showToast('Senha incorreta ou erro ao reenviar', 'error');
-    }
-}
 
-// Exportar
-window.resendVerificationFromLogin = resendVerificationFromLogin;
-
-// ==================== EXPORTS GLOBAIS (CRÍTICOS - NÃO REMOVER) ====================
+// ==================== EXPORTS GLOBAIS PARA O HTML ====================
 window.userLogin = userLogin;
 window.userRegister = userRegister;
 window.userLogout = userLogout;
 window.loginWithGoogle = loginWithGoogle;
-window.validatePasswordStrength = validatePasswordStrength;
-window.showToast = showToast;
-window.updateUI = updateUI;
 window.resetPassword = resetPassword;
+window.resendVerificationEmail = resendVerificationEmail;
 
-console.log('✅ Auth Module Loaded (Production-Grade v2.0)');
-
+console.log('✅ Auth Module v2.0 (by Manus) carregado com sucesso.');
