@@ -268,16 +268,18 @@ async function initCheckout() {
     }
 }
         
-        // ==================== LÓGICA DE UI DO CHECKOUT (Adicionar no final do checkout.js) ====================
+// ==================== LÓGICA DE UI DO CHECKOUT ====================
 function handleCheckoutAuthUpdate(user) {
     // Atualiza variável local
     currentUser = user; 
     
     if (user) {
         // LOGADO: Esconde abas de login, Mostra nome do usuário
-        if (DOM.authTabs) DOM.authTabs.style.display = 'none';
-        if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'block';
-        if (DOM.loggedUserName) DOM.loggedUserName.textContent = user.displayName || user.name || user.email;
+        if (CheckoutDOM.authTabsContainer) CheckoutDOM.authTabsContainer.style.display = 'none';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
+        if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || user.name || user.email;
+        if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
         
         // Preenche inputs automaticamente
         const inputNome = document.getElementById('inputNome');
@@ -286,12 +288,23 @@ function handleCheckoutAuthUpdate(user) {
         if (inputNome && !inputNome.value) inputNome.value = user.displayName || user.name || '';
         if (inputEmail) {
             inputEmail.value = user.email || '';
-            inputEmail.disabled = true; // Bloqueia edição do email
+            inputEmail.disabled = true;
+        }
+        
+        // Mostrar formulário de dados pessoais
+        if (CheckoutDOM.formDadosPessoais) {
+            CheckoutDOM.formDadosPessoais.style.display = 'block';
         }
     } else {
         // DESLOGADO: Mostra abas de login/cadastro
-        if (DOM.authTabs) DOM.authTabs.style.display = 'flex';
-        if (DOM.loggedInfo) DOM.loggedInfo.style.display = 'none';
+        if (CheckoutDOM.authTabsContainer) CheckoutDOM.authTabsContainer.style.display = 'flex';
+        if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
+        if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
+        
+        // Esconder formulário de dados pessoais
+        if (CheckoutDOM.formDadosPessoais) {
+            CheckoutDOM.formDadosPessoais.style.display = 'none';
+        }
     }
 }
         
