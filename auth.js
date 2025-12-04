@@ -373,6 +373,24 @@ async function userLogin(event) {
     try {
         // CHAMADA FIREBASE AUTH
         await auth.signInWithEmailAndPassword(email, password);
+
+        // ✅ ADICIONAR ESTE BLOCO COMPLETO AQUI:
+    const user = auth.currentUser;
+    
+    if (user && !user.emailVerified) {
+        // Forçar logout
+        await auth.signOut();
+        
+        if (errorMsgEl) {
+            errorMsgEl.innerHTML = '⚠️ E-mail não verificado. <a href="#" onclick="resendVerificationFromLogin(\'' + email + '\'); return false;" style="color: var(--primary); text-decoration: underline;">Clique aqui para reenviar</a>';
+            errorMsgEl.classList.add('active');
+        }
+        
+        showToast('Por favor, verifique seu e-mail antes de fazer login', 'error');
+        
+        // Interromper execução
+        return;
+    }
         
         showToast('Login realizado com sucesso!', 'success');
         updateUserPanelTabs(currentUser);
@@ -709,8 +727,41 @@ async function resendVerificationEmail() {
     }
 }
 
+// ==================== REENVIAR VERIFICAÇÃO NO LOGIN ====================
+async function resendVerificationFromLogin(email) {
+    const tempPassword = prompt('Digite sua senha para reenviar o e-mail de verificação:');
+    
+    if (!tempPassword) {
+        showToast('Operação cancelada', 'info');
+        return;
+    }
+    
+    try {
+        // Login temporário
+        const userCredential = await auth.signInWithEmailAndPassword(email, tempPassword);
+        const user = userCredential.user;
+        
+        if (user.emailVerified) {
+            showToast('Seu e-mail já está verificado! Faça login novamente.', 'success');
+            await auth.signOut();
+            return;
+        }
+        
+        // Reenviar verificação
+        await user.sendEmailVerification();
+        showToast('✅ E-mail de verificação reenviado!', 'success');
+        
+        // Logout automático
+        await auth.signOut();
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        showToast('Senha incorreta ou erro ao reenviar', 'error');
+    }
+}
+
 // Exportar
-window.resendVerificationEmail = resendVerificationEmail;
+window.resendVerificationFromLogin = resendVerificationFromLogin;
 
 // ==================== EXPORTS GLOBAIS (CRÍTICOS - NÃO REMOVER) ====================
 window.userLogin = userLogin;
