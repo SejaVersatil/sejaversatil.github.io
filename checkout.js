@@ -185,6 +185,7 @@ function cacheDOMElements() {
 }
 
 // ==================== INICIALIZAÇÃO PRINCIPAL ====================
+// ==================== INICIALIZAÇÃO PRINCIPAL ====================
 async function initCheckout() {
     try {
         // [PARTE 1: CÓDIGO EXISTENTE - Proteção do CartManager]
@@ -207,7 +208,6 @@ async function initCheckout() {
                 
         // ✅ DEBUG: Verificar se elementos foram cacheados
         console.log('🔍 Verificando elementos DOM...');
-        // Nota: Se der erro aqui, verifique se a variável se chama 'CheckoutDOM' ou apenas 'DOM' no seu arquivo
         console.log('authStateGuest:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.authStateGuest : 'Unknown');
         console.log('authStateLogged:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.authStateLogged : 'Unknown');
         console.log('formDadosPessoais:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.formDadosPessoais : 'Unknown');
@@ -218,25 +218,50 @@ async function initCheckout() {
             const user = await window.authReady;
             console.log('✅ Auth pronto. User:', user ? user.email : 'null');
             
-            // Chama a função de atualização (verifique se o nome é updateAuthUI ou handleCheckoutAuthUpdate)
-            if (typeof updateAuthUI === 'function') updateAuthUI(user);
-            else if (typeof handleCheckoutAuthUpdate === 'function') handleCheckoutAuthUpdate(user);
-
+            // Chama a função de atualização
+            if (typeof updateAuthUI === 'function') {
+                updateAuthUI(user);
+            } else if (typeof handleCheckoutAuthUpdate === 'function') {
+                handleCheckoutAuthUpdate(user);
+            }
         } else {
             console.warn('⚠️ window.authReady não existe');
             // Fallback
             if (typeof auth !== 'undefined') {
                 auth.onAuthStateChanged((user) => {
                     console.log('🔄 onAuthStateChanged (fallback):', user ? user.email : 'null');
-                    if (typeof updateAuthUI === 'function') updateAuthUI(user);
-                    else if (typeof handleCheckoutAuthUpdate === 'function') handleCheckoutAuthUpdate(user);
+                    if (typeof updateAuthUI === 'function') {
+                        updateAuthUI(user);
+                    } else if (typeof handleCheckoutAuthUpdate === 'function') {
+                        handleCheckoutAuthUpdate(user);
+                    }
                 });
             }
         }
 
-        // 2. Load cart (O código continua daqui para baixo...)
+        // 2. Load cart
         CartManager.load();
-
+        CheckoutState.subtotal = CartManager.getSubtotal();
+        CheckoutState.couponDiscount = CartManager.couponDiscount || 0;
+        
+        // 3. Verify cart not empty
+        if (!CartManager.cart || CartManager.cart.length === 0) {
+            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'warning');
+            setTimeout(() => window.location.href = 'index.html', 2000);
+            return;
+        }
+        
+        // Continue initialization...
+        renderSummary();
+        initMasks();
+        initEvents();
+        
+        if (CheckoutDOM.summaryCartCode) {
+            CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
+        }
+        
+        console.log('✅ Checkout inicializado com sucesso');
+        
     } catch (error) {
         console.error('❌ Erro na inicialização:', error);
         showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
