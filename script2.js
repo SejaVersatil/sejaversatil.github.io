@@ -880,7 +880,162 @@ function switchUserTab(tab) {
     }
 }
 
+// Tratar retorno do redirect (caso popup seja bloqueado)
+auth.getRedirectResult().then((result) => {
+    if (result.user) {
+        console.log('✅ Retorno do redirect:', result.user.email);
+        // O listener onAuthStateChanged vai cuidar do resto
+    }
+}).catch((error) => {
+    if (error.code !== 'auth/popup-closed-by-user') {
+        console.error('❌ Erro no redirect:', error);
+        showToast('Erro no login: ' + error.message, 'error');
+    }
+});
 
+function showLoggedInView() {
+    document.getElementById('userPanelTabs').style.display = 'none';
+    document.getElementById('loginTab').classList.remove('active');
+    document.getElementById('registerTab').classList.remove('active');
+    document.getElementById('userLoggedTab').classList.add('active');
+    
+    document.getElementById('userName').textContent = currentUser.name;
+    document.getElementById('userEmail').textContent = currentUser.email;
+    
+    if (currentUser.isAdmin) {
+        document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+        document.getElementById('adminAccessBtn').style.display = 'block';
+        isAdminLoggedIn = true;
+    } else {
+        document.getElementById('userStatus').textContent = 'Cliente';
+        document.getElementById('adminAccessBtn').style.display = 'none';
+    }
+}
+
+function hideLoggedInView() {
+    document.getElementById('userPanelTabs').style.display = 'flex';
+    document.getElementById('userLoggedTab').classList.remove('active');
+    switchUserTab('login');
+}
+
+/**
+ * Verifica a força da senha com base em critérios de segurança.
+ * Retorna uma pontuação de 0 a 4.
+ */
+function checkPasswordStrength(password) {
+    let score = 0;
+    // Mínimo de 8 caracteres (melhoria de segurança em relação aos 6 anteriores)
+    if (password.length < 8) return 0; 
+    score++; 
+
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++; // Maiúsculas e minúsculas
+    if (/\d/.test(password)) score++; // Números
+    if (/[^a-zA-Z0-9\s]/.test(password)) score++; // Símbolos
+
+    return score;
+}
+
+// ==================== LOGIN COM GOOGLE ====================
+async function loginWithGoogle() {
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        // ✅ CORREÇÃO 1: Detectar bloqueio de popup
+        let result;
+        try {
+            result = await auth.signInWithPopup(provider);
+        } catch (popupError) {
+            if (popupError.code === 'auth/popup-blocked') {
+                // Tentar com redirect como fallback
+                await auth.signInWithRedirect(provider);
+                return; // Sai aqui, o redirect vai recarregar a página
+            }
+            throw popupError; // Repassa outros erros
+        }
+        
+        const user = result.user;
+        
+        console.log('✅ Login Google bem-sucedido:', user.email);
+        
+        // ✅ CORREÇÃO 2: Verificar se é admin ANTES de criar documento
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+        
+        if (adminDoc.exists && adminDoc.data().role === 'admin') {
+            const adminData = adminDoc.data();
+            
+            currentUser = {
+                name: adminData.name || user.displayName || 'Administrador',
+                email: user.email,
+                isAdmin: true,
+                uid: user.uid,
+                permissions: adminData.permissions || []
+            };
+            
+            isAdminLoggedIn = true;
+        } else {
+            // ✅ CORREÇÃO 3: Usar merge para não sobrescrever dados existentes
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                photoURL: user.photoURL || null,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                isAdmin: false,
+                provider: 'google' // ← Adiciona identificador
+            }, { merge: true }); // ← IMPORTANTE: merge true
+            
+            currentUser = {
+                name: user.displayName || 'Usuário',
+                email: user.email,
+                isAdmin: false,
+                uid: user.uid,
+                permissions: []
+            };
+        }
+        
+        // Salvar sessão
+        localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
+        
+        // Atualizar UI
+        showLoggedInView();
+        showToast('Login realizado com sucesso!', 'success');
+        
+        // Fechar painel após 1 segundo
+        setTimeout(() => {
+            closeUserPanel();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('❌ Erro no login Google:', error);
+        
+        let errorMessage = 'Erro ao fazer login com Google';
+        
+        // ✅ CORREÇÃO 4: Mensagens de erro mais específicas
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Você fechou a janela de login';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Login cancelado';
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'Este email já está cadastrado com outro método de login';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Erro de conexão. Verifique sua internet';
+        } else if (error.code === 'auth/internal-error') {
+            errorMessage = 'Erro interno. Tente novamente em alguns segundos';
+        } else if (error.message) {
+            // Mostrar mensagem técnica se for outro erro
+            errorMessage = error.message;
+        }
+        
+        showToast(errorMessage, 'error');
+        
+    } finally {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
+}
 // ==================== FIRESTORE ====================
 
 async function carregarProdutosDoFirestore() {
@@ -5711,18 +5866,3 @@ window.addEventListener('authStateUpdated', (e) => {
 });
 
 
-// ==================== LISTENER DE AUTH CENTRALIZADO ====================
-// Ouve o evento customizado disparado por auth.js para manter a sincronia.
-window.addEventListener('authStateChanged', (event) => {
-    const { user } = event.detail;
-    console.log('Sincronização de Auth recebida em script2.js:', user ? user.email : 'Visitante');
-
-    // Atualiza as variáveis globais de script2.js com base no evento
-    currentUser = user;
-    isAdminLoggedIn = user ? user.isAdmin : false;
-
-    // Se houver outras funções em script2.js que dependam do estado de login,
-    // elas podem ser chamadas aqui. Ex:
-    // updateFavoritesUI();
-    // renderPersonalizedContent();
-});
