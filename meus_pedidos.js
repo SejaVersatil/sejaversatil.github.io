@@ -6,7 +6,6 @@
 'use strict';
 
 // ==================== VARIÁVEIS GLOBAIS ====================
-let currentUser = null;
 let userOrders = [];
 
 // ==================== INICIALIZAÇÃO ====================
@@ -656,3 +655,4 @@ window.handleLogout = handleLogout;
 window.contactWhatsApp = contactWhatsApp;
 
 console.log('✅ Minha Conta JS carregado com sucesso');
+
