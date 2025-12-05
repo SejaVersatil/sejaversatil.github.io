@@ -727,7 +727,7 @@ function renderSummary() {
             <div class="summary-item-info">
                 <div class="summary-item-name">${escapeHtml(item.name )}</div>
                 <div class="summary-item-details">
-                    Tamanho: ${escapeHtml(item.size || 'M')} | Cor: ${escapeHtml(item.color || 'Padrão')}
+                    Tamanho: ${escapeHtml(item.selectedSize || item.size || 'M')} | Cor: ${escapeHtml(item.selectedColor || item.color || 'Padrão')}
                 </div>
                 <div class="summary-item-price">
                     <span class="summary-item-qty">Qtd: ${item.quantity}</span>
