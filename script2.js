@@ -2874,7 +2874,7 @@ function updateCartUI() {
                             <span>${item.quantity}</span>
                             <button class="qty-btn" onclick="updateQuantity('${item.cartItemId || item.id}', 1)">+</button>
                         </div>
-                        <div class="remove-item" onclick="removeFromCart('${item.cartItemId || item.id}')">Remover</div>
+                        <button class="remove-item" onclick="removeFromCart('${item.cartItemId || item.id}')" aria-label="Remover item"></button>
                     </div>
                 `;
                 
@@ -5998,6 +5998,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
