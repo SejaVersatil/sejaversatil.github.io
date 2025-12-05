@@ -134,33 +134,59 @@ async function loadUserOrders() {
     if (ordersList) ordersList.style.display = 'none';
 
     // Buscar pedidos no Firestore
-    // CORREÇÃO: Buscar por cliente.uid E userId (compatibilidade)
-    const ordersQuery = db.collection('pedidos')
-      .where('cliente.uid', '==', currentUser.uid)
-      .orderBy('timestamp', 'desc')
-      .limit(50);
-
-    const snapshot = await ordersQuery.get();
-
-    // Se não encontrar nada com cliente.uid, tenta com userId (fallback)
     let orders = [];
-    if (snapshot.empty) {
-      console.log('🔍 Tentando busca alternativa com userId...');
-      const fallbackQuery = db.collection('pedidos')
-        .where('userId', '==', currentUser.uid)
-        .orderBy('createdAt', 'desc')
+
+    try {
+      // TENTATIVA 1: Buscar por cliente.uid (formato novo)
+      const query1 = db.collection('pedidos')
+        .where('cliente.uid', '==', currentUser.uid)
         .limit(50);
+
+      const snapshot1 = await query1.get();
       
-      const fallbackSnapshot = await fallbackQuery.get();
-      
-      fallbackSnapshot.forEach((doc) => {
+      snapshot1.forEach((doc) => {
         orders.push({ id: doc.id, ...doc.data() });
       });
-    } else {
-      snapshot.forEach((doc) => {
-        orders.push({ id: doc.id, ...doc.data() });
-      });
+
+      console.log(`✅ Encontrados ${orders.length} pedidos com cliente.uid`);
+    } catch (error) {
+      console.warn('⚠️ Erro na query cliente.uid:', error);
     }
+
+    // TENTATIVA 2: Se não encontrou, buscar por userId (formato antigo)
+    if (orders.length === 0) {
+      try {
+        console.log('🔍 Tentando busca alternativa com userId...');
+        
+        const query2 = db.collection('pedidos')
+          .where('userId', '==', currentUser.uid)
+          .limit(50);
+        
+        const snapshot2 = await query2.get();
+        
+        snapshot2.forEach((doc) => {
+          orders.push({ id: doc.id, ...doc.data() });
+        });
+
+        console.log(`✅ Encontrados ${orders.length} pedidos com userId`);
+      } catch (error) {
+        console.warn('⚠️ Erro na query userId:', error);
+      }
+    }
+
+    // Ordenar manualmente por data (já que não podemos usar orderBy com where em campos diferentes)
+    orders.sort((a, b) => {
+      const dateA = a.timestamp || a.createdAt;
+      const dateB = b.timestamp || b.createdAt;
+      
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+      
+      const timeA = dateA.toMillis ? dateA.toMillis() : dateA;
+      const timeB = dateB.toMillis ? dateB.toMillis() : dateB;
+      
+      return timeB - timeA; // Mais recente primeiro
+    });
 
     userOrders = orders;
     console.log(`✅ ${orders.length} pedidos encontrados`);
