@@ -537,23 +537,31 @@
 </div>
 
         <div class="user-tab-content" id="userLoggedTab">
-          <div class="user-logged-in">
-            <h4>Bem-vindo(a)! <span id="userName"></span></h4>
-            <div class="user-info">
-              <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
-              <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
-            </div>
-            <div class="user-actions">
-              <button class="user-action-btn" onclick="openMyOrders()"> Meus Pedidos</button>
-              <button class="user-action-btn" onclick="alert('Funcionalidade em desenvolvimento!')">Meus Dados</button>
-              <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">🔧 Painel Administrativo</button>
-              <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
-            </div>
-          </div>
+    <div class="user-logged-in">
+        <h4>Bem-vindo(a)! <span id="userName"></span></h4>
+        <div class="user-info">
+            <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
+            <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
         </div>
-      </div>
+        <div class="user-actions">
+            
+            <!-- ✅ ALTERAÇÃO: Agora são Links (<a>) em vez de botões -->
+            <!-- Adicionei text-decoration: none para garantir que não fique sublinhado -->
+            
+            <a href="meus_pedidos.html?aba=pedidos" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+                📦 Meus Pedidos
+            </a>
+
+            <a href="meus_pedidos.html?aba=dados" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+                👤 Meus Dados
+            </a>
+
+            <!-- Botões de Admin e Logout permanecem iguais -->
+            <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">🔧 Painel Administrativo</button>
+            <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
+        </div>
     </div>
-  </div>
+</div>
 
   <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
