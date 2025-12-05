@@ -984,3 +984,33 @@ window.resetPassword = resetPassword;
 window.resendVerificationEmail = resendVerificationEmail;
 window.resendVerificationFromLogin = resendVerificationFromLogin;
 window.switchUserTab = switchUserTab;
+
+
+// Máscara de Telefone
+function maskPhone(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    if (value.length > 10) {
+        // Formato (11) 91234-5678
+        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+    } else if (value.length > 5) {
+        // Formato (11) 1234-5678
+        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+    } else if (value.length > 2) {
+        value = value.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+    }
+    input.value = value;
+}
+
+// Máscara de CPF
+function maskCPF(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    
+    input.value = value;
+}
