@@ -2194,6 +2194,10 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 
 /* Mobile (Principal) */
 @media (max-width: 768px) {
+
+    body {
+        padding-top: 103px !important;
+    }
     /* Layout de Produtos */
     .products-grid, .related-products-grid, #adminProductsGrid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1px !important; padding: 0 !important; width: 100% !important; box-sizing: border-box; }
     .product-card { min-height: auto !important; border: none !important; box-shadow: none !important; margin: 0 !important; padding-bottom: 10px !important; background: transparent !important; }
@@ -3067,6 +3071,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
