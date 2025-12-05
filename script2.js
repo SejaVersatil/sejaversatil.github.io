@@ -921,9 +921,6 @@ async function showLoggedInView() {
     // ============================================================
     // CORREÇÃO CRÍTICA PARA CHECKOUT: CARREGAR DADOS DO FIRESTORE
     // ============================================================
-    // ============================================================
-    // CORREÇÃO CRÍTICA PARA CHECKOUT: CARREGAR DADOS DO FIRESTORE
-    // ============================================================
     if (window.location.pathname.includes('checkout.html')) {
         console.log('🛒 Login no checkout: Buscando CPF e Telefone...');
         
@@ -941,13 +938,11 @@ async function showLoggedInView() {
                 console.log('✅ Dados recuperados:', currentUser.phone, currentUser.cpf);
 
                 // 2. Preenche os inputs do formulário (CRÍTICO PARA VALIDAÇÃO)
-                // Tenta achar os campos padrão de cadastro/checkout
                 const inputTel = document.getElementById('inputTelefone') || document.getElementById('guestPhone');
                 const inputCPF = document.getElementById('inputCPF') || document.getElementById('guestCPF');
 
                 if (inputTel && currentUser.phone) {
                     inputTel.value = currentUser.phone;
-                    // Dispara evento para o sistema "perceber" que foi preenchido
                     inputTel.dispatchEvent(new Event('input')); 
                     inputTel.dispatchEvent(new Event('change'));
                 }
@@ -958,43 +953,84 @@ async function showLoggedInView() {
                     inputCPF.dispatchEvent(new Event('change'));
                 }
 
-                // 3. Se os dados ainda estiverem faltando, avisa ou abre modal
+                // ============================================================
+                // 🎯 NOVA LÓGICA: SOLICITAR DADOS FALTANTES IMEDIATAMENTE
+                // ============================================================
                 if (!currentUser.phone || !currentUser.cpf) {
-                    console.warn('⚠️ Usuário logado mas sem CPF/Tel. Solicitando...');
-
-                    // Se tiver modal dedicado no checkout (RECOMENDADO)
-                    if (typeof showMissingDataModal === 'function') {
-                        showMissingDataModal();
-                    }
-
-                    // OU se usar prompts diretos
+                    console.warn('⚠️ Usuário logado mas sem CPF/Tel. Solicitando agora...');
+                    
+                    // Pequeno delay para garantir que o DOM está pronto
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Solicitar Telefone (se faltando)
                     if (!currentUser.phone && typeof getUserPhone === 'function') {
                         const phone = await getUserPhone();
-                        if (phone) currentUser.phone = phone;
+                        if (phone) {
+                            currentUser.phone = phone;
+                            
+                            // Atualiza input em tempo real
+                            const telInput = document.getElementById('inputTelefone');
+                            if (telInput) {
+                                telInput.value = phone;
+                                telInput.dispatchEvent(new Event('input'));
+                                telInput.dispatchEvent(new Event('change'));
+                            }
+                        }
                     }
-
+                    
+                    // Solicitar CPF (se faltando)
                     if (!currentUser.cpf && typeof getUserCPF === 'function') {
                         const cpf = await getUserCPF();
-                        if (cpf) currentUser.cpf = cpf;
+                        if (cpf) {
+                            currentUser.cpf = cpf;
+                            
+                            // Atualiza input em tempo real
+                            const cpfInput = document.getElementById('inputCPF');
+                            if (cpfInput) {
+                                cpfInput.value = cpf;
+                                cpfInput.dispatchEvent(new Event('input'));
+                                cpfInput.dispatchEvent(new Event('change'));
+                            }
+                        }
                     }
-
-                    // Atualiza os inputs do checkout (USANDO AS VARIÁVEIS JÁ EXISTENTES)
-                    if (inputTel && currentUser.phone) {
-                        inputTel.value = currentUser.phone;
-                        inputTel.dispatchEvent(new Event('input'));
-                    }
-
-                    if (inputCPF && currentUser.cpf) {
-                        inputCPF.value = currentUser.cpf;
-                        inputCPF.dispatchEvent(new Event('input'));
+                    
+                    // Validação final: se ainda faltarem dados, mostrar toast
+                    if (!currentUser.phone || !currentUser.cpf) {
+                        showToast('⚠️ Complete seus dados para continuar', 'error');
+                        
+                        // Scroll suave até a seção de dados
+                        const dadosSection = document.getElementById('sectionDados');
+                        if (dadosSection) {
+                            dadosSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            // Destaque visual temporário
+                            dadosSection.style.border = '2px solid #e74c3c';
+                            setTimeout(() => {
+                                dadosSection.style.border = '';
+                            }, 3000);
+                        }
+                    } else {
+                        // Sucesso: todos os dados foram preenchidos
+                        showToast('✅ Dados completos! Continue o checkout', 'success');
+                        
+                        // Auto-validar o Step 1 para liberar Step 2
+                        if (typeof validateDadosStep === 'function') {
+                            setTimeout(() => {
+                                validateDadosStep();
+                            }, 1000);
+                        }
                     }
                 }
 
+            } else {
+                console.warn('⚠️ Documento do usuário não encontrado no Firestore');
             }
         } catch (error) {
-            console.error("Erro ao buscar dados complementares do usuário:", error);
+            console.error("❌ Erro ao buscar dados complementares do usuário:", error);
+            showToast('Erro ao carregar seus dados. Tente novamente.', 'error');
         }
     }
+}
 
 // ==================== LOGIN COM GOOGLE ====================
 async function loginWithGoogle() {
@@ -5931,6 +5967,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
