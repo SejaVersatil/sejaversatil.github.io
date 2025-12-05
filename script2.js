@@ -5152,7 +5152,7 @@ document.head.appendChild(styleSheet);
 console.log('✅ Sistema de estoque integrado ao site');
 
 // ==================== TOP BANNER ROTATIVO ====================
-(function initTopBannerRotative() {
+document.addEventListener('DOMContentLoaded', function() {
     const messages = document.querySelectorAll('.banner-message');
     
     if (messages.length === 0) {
@@ -5174,10 +5174,10 @@ console.log('✅ Sistema de estoque integrado ao site');
     }
     
     // Inicia o intervalo (troca a cada 4 segundos)
-    setInterval(rotateBanner, 3000);
+    setInterval(rotateBanner, 4000);
     
-    console.log('✅ Banner rotativo inicializado:', messages.length, 'mensagens');
-})();
+    console.log('✅ Banner rotativo inicializado com', messages.length, 'mensagens');
+});
         
 // MARCAR PRODUTOS COMO BLACK FRIDAY
 // ================================================================
@@ -5844,6 +5844,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
