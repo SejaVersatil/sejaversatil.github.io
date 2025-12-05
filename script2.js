@@ -893,6 +893,7 @@ auth.getRedirectResult().then((result) => {
 });
 
 function showLoggedInView() {
+    // Atualiza o Painel Lateral
     document.getElementById('userPanelTabs').style.display = 'none';
     document.getElementById('loginTab').classList.remove('active');
     document.getElementById('registerTab').classList.remove('active');
@@ -909,29 +910,27 @@ function showLoggedInView() {
         document.getElementById('userStatus').textContent = 'Cliente';
         document.getElementById('adminAccessBtn').style.display = 'none';
     }
-}
 
-function hideLoggedInView() {
-    document.getElementById('userPanelTabs').style.display = 'flex';
-    document.getElementById('userLoggedTab').classList.remove('active');
-    switchUserTab('login');
-}
-
-/**
- * Verifica a força da senha com base em critérios de segurança.
- * Retorna uma pontuação de 0 a 4.
- */
-function checkPasswordStrength(password) {
-    let score = 0;
-    // Mínimo de 8 caracteres (melhoria de segurança em relação aos 6 anteriores)
-    if (password.length < 8) return 0; 
-    score++; 
-
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++; // Maiúsculas e minúsculas
-    if (/\d/.test(password)) score++; // Números
-    if (/[^a-zA-Z0-9\s]/.test(password)) score++; // Símbolos
-
-    return score;
+    // ============================================================
+    // AJUSTE: Se estiver no Checkout, força o carregamento de CPF/Tel
+    // ============================================================
+    if (window.location.pathname.includes('checkout.html')) {
+        console.log('🛒 Login no checkout detectado: Recarregando dados de CPF/Tel...');
+        
+        // Chama as funções globais que verificam/pedem esses dados
+        if (typeof getUserPhone === 'function') getUserPhone();
+        if (typeof getUserCPF === 'function') getUserCPF();
+        
+        // Se houver campos de input visíveis, tenta preenchê-los com os dados do currentUser atualizado
+        setTimeout(() => {
+            if (currentUser.phone && document.getElementById('inputTelefone')) {
+                document.getElementById('inputTelefone').value = currentUser.phone;
+            }
+            if (currentUser.cpf && document.getElementById('inputCPF')) {
+                document.getElementById('inputCPF').value = currentUser.cpf;
+            }
+        }, 500);
+    }
 }
 
 // ==================== LOGIN COM GOOGLE ====================
@@ -5869,6 +5868,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
