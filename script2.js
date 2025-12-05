@@ -958,9 +958,36 @@ async function showLoggedInView() {
                 // 3. Se os dados ainda estiverem faltando, avisa ou abre modal
                 if (!currentUser.phone || !currentUser.cpf) {
                     console.warn('⚠️ Usuário logado mas sem CPF/Tel. Solicitando...');
-                    // Se tiver a função de pedir dados, chama ela, senão apenas avisa
-                    if (typeof getUserPhone === 'function') getUserPhone();
-                    if (typeof getUserCPF === 'function') getUserCPF();
+
+                    // Se tiver modal dedicado no checkout (RECOMENDADO)
+                    if (typeof showMissingDataModal === 'function') {
+                        showMissingDataModal();
+                    }
+
+                    // OU se usar prompts diretos
+                    if (!currentUser.phone && typeof getUserPhone === 'function') {
+                        const phone = await getUserPhone();
+                        if (phone) currentUser.phone = phone;
+                    }
+
+                    if (!currentUser.cpf && typeof getUserCPF === 'function') {
+                        const cpf = await getUserCPF();
+                        if (cpf) currentUser.cpf = cpf;
+                    }
+
+                    // Atualiza os inputs do checkout
+                    const inputTel = document.getElementById('inputTelefone');
+                    const inputCPF = document.getElementById('inputCPF');
+
+                    if (inputTel && currentUser.phone) {
+                        inputTel.value = currentUser.phone;
+                        inputTel.dispatchEvent(new Event('input'));
+                    }
+
+                    if (inputCPF && currentUser.cpf) {
+                        inputCPF.value = currentUser.cpf;
+                        inputCPF.dispatchEvent(new Event('input'));
+                    }
                 }
 
             }
@@ -968,7 +995,6 @@ async function showLoggedInView() {
             console.error("Erro ao buscar dados complementares do usuário:", error);
         }
     }
-}
 
 // ==================== LOGIN COM GOOGLE ====================
 async function loginWithGoogle() {
@@ -5905,6 +5931,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
