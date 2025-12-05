@@ -311,43 +311,58 @@ function handleCheckoutAuthUpdate(user) {
 // ==================== AUTENTICAÇÃO ====================
 window.updateAuthUICheckout = function(user) {
     console.log('🔄 Checkout UI updating for:', user ? user.email : 'Guest');
-    
+
     if (user) {
+        // ✅ VERIFICAÇÃO CRÍTICA: Email não verificado
+        if (!user.emailVerified) {
+            console.warn('⚠️ Usuário sem email verificado detectado');
+
+            // Forçar logout
+            auth.signOut().catch(err => console.error('Erro ao logout:', err));
+
+            showToast('Email não verificado', 'Verifique seu email antes de continuar', 'error');
+
+            // Mostrar mensagem de verificação
+            showEmailVerificationMessage(user.email);
+
+            return; // Impede continuar
+        }
+        
         // Show logged-in state
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
         if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
         if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
-        
+
         // Auto-fill email
         if (CheckoutDOM.inputEmail) {
             CheckoutDOM.inputEmail.value = user.email || '';
             CheckoutDOM.inputEmail.disabled = true;
         }
-        
+
         // ✅ Check Firestore for saved data (COLEÇÃO CORRETA: 'users')
         if (user.uid && typeof db !== 'undefined') {
             db.collection('users').doc(user.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        
+
                         // Preencher telefone
                         if (userData.phone && CheckoutDOM.inputTelefone) {
                             CheckoutDOM.inputTelefone.value = userData.phone;
                         }
-                        
+
                         // Preencher CPF
                         if (userData.cpf && CheckoutDOM.inputCPF) {
                             CheckoutDOM.inputCPF.value = userData.cpf;
                         }
-                        
+
                         // Auto-validate if all fields present
                         if (userData.phone && userData.cpf) {
                             CheckoutState.step1Valid = true;
                             updateColumnStatus(1, 'Completo', 'success');
                             unlockColumn(2);
-                            
+
                             // Mostrar formulário de dados pessoais já preenchido
                             if (CheckoutDOM.formDadosPessoais) {
                                 CheckoutDOM.formDadosPessoais.style.display = 'block';
@@ -391,35 +406,61 @@ window.handleLogin = async function() {
     }
     
     try {
-        showLoading(true);
+    showLoading(true);
+    
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+    
+    console.log('🔐 Login realizado:', user.email);
+    
+    // ✅ BLOQUEIO CRÍTICO: Verificar email ANTES de continuar
+    if (!user.emailVerified) {
+        // Forçar logout
+        await auth.signOut();
         
-        // ✅ FIX: Aguardar login completar
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+        showToast('Email não verificado', 'Verifique seu email para continuar', 'error');
         
-        console.log('✅ Login realizado:', user.email);
-        
-        // ✅ FIX: Aguardar auth state se propagar
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // ✅ FIX: Preencher formulário de dados pessoais
-        if (CheckoutDOM.inputNome && user.displayName) {
-            CheckoutDOM.inputNome.value = user.displayName;
+        // Mostrar opção de reenvio
+        if (confirm('Deseja reenviar o email de verificação?')) {
+            try {
+                // Re-login temporário
+                const tempUser = await auth.signInWithEmailAndPassword(email, password);
+                await tempUser.user.sendEmailVerification();
+                await auth.signOut();
+                
+                showEmailVerificationMessage(email);
+                showToast('Email reenviado', 'Verifique sua caixa de entrada', 'success');
+            } catch (error) {
+                console.error('❌ Erro ao reenviar:', error);
+                showToast('Erro', 'Não foi possível reenviar', 'error');
+            }
         }
-        if (CheckoutDOM.inputEmail) {
-            CheckoutDOM.inputEmail.value = user.email;
-            CheckoutDOM.inputEmail.disabled = true;
-        }
         
-        // ✅ FIX: Marcar etapa 1 como completa
-        CheckoutState.step1Valid = true;
-        CheckoutState.userData.nome = user.displayName || '';
-        CheckoutState.userData.email = user.email;
-        
-        updateColumnStatus(1, 'Completo', 'success');
-        unlockColumn(2);
-        
-        showToast('Login realizado', 'Bem-vindo de volta!', 'success');
+        return; // Impede continuar
+    }
+    
+    // ✅ EMAIL VERIFICADO - Pode continuar
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Preencher formulário
+    const inputNome = document.getElementById('inputNome');
+    if (inputNome && user.displayName) {
+        inputNome.value = user.displayName;
+    }
+    if (CheckoutDOM.inputEmail) {
+        CheckoutDOM.inputEmail.value = user.email;
+        CheckoutDOM.inputEmail.disabled = true;
+    }
+    
+    // Marcar etapa 1 como completa
+    CheckoutState.step1Valid = true;
+    CheckoutState.userData.nome = user.displayName || '';
+    CheckoutState.userData.email = user.email;
+    
+    updateColumnStatus(1, 'Completo', 'success');
+    unlockColumn(2);
+    
+    showToast('Login realizado', 'Bem-vindo de volta!', 'success');
         
     } catch (error) {
         console.error('❌ Erro no login:', error);
