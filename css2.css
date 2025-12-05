@@ -756,8 +756,8 @@ nav {
 /* === FOOTER DO CARRINHO === */
 .cart-footer {
     padding: 1.5rem;
-    border-top: 2px solid #f0f0f0;
-    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+    background: #ffffff;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -765,23 +765,23 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;  /* ← REDUZIDO */
-    padding-bottom: 0.6rem;  /* ← REDUZIDO */
-    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .cart-total span:first-child {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.7rem;  /* ← REDUZIDO de 0.85rem */
+    font-size: 0.9rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;  /* ← REDUZIDO */
-    color: #666;
+    letter-spacing: 1px;
+    color: #333;
 }
 
 .cart-total span:last-child {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 1.1rem;  /* ← REDUZIDO de 1.4rem */
+    font-size: 1.5rem;
     font-weight: 700;
     color: #000;
 }
@@ -3039,6 +3039,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
