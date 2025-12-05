@@ -308,7 +308,7 @@ function handleCheckoutAuthUpdate(user) {
         showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
     }
 }
-// ==================== AUTENTICAÇÃO ====================
+// ==================== AUTENTICAÇÃO E PREENCHIMENTO DE DADOS ====================
 window.updateAuthUICheckout = function(user) {
     console.log('🔄 Checkout UI updating for:', user ? user.email : 'Guest');
 
@@ -316,36 +316,46 @@ window.updateAuthUICheckout = function(user) {
         // ✅ VERIFICAÇÃO CRÍTICA: Email não verificado
         if (!user.emailVerified) {
             console.warn('⚠️ Usuário sem email verificado detectado');
-
-            // Forçar logout
             auth.signOut().catch(err => console.error('Erro ao logout:', err));
-
             showToast('Email não verificado', 'Verifique seu email antes de continuar', 'error');
-
-            // Mostrar mensagem de verificação
             showEmailVerificationMessage(user.email);
-
-            return; // Impede continuar
+            return; 
         }
         
-        // Show logged-in state
+        // Exibir estado Logado
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
+        
+        // 1. Tenta preencher com o que já temos do Auth (Google/Email)
         if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || 'Usuário';
         if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
 
-        // Auto-fill email
+        // Preencher input de email
         if (CheckoutDOM.inputEmail) {
             CheckoutDOM.inputEmail.value = user.email || '';
             CheckoutDOM.inputEmail.disabled = true;
         }
 
-        // ✅ Check Firestore for saved data (COLEÇÃO CORRETA: 'users')
+        // ✅ BUSCAR DADOS COMPLETOS NO FIRESTORE (Incluindo o NOME)
         if (user.uid && typeof db !== 'undefined') {
             db.collection('users').doc(user.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
+
+                        // ✅ CORREÇÃO: Atualizar Nome na tela (Prioridade: Banco > Auth)
+                        const nomeReal = userData.name || user.displayName;
+                        if (nomeReal) {
+                            // Atualiza o "Bem-vindo, Fulano"
+                            if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = nomeReal;
+                            
+                            // Atualiza o input de nome (se existir no HTML)
+                            const inputNome = document.getElementById('inputNome'); 
+                            if (inputNome) inputNome.value = nomeReal;
+                            
+                            // Salva no estado global
+                            CheckoutState.userData.nome = nomeReal;
+                        }
 
                         // Preencher telefone
                         if (userData.phone && CheckoutDOM.inputTelefone) {
@@ -357,13 +367,12 @@ window.updateAuthUICheckout = function(user) {
                             CheckoutDOM.inputCPF.value = userData.cpf;
                         }
 
-                        // Auto-validate if all fields present
-                        if (userData.phone && userData.cpf) {
+                        // Validação automática se tudo estiver preenchido
+                        if (userData.phone && userData.cpf && nomeReal) {
                             CheckoutState.step1Valid = true;
                             updateColumnStatus(1, 'Completo', 'success');
                             unlockColumn(2);
 
-                            // Mostrar formulário de dados pessoais já preenchido
                             if (CheckoutDOM.formDadosPessoais) {
                                 CheckoutDOM.formDadosPessoais.style.display = 'block';
                             }
@@ -375,7 +384,7 @@ window.updateAuthUICheckout = function(user) {
                 });
         }
     } else {
-        // Show guest state
+        // Exibir estado Visitante
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
         CheckoutState.step1Valid = false;
