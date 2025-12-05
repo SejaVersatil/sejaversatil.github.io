@@ -892,44 +892,81 @@ auth.getRedirectResult().then((result) => {
     }
 });
 
-function showLoggedInView() {
-    // Atualiza o Painel Lateral
-    document.getElementById('userPanelTabs').style.display = 'none';
-    document.getElementById('loginTab').classList.remove('active');
-    document.getElementById('registerTab').classList.remove('active');
-    document.getElementById('userLoggedTab').classList.add('active');
+async function showLoggedInView() {
+    // 1. Atualizações Visuais Básicas (Painel Lateral)
+    const tabs = document.getElementById('userPanelTabs');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loggedTab = document.getElementById('userLoggedTab');
+
+    if(tabs) tabs.style.display = 'none';
+    if(loginTab) loginTab.classList.remove('active');
+    if(registerTab) registerTab.classList.remove('active');
+    if(loggedTab) loggedTab.classList.add('active');
     
-    document.getElementById('userName').textContent = currentUser.name;
-    document.getElementById('userEmail').textContent = currentUser.email;
+    // Atualiza nome e email no painel
+    if(document.getElementById('userName')) document.getElementById('userName').textContent = currentUser.name;
+    if(document.getElementById('userEmail')) document.getElementById('userEmail').textContent = currentUser.email;
     
+    // Verifica Admin
     if (currentUser.isAdmin) {
-        document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
-        document.getElementById('adminAccessBtn').style.display = 'block';
+        if(document.getElementById('userStatus')) document.getElementById('userStatus').innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+        if(document.getElementById('adminAccessBtn')) document.getElementById('adminAccessBtn').style.display = 'block';
         isAdminLoggedIn = true;
     } else {
-        document.getElementById('userStatus').textContent = 'Cliente';
-        document.getElementById('adminAccessBtn').style.display = 'none';
+        if(document.getElementById('userStatus')) document.getElementById('userStatus').textContent = 'Cliente';
+        if(document.getElementById('adminAccessBtn')) document.getElementById('adminAccessBtn').style.display = 'none';
     }
 
     // ============================================================
-    // AJUSTE: Se estiver no Checkout, força o carregamento de CPF/Tel
+    // CORREÇÃO CRÍTICA PARA CHECKOUT: CARREGAR DADOS DO FIRESTORE
     // ============================================================
     if (window.location.pathname.includes('checkout.html')) {
-        console.log('🛒 Login no checkout detectado: Recarregando dados de CPF/Tel...');
+        console.log('🛒 Login no checkout: Buscando CPF e Telefone...');
         
-        // Chama as funções globais que verificam/pedem esses dados
-        if (typeof getUserPhone === 'function') getUserPhone();
-        if (typeof getUserCPF === 'function') getUserCPF();
-        
-        // Se houver campos de input visíveis, tenta preenchê-los com os dados do currentUser atualizado
-        setTimeout(() => {
-            if (currentUser.phone && document.getElementById('inputTelefone')) {
-                document.getElementById('inputTelefone').value = currentUser.phone;
+        try {
+            // Busca dados frescos do Firestore
+            const doc = await db.collection('users').doc(currentUser.uid).get();
+            
+            if (doc.exists) {
+                const userData = doc.data();
+                
+                // 1. Atualiza a variável global (CRÍTICO PARA O WHATSAPP)
+                currentUser.phone = userData.phone || "";
+                currentUser.cpf = userData.cpf || "";
+                
+                console.log('✅ Dados recuperados:', currentUser.phone, currentUser.cpf);
+
+                // 2. Preenche os inputs do formulário (CRÍTICO PARA VALIDAÇÃO)
+                // Tenta achar os campos padrão de cadastro/checkout
+                const inputTel = document.getElementById('inputTelefone') || document.getElementById('guestPhone');
+                const inputCPF = document.getElementById('inputCPF') || document.getElementById('guestCPF');
+
+                if (inputTel && currentUser.phone) {
+                    inputTel.value = currentUser.phone;
+                    // Dispara evento para o sistema "perceber" que foi preenchido
+                    inputTel.dispatchEvent(new Event('input')); 
+                    inputTel.dispatchEvent(new Event('change'));
+                }
+
+                if (inputCPF && currentUser.cpf) {
+                    inputCPF.value = currentUser.cpf;
+                    inputCPF.dispatchEvent(new Event('input'));
+                    inputCPF.dispatchEvent(new Event('change'));
+                }
+
+                // 3. Se os dados ainda estiverem faltando, avisa ou abre modal
+                if (!currentUser.phone || !currentUser.cpf) {
+                    console.warn('⚠️ Usuário logado mas sem CPF/Tel. Solicitando...');
+                    // Se tiver a função de pedir dados, chama ela, senão apenas avisa
+                    if (typeof getUserPhone === 'function') getUserPhone();
+                    if (typeof getUserCPF === 'function') getUserCPF();
+                }
+
             }
-            if (currentUser.cpf && document.getElementById('inputCPF')) {
-                document.getElementById('inputCPF').value = currentUser.cpf;
-            }
-        }, 500);
+        } catch (error) {
+            console.error("Erro ao buscar dados complementares do usuário:", error);
+        }
     }
 }
 
@@ -5868,6 +5905,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
