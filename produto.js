@@ -1354,29 +1354,6 @@ function toggleSidebar() {
     if (ov) ov.classList.toggle('active');
 }
 
-function initBlackFridayCountdown() {
-    // Ajuste a data aqui se necessário
-    const end = new Date(2025, 10, 30, 23, 59, 59);
-    if (state.countdownInterval) clearInterval(state.countdownInterval);
-
-    const update = () => {
-        const diff = end.getTime() - Date.now();
-        if (diff <= 0) return clearInterval(state.countdownInterval);
-
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-        if (elExists('bfDays')) $('bfDays').textContent = String(d).padStart(2, '0');
-        if (elExists('bfHours')) $('bfHours').textContent = String(h).padStart(2, '0');
-        if (elExists('bfMinutes')) $('bfMinutes').textContent = String(m).padStart(2, '0');
-        if (elExists('bfSeconds')) $('bfSeconds').textContent = String(s).padStart(2, '0');
-    };
-    update();
-    state.countdownInterval = setInterval(update, 1000);
-}
-
 /* Máscara CEP */
 document.addEventListener('input', (e) => {
     if (e.target && e.target.id === 'zipCodeInput') {
@@ -2034,6 +2011,7 @@ function setupMasks() {
 }
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
+
 
 
 
