@@ -112,3 +112,47 @@
 @-webkit-keyframes spin {
     to { -webkit-transform: rotate(360deg); }
 }
+
+<style>
+.input-error {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.form-error {
+    padding: 0.8rem;
+    background: #fee;
+    border-left: 4px solid #e74c3c;
+    border-radius: 4px;
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.form-error.active {
+    display: block !important;
+}
+
+.form-success {
+    padding: 0.8rem;
+    background: #d4edda;
+    border-left: 4px solid #27ae60;
+    border-radius: 4px;
+    color: #155724;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.form-success.active {
+    display: block !important;
+}
+</style>
+
+
