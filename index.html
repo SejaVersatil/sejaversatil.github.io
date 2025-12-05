@@ -495,6 +495,19 @@
             <label for="registerEmail">E-mail</label>
             <input type="email" id="registerEmail" required autocomplete="email" placeholder="seu@email.com">
         </div>
+
+        <!-- ✅ NOVOS CAMPOS ADICIONADOS AQUI -->
+        <div class="form-group">
+            <label for="registerPhone">WhatsApp / Telefone</label>
+            <input type="tel" id="registerPhone" required maxlength="15" autocomplete="tel" placeholder="(XX) XXXXX-XXXX" onkeyup="maskPhone(this)">
+        </div>
+        
+        <div class="form-group">
+            <label for="registerCPF">CPF</label>
+            <input type="text" id="registerCPF" required maxlength="14" placeholder="000.000.000-00" onkeyup="maskCPF(this)">
+        </div>
+        <!-- FIM DOS NOVOS CAMPOS -->
+
         <div class="form-group">
             <label for="registerPassword">Crie uma Senha</label>
             <input type="password" id="registerPassword" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
