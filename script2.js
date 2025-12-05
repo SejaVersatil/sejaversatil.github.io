@@ -921,6 +921,9 @@ async function showLoggedInView() {
     // ============================================================
     // CORREÇÃO CRÍTICA PARA CHECKOUT: CARREGAR DADOS DO FIRESTORE
     // ============================================================
+    // ============================================================
+    // CORREÇÃO CRÍTICA PARA CHECKOUT: CARREGAR DADOS DO FIRESTORE
+    // ============================================================
     if (window.location.pathname.includes('checkout.html')) {
         console.log('🛒 Login no checkout: Buscando CPF e Telefone...');
         
@@ -975,10 +978,7 @@ async function showLoggedInView() {
                         if (cpf) currentUser.cpf = cpf;
                     }
 
-                    // Atualiza os inputs do checkout
-                    const inputTel = document.getElementById('inputTelefone');
-                    const inputCPF = document.getElementById('inputCPF');
-
+                    // Atualiza os inputs do checkout (USANDO AS VARIÁVEIS JÁ EXISTENTES)
                     if (inputTel && currentUser.phone) {
                         inputTel.value = currentUser.phone;
                         inputTel.dispatchEvent(new Event('input'));
@@ -5931,6 +5931,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
