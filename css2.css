@@ -520,6 +520,41 @@ nav {
     transform: rotate(90deg);
 }
 
+
+/* === BARRA DE PROGRESSO FRETE === */
+.cart-shipping-progress {
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.shipping-progress-text {
+    font-size: 0.75rem;
+    color: #333;
+    margin-bottom: 0.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.shipping-progress-bar {
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.shipping-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #000000 0%, #333333 100%);
+    width: 0%; /* Controlado via JS */
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
 /* === LISTA DE ITENS === */
 .cart-items {
     flex: 1;
@@ -2992,6 +3027,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
