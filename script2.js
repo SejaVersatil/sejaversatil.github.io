@@ -5174,7 +5174,7 @@ console.log('✅ Sistema de estoque integrado ao site');
     }
     
     // Inicia o intervalo (troca a cada 4 segundos)
-    setInterval(rotateBanner, 4000);
+    setInterval(rotateBanner, 3000);
     
     console.log('✅ Banner rotativo inicializado:', messages.length, 'mensagens');
 })();
@@ -5844,6 +5844,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
