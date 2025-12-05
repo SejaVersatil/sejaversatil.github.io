@@ -482,6 +482,10 @@ async function userRegister(event) {
     
     const nameInput = document.getElementById('registerName');
     const emailInput = document.getElementById('registerEmail');
+    // ✅ NOVOS ELEMENTOS
+    const phoneInput = document.getElementById('registerPhone');
+    const cpfInput = document.getElementById('registerCPF');
+    // ----------------
     const passwordInput = document.getElementById('registerPassword');
     const confirmPasswordInput = document.getElementById('registerConfirmPassword');
     const errorMsgEl = document.getElementById('registerError');
@@ -490,7 +494,7 @@ async function userRegister(event) {
     const originalText = registerBtn ? registerBtn.textContent : 'Cadastrar';
 
     // VALIDAÇÃO INICIAL
-    if (!nameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
+    if (!nameInput || !emailInput || !phoneInput || !cpfInput || !passwordInput || !confirmPasswordInput) {
         console.error('❌ Elementos de registro não encontrados no DOM');
         showToast('Erro ao carregar formulário', 'error');
         return;
@@ -506,16 +510,20 @@ async function userRegister(event) {
     
     const name = nameInput.value.trim();
     const email = emailInput.value.toLowerCase().trim();
+    // ✅ NOVOS VALORES
+    const phone = phoneInput.value.trim();
+    const cpf = cpfInput.value.trim();
+    // ----------------
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
-    // LIMPAR FEEDBACKS VISUAIS
-    [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+    // LIMPAR FEEDBACKS VISUAIS (Incluindo novos campos)
+    [nameInput, emailInput, phoneInput, cpfInput, passwordInput, confirmPasswordInput].forEach(input => {
         input.classList.remove('input-error');
     });
 
-    // VALIDAÇÃO: CAMPOS OBRIGATÓRIOS
-    if (!name || !email || !password || !confirmPassword) {
+    // VALIDAÇÃO: CAMPOS OBRIGATÓRIOS (Incluindo novos campos)
+    if (!name || !email || !phone || !cpf || !password || !confirmPassword) {
         if (errorMsgEl) {
             errorMsgEl.textContent = 'Preencha todos os campos.';
             errorMsgEl.classList.add('active');
@@ -583,10 +591,12 @@ async function userRegister(event) {
             displayName: name
         });
 
-        // SALVAR NO FIRESTORE
+        // SALVAR NO FIRESTORE (Incluindo Phone e CPF)
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
+            phone: phone, // ✅ ADICIONADO
+            cpf: cpf,     // ✅ ADICIONADO
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
@@ -608,6 +618,8 @@ async function userRegister(event) {
             // Travar campos (não limpar para evitar reenvio acidental)
             nameInput.disabled = true;
             emailInput.disabled = true;
+            phoneInput.disabled = true; // ✅ TRAVAR NOVO CAMPO
+            cpfInput.disabled = true;   // ✅ TRAVAR NOVO CAMPO
             passwordInput.disabled = true;
             confirmPasswordInput.disabled = true;
             
