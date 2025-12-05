@@ -2239,107 +2239,94 @@ function renderProducts() {
     }
     
     grid.innerHTML = paginatedProducts.map(product => {
-    // CORREÇÃO: Garantir que images sempre seja um array válido
-    let images = [];
-    
-    if (Array.isArray(product.images) && product.images.length > 0) {
-        images = product.images;
-    } else if (product.image) {
-        images = [product.image];
-    } else {
-        images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
-    }
-    
-    const hasMultipleImages = images.length > 1;
-    const isFav = isFavorite(product.id);
-    
-    // Calcular desconto percentual
-    const discountPercent = product.oldPrice ? 
-        Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        // CORREÇÃO: Garantir que images sempre seja um array válido
+        let images = [];
+        
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            images = product.images;
+        } else if (product.image) {
+            images = [product.image];
+        } else {
+            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        }
+        
+        const hasMultipleImages = images.length > 1;
+        const isFav = isFavorite(product.id);
+        
+        // Calcular desconto percentual
+        const discountPercent = product.oldPrice ? 
+            Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
 
         const variants = productVariants[product.id] || [];
-const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
-const lowStockWarning = totalStock > 0 && totalStock <= 10;
-    
-    return `
-        <div class="product-card" data-product-id="${product.id}" onclick="isInternalNavigation = true; openProductDetails('${product.id}')">
-            <div class="product-image">
-                <!-- Favorite Button -->
-                <button class="favorite-btn ${isFav ? 'active' : ''}" 
-        onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
-        aria-label="Adicionar aos favoritos">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-    </svg>
-</button>
-                
-                <!-- Black Friday Badge -->
-${product.isBlackFriday && discountPercent > 0 ? `
-    <div class="bf-product-badge">
-        <div class="bf-badge-content">
-            <div class="bf-badge-text">
-                <span style="font-size: 2.6rem; font-weight: 900; letter-spacing: 2px; color: #FFFFFF;">BLACK</span>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.17rem; font-weight: 700; letter-spacing: 1px; color: #FFFFFF;">Versátil</span>
-                    <span style="font-size: 1.17rem; font-weight: 900; letter-spacing: 1px; color: #FF6B35;">-${discountPercent}%</span>
-                </div>
-            </div>
-        </div>
-    </div>
-` : ''}
-${product.badge && !product.isBlackFriday && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
-${discountPercent > 0 && !product.isBlackFriday ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
-                
-                <!-- Image Carousel -->
-                <div class="product-image-carousel">
-                    ${images.map((img, index) => {
-                        const isRealImage = img.startsWith('data:image') || img.startsWith('http');
-                        return `
-                            <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
-                                 style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
-                                ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy" decoding="async">` : ''}
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-                
-                <!-- Navigation Arrows (only if multiple images) -->
-                ${hasMultipleImages ? `
-                    <div class="product-carousel-arrows">
-                        <button class="product-carousel-arrow" 
-                                onclick="event.stopPropagation(); prevProductImage('${product.id}', event)" 
-                                aria-label="Imagem anterior">‹</button>
-                        <button class="product-carousel-arrow" 
-                                onclick="event.stopPropagation(); nextProductImage('${product.id}', event)" 
-                                aria-label="Próxima imagem">›</button>
+        const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+        const lowStockWarning = totalStock > 0 && totalStock <= 10;
+        
+        return `
+            <div class="product-card" data-product-id="${product.id}" onclick="isInternalNavigation = true; openProductDetails('${product.id}')">
+                <div class="product-image">
+                    <!-- Favorite Button -->
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" 
+                            onclick="event.stopPropagation(); toggleFavorite('${product.id}')" 
+                            aria-label="Adicionar aos favoritos">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Badges Padrão (Black Friday Removido) -->
+                    ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
+                    ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+                    
+                    <!-- Image Carousel -->
+                    <div class="product-image-carousel">
+                        ${images.map((img, index) => {
+                            const isRealImage = img.startsWith('data:image') || img.startsWith('http');
+                            return `
+                                <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
+                                     style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
+                                    ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy" decoding="async">` : ''}
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                     
-                    <!-- Carousel Dots -->
-                    <div class="product-carousel-dots">
-                        ${images.map((_, index) => `
-                            <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" 
-                                 onclick="event.stopPropagation(); goToProductImage('${product.id}', ${index}, event)"></div>
-                        `).join('')}
-                    </div>
-                ` : ''}
+                    <!-- Navigation Arrows (only if multiple images) -->
+                    ${hasMultipleImages ? `
+                        <div class="product-carousel-arrows">
+                            <button class="product-carousel-arrow" 
+                                    onclick="event.stopPropagation(); prevProductImage('${product.id}', event)" 
+                                    aria-label="Imagem anterior">‹</button>
+                            <button class="product-carousel-arrow" 
+                                    onclick="event.stopPropagation(); nextProductImage('${product.id}', event)" 
+                                    aria-label="Próxima imagem">›</button>
+                        </div>
+                        
+                        <!-- Carousel Dots -->
+                        <div class="product-carousel-dots">
+                            ${images.map((_, index) => `
+                                <div class="product-carousel-dot ${index === 0 ? 'active' : ''}" 
+                                     onclick="event.stopPropagation(); goToProductImage('${product.id}', ${index}, event)"></div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                </div>
                 
-            </div>
-            
-            <!-- Product Info -->
-            <div class="product-info">
-                <h4>${sanitizeInput(product.name)}</h4>
-                <div class="product-price">
-                    ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
-                    <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                <!-- Product Info -->
+                <div class="product-info">
+                    <h4>${sanitizeInput(product.name)}</h4>
+                    <div class="product-price">
+                        ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
+                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-}).join('');
+        `;
+    }).join('');
 
-// Adicionar hover automático no carrossel
-setupAutoCarousel();
-renderPagination(totalPages);
+    // Adicionar hover automático no carrossel
+    setupAutoCarousel();
+    renderPagination(totalPages);
 }
 
 // ==================== AUTO CAROUSEL NO HOVER ====================
@@ -5844,6 +5831,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
