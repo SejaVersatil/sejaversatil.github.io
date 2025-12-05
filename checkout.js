@@ -415,61 +415,89 @@ window.handleLogin = async function() {
     }
     
     try {
-    showLoading(true);
-    
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-    
-    console.log('🔐 Login realizado:', user.email);
-    
-    // ✅ BLOQUEIO CRÍTICO: Verificar email ANTES de continuar
-    if (!user.emailVerified) {
-        // Forçar logout
-        await auth.signOut();
+        showLoading(true);
         
-        showToast('Email não verificado', 'Verifique seu email para continuar', 'error');
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
         
-        // Mostrar opção de reenvio
-        if (confirm('Deseja reenviar o email de verificação?')) {
-            try {
-                // Re-login temporário
-                const tempUser = await auth.signInWithEmailAndPassword(email, password);
-                await tempUser.user.sendEmailVerification();
-                await auth.signOut();
-                
-                showEmailVerificationMessage(email);
-                showToast('Email reenviado', 'Verifique sua caixa de entrada', 'success');
-            } catch (error) {
-                console.error('❌ Erro ao reenviar:', error);
-                showToast('Erro', 'Não foi possível reenviar', 'error');
+        console.log('🔐 Login realizado:', user.email);
+        
+        // ✅ BLOQUEIO CRÍTICO: Verificar email ANTES de continuar
+        if (!user.emailVerified) {
+            // Forçar logout
+            await auth.signOut();
+            
+            showToast('Email não verificado', 'Verifique seu email para continuar', 'error');
+            
+            // Mostrar opção de reenvio
+            if (confirm('Deseja reenviar o email de verificação?')) {
+                try {
+                    // Re-login temporário
+                    const tempUser = await auth.signInWithEmailAndPassword(email, password);
+                    await tempUser.user.sendEmailVerification();
+                    await auth.signOut();
+                    
+                    showEmailVerificationMessage(email);
+                    showToast('Email reenviado', 'Verifique sua caixa de entrada', 'success');
+                } catch (error) {
+                    console.error('❌ Erro ao reenviar:', error);
+                    showToast('Erro', 'Não foi possível reenviar', 'error');
+                }
             }
+            
+            return; // Impede continuar
         }
         
-        return; // Impede continuar
-    }
-    
-    // ✅ EMAIL VERIFICADO - Pode continuar
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Preencher formulário
-    const inputNome = document.getElementById('inputNome');
-    if (inputNome && user.displayName) {
-        inputNome.value = user.displayName;
-    }
-    if (CheckoutDOM.inputEmail) {
-        CheckoutDOM.inputEmail.value = user.email;
-        CheckoutDOM.inputEmail.disabled = true;
-    }
-    
-    // Marcar etapa 1 como completa
-    CheckoutState.step1Valid = true;
-    CheckoutState.userData.nome = user.displayName || '';
-    CheckoutState.userData.email = user.email;
-    
-    updateColumnStatus(1, 'Completo', 'success');
-    unlockColumn(2);
-    
-    showToast('Login realizado', 'Bem-vindo de volta!', 'success');
+        // ✅ EMAIL VERIFICADO - Pode continuar
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // ============================================================
+        // 🔄 AJUSTE ADICIONADO: BUSCAR DADOS EXTRAS NO FIRESTORE
+        // ============================================================
+        let savedPhone = '';
+        let savedCPF = '';
+        let savedName = user.displayName; // Começa com o do Auth
+
+        if (typeof db !== 'undefined') {
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    savedPhone = data.phone || '';
+                    savedCPF = data.cpf || '';
+                    if (data.name) savedName = data.name; // Prioriza nome do banco
+                }
+            } catch (err) {
+                console.warn('⚠️ Erro ao buscar dados complementares:', err);
+            }
+        }
+        // ============================================================
+        
+        // Preencher formulário visualmente
+        const inputNome = document.getElementById('inputNome');
+        if (inputNome) {
+            inputNome.value = savedName || '';
+        }
+        if (CheckoutDOM.inputEmail) {
+            CheckoutDOM.inputEmail.value = user.email;
+            CheckoutDOM.inputEmail.disabled = true;
+        }
+
+        // ✅ Preencher Inputs de Telefone e CPF
+        if (CheckoutDOM.inputTelefone) CheckoutDOM.inputTelefone.value = savedPhone;
+        if (CheckoutDOM.inputCPF) CheckoutDOM.inputCPF.value = savedCPF;
+        
+        // Marcar etapa 1 como completa e Salvar no Estado Global
+        CheckoutState.step1Valid = true;
+        CheckoutState.userData.nome = savedName || '';
+        CheckoutState.userData.email = user.email;
+        CheckoutState.userData.telefone = savedPhone; // ✅ Salva no estado
+        CheckoutState.userData.cpf = savedCPF;       // ✅ Salva no estado
+        
+        updateColumnStatus(1, 'Completo', 'success');
+        unlockColumn(2);
+        
+        showToast('Login realizado', 'Bem-vindo de volta!', 'success');
         
     } catch (error) {
         console.error('❌ Erro no login:', error);
