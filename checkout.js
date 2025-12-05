@@ -1184,27 +1184,36 @@ function buildOrderData() {
             Object.entries(obj).filter(([_, v]) => v != null)
         );
     };
+
+    // 🔴 AQUI ESTÁ A CORREÇÃO:
+    // Capturamos direto do DOM (document.getElementById) para garantir 
+    // que o valor enviado é exatamente o que o usuário está vendo na tela.
+    const domNome = document.getElementById('inputNome')?.value;
+    const domEmail = document.getElementById('inputEmail')?.value;
+    const domTelefone = document.getElementById('inputTelefone')?.value;
+    const domCPF = document.getElementById('inputCPF')?.value;
     
     return {
         codigo: CheckoutState.cartCode || generateCartCode(),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         
         cliente: cleanData({
-            nome: CheckoutState.userData.nome || '',
-            email: CheckoutState.userData.email || '',
-            telefone: CheckoutState.userData.telefone || '',
-            cpf: CheckoutState.userData.cpf || '',
+            // Ordem de prioridade: 1. O que tá escrito no input AGORA || 2. O que tá na memória || 3. Vazio
+            nome: domNome || CheckoutState.userData.nome || window.currentUser?.displayName || '',
+            email: domEmail || CheckoutState.userData.email || window.currentUser?.email || '',
+            telefone: domTelefone || CheckoutState.userData.telefone || '',
+            cpf: domCPF || CheckoutState.userData.cpf || '',
             uid: window.currentUser?.uid || null
         }),
         
         endereco: cleanData({
-            cep: CheckoutState.addressData.cep || '',
-            rua: CheckoutState.addressData.rua || '',
-            numero: CheckoutState.addressData.numero || '',
-            complemento: CheckoutState.addressData.complemento || '',
-            bairro: CheckoutState.addressData.bairro || '',
-            cidade: CheckoutState.addressData.cidade || '',
-            uf: CheckoutState.addressData.uf || ''
+            cep: CheckoutState.addressData.cep || document.getElementById('inputCEP')?.value || '',
+            rua: CheckoutState.addressData.rua || document.getElementById('inputRua')?.value || '',
+            numero: CheckoutState.addressData.numero || document.getElementById('inputNumero')?.value || '',
+            complemento: CheckoutState.addressData.complemento || document.getElementById('inputComplemento')?.value || '',
+            bairro: CheckoutState.addressData.bairro || document.getElementById('inputBairro')?.value || '',
+            cidade: CheckoutState.addressData.cidade || document.getElementById('inputCidade')?.value || '',
+            uf: CheckoutState.addressData.uf || document.getElementById('inputUF')?.value || ''
         }),
         
         items: cartItems.map(item => cleanData({
