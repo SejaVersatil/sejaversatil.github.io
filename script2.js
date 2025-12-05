@@ -5267,30 +5267,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
         strengthDiv.style.display = 'block';
 
-        // Regras simplificadas
+        // Regras de força
         const rules = [
             password.length >= 6,
             password.length >= 8,
             /[a-z]/.test(password) && /[A-Z]/.test(password),
-            /\d/.test(password)
+            /\d/.test(password),
+            /[^A-Za-z0-9]/.test(password)
         ];
 
         const score = rules.filter(Boolean).length;
 
         const levels = [
-            { text: '🔴 Senha fraca', color: '#e74c3c', width: '25%' },
-            { text: '🟠 Senha razoável', color: '#e67e22', width: '50%' },
-            { text: '🟡 Senha boa', color: '#f39c12', width: '75%' },
+            { text: '🔴 Senha muito fraca', color: '#e74c3c', width: '20%' },
+            { text: '🟠 Senha fraca', color: '#e67e22', width: '40%' },
+            { text: '🟡 Senha razoável', color: '#f39c12', width: '60%' },
+            { text: '🟢 Senha boa', color: '#27ae60', width: '80%' },
             { text: '🟢 Senha forte', color: '#27ae60', width: '100%' }
         ];
 
-        const level = levels[Math.min(score - 1, levels.length - 1)] || levels[0];
+        const level = levels[Math.min(score, levels.length - 1)];
 
         strengthBar.style.width = level.width;
         strengthBar.style.backgroundColor = level.color;
         strengthText.textContent = level.text;
         strengthText.style.color = level.color;
     });
+});
+
+
+// ==================== FEEDBACK DE SENHAS COINCIDENTES ====================
+document.addEventListener('DOMContentLoaded', () => {
+    const passwordInput = document.getElementById('registerPassword');
+    const confirmPasswordInput = document.getElementById('registerConfirmPassword');
+    const matchFeedback = document.getElementById('passwordMatchFeedback');
+
+    if (!passwordInput || !confirmPasswordInput || !matchFeedback) {
+        console.warn('⚠️ Elementos de confirmação de senha não encontrados.');
+        return;
+    }
+
+    const checkMatch = () => {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (!confirmPassword) {
+            matchFeedback.style.display = 'none';
+            return;
+        }
+
+        matchFeedback.style.display = 'block';
+
+        if (password === confirmPassword) {
+            matchFeedback.textContent = '✅ As senhas coincidem';
+            matchFeedback.style.color = '#27ae60';
+        } else {
+            matchFeedback.textContent = '❌ As senhas não coincidem';
+            matchFeedback.style.color = '#e74c3c';
+        }
+    };
+
+    passwordInput.addEventListener('input', checkMatch);
+    confirmPasswordInput.addEventListener('input', checkMatch);
 });
 
 // ==================== BUSCA INTELIGENTE (LIVE SEARCH) ====================
@@ -5831,6 +5869,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
