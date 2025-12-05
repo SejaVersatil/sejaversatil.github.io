@@ -502,6 +502,140 @@ window.handleRegister = async function() {
         showLoading(false);
     }
 }
+
+
+// ==================== MENSAGEM FIXA DE VERIFICAÇÃO ====================
+function showEmailVerificationMessage(email) {
+    // Esconder abas de login/cadastro
+    if (CheckoutDOM.authTabsContainer) CheckoutDOM.authTabsContainer.style.display = 'none';
+    if (CheckoutDOM.tabLogin) CheckoutDOM.tabLogin.style.display = 'none';
+    if (CheckoutDOM.tabCadastro) CheckoutDOM.tabCadastro.style.display = 'none';
+    
+    // Criar mensagem fixa
+    const messageBox = document.createElement('div');
+    messageBox.id = 'emailVerificationBox';
+    messageBox.style.cssText = `
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 1rem;
+        animation: pulse 2s infinite;
+    `;
+    
+    messageBox.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📧</div>
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Email de Verificação Enviado!</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.9;">
+            Enviamos um link de confirmação para:<br>
+            <strong>${email}</strong>
+        </p>
+        <p style="font-size: 0.85rem; margin-bottom: 1rem; opacity: 0.9;">
+            Verifique sua caixa de entrada e <strong>spam</strong>
+        </p>
+        <button onclick="checkEmailVerification()" 
+                style="background: white; color: #667eea; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 0.5rem;">
+            ✓ JÁ VERIFIQUEI MEU EMAIL
+        </button>
+        <button onclick="resendVerificationCheckout('${email}')" 
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%;">
+            🔄 REENVIAR EMAIL
+        </button>
+    `;
+    
+    // Inserir no DOM
+    const guestContainer = CheckoutDOM.authStateGuest;
+    if (guestContainer) {
+        guestContainer.appendChild(messageBox);
+    }
+    
+    // Adicionar CSS da animação
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Função para verificar se email foi confirmado
+window.checkEmailVerification = async function() {
+    showLoading(true);
+    
+    try {
+        // Recarregar usuário atual
+        if (auth.currentUser) {
+            await auth.currentUser.reload();
+            
+            if (auth.currentUser.emailVerified) {
+                // ✅ Email verificado!
+                const box = document.getElementById('emailVerificationBox');
+                if (box) {
+                    box.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+                    box.innerHTML = `
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">✅</div>
+                        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Email Confirmado!</h3>
+                        <p style="font-size: 0.9rem;">Redirecionando...</p>
+                    `;
+                }
+                
+                // Recarregar página após 2 segundos
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                
+            } else {
+                showToast('Ainda não verificado', 'Verifique seu email e tente novamente', 'warning');
+            }
+        } else {
+            showToast('Sessão expirada', 'Faça login novamente', 'error');
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('❌ Erro ao verificar:', error);
+        showToast('Erro', 'Tente novamente', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Função para reenviar email
+window.resendVerificationCheckout = async function(email) {
+    const password = prompt('Digite sua senha para reenviar o email:');
+    if (!password) return;
+    
+    showLoading(true);
+    
+    try {
+        // Login temporário
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        if (user.emailVerified) {
+            showToast('Email já verificado', 'Recarregando...', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+            return;
+        }
+        
+        // Reenviar
+        await user.sendEmailVerification();
+        
+        showToast('Email reenviado', 'Verifique sua caixa de entrada', 'success');
+        
+        // Logout novamente
+        await auth.signOut();
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        showToast('Erro', 'Senha incorreta ou erro ao reenviar', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
 // ==================== HANDLE LOGOUT ====================
 window.handleLogout = function() {
     auth.signOut().then(() => {
