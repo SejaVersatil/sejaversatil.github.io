@@ -3100,6 +3100,20 @@ const saveCart = (() => {
     };
 })();
 
+function closeCartAndExplore() {
+    toggleCart(); // Fecha o carrinho
+    
+    // Scroll suave para a seção de produtos
+    const productsSection = document.getElementById('produtos');
+    if (productsSection) {
+        setTimeout(() => {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+    }
+    
+    trackEvent('Cart', 'Explore More Products', 'View More Button');
+}
+
 // ==================== INICIALIZAÇÃO ====================
 // Garante que os elementos são carregados ao iniciar a página
 document.addEventListener('DOMContentLoaded', () => {
@@ -5937,7 +5951,7 @@ window.validateDadosStep = validateDadosStep;
 window.validateEnderecoStep = validateEnderecoStep;
 window.validatePagamentoStep = validatePagamentoStep;
 window.processCheckout = processCheckout;
-
+window.closeCartAndExplore = closeCartAndExplore;
 
 document.addEventListener('DOMContentLoaded', () => {
     const cepInput = document.getElementById('inputCEP');
@@ -5998,17 +6012,3 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
