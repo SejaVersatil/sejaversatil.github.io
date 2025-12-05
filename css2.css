@@ -153,7 +153,9 @@ nav {
     align-items: center;
     flex: 1;
     max-width: 500px;
-    background: #f5f5f5;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 50px;
     padding: 0 1rem !important; /* ← REDUZIDO */
     height: 38px !important; 
@@ -164,9 +166,11 @@ nav {
 }
 
 .search-bar:focus-within {
-    background: #fff;
-    border-color: #000;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.25);  /* ← Mais opaca ao focar */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 .search-logo {
@@ -3063,6 +3067,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
