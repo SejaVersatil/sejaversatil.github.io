@@ -238,19 +238,30 @@ async function updateUI(user) {
     const checkoutUserEmail = document.getElementById('loggedUserEmail');
 
     if (user) {
-        // ✅ VERIFICAR SE E-MAIL FOI CONFIRMADO
-        if (!user.emailVerified) {
-            showToast('⚠️ Por favor, verifique seu e-mail antes de continuar', 'error');
-
-            await user.reload();
-            
-            localStorage.removeItem('sejaVersatilCurrentUser');
-            currentUser = null;
-            window.currentUser = null;
-
-            // Bloquear ações sensíveis
-            return;
+    // ✅ VERIFICAR SE E-MAIL FOI CONFIRMADO
+    if (!user.emailVerified) {
+        // Tentar recarregar dados do Firebase (se disponível)
+        const firebaseUser = auth.currentUser;
+        if (firebaseUser) {
+            try {
+                await firebaseUser.reload();
+                
+                // Se após reload ainda não verificou, bloqueia
+                if (!firebaseUser.emailVerified) {
+                    showToast('⚠️ Por favor, verifique seu e-mail antes de continuar', 'error');
+                    
+                    localStorage.removeItem('sejaVersatilCurrentUser');
+                    currentUser = null;
+                    window.currentUser = null;
+                    return;
+                }
+                // Se verificou após reload, atualiza e continua
+                user.emailVerified = true;
+            } catch (error) {
+                console.warn('Erro ao recarregar usuário:', error);
+            }
         }
+    }
 
         // Garantir que currentUser está sincronizado
         if (typeof currentUser === 'undefined' || !currentUser) {
