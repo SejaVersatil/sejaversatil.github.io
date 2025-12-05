@@ -585,12 +585,13 @@ nav {
 /* === ITEM INDIVIDUAL === */
 .cart-item {
     display: flex;
-    gap: 0.8rem;  /* ← REDUZIDO para aproveitar espaço */
-    padding-bottom: 1rem;
+    gap: 1rem;
+    padding: 1rem 0;
     margin-bottom: 1rem;
     border-bottom: 1px solid #f5f5f5;
     animation: slideInRight 0.3s ease;
-    align-items: flex-start;  /* ← ADICIONAR esta linha */
+    align-items: flex-start;
+    position: relative;
 }
 .cart-item:last-child {
     border-bottom: none;
@@ -610,14 +611,14 @@ nav {
 
 /* Imagem do Produto */
 .cart-item-img {
-    width: 80px !important;  /* ← AUMENTADO de 70px */
-    height: 106px !important;  /* ← AUMENTADO (mantém proporção 3:4) */
-    min-width: 80px;
+    width: 70px !important;
+    height: 93px !important;
+    min-width: 70px;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
-    border-radius: 6px;  /* ← REDUZIDO para parecer mais clean */
-    border: 1px solid #e5e5e5;  /* ← COR AJUSTADA */
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
     flex-shrink: 0;
 }
 
@@ -626,16 +627,17 @@ nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.3rem;
     min-width: 0;
+    padding-right: 2rem; /* Espaço para o ícone de lixeira */
 }
 
 .cart-item-title {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.75rem;  /* ← JÁ ESTÁ REDUZIDO */
+    font-size: 0.85rem;
     font-weight: 600;
     color: #1a1a1a;
-    line-height: 1.25;
+    line-height: 1.3;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -645,19 +647,19 @@ nav {
 }
 
 .cart-item-meta {
-    font-size: 0.75rem;  /* ← REDUZIDO de 0.75rem */
+    font-size: 0.7rem;
     color: #999;
-    line-height: 1.15;  /* ← AJUSTADO */
+    line-height: 1.2;
 }
 
 .cart-item-price {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.9rem;  /* ← AUMENTAR um pouco */
-    font-weight: 700;
+    font-size: 1.1rem !important; /* Destaque */
+    font-weight: 700 !important;
     color: #000;
-    margin: 0.2rem 0;
-    display: block;  /* ← ADICIONAR esta linha */
-    line-height: 1.2;  /* ← ADICIONAR esta linha */
+    margin: 0.4rem 0;
+    display: block;
+    line-height: 1;
 }
 
 /* Controles de Quantidade */
@@ -706,20 +708,30 @@ nav {
 
 /* Botão Remover */
 .remove-item {
-    font-size: 0.75rem;
-    color: #999;
-    text-decoration: underline;
-    cursor: pointer;
-    margin-top: 0.3rem;
-    transition: color 0.2s ease;
-    background: none;
+    position: absolute;
+    top: 1rem;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
     border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    color: #999;
     padding: 0;
-    font-family: 'Century Gothic', sans-serif;
 }
 
 .remove-item:hover {
     color: #e74c3c;
+    transform: scale(1.1);
+}
+
+.remove-item::before {
+    content: '🗑️'; /* Ícone de lixeira */
 }
 
 /* === CARRINHO VAZIO === */
@@ -3027,6 +3039,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
