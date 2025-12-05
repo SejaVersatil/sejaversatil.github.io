@@ -66,6 +66,11 @@
     color: var(--color-text);
     font-weight: 700;
     font-size: 18px;
+    width: auto !important;       /* Permite que o logo ocupe o espaço necessário */
+    min-width: 150px;             /* Garante um tamanho mínimo para não cortar */
+    overflow: visible !important; /* Mostra o que estiver vazando da caixa */
+    white-space: nowrap;          /* Impede que o texto quebre linha */
+    display: inline-block;
 }
 
 .checkout-security {
