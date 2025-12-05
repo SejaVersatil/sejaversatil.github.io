@@ -2803,6 +2803,37 @@ function updateCartUI() {
     }
     
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    // ============================================================
+    // 👇 CÓDIGO NOVO ADICIONADO AQUI 👇
+    // ============================================================
+    // === CALCULAR PROGRESSO DO FRETE ===
+    const FREE_SHIPPING_THRESHOLD = 299.00;
+    const cartSubtotalCalc = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const progressPercent = Math.min((cartSubtotalCalc / FREE_SHIPPING_THRESHOLD) * 100, 100);
+    const remainingForFreeShipping = Math.max(FREE_SHIPPING_THRESHOLD - cartSubtotalCalc, 0);
+
+    // Atualizar elementos visuais
+    const progressFill = document.getElementById('shippingProgressFill');
+    const progressText = document.getElementById('shippingProgressText');
+    const progressAmount = document.getElementById('shippingProgressAmount');
+
+    if (progressFill) {
+        progressFill.style.width = `${progressPercent}%`;
+    }
+
+    if (progressText && progressAmount) {
+        if (remainingForFreeShipping > 0) {
+            progressText.textContent = `Pra ganhar FRETE GRÁTIS`;
+            progressAmount.textContent = `R$${remainingForFreeShipping.toFixed(2)}`;
+            progressAmount.style.color = '#000';
+        } else {
+            progressText.textContent = `✓ Você ganhou frete grátis!`;
+            progressAmount.textContent = '';
+            progressText.style.color = '#27ae60';
+        }
+    }
+    // ============================================================
     
     // ✅ Agora é seguro usar requestAnimationFrame
     requestAnimationFrame(() => {
@@ -5967,6 +5998,7 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
 
