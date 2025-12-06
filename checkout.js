@@ -497,12 +497,31 @@ window.handleLogin = async function() {
         CheckoutState.userData.nome = savedName || '';
         CheckoutState.userData.email = user.email;
         CheckoutState.userData.telefone = savedPhone; // ✅ Salva no estado
-        CheckoutState.userData.cpf = savedCPF;       // ✅ Salva no estado
+        CheckoutState.userData.cpf = savedCPF;        // ✅ Salva no estado
         
         updateColumnStatus(1, 'Completo', 'success');
         unlockColumn(2);
         
         showToast('Login realizado', 'Bem-vindo de volta!', 'success');
+
+        // 👇 ADIÇÃO SOLICITADA AQUI 👇
+        // Buscar dados do Firestore
+        if (typeof db !== 'undefined') {
+            const doc = await db.collection('users').doc(user.uid).get();
+            if (doc.exists) {
+                const data = doc.data();
+                
+                if (data.phone && CheckoutDOM.inputTelefone) {
+                    CheckoutDOM.inputTelefone.value = data.phone;
+                    CheckoutState.userData.telefone = data.phone;
+                }
+                
+                if (data.cpf && CheckoutDOM.inputCPF) {
+                    CheckoutDOM.inputCPF.value = data.cpf;
+                    CheckoutState.userData.cpf = data.cpf;
+                }
+            }
+        }
         
     } catch (error) {
         console.error('❌ Erro no login:', error);
