@@ -680,7 +680,13 @@ async function userRegister(event) {
 
 // ==================== GOOGLE LOGIN (CHAMADA POR index.html) ====================
 async function loginWithGoogle() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
+    // ✅ DETECTAR CONTEXTO: Home ou Checkout
+    const isCheckoutPage = window.location.pathname.includes('checkout.html');
+    const isHomePage = !isCheckoutPage;
+    
+    // ✅ LOADING OVERLAY (tenta ambos os IDs)
+    const loadingOverlay = document.getElementById('loadingOverlay') || 
+                           document.getElementById('checkoutLoadingOverlay');
     if (loadingOverlay) loadingOverlay.classList.add('active');
     
     try {
@@ -689,6 +695,7 @@ async function loginWithGoogle() {
             prompt: 'select_account'
         });
         
+        // Tentar popup primeiro
         let result;
         try {
             result = await auth.signInWithPopup(provider);
@@ -704,7 +711,7 @@ async function loginWithGoogle() {
         
         console.log('✅ Login Google bem-sucedido:', user.email);
         
-        // VERIFICAR SE É ADMIN
+        // ✅ VERIFICAR SE É ADMIN
         const adminDoc = await db.collection('admins').doc(user.uid).get();
         
         if (adminDoc.exists && adminDoc.data().role === 'admin') {
@@ -720,11 +727,13 @@ async function loginWithGoogle() {
             
             isAdminLoggedIn = true;
         } else {
-            // SALVAR USUÁRIO COMUM
+            // ✅ SALVAR USUÁRIO COMUM COM MERGE
             await db.collection('users').doc(user.uid).set({
                 name: user.displayName || 'Usuário',
                 email: user.email,
                 photoURL: user.photoURL || null,
+                phone: '',
+                cpf: '',
                 lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                 isAdmin: false,
                 provider: 'google'
@@ -735,20 +744,116 @@ async function loginWithGoogle() {
                 email: user.email,
                 isAdmin: false,
                 uid: user.uid,
+                phone: '',
+                cpf: '',
                 permissions: []
             };
         }
         
-        // SALVAR NO LOCALSTORAGE
+        // ✅ SALVAR NO LOCALSTORAGE
         localStorage.setItem('sejaVersatilCurrentUser', JSON.stringify(currentUser));
         
         showToast('Login realizado com sucesso!', 'success');
         
-        // FECHAR MODAL (SE FUNÇÃO EXISTIR)
-        if (typeof closeUserPanel === 'function') {
-            setTimeout(() => {
-                closeUserPanel();
-            }, 1000);
+        // ==========================================
+        // ✅ LÓGICA ESPECÍFICA POR PÁGINA
+        // ==========================================
+        
+        if (isCheckoutPage) {
+            // ========== CHECKOUT.HTML ==========
+            const authStateGuest = document.getElementById('authStateGuest');
+            const authStateLogged = document.getElementById('authStateLogged');
+            const authTabsContainer = document.querySelector('.auth-tabs');
+            const formDadosPessoais = document.getElementById('formDadosPessoais');
+            
+            // Esconder estado de visitante
+            if (authStateGuest) authStateGuest.style.display = 'none';
+            if (authTabsContainer) authTabsContainer.style.display = 'none';
+            
+            // Mostrar estado logado
+            if (authStateLogged) {
+                authStateLogged.style.display = 'block';
+                
+                const loggedUserName = document.getElementById('loggedUserName');
+                const loggedUserEmail = document.getElementById('loggedUserEmail');
+                
+                if (loggedUserName) loggedUserName.textContent = currentUser.name;
+                if (loggedUserEmail) loggedUserEmail.textContent = currentUser.email;
+            }
+            
+            // Mostrar formulário de dados pessoais
+            if (formDadosPessoais) {
+                formDadosPessoais.style.display = 'block';
+                
+                // Preencher email
+                const inputEmail = document.getElementById('inputEmail');
+                if (inputEmail) {
+                    inputEmail.value = currentUser.email;
+                    inputEmail.disabled = true;
+                }
+            }
+            
+            // ✅ BUSCAR DADOS COMPLEMENTARES DO FIRESTORE
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const userData = doc.data();
+                    
+                    const inputTelefone = document.getElementById('inputTelefone');
+                    const inputCPF = document.getElementById('inputCPF');
+                    
+                    if (userData.phone && inputTelefone) {
+                        inputTelefone.value = userData.phone;
+                    }
+                    
+                    if (userData.cpf && inputCPF) {
+                        inputCPF.value = userData.cpf;
+                    }
+                }
+            } catch (err) {
+                console.warn('⚠️ Erro ao buscar dados complementares:', err);
+            }
+            
+        } else if (isHomePage) {
+            // ========== INDEX.HTML ==========
+            const userPanel = document.getElementById('userPanel');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loggedTab = document.getElementById('userLoggedTab');
+            const userPanelTabs = document.getElementById('userPanelTabs');
+            
+            // Esconder abas de login/cadastro
+            if (userPanelTabs) userPanelTabs.style.display = 'none';
+            if (loginTab) loginTab.classList.remove('active');
+            if (registerTab) registerTab.classList.remove('active');
+            
+            // Mostrar aba logada
+            if (loggedTab) {
+                loggedTab.classList.add('active');
+                
+                const userName = document.getElementById('userName');
+                const userEmail = document.getElementById('userEmail');
+                const userStatus = document.getElementById('userStatus');
+                const adminBtn = document.getElementById('adminAccessBtn');
+                
+                if (userName) userName.textContent = currentUser.name;
+                if (userEmail) userEmail.textContent = currentUser.email;
+                
+                if (currentUser.isAdmin) {
+                    if (userStatus) userStatus.innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+                    if (adminBtn) adminBtn.style.display = 'block';
+                } else {
+                    if (userStatus) userStatus.textContent = 'Cliente';
+                    if (adminBtn) adminBtn.style.display = 'none';
+                }
+            }
+            
+            // ✅ FECHAR PAINEL APÓS 1 SEGUNDO
+            if (typeof closeUserPanel === 'function') {
+                setTimeout(() => {
+                    closeUserPanel();
+                }, 1000);
+            }
         }
         
     } catch (error) {
@@ -760,7 +865,7 @@ async function loginWithGoogle() {
             errorMessage = 'Você fechou a janela de login';
         } else if (error.code === 'auth/cancelled-popup-request') {
             errorMessage = 'Login cancelado';
-        } else         if (error.code === 'auth/account-exists-with-different-credential') {
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
             errorMessage = 'Este email já está cadastrado com outro método de login';
         } else if (error.code === 'auth/network-request-failed') {
             errorMessage = 'Erro de conexão. Verifique sua internet';
