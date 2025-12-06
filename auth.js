@@ -224,6 +224,169 @@ function updateUserPanelTabs(user) {
     }
 }
 
+
+// ==================== LOGGED IN VIEW (UI APÓS LOGIN) ====================
+async function showLoggedInView() {
+    // ✅ DETECTAR CONTEXTO
+    const isCheckoutPage = window.location.pathname.includes('checkout.html');
+    
+    // ========================================
+    // 1. ATUALIZAR UI DO PAINEL LATERAL (HOME)
+    // ========================================
+    const tabs = document.getElementById('userPanelTabs');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loggedTab = document.getElementById('userLoggedTab');
+
+    if(tabs) tabs.style.display = 'none';
+    if(loginTab) loginTab.classList.remove('active');
+    if(registerTab) registerTab.classList.remove('active');
+    if(loggedTab) loggedTab.classList.add('active');
+    
+    // Atualiza nome e email no painel
+    if(document.getElementById('userName')) {
+        document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+    }
+    if(document.getElementById('userEmail')) {
+        document.getElementById('userEmail').textContent = currentUser.email;
+    }
+    
+    // Verifica Admin
+    if (currentUser.isAdmin) {
+        const userStatus = document.getElementById('userStatus');
+        const adminBtn = document.getElementById('adminAccessBtn');
+        
+        if(userStatus) userStatus.innerHTML = 'Administrador <span class="admin-badge">ADMIN</span>';
+        if(adminBtn) adminBtn.style.display = 'block';
+        isAdminLoggedIn = true;
+    } else {
+        const userStatus = document.getElementById('userStatus');
+        const adminBtn = document.getElementById('adminAccessBtn');
+        
+        if(userStatus) userStatus.textContent = 'Cliente';
+        if(adminBtn) adminBtn.style.display = 'none';
+    }
+
+    // ========================================
+    // 2. LÓGICA ESPECÍFICA PARA CHECKOUT
+    // ========================================
+    if (isCheckoutPage) {
+        console.log('🛒 Checkout: Configurando UI e buscando dados...');
+        
+        // Atualizar elementos do checkout
+        const authStateGuest = document.getElementById('authStateGuest');
+        const authStateLogged = document.getElementById('authStateLogged');
+        const authTabsContainer = document.querySelector('.auth-tabs');
+        const formDadosPessoais = document.getElementById('formDadosPessoais');
+        
+        // Esconder estado de visitante
+        if (authStateGuest) authStateGuest.style.display = 'none';
+        if (authTabsContainer) authTabsContainer.style.display = 'none';
+        
+        // Mostrar estado logado
+        if (authStateLogged) {
+            authStateLogged.style.display = 'block';
+            
+            const loggedUserName = document.getElementById('loggedUserName');
+            const loggedUserEmail = document.getElementById('loggedUserEmail');
+            
+            if (loggedUserName) loggedUserName.textContent = currentUser.name;
+            if (loggedUserEmail) loggedUserEmail.textContent = currentUser.email;
+        }
+        
+        // Mostrar formulário de dados pessoais
+        if (formDadosPessoais) {
+            formDadosPessoais.style.display = 'block';
+            
+            // Preencher email
+            const inputEmail = document.getElementById('inputEmail');
+            if (inputEmail) {
+                inputEmail.value = currentUser.email;
+                inputEmail.disabled = true;
+            }
+        }
+        
+        // ✅ BUSCAR DADOS COMPLEMENTARES DO FIRESTORE
+        if (currentUser.uid && typeof db !== 'undefined') {
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (doc.exists) {
+                    const userData = doc.data();
+                    
+                    // Atualizar variável global
+                    currentUser.phone = userData.phone || "";
+                    currentUser.cpf = userData.cpf || "";
+                    
+                    console.log('✅ Dados recuperados:', currentUser.phone, currentUser.cpf);
+
+                    // Preencher inputs
+                    const inputTelefone = document.getElementById('inputTelefone');
+                    const inputCPF = document.getElementById('inputCPF');
+
+                    if (inputTelefone && userData.phone) {
+                        inputTelefone.value = userData.phone;
+                        inputTelefone.dispatchEvent(new Event('input'));
+                    }
+
+                    if (inputCPF && userData.cpf) {
+                        inputCPF.value = userData.cpf;
+                        inputCPF.dispatchEvent(new Event('input'));
+                    }
+
+                    // Solicitar dados faltantes APENAS SE NECESSÁRIO
+                    if (!currentUser.phone || !currentUser.cpf) {
+                        console.warn('⚠️ Dados incompletos. Solicitando...');
+                        
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        // Solicitar Telefone
+                        if (!currentUser.phone && typeof getUserPhone === 'function') {
+                            const phone = await getUserPhone();
+                            if (phone) {
+                                currentUser.phone = phone;
+                                if (inputTelefone) {
+                                    inputTelefone.value = phone;
+                                    inputTelefone.dispatchEvent(new Event('input'));
+                                }
+                            }
+                        }
+                        
+                        // Solicitar CPF
+                        if (!currentUser.cpf && typeof getUserCPF === 'function') {
+                            const cpf = await getUserCPF();
+                            if (cpf) {
+                                currentUser.cpf = cpf;
+                                if (inputCPF) {
+                                    inputCPF.value = cpf;
+                                    inputCPF.dispatchEvent(new Event('input'));
+                                }
+                            }
+                        }
+                        
+                        // Validação final
+                        if (!currentUser.phone || !currentUser.cpf) {
+                            showToast('⚠️ Complete seus dados para continuar', 'error');
+                        } else {
+                            showToast('✅ Dados completos!', 'success');
+                            
+                            if (typeof validateDadosStep === 'function') {
+                                setTimeout(() => validateDadosStep(), 1000);
+                            }
+                        }
+                    }
+                } else {
+                    console.warn('⚠️ Documento do usuário não encontrado');
+                }
+            } catch (error) {
+                console.error("❌ Erro ao buscar dados:", error);
+                showToast('Erro ao carregar dados', 'error');
+            }
+        }
+    }
+}
+
+
 // ==================== UI UPDATE (CHAMADA POR onAuthStateChanged) ====================
 async function updateUI(user) {
     const userPanel = document.getElementById('userPanel');
