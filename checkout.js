@@ -1546,6 +1546,19 @@ function processToastQueue() {
     }, CHECKOUT_CONFIG.TOAST_DURATION);
 }
 
+// ==================== MÁSCARAS PARA FORMULÁRIO DE CADASTRO ====================
+window.maskPhone = function(input) {
+    let v = input.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    input.value = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+}
+
+window.maskCPF = function(input) {
+    let v = input.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    input.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
 // ==================== EXPORT GLOBAL FUNCTIONS ====================
 window.switchAuthTab = switchAuthTab;
 window.handleLogin = handleLogin;
