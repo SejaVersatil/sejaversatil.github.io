@@ -4092,23 +4092,6 @@ function setupCartAbandonmentTracking() {
             }, 300000);
         }
     };
-    
-    // ✅ MODIFICADO: Só avisa se for realmente sair (fechar aba/janela)
-   window.addEventListener('beforeunload', (e) => {
-    // ✅ Se for navegação interna marcada, não avisa
-    if (isInternalNavigation) {
-        isInternalNavigation = false; // Reset
-        return undefined;
-    }
-    
-    // ✅ Se tem carrinho, avisa apenas ao FECHAR/SAIR
-    if (cart.length > 0) {
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
-    }
-});
-    
     setInterval(startCartTimer, 60000);
 }
 
@@ -6023,5 +6006,6 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
 
