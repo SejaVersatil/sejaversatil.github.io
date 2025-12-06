@@ -548,10 +548,11 @@ nav {
 
 .shipping-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #000000 0%, #333333 100%);
-    width: 0%; /* Controlado via JS */
+    background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%); /* ← VERDE */
+    width: 0%;
     border-radius: 10px;
     transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2); /* ← ADICIONAR sombra sutil */
 }
 
 
@@ -755,7 +756,7 @@ nav {
 
 /* === FOOTER DO CARRINHO === */
 .cart-footer {
-    padding: 1.5rem;
+    padding: 1.2rem 1.2rem 1rem 1.2rem; /* ← REDUZIDO de 1.5rem */
     border-top: 1px solid #f0f0f0;
     background: #ffffff;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
@@ -765,44 +766,46 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.2rem; /* ← REDUZIDO de 1.5rem */
-    padding-bottom: 0.8rem; /* ← REDUZIDO de 1rem */
+    margin-bottom: 1rem; /* ← REDUZIDO de 1.2rem */
+    padding-bottom: 0.7rem; /* ← REDUZIDO de 0.8rem */
     border-bottom: 1px solid #f0f0f0;
 }
 
 .cart-total span:first-child {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.8rem; /* ← REDUZIDO de 0.9rem */
+    font-size: 0.7rem; /* ← REDUZIDO de 0.8rem */
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px; /* ← REDUZIDO de 1px */
+    letter-spacing: 0.6px; /* ← REDUZIDO de 0.8px */
     color: #333;
 }
 
 .cart-total span:last-child {
     font-family: 'Century Gothic', sans-serif;
-    font-size: 1.3rem; /* ← REDUZIDO de 1.5rem */
+    font-size: 1.15rem; /* ← REDUZIDO de 1.3rem */
     font-weight: 700;
     color: #000;
+    line-height: 1; /* ← ADICIONAR para compactar */
 }
 
 
 /* Botão Ver Mais Lookinhos (Outline) */
 .view-more-btn {
     width: 100%;
-    padding: 0.9rem; /* ← REDUZIDO de 1rem */
+    padding: 0.75rem; /* ← REDUZIDO de 0.9rem */
     background: transparent;
     color: #000;
-    border: 2px solid #000;
-    border-radius: 6px; /* ← REDUZIDO de 8px */
+    border: 1.5px solid #000; /* ← BORDA MAIS FINA */
+    border-radius: 6px;
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.8rem; /* ← REDUZIDO de 0.85rem */
+    font-size: 0.72rem; /* ← REDUZIDO de 0.8rem */
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.2px; /* ← REDUZIDO de 1.5px */
+    letter-spacing: 1px; /* ← REDUZIDO de 1.2px */
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 0.7rem; /* ← REDUZIDO de 0.8rem */
+    margin-bottom: 0.6rem; /* ← REDUZIDO de 0.7rem */
+    line-height: 1; /* ← COMPACTAR */
 }
 
 .view-more-btn:hover {
@@ -812,19 +815,20 @@ nav {
 /* Botão Finalizar Compra (Sólido Preto) */
 .checkout-btn {
     width: 100%;
-    padding: 1rem; /* ← REDUZIDO de 1.2rem */
+    padding: 0.85rem; /* ← REDUZIDO de 1rem */
     background: #000;
     color: #fff;
     border: none;
-    border-radius: 6px; /* ← REDUZIDO de 8px */
+    border-radius: 6px;
     font-family: 'Century Gothic', sans-serif;
-    font-size: 0.85rem; /* ← REDUZIDO de 0.9rem */
+    font-size: 0.75rem; /* ← REDUZIDO de 0.85rem */
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.2px; /* ← REDUZIDO de 1.5px */
+    letter-spacing: 1px; /* ← REDUZIDO de 1.2px */
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    line-height: 1; /* ← COMPACTAR */
 }
 
 .checkout-btn:hover {
@@ -1670,39 +1674,41 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 /* ==================== SISTEMA DE CUPONS ==================== */
 
 .coupon-section {
-    padding: 1rem 1.5rem;
+    padding: 0.7rem 1rem; /* ← REDUZIDO de 1rem 1.5rem */
     border-top: 1px solid #f0f0f0;
     border-bottom: 1px solid #f0f0f0;
     background: #fafafa;
     margin-bottom: 0;
 }
 
+
 .coupon-section h4 {
     font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
-    font-size: 0.65rem; /* ← REDUZIDO de 0.7rem */
+    font-size: 0.55rem; /* ← REDUZIDO de 0.65rem */
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.6rem;
+    letter-spacing: 0.4px; /* ← REDUZIDO de 0.5px */
+    margin-bottom: 0.4rem; /* ← REDUZIDO de 0.6rem */
     color: var(--text);
 }
 
 .coupon-input-row {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem; /* ← REDUZIDO de 0.5rem */
 }
 
 .coupon-input {
     flex: 1;
-    padding: 0.55rem; /* ← REDUZIDO de 0.6rem */
-    border: 2px solid var(--gray);
+    padding: 0.5rem; /* ← REDUZIDO de 0.55rem */
+    border: 1px solid #e5e5e5; /* ← BORDA MAIS FINA */
     border-radius: 4px;
-    font-size: 0.7rem; /* ← REDUZIDO de 0.75rem */
+    font-size: 0.65rem; /* ← REDUZIDO de 0.7rem */
     font-family: var(--font-main);
     text-transform: uppercase;
     font-weight: 600;
     transition: var(--transition-normal);
     background: var(--white);
+    height: 36px; /* ← ALTURA FIXA */
 }
 
 .coupon-input:focus {
@@ -1721,18 +1727,19 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 }
 
 .coupon-apply-btn {
-    padding: 0 0.9rem; /* ← REDUZIDO de 1rem */
+    padding: 0 0.7rem; /* ← REDUZIDO de 0.9rem */
     background: var(--primary);
     color: var(--white);
     border: none;
     border-radius: 4px;
     font-weight: 700;
-    font-size: 0.65rem; /* ← REDUZIDO de 0.7rem */
+    font-size: 0.55rem; /* ← REDUZIDO de 0.65rem */
     cursor: pointer;
     transition: var(--transition-normal);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px; /* ← REDUZIDO de 0.5px */
     font-family: var(--font-main);
+    height: 34px; /* ← ALTURA FIXA (mesma do input) */
 }
 
 .coupon-apply-btn:hover {
@@ -1822,10 +1829,11 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
 .discount-breakdown {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
+    padding: 0.4rem 0; /* ← REDUZIDO de 0.5rem */
+    font-size: 0.75rem; /* ← REDUZIDO de 0.9rem */
     color: #27ae60;
     font-weight: 600;
+    margin-bottom: 0.6rem; /* ← ADICIONAR espaçamento */
 }
 
 /* ==================== ADMIN: GERENCIAMENTO DE CUPONS ==================== */
@@ -2496,16 +2504,20 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     .cart-footer {
         padding: 1rem; /* ← REDUZIDO */
     }
-    .cart-total { margin-bottom: 1rem !important; padding-bottom: 0.8rem !important; }
-    .cart-total span:first-child { font-size: 0.8rem !important; }
+    .cart-total { margin-bottom: 0.8rem !important; padding-bottom: 0.6rem !important; }
+    .cart-total span:first-child { font-size: 0.65rem !important; }
     .cart-total span:last-child {
-        font-size: 1.2rem; /* ← REDUZIDO */
+        font-size: 1.05rem; /* ← REDUZIDO */
     }
     .checkout-btn,
     .view-more-btn {
-        padding: 0.85rem; /* ← REDUZIDO */
-        font-size: 0.75rem; /* ← REDUZIDO */
+        padding: 0.7rem; /* ← REDUZIDO */
+        font-size: 0.68rem; /* ← REDUZIDO */
     }
+.view-more-btn {
+        margin-bottom: 0.5rem; /* ← REDUZIDO */
+    }
+   
     .empty-cart { padding: 2rem 1.5rem !important; min-height: 150px !important; }
 
     /* Promo Cards */
@@ -3098,6 +3110,7 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     max-height: 90vh;
     overflow-y: auto;
 }
+
 
 
 
