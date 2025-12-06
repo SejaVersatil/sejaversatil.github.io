@@ -2804,7 +2804,7 @@ function updateCartUI() {
     
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    // ============================================================
+// ============================================================
     // 👇 CÓDIGO NOVO ADICIONADO AQUI 👇
     // ============================================================
     // === CALCULAR PROGRESSO DO FRETE ===
@@ -2824,25 +2824,26 @@ function updateCartUI() {
 
     if (progressText && progressAmount) {
         if (remainingForFreeShipping > 0) {
-    progressText.textContent = `Pra ganhar FRETE GRÁTIS`;
-    progressAmount.textContent = `R$${remainingForFreeShipping.toFixed(2)}`;
-    progressAmount.style.color = '#000';
-    // Resetar background se estava verde
-    if (progressText.parentElement) {
-        progressText.parentElement.style.background = '';
+            progressText.textContent = `Pra ganhar FRETE GRÁTIS`;
+            progressAmount.textContent = `R$${remainingForFreeShipping.toFixed(2)}`;
+            progressAmount.style.color = '#000';
+            // Resetar background se estava verde
+            if (progressText.parentElement) {
+                progressText.parentElement.style.background = '';
+            }
+        } else {
+            progressText.textContent = `✓ Você ganhou frete grátis!`;
+            progressAmount.textContent = '';
+            progressText.style.color = '#27ae60';
+            progressText.style.fontWeight = '700';
+            
+            // Destacar com background verde claro
+            if (progressText.parentElement) {
+                progressText.parentElement.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
+                progressText.parentElement.style.borderLeft = '4px solid #27ae60';
+            }
+        }
     }
-} else {
-    progressText.textContent = `✓ Você ganhou frete grátis!`;
-    progressAmount.textContent = '';
-    progressText.style.color = '#27ae60';
-    progressText.style.fontWeight = '700';
-    
-    // Destacar com background verde claro
-    if (progressText.parentElement) {
-        progressText.parentElement.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
-        progressText.parentElement.style.borderLeft = '4px solid #27ae60';
-    }
-}
     // ============================================================
     
     // ✅ Agora é seguro usar requestAnimationFrame
@@ -6022,4 +6023,5 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
+
 
