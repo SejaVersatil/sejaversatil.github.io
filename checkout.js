@@ -262,6 +262,40 @@ function handleCheckoutAuthUpdate(user) {
             inputEmail.value = user.email || '';
             inputEmail.disabled = true;
         }
+
+        // ============================================================
+        // 👇 CÓDIGO ADICIONADO AQUI 👇
+        // ============================================================
+        // ✅ Buscar dados completos do Firestore
+        if (user.uid && typeof db !== 'undefined') {
+            db.collection('users').doc(user.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // Preencher telefone
+                        if (userData.phone && CheckoutDOM.inputTelefone) {
+                            CheckoutDOM.inputTelefone.value = userData.phone;
+                            CheckoutState.userData.telefone = userData.phone;
+                        }
+                        
+                        // Preencher CPF
+                        if (userData.cpf && CheckoutDOM.inputCPF) {
+                            CheckoutDOM.inputCPF.value = userData.cpf;
+                            CheckoutState.userData.cpf = userData.cpf;
+                        }
+                        
+                        // Se tudo estiver preenchido, validar automaticamente
+                        if (userData.phone && userData.cpf) {
+                            CheckoutState.step1Valid = true;
+                            updateColumnStatus(1, 'Completo', 'success');
+                            unlockColumn(2);
+                        }
+                    }
+                })
+                .catch(err => console.warn('⚠️ Erro ao carregar dados:', err));
+        }
+        // ============================================================
         
         // Mostrar formulário de dados pessoais
         if (CheckoutDOM.formDadosPessoais) {
@@ -277,35 +311,6 @@ function handleCheckoutAuthUpdate(user) {
         if (CheckoutDOM.formDadosPessoais) {
             CheckoutDOM.formDadosPessoais.style.display = 'none';
         }
-    }
-}
-        
-        // 2. Load cart
-        CartManager.load();
-        CheckoutState.subtotal = CartManager.getSubtotal();
-        CheckoutState.couponDiscount = CartManager.couponDiscount || 0;
-        
-        // 3. Verify cart not empty
-        if (!CartManager.cart || CartManager.cart.length === 0) {
-            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'warning');
-            setTimeout(() => window.location.href = 'index.html', 2000);
-            return;
-        }
-        
-        // Continue initialization...
-        renderSummary();
-        initMasks();
-        initEvents();
-        
-        if (CheckoutDOM.summaryCartCode) {
-            CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
-        }
-        
-        console.log('✅ Checkout inicializado com sucesso');
-        
-    } catch (error) {
-        console.error('❌ Erro na inicialização:', error);
-        showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
     }
 }
 // ==================== AUTENTICAÇÃO E PREENCHIMENTO DE DADOS ====================
