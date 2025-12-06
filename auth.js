@@ -1252,7 +1252,7 @@ window.resetPassword = resetPassword;
 window.resendVerificationEmail = resendVerificationEmail;
 window.resendVerificationFromLogin = resendVerificationFromLogin;
 window.switchUserTab = switchUserTab;
-
+window.showLoggedInView = showLoggedInView;
 
 // Máscara de Telefone
 function maskPhone(input) {
