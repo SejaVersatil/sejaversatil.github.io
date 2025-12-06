@@ -553,6 +553,8 @@ window.handleRegister = async function() {
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
+            phone: telefone,
+            cpf: cpf,  
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         
