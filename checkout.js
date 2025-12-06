@@ -185,9 +185,10 @@ function cacheDOMElements() {
 }
 
 // ==================== INICIALIZAÇÃO PRINCIPAL ====================
+// ==================== INICIALIZAÇÃO PRINCIPAL ====================
 async function initCheckout() {
     try {
-        // [PARTE 1: CÓDIGO EXISTENTE - Proteção do CartManager]
+        // [Proteção do CartManager]
         if (typeof CartManager === 'undefined') {
             let attempts = 0;
             while (typeof CartManager === 'undefined' && attempts < 30) {
@@ -204,56 +205,63 @@ async function initCheckout() {
         }
         
         console.log('🚀 initCheckout começando...');
-                
-        // ✅ DEBUG: Verificar se elementos foram cacheados
-        console.log('🔍 Verificando elementos DOM...');
-        console.log('authStateGuest:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.authStateGuest : 'Unknown');
-        console.log('authStateLogged:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.authStateLogged : 'Unknown');
-        console.log('formDadosPessoais:', typeof CheckoutDOM !== 'undefined' ? CheckoutDOM.formDadosPessoais : 'Unknown');
-                
+        
         // 1. WAIT for auth to be ready
         if (window.authReady) {
             console.log('⏳ Aguardando auth estar pronto...');
             const user = await window.authReady;
             console.log('✅ Auth pronto. User:', user ? user.email : 'null');
             handleCheckoutAuthUpdate(user);
-            
-            // Chama a função de atualização
-            if (typeof updateAuthUI === 'function') {
-                updateAuthUI(user);
-            } else if (typeof handleCheckoutAuthUpdate === 'function') {
-                handleCheckoutAuthUpdate(user);
-            }
         } else {
             console.warn('⚠️ window.authReady não existe');
-            // Fallback
             if (typeof auth !== 'undefined') {
                 auth.onAuthStateChanged((user) => {
                     console.log('🔄 onAuthStateChanged (fallback):', user ? user.email : 'null');
-                    if (typeof updateAuthUI === 'function') {
-                        updateAuthUI(user);
-                    } else if (typeof handleCheckoutAuthUpdate === 'function') {
-                        handleCheckoutAuthUpdate(user);
-                    }
+                    handleCheckoutAuthUpdate(user);
                 });
             }
         }
-
         
+        // 2. Load cart
+        CartManager.load();
+        CheckoutState.subtotal = CartManager.getSubtotal();
+        CheckoutState.couponDiscount = CartManager.couponDiscount || 0;
+        
+        // 3. Verify cart not empty
+        if (!CartManager.cart || CartManager.cart.length === 0) {
+            showToast('Carrinho vazio', 'Adicione produtos antes de finalizar', 'warning');
+            setTimeout(() => window.location.href = 'index.html', 2000);
+            return;
+        }
+        
+        // Continue initialization...
+        renderSummary();
+        initMasks();
+        initEvents();
+        
+        if (CheckoutDOM.summaryCartCode) {
+            CheckoutDOM.summaryCartCode.textContent = `(${CheckoutState.cartCode})`;
+        }
+        
+        console.log('✅ Checkout inicializado com sucesso');
+        
+    } catch (error) {
+        console.error('❌ Erro na inicialização:', error);
+        showToast('Erro ao carregar', 'Tente recarregar a página', 'error');
+    }
+}
+
 // ==================== LÓGICA DE UI DO CHECKOUT ====================
+// ✅ AGORA ESTÁ FORA DE initCheckout()
 function handleCheckoutAuthUpdate(user) {
-    // Atualiza variável local
-    currentUser = user; 
-    
     if (user) {
-        // LOGADO: Esconde abas de login, Mostra nome do usuário
+        // LOGADO
         if (CheckoutDOM.authTabsContainer) CheckoutDOM.authTabsContainer.style.display = 'none';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'block';
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'none';
         if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = user.displayName || user.name || user.email;
         if (CheckoutDOM.loggedUserEmail) CheckoutDOM.loggedUserEmail.textContent = user.email || '';
         
-        // Preenche inputs automaticamente
         const inputNome = document.getElementById('inputNome');
         const inputEmail = document.getElementById('inputEmail');
         
@@ -263,29 +271,23 @@ function handleCheckoutAuthUpdate(user) {
             inputEmail.disabled = true;
         }
 
-        // ============================================================
-        // 👇 CÓDIGO ADICIONADO AQUI 👇
-        // ============================================================
-        // ✅ Buscar dados completos do Firestore
+        // Buscar dados completos do Firestore
         if (user.uid && typeof db !== 'undefined') {
             db.collection('users').doc(user.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
                         
-                        // Preencher telefone
                         if (userData.phone && CheckoutDOM.inputTelefone) {
                             CheckoutDOM.inputTelefone.value = userData.phone;
                             CheckoutState.userData.telefone = userData.phone;
                         }
                         
-                        // Preencher CPF
                         if (userData.cpf && CheckoutDOM.inputCPF) {
                             CheckoutDOM.inputCPF.value = userData.cpf;
                             CheckoutState.userData.cpf = userData.cpf;
                         }
                         
-                        // Se tudo estiver preenchido, validar automaticamente
                         if (userData.phone && userData.cpf) {
                             CheckoutState.step1Valid = true;
                             updateColumnStatus(1, 'Completo', 'success');
@@ -295,19 +297,16 @@ function handleCheckoutAuthUpdate(user) {
                 })
                 .catch(err => console.warn('⚠️ Erro ao carregar dados:', err));
         }
-        // ============================================================
         
-        // Mostrar formulário de dados pessoais
         if (CheckoutDOM.formDadosPessoais) {
             CheckoutDOM.formDadosPessoais.style.display = 'block';
         }
     } else {
-        // DESLOGADO: Mostra abas de login/cadastro
+        // DESLOGADO
         if (CheckoutDOM.authTabsContainer) CheckoutDOM.authTabsContainer.style.display = 'flex';
         if (CheckoutDOM.authStateLogged) CheckoutDOM.authStateLogged.style.display = 'none';
         if (CheckoutDOM.authStateGuest) CheckoutDOM.authStateGuest.style.display = 'block';
         
-        // Esconder formulário de dados pessoais
         if (CheckoutDOM.formDadosPessoais) {
             CheckoutDOM.formDadosPessoais.style.display = 'none';
         }
