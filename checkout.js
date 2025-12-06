@@ -538,11 +538,13 @@ window.handleLogin = async function() {
 window.handleRegister = async function() {
     const name = document.getElementById('registerName')?.value.trim();
     const email = document.getElementById('registerEmail')?.value.trim();
+    const phone = document.getElementById('registerPhone')?.value.trim(); // ✅ CAPTURA TELEFONE
+    const cpf = document.getElementById('registerCPF')?.value.trim();     // ✅ CAPTURA CPF
     const password = document.getElementById('registerPassword')?.value;
     const passwordConfirm = document.getElementById('registerPasswordConfirm')?.value;
     
     // Validações
-    if (!name || !email || !password || !passwordConfirm) {
+    if (!name || !email || !phone || !cpf || !password || !passwordConfirm) {
         showToast('Campos obrigatórios', 'Preencha todos os campos', 'warning');
         return;
     }
@@ -560,31 +562,24 @@ window.handleRegister = async function() {
     showLoading(true);
     
     try {
-        // 1. Criar conta
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
-        // 2. Atualizar perfil
         await user.updateProfile({ displayName: name });
         
-        // 3. Salvar no Firestore
+        // ✅ SALVAR COM TELEFONE E CPF
         await db.collection('users').doc(user.uid).set({
             name: name,
             email: email,
-            phone: telefone,
-            cpf: cpf,  
+            phone: phone.replace(/\D/g, ''), // Remove formatação
+            cpf: cpf.replace(/\D/g, ''),     // Remove formatação
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
         
-        // ✅ 4. ENVIAR EMAIL DE VERIFICAÇÃO
         await user.sendEmailVerification();
-        
-        // ✅ 5. FORÇAR LOGOUT (não deixa continuar sem verificar)
         await auth.signOut();
         
-        // ✅ 6. MOSTRAR MENSAGEM FIXA DE VERIFICAÇÃO
         showEmailVerificationMessage(email);
-        
         showToast('Cadastro realizado', 'Verifique seu email para continuar', 'success');
         
     } catch (error) {
