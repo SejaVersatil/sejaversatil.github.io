@@ -816,57 +816,64 @@
           <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">Produtos marcados exibirão o adesivo "BLACK VERSÁTIL" em destaque</small>
         </div>
 
-        <div class="admin-form-group">
-          <label style="display: block; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">🎨 Cores do Produto</label>
-          <div id="productColorsManager" style="margin-bottom: 1rem; min-height: 50px; padding: 1rem; background: #f8f8f8; border-radius: 8px;">
-            <p style="color: #999; font-size: 0.85rem; text-align: center;">Nenhuma cor adicionada ainda</p>
-          </div>
-          <button type="button" onclick="addColorToProduct()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 0.8rem 1.5rem; cursor: pointer; border-radius: 8px; font-weight: 600; width: 100%; transition: all 0.3s;">➕ Adicionar Nova Cor</button>
-          <small style="display: block; margin-top: 0.8rem; color: #666; font-size: 0.75rem; line-height: 1.6;">
-            💡 <strong>Fluxo correto:</strong><br>
-            1️⃣ Adicione as imagens da primeira cor<br>
-            2️⃣ Clique em "Adicionar Nova Cor" e preencha nome e código hex<br>
-            3️⃣ Limpe as imagens antigas e adicione as da próxima cor<br>
-            4️⃣ Repita para cada cor do produto
-          </small>
-        </div>
+        <!-- ========== SEÇÃO DE CORES (REDESENHADA) ========== -->
+<div class="admin-form-group">
+  <label class="section-label">🎨 Cores do Produto</label>
+  
+  <div id="productColorsManager" class="colors-manager-container">
+    <p class="empty-state">Nenhuma cor adicionada ainda</p>
+  </div>
+  
+  <button type="button" onclick="addColorToProduct()" class="btn-add-color">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    Adicionar Nova Cor
+  </button>
+  
+  <small class="form-hint">
+    💡 <strong>Fluxo correto:</strong> Adicione as imagens → Crie a cor → Vincule as fotos à cor
+  </small>
+</div>
 
-        <div class="image-manager">
-          <div class="image-manager-title">Imagens do Produto</div>
-          <div class="image-list" id="productImagesList"></div>
-          
-          <div class="image-upload-options">
-            <button type="button" class="image-add-btn">
-              📁 Upload Local
-              <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
-            </button>
-            <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">🔗 URL de Imagem</button>
-            <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">🎨 Gradiente CSS</button>
-          </div>
-          
-          <div class="image-url-input" id="imageUrlInputBox">
-            <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
-            <div class="image-url-actions">
-              <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
-              <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
-            </div>
-          </div>
-          
-          <div class="image-url-input" id="imageGradientInputBox">
-            <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-            <div class="image-url-actions">
-              <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
-              <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
-            </div>
-          </div>
-          
-          <div class="image-helper">
-            💡 <strong>Como adicionar imagens:</strong><br>
-            • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
-            • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente)<br>
-            • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
-          </div>
-        </div>
+<!-- ========== SEÇÃO DE IMAGENS (MANTIDA) ========== -->
+<div class="image-manager">
+  <div class="image-manager-title">Imagens do Produto</div>
+  <div class="image-list" id="productImagesList"></div>
+  
+  <div class="image-upload-options">
+    <button type="button" class="image-add-btn">
+      📁 Upload Local
+      <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
+    </button>
+    <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">🔗 URL de Imagem</button>
+    <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">🎨 Gradiente CSS</button>
+  </div>
+  
+  <div class="image-url-input" id="imageUrlInputBox">
+    <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
+    <div class="image-url-actions">
+      <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
+      <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
+    </div>
+  </div>
+  
+  <div class="image-url-input" id="imageGradientInputBox">
+    <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+    <div class="image-url-actions">
+      <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
+      <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
+    </div>
+  </div>
+  
+  <div class="image-helper">
+    💡 <strong>Como adicionar imagens:</strong><br>
+    • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
+    • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente)<br>
+    • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
+  </div>
+</div>
         
         <input type="hidden" id="productId">
         <div class="admin-form-actions">
