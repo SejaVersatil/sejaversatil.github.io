@@ -973,11 +973,23 @@ async function loginWithGoogle() {
         // ✅ LÓGICA ESPECÍFICA POR PÁGINA
         // ==========================================
         
-       // ✅ CHAMAR FUNÇÃO CENTRALIZADA DO auth.js
-if (typeof showLoggedInView === 'function') {
-    await showLoggedInView();
-} else {
-    console.error('❌ showLoggedInView não encontrada! Verifique se auth.js foi carregado.');
+        // ✅ CHAMAR FUNÇÃO CENTRALIZADA DO auth.js
+        if (typeof showLoggedInView === 'function') {
+            await showLoggedInView();
+        } else {
+            console.error('❌ showLoggedInView não encontrada! Verifique se auth.js foi carregado.');
+        }
+
+    // 👇 O QUE FALTAVA PARA FECHAR O CÓDIGO 👇
+    } catch (error) {
+        console.error('❌ Erro no login Google:', error);
+        // Tratamento de erro básico
+        if (error.code !== 'auth/popup-closed-by-user') {
+             showToast('Erro ao entrar com Google', 'error');
+        }
+    } finally {
+        if (loadingOverlay) loadingOverlay.classList.remove('active');
+    }
 }
 // ==================== FIRESTORE ====================
 
@@ -5852,9 +5864,3 @@ window.addEventListener('authStateUpdated', (e) => {
         updateFavoriteStatus();
     }
 });
-
-
-
-
-
-
