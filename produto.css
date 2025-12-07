@@ -11,15 +11,15 @@ body.product-page {
 
 /* Título do Produto */
 .product-title, #detailsProductName {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-weight: 400 !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
+    font-weight: 500 !important; /* ✅ Ajuste: 500 fica mais elegante na Outfit */
     font-size: 46px !important;    
     line-height: 1.1 !important;
     color: #1a1a1a !important;
-    margin-top: 0 !important;  /* NOVO: remove espaço superior */
+    margin-top: 0 !important;
     margin-bottom: 5px !important;
     text-transform: none !important;
-    letter-spacing: -1px !important; 
+    letter-spacing: -0.5px !important; /* ✅ Ajuste: -1px ficaria muito apertado */
 }
 
 /* Descrição Curta */
@@ -31,7 +31,7 @@ body.product-page {
 }
 
 .short-desc-text {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 15px !important;
     line-height: 1.6 !important;
     color: #333333 !important;
@@ -39,7 +39,7 @@ body.product-page {
 }
 
 .view-full-desc {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 14px !important;
     font-weight: 700 !important;
     text-decoration: underline !important;
@@ -173,9 +173,9 @@ body.product-page {
     border: 1px solid #e0e0e0;
     background: #fff;
     color: #555;
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 14px !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important; /* ✅ Ajuste: 500 fica mais nítido para botões */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -240,7 +240,8 @@ body.product-page {
     font-size: 0.75rem;
     color: #666;
     cursor: pointer;
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
+    font-weight: 500 !important; /* ✅ Ajuste: Melhora a leitura em letras pequenas */
     text-decoration: underline;
 }
 
@@ -286,7 +287,7 @@ body.product-page {
 }
 
 .badge-text strong {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-weight: 700 !important;
     color: #1a1a1a !important;
     margin-bottom: 2px;
@@ -366,9 +367,9 @@ body, .short-desc-text, .model-info-text {
 }
 
 .selector-label {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 14px !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important; /* ✅ Ajuste: 500 melhora a leitura de labels */
     color: #000 !important;
     margin-bottom: 0.6rem !important;
     text-transform: none !important; 
@@ -391,17 +392,17 @@ body, .short-desc-text, .model-info-text {
 }
 
 .price-current {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-    font-weight: 400 !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
+    font-weight: 600 !important; /* ✅ Ajuste: 600 destaca melhor o preço que 400 */
     font-size: 1.5rem !important;
     color: #000000 !important;
-    letter-spacing: -1px !important;
+    letter-spacing: -0.5px !important; /* ✅ Ajuste: -1px é muito para a Outfit */
     line-height: 1 !important;
     margin: 0 !important;
 }
 
 .price-installments {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 15px !important;
     color: #555 !important;
     font-weight: 400 !important;
@@ -482,14 +483,14 @@ body, .short-desc-text, .model-info-text {
 @media (min-width: 769px) {
     
     .price-current, 
-    #detailsPriceNew {
-        font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
-        font-weight: 400 !important;
-        font-size: 46px !important; /* GIGANTE só no PC */
-        color: #000000 !important;
-        letter-spacing: -1px !important;
-        line-height: 1.1 !important;
-    }
+#detailsPriceNew {
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
+    font-weight: 600 !important; /* ✅ Ajuste: 600 dá mais impacto em tamanho gigante */
+    font-size: 46px !important; /* GIGANTE só no PC */
+    color: #000000 !important;
+    letter-spacing: -1.5px !important; /* ✅ Ajuste: Outfit aceita bem tracking negativo em tamanhos grandes */
+    line-height: 1.1 !important;
+}
 
     /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
@@ -585,9 +586,9 @@ body, .short-desc-text, .model-info-text {
     border: none !important;
     color: #000 !important;
     padding: 0 !important;
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
     font-size: 14px !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important; /* ✅ Ajuste: 500 melhora a visibilidade do link */
     text-transform: none !important;
     letter-spacing: 0 !important;
     text-decoration: underline;
@@ -730,7 +731,8 @@ body, .short-desc-text, .model-info-text {
 .btn-whatsapp-main {
     width: 100% !important;
     height: 55px !important;
-    font-family: 'Century Gothic', CenturyGothic, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
+    font-weight: 600 !important; /* ✅ Ajuste: 600 dá mais impacto e leitura no botão */
     text-transform: uppercase !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
@@ -1149,5 +1151,6 @@ body, .short-desc-text, .model-info-text {
         letter-spacing: 0.5px;
     }
 }
+
 
 
