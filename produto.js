@@ -2012,11 +2012,3 @@ function setupMasks() {
 // Chamar setupMasks ao carregar
 document.addEventListener('DOMContentLoaded', setupMasks);
 
-
-
-
-
-
-
-
-
