@@ -2,7 +2,7 @@
 /* Header, Footer, Menu e Banners são herdados do CSS Principal */
 
 body.product-page {
-    font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif, sans-serif;
+    font-family: 'Outfit', sans-serif; /* ✅ Fonte substituída */
     color: #000000;
     background: #ffffff;
     line-height: 1.5;
@@ -1149,4 +1149,5 @@ body, .short-desc-text, .model-info-text {
         letter-spacing: 0.5px;
     }
 }
+
 
