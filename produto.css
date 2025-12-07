@@ -483,14 +483,15 @@ body, .short-desc-text, .model-info-text {
 @media (min-width: 769px) {
     
     .price-current, 
-#detailsPriceNew {
-    font-family: 'Outfit', sans-serif !important; /* ✅ Fonte trocada */
-    font-weight: 600 !important; /* ✅ Ajuste: 600 dá mais impacto em tamanho gigante */
-    font-size: 46px !important; /* GIGANTE só no PC */
-    color: #000000 !important;
-    letter-spacing: -1.5px !important; /* ✅ Ajuste: Outfit aceita bem tracking negativo em tamanhos grandes */
-    line-height: 1.1 !important;
-}
+    #detailsPriceNew {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 46px !important;      
+        font-weight: 500 !important;      
+        color: #1a1a1a !important;         
+        letter-spacing: -0.5px !important; 
+        line-height: 1.1 !important;
+        margin-top: 5px !important;       
+    }
 
     /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
@@ -1151,6 +1152,7 @@ body, .short-desc-text, .model-info-text {
         letter-spacing: 0.5px;
     }
 }
+
 
 
 
