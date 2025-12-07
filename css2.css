@@ -1360,23 +1360,25 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     height: 100%; 
     background: rgba(0,0,0,0.7); 
     z-index: 3600; 
-    align-items: flex-start; /* ← MUDAR de center para flex-start */
+    align-items: flex-start; 
     justify-content: center; 
     padding: 2rem;
-    padding-top: 3rem; /* ← ADICIONAR para afastar do topo */
-    overflow-y: auto; /* ← ADICIONAR para scroll do próprio modal */
+    padding-top: 3rem; 
+    overflow-y: auto; 
 }
 .admin-modal.active { display: flex; }
 .admin-modal-content {
     background: white;
     padding: 2rem;
+    padding-bottom: 0; 
     width: 100%;
-    max-width: 800px; /* ← AUMENTAR DE 600px PARA 800px */
-    max-height: 95vh; /* ← AUMENTAR DE 90vh PARA 95vh */
+    max-width: 800px;
+    max-height: 95vh;
     overflow-y: auto;
-    overflow-x: hidden; /* ← ADICIONAR ESTA LINHA */
+    overflow-x: hidden;
 }
-/* Ajuste do modal de produto - ADICIONAR ESTA SEÇÃO COMPLETA */
+
+/* Ajuste do modal de produto */
 #productModal .admin-modal-content {
     max-width: 900px;
     padding: 1.5rem;
@@ -1401,22 +1403,60 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
     gap: 1rem; 
     margin-bottom: 1.5rem;
-    max-height: 400px; /* ← ADICIONAR */
-    overflow-y: auto; /* ← ADICIONAR */
-    padding-right: 0.5rem; /* ← ADICIONAR */
+    max-height: 400px; 
+    overflow-y: auto; 
+    padding-right: 0.5rem; 
 }
+
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray); }
 .admin-modal-header h3 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
+
 .admin-form-group label { display: block; margin-bottom: 0.2rem; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
-.admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--gray); font-size: 0.9rem; font-family: inherit; }
-.admin-form-group textarea { resize: vertical; min-height: 100px; }
+
+/* ==================== INPUTS MODERNOS (Substituição) ==================== */
+.admin-form-group input,
+.admin-form-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: #fafafa;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.admin-form-group input:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Textarea separado para manter estilo base + resize */
+.admin-form-group textarea { 
+    width: 100%; 
+    padding: 0.8rem; 
+    border: 1px solid var(--gray); 
+    font-size: 0.9rem; 
+    font-family: inherit;
+    resize: vertical; 
+    min-height: 100px; 
+}
+
 .admin-form-actions { display: flex; gap: 1rem; margin-top: 2rem; }
 .admin-form-actions button { flex: 1; padding: 1rem; border: none; cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; }
 .admin-btn-save { background: var(--primary); color: white; }
 .admin-btn-save:hover { background: #333; }
 .admin-btn-cancel { background: var(--gray); color: var(--text); }
 .admin-btn-cancel:hover { background: #ccc; }
-
 /* ==================== GERENCIADOR DE FOTOS (ATUALIZADO) ==================== */
 /* Container Geral */
 .image-manager { 
@@ -3158,3 +3198,21 @@ footer { background: var(--gray-light); padding: 3rem 4% 1.5rem; border-top: 1px
     overflow-y: auto;
 }
 
+/* ==================== GRID DE FORMULÁRIO ==================== */
+.form-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.form-row-grid .admin-form-group {
+  margin-bottom: 0; /* Remove margem extra */
+}
+
+/* Mobile: Volta para coluna única */
+@media (max-width: 768px) {
+  .form-row-grid {
+    grid-template-columns: 1fr;
+  }
+}
