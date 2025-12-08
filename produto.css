@@ -499,8 +499,8 @@ body, .short-desc-text, .model-info-text {
     /* 1. Grid Principal (Esq: Galeria Grande | Dir: Info Fixa) */
     .product-page-container .product-main-grid {
         display: grid !important;
-        grid-template-columns: 68% 28% !important; 
-        gap: 4% !important;
+        grid-template-columns: 65% 30% !important;
+        gap: 5% !important;
         width: 100% !important;
         max-width: 100% !important;
         padding: 20px 0px 40px 0 !important;
@@ -1155,6 +1155,7 @@ body, .short-desc-text, .model-info-text {
         letter-spacing: 0.5px;
     }
 }
+
 
 
 
