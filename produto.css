@@ -49,7 +49,11 @@ body.product-page {
     cursor: pointer;
 }
 
-.product-page-container { max-width: 100%; padding: 0; margin: 0; }
+.product-page-container {
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        padding: 0 60px !important;
+    }
 
 /* .gallery-photo-full:first-child {
     grid-column: span 2; 
@@ -1152,6 +1156,7 @@ body, .short-desc-text, .model-info-text {
         letter-spacing: 0.5px;
     }
 }
+
 
 
 
