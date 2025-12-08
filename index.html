@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
-  <link rel="dns-prefetch" href="https://www.gstatic.com">
-  
+  <!-- ✅ Consolidado: dns-prefetch removido, mantido apenas preconnect (mais eficiente) -->
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+  <link rel="preconnect" href="https://www.gstatic.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- ✅ Consolidado: Google Fonts unificado em uma única chamada (linhas 6-7 e 32 do original) -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,17 +32,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Seja Versátil">
 
-  <link rel="preconnect" href="https://www.gstatic.com">
-  <link rel="preconnect" href="https://firebasestorage.googleapis.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="https://i.imgur.com/kvruQ8k.jpeg" fetchpriority="high">
-
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css2.css?v=1.0.1">
   <link rel="stylesheet" href="auth_styles.css">
-
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -77,9 +72,8 @@
       }
     });
   </script>
-  <!-- NOVO MÓDULO DE AUTENTICAÇÃO CENTRALIZADO -->
-<script src="auth.js"></script>
-<script src="script2.js?v=1.0.5"></script> 
+  <script src="auth.js"></script>
+  <script src="script2.js?v=1.0.5"></script> 
 </head>
 
 <body>
@@ -116,13 +110,13 @@
     </div>
   </div>
 
- <!-- Top Banner Rotativo -->
-<div class="top-banner-rotative">
+  <!-- Top Banner Rotativo -->
+  <div class="top-banner-rotative">
     <div class="banner-message active">FRETE GRÁTIS para todo Brasil nas compras acima de R$ 399,90</div>
     <div class="banner-message">PARCELE EM ATÉ <strong>3X SEM JUROS</strong> no cartão de crédito</div>
     <div class="banner-message">GANHE <strong>10% DE DESCONTO NO PIX</strong> pagando no PIX</div>
     <div class="banner-message"><strong>ALTA TECNOLOGIA</strong> - Compre sem medo</div>
-</div>
+  </div>
 
   <header>
     <nav>
@@ -173,7 +167,6 @@
     </nav>
   </header>
 
-  
   <!-- ==================== MODALS SECTION ==================== -->
   <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="search-content">
@@ -191,70 +184,54 @@
     <div class="cart-items" id="cartItems">
       <div class="empty-cart">Seu carrinho está vazio</div>
     </div>
-   <div class="cart-footer" id="cartFooter" style="display: none;">
-
-
-     <!-- NOVA SEÇÃO: Barra de Frete -->
-<div class="cart-shipping-progress">
-  <div class="shipping-progress-text">
-    <span id="shippingProgressText">Pra ganhar FRETE GRÁTIS</span>
-    <span id="shippingProgressAmount" style="float: right; font-weight: 700;">R$299,00</span>
-  </div>
-  <div class="shipping-progress-bar">
-    <div class="shipping-progress-fill" id="shippingProgressFill"></div>
-  </div>
-</div>
-     
-  <!-- Sistema de Cupons -->
-  <div class="coupon-section">
-    <h4>🎟️ Cupom de Desconto</h4>
-    <div class="coupon-input-row">
-      <input type="text" 
-             class="coupon-input" 
-             id="couponInput" 
-             placeholder="Digite o código" 
-             maxlength="20"
-             autocomplete="off">
-      <button class="coupon-apply-btn" 
-              id="applyCouponBtn" 
-              type="button"
-              onclick="applyCoupon()">
-        APLICAR
-      </button>
-    </div>
-    <div class="coupon-message" id="couponMessage"></div>
-    <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
-      <div class="applied-coupon-info">
-        <span class="applied-coupon-code" id="appliedCouponCode"></span>
-        <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
+    <div class="cart-footer" id="cartFooter" style="display: none;">
+      <!-- Barra de Frete -->
+      <div class="cart-shipping-progress">
+        <div class="shipping-progress-text">
+          <span id="shippingProgressText">Pra ganhar FRETE GRÁTIS</span>
+          <span id="shippingProgressAmount" style="float: right; font-weight: 700;">R$299,00</span>
+        </div>
+        <div class="shipping-progress-bar">
+          <div class="shipping-progress-fill" id="shippingProgressFill"></div>
+        </div>
       </div>
-      <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
-    </div>
-  </div>
-  
-  <!-- Total com Desconto -->
-  <div class="cart-total">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
-      <span>Subtotal:</span>
-      <span id="cartSubtotal">R$ 0,00</span>
-    </div>
-    <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
-      <span>Desconto:</span>
-      <span id="discountValue">- R$ 0,00</span>
-    </div>
-    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
-      <span>Total:</span>
-      <span id="cartTotal">R$ 0,00</span>
-    </div>
-  </div>
-
-
-     <button class="view-more-btn" onclick="closeCartAndExplore()">
-  VER MAIS LOOKS
-</button>
      
-  <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
-</div>
+      <!-- Sistema de Cupons -->
+      <div class="coupon-section">
+        <h4>🎟️ Cupom de Desconto</h4>
+        <div class="coupon-input-row">
+          <input type="text" class="coupon-input" id="couponInput" placeholder="Digite o código" maxlength="20" autocomplete="off">
+          <button class="coupon-apply-btn" id="applyCouponBtn" type="button" onclick="applyCoupon()">APLICAR</button>
+        </div>
+        <div class="coupon-message" id="couponMessage"></div>
+        <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
+          <div class="applied-coupon-info">
+            <span class="applied-coupon-code" id="appliedCouponCode"></span>
+            <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
+          </div>
+          <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
+        </div>
+      </div>
+  
+      <!-- Total com Desconto -->
+      <div class="cart-total">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+          <span>Subtotal:</span>
+          <span id="cartSubtotal">R$ 0,00</span>
+        </div>
+        <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
+          <span>Desconto:</span>
+          <span id="discountValue">- R$ 0,00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
+          <span>Total:</span>
+          <span id="cartTotal">R$ 0,00</span>
+        </div>
+      </div>
+
+      <button class="view-more-btn" onclick="closeCartAndExplore()">VER MAIS LOOKS</button>
+      <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+    </div>
   </div>
 
   <section class="hero-section" id="hero">
@@ -347,30 +324,28 @@
   </section>
 
   <!-- VIDEO GRID SECTION -->
-<section class="video-grid-section">
-  <h2 class="section-title">Em Movimento</h2>
-  
-  <div class="video-grid-container" id="videoGridContainer">
-    <!-- Skeleton loader enquanto carrega -->
-    <div class="video-card skeleton-loading">
-      <div class="skeleton-video shimmer"></div>
+  <section class="video-grid-section">
+    <h2 class="section-title">Em Movimento</h2>
+    <div class="video-grid-container" id="videoGridContainer">
+      <!-- Skeleton loader enquanto carrega -->
+      <div class="video-card skeleton-loading">
+        <div class="skeleton-video shimmer"></div>
+      </div>
+      <div class="video-card skeleton-loading">
+        <div class="skeleton-video shimmer"></div>
+      </div>
+      <div class="video-card skeleton-loading">
+        <div class="skeleton-video shimmer"></div>
+      </div>
+      <div class="video-card skeleton-loading">
+        <div class="skeleton-video shimmer"></div>
+      </div>
     </div>
-    <div class="video-card skeleton-loading">
-      <div class="skeleton-video shimmer"></div>
-    </div>
-    <div class="video-card skeleton-loading">
-      <div class="skeleton-video shimmer"></div>
-    </div>
-    <div class="video-card skeleton-loading">
-      <div class="skeleton-video shimmer"></div>
-    </div>
-  </div>
-</section>
+  </section>
 
   <section class="products-section bestsellers-section">
     <h2 class="section-title">Mais Vendidos</h2>
-    <div class="products-grid" id="bestSellersGrid">
-      </div>
+    <div class="products-grid" id="bestSellersGrid"></div>
   </section>
 
   <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&q=80')">
@@ -453,6 +428,7 @@
     </svg>
   </a>
 
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos, mantido apenas no container pai -->
   <div class="user-panel" id="userPanel">
     <div class="user-panel-content">
       <div class="user-panel-header">
@@ -467,116 +443,100 @@
 
       <div class="user-panel-body">
         <div class="user-tab-content active" id="loginTab">
-    <form onsubmit="userLogin(event)">
-        <div class="form-group">
-            <label for="loginEmail">E-mail</label>
-            <input type="email" id="loginEmail" required autocomplete="email">
-        </div>
-        <div class="form-group">
-            <label for="loginPassword">Senha</label>
-            <input type="password" id="loginPassword" required autocomplete="current-password">
-        </div>
-        <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
-            <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
-        </div>
-      
-        <!-- Mensagem de erro dinâmica -->
-        <div class="form-error" id="loginError" style="display: none;"></div>
-        <button type="submit" class="form-btn">Entrar</button>
-    </form>
-    <div class="login-divider"><span>ou</span></div>
-<button type="button" class="google-login-btn" onclick="loginWithGoogle()">
-    <svg width="18" height="18" viewBox="0 0 18 18" style="margin-right: 0.8rem;">
-        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
-        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-        <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
-        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
-    </svg>
-    Entrar com Google
-</button>
-<div class="form-link">
-    Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
-</div>
-</div>
-
-<!-- ABA DE CADASTRO ATUALIZADA -->
-<div class="user-tab-content" id="registerTab">
-    <form onsubmit="userRegister(event)">
-        <div class="form-group">
-            <label for="registerName">Nome Completo</label>
-            <input type="text" id="registerName" required minlength="3" autocomplete="name" placeholder="Ex: Maria Silva">
-        </div>
-        <div class="form-group">
-            <label for="registerEmail">E-mail</label>
-            <input type="email" id="registerEmail" required autocomplete="email" placeholder="seu@email.com">
+          <form onsubmit="userLogin(event)">
+            <div class="form-group">
+              <label for="loginEmail">E-mail</label>
+              <input type="email" id="loginEmail" required autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Senha</label>
+              <input type="password" id="loginPassword" required autocomplete="current-password">
+            </div>
+            <div class="form-link" style="text-align: right; margin-bottom: 1rem;">
+              <a href="#" onclick="resetPassword(); return false;">Esqueceu sua senha?</a>
+            </div>
+            <div class="form-error" id="loginError" style="display: none;"></div>
+            <button type="submit" class="form-btn">Entrar</button>
+          </form>
+          <div class="login-divider"><span>ou</span></div>
+          <button type="button" class="google-login-btn" onclick="loginWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 18 18" style="margin-right: 0.8rem;">
+              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+              <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+            </svg>
+            Entrar com Google
+          </button>
+          <div class="form-link">
+            Não tem conta? <a href="#" onclick="switchUserTab('register'); return false;">Cadastre-se aqui</a>
+          </div>
         </div>
 
-        <!-- ✅ NOVOS CAMPOS ADICIONADOS AQUI -->
-        <div class="form-group">
-            <label for="registerPhone">WhatsApp / Telefone</label>
-            <input type="tel" id="registerPhone" required maxlength="15" autocomplete="tel" placeholder="(XX) XXXXX-XXXX" onkeyup="maskPhone(this)">
-        </div>
-        
-        <div class="form-group">
-            <label for="registerCPF">CPF</label>
-            <input type="text" id="registerCPF" required maxlength="14" placeholder="000.000.000-00" onkeyup="maskCPF(this)">
-        </div>
-        <!-- FIM DOS NOVOS CAMPOS -->
-
-        <div class="form-group">
-            <label for="registerPassword">Crie uma Senha</label>
-            <input type="password" id="registerPassword" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
-            
-            <div id="passwordStrength" style="display: none; margin-top: 0.5rem;">
+        <div class="user-tab-content" id="registerTab">
+          <form onsubmit="userRegister(event)">
+            <div class="form-group">
+              <label for="registerName">Nome Completo</label>
+              <input type="text" id="registerName" required minlength="3" autocomplete="name" placeholder="Ex: Maria Silva">
+            </div>
+            <div class="form-group">
+              <label for="registerEmail">E-mail</label>
+              <input type="email" id="registerEmail" required autocomplete="email" placeholder="seu@email.com">
+            </div>
+            <div class="form-group">
+              <label for="registerPhone">WhatsApp / Telefone</label>
+              <input type="tel" id="registerPhone" required maxlength="15" autocomplete="tel" placeholder="(XX) XXXXX-XXXX" onkeyup="maskPhone(this)">
+            </div>
+            <div class="form-group">
+              <label for="registerCPF">CPF</label>
+              <input type="text" id="registerCPF" required maxlength="14" placeholder="000.000.000-00" onkeyup="maskCPF(this)">
+            </div>
+            <div class="form-group">
+              <label for="registerPassword">Crie uma Senha</label>
+              <input type="password" id="registerPassword" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+              <div id="passwordStrength" style="display: none; margin-top: 0.5rem;">
                 <div style="height: 4px; background: #e5e5e5; border-radius: 2px; overflow: hidden;">
-                    <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s;"></div>
+                  <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s;"></div>
                 </div>
                 <small id="strengthText" style="display: block; margin-top: 0.3rem; font-size: 0.8rem;"></small>
+              </div>
             </div>
+            <div class="form-group">
+              <label for="registerConfirmPassword">Confirmar Senha</label>
+              <input type="password" id="registerConfirmPassword" required autocomplete="new-password" placeholder="Digite a senha novamente">
+              <small id="passwordMatchFeedback" style="display: none; margin-top: 0.5rem; font-size: 0.8rem;"></small>
+            </div>
+            <div class="form-error" id="registerError" style="display: none;"></div>
+            <div class="form-success" id="registerSuccess" style="display: none;"></div>
+            <button type="submit" class="form-btn">Criar Conta</button>
+          </form>
+          <div class="form-link">
+            Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
+          </div>
         </div>
-        <div class="form-group">
-            <label for="registerConfirmPassword">Confirmar Senha</label>
-            <input type="password" id="registerConfirmPassword" required autocomplete="new-password" placeholder="Digite a senha novamente">
-            
-            <small id="passwordMatchFeedback" style="display: none; margin-top: 0.5rem; font-size: 0.8rem;"></small>
-        </div>
-        
-        <div class="form-error" id="registerError" style="display: none;"></div>
-        <div class="form-success" id="registerSuccess" style="display: none;"></div>
-        
-        <button type="submit" class="form-btn">Criar Conta</button>
-    </form>
-    <div class="form-link">
-        Já tem conta? <a href="#" onclick="switchUserTab('login'); return false;">Entre aqui</a>
-    </div>
-</div>
 
         <div class="user-tab-content" id="userLoggedTab">
-    <div class="user-logged-in">
-        <h4>Bem-vindo(a)! <span id="userName"></span></h4>
-        <div class="user-info">
-            <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
-            <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
-        </div>
-        <div class="user-actions">
-            
-            <!-- ✅ ALTERAÇÃO: Agora são Links (<a>) em vez de botões -->
-            <!-- Adicionei text-decoration: none para garantir que não fique sublinhado -->
-            
-            <a href="meus_pedidos.html?aba=pedidos" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+          <div class="user-logged-in">
+            <h4>Bem-vindo(a)! <span id="userName"></span></h4>
+            <div class="user-info">
+              <p><strong>E-mail:</strong> <span id="userEmail"></span></p>
+              <p><strong>Status:</strong> <span id="userStatus">Cliente</span></p>
+            </div>
+            <div class="user-actions">
+              <a href="meus_pedidos.html?aba=pedidos" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
                 📦 Meus Pedidos
-            </a>
-
-            <a href="meus_pedidos.html?aba=dados" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+              </a>
+              <a href="meus_pedidos.html?aba=dados" class="user-action-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
                 👤 Meus Dados
-            </a>
-
-            <!-- Botões de Admin e Logout permanecem iguais -->
-            <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">🔧 Painel Administrativo</button>
-            <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
+              </a>
+              <button class="user-action-btn admin" id="adminAccessBtn" style="display: none;" onclick="openAdminPanel(); closeUserPanel()">🔧 Painel Administrativo</button>
+              <button class="user-action-btn logout" onclick="userLogout()">Sair da Conta</button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
   <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
@@ -620,7 +580,6 @@
           <label for="settingBannerTitle">Banner Principal - Texto 1</label>
           <input type="text" id="settingBannerTitle" value="Seja Versátil">
         </div>
-
         <div class="admin-form-group">
           <label for="settingBannerSubtitle">Banner Principal - Subtítulo</label>
           <input type="text" id="settingBannerSubtitle" value="Seja Você, Seja Versátil">
@@ -634,48 +593,41 @@
           <button class="admin-btn admin-btn-delete" onclick="limparTodosProdutos()" style="width: 100%;">🗑️ Limpar TODOS os Produtos do Firestore</button>
           <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Esta ação não pode ser desfeita! Use apenas para testes.</p>
         </div>
-        <!-- GERENCIAMENTO DE VÍDEOS -->
-<div class="admin-form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e5e5;">
-  <label style="color: #667eea;">🎬 Gerenciar Grid de Vídeos</label>
-  <button class="admin-btn admin-btn-add" onclick="openVideoManager()" style="width: 100%;">
-    📹 Abrir Gerenciador de Vídeos
-  </button>
-  <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
-    Adicione até 5 vídeos de 5-10 segundos (máx 2MB cada)
-  </p>
-</div>
+        <div class="admin-form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e5e5;">
+          <label style="color: #667eea;">🎬 Gerenciar Grid de Vídeos</label>
+          <button class="admin-btn admin-btn-add" onclick="openVideoManager()" style="width: 100%;">📹 Abrir Gerenciador de Vídeos</button>
+          <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Adicione até 5 vídeos de 5-10 segundos (máx 2MB cada)</p>
+        </div>
         <button class="admin-btn admin-btn-add" onclick="saveSettings()">Salvar Configurações</button>
       </div>
-              <!-- Nova Aba de Cupons -->
-<div class="admin-tab-content" id="couponsTab">
-  <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
-  
-  <div style="margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
-    <div id="activeCouponsList" class="coupons-list"></div>
-  </div>
-  
-  <div style="margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
-    <div id="inactiveCouponsList" class="coupons-list"></div>
-  </div>
-</div>
 
-<!-- Modal de Cupom -->
+      <div class="admin-tab-content" id="couponsTab">
+        <button class="admin-btn admin-btn-add" onclick="openCouponModal()">+ Criar Novo Cupom</button>
+        <div style="margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem;">Cupons Ativos</h3>
+          <div id="activeCouponsList" class="coupons-list"></div>
+        </div>
+        <div style="margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem;">Cupons Inativos/Expirados</h3>
+          <div id="inactiveCouponsList" class="coupons-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos -->
   <div class="coupon-modal" id="couponModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="coupon-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="coupon-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="coupon-modal-content">
+      <div class="coupon-modal-header">
         <h3>Criar Novo Cupom</h3>
         <button onclick="closeCouponModal()">✕</button>
       </div>
-      
       <form id="couponForm" onsubmit="saveCoupon(event)" novalidate>
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponCode">Código do Cupom *</label>
             <input type="text" id="couponCode" required maxlength="20" style="text-transform: uppercase;">
           </div>
-          
           <div class="admin-form-group">
             <label for="couponType">Tipo de Desconto *</label>
             <select id="couponType" required onchange="toggleMaxDiscount()">
@@ -684,37 +636,31 @@
             </select>
           </div>
         </div>
-        
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponValue">Valor do Desconto *</label>
             <input type="number" id="couponValue" step="0.01" required min="0">
           </div>
-          
           <div class="admin-form-group" id="maxDiscountGroup">
             <label for="couponMaxDiscount">Desconto Máximo (R$)</label>
             <input type="number" id="couponMaxDiscount" step="0.01" min="0">
           </div>
         </div>
-        
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponMinValue">Valor Mínimo do Carrinho (R$)</label>
             <input type="number" id="couponMinValue" step="0.01" min="0">
           </div>
-          
           <div class="admin-form-group">
             <label for="couponUsageLimit">Limite Total de Usos</label>
             <input type="number" id="couponUsageLimit" min="1">
           </div>
         </div>
-        
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponUsagePerUser">Usos por Usuário</label>
             <input type="number" id="couponUsagePerUser" min="1">
           </div>
-          
           <div class="admin-form-group">
             <label>
               <input type="checkbox" id="couponActive" checked style="width: auto; margin-right: 0.5rem;">
@@ -722,21 +668,17 @@
             </label>
           </div>
         </div>
-        
         <div class="coupon-form-row">
           <div class="admin-form-group">
             <label for="couponValidFrom">Válido A Partir De</label>
             <input type="datetime-local" id="couponValidFrom">
           </div>
-          
           <div class="admin-form-group">
             <label for="couponValidUntil">Válido Até</label>
             <input type="datetime-local" id="couponValidUntil">
           </div>
         </div>
-        
         <input type="hidden" id="couponId">
-        
         <div class="admin-form-actions">
           <button type="submit" class="admin-btn-save">Salvar Cupom</button>
           <button type="button" class="admin-btn-cancel" onclick="closeCouponModal()">Cancelar</button>
@@ -745,136 +687,115 @@
     </div>
   </div>
 
-<!-- VIDEO MANAGER MODAL -->
-<div class="admin-modal" id="videoManagerModal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="admin-modal-content" style="max-width: 800px;" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
-      <h3>🎬 Gerenciar Vídeos da Home</h3>
-      <button class="admin-close" onclick="closeVideoManager()" aria-label="Fechar">✕</button>
-    </div>
-    
-    <div style="padding: 1.5rem;">
-      <div class="video-manager-list" id="videoManagerList">
-        <!-- Vídeos serão renderizados aqui -->
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos -->
+  <div class="admin-modal" id="videoManagerModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal-content" style="max-width: 800px;">
+      <div class="admin-modal-header">
+        <h3>🎬 Gerenciar Vídeos da Home</h3>
+        <button class="admin-close" onclick="closeVideoManager()" aria-label="Fechar">✕</button>
       </div>
-      
-      <button class="admin-btn admin-btn-add" onclick="addVideoSlot()" style="width: 100%; margin-top: 1rem;">
-        ➕ Adicionar Vídeo (máx 5)
-      </button>
-      
-      <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f8f8; border-radius: 8px; font-size: 0.85rem; color: #666;">
-        <strong>📋 Especificações:</strong><br>
-        • Formato: MP4 (H.264)<br>
-        • Tamanho máximo: 2MB por vídeo<br>
-        • Resolução recomendada: 720p ou 1080p<br>
-        • Duração: 5-10 segundos<br>
-        • FPS: 30fps
+      <div style="padding: 1.5rem;">
+        <div class="video-manager-list" id="videoManagerList"></div>
+        <button class="admin-btn admin-btn-add" onclick="addVideoSlot()" style="width: 100%; margin-top: 1rem;">➕ Adicionar Vídeo (máx 5)</button>
+        <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f8f8; border-radius: 8px; font-size: 0.85rem; color: #666;">
+          <strong>📋 Especificações:</strong><br>
+          • Formato: MP4 (H.264)<br>
+          • Tamanho máximo: 2MB por vídeo<br>
+          • Resolução recomendada: 720p ou 1080p<br>
+          • Duração: 5-10 segundos<br>
+          • FPS: 30fps
+        </div>
       </div>
     </div>
   </div>
-</div>
-      
-<div class="admin-modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true">
-  
-    <div class="admin-modal-content" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="admin-modal-header" role="dialog" aria-modal="true" aria-hidden="true">
-        <h3 id="modalTitle">Adicionar Produto</h3>
-        <button class="admin-close" onclick="closeProductModal()" aria-label="Fechar">✕</button>
-      </div>
-      <form id="productForm" onsubmit="saveProduct(event)">
-        <div class="admin-form-group">
-          <label for="productName">Nome do Produto *</label>
-          <input type="text" id="productName" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="productCategory">Categoria *</label>
-          <select id="productCategory" required>
-            <option value="blusas">Blusas</option>
-            <option value="conjunto calca">Conjunto Calça</option>
-            <option value="peca unica">Peça Única</option>
-            <option value="conjunto short saia">Conjunto Short Saia</option>
-            <option value="conjunto short">Conjunto Short</option>
-          </select>
-        </div>
-        <div class="admin-form-group">
-          <label for="productPrice">Preço Atual (R$) *</label>
-          <input type="number" id="productPrice" step="0.01" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="productOldPrice">Preço Antigo (R$) - Opcional</label>
-          <input type="number" id="productOldPrice" step="0.01">
-        </div>
-        <div class="admin-form-group">
-          <label for="productBadge">Badge - Opcional</label>
-          <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
-        </div>
-        <div class="admin-form-group">
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="checkbox" id="productBlackFriday" style="width: auto; cursor: pointer;">
-            <span>Black Versátil</span>
-          </label>
-          <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">Produtos marcados exibirão o adesivo "BLACK VERSÁTIL" em destaque</small>
-        </div>
 
-        <!-- ========== SEÇÃO DE CORES (REDESENHADA) ========== -->
-<div class="admin-form-group">
-  <label class="section-label">🎨 Cores do Produto</label>
-  
-  <div id="productColorsManager" class="colors-manager-container">
-    <p class="empty-state">Nenhuma cor adicionada ainda</p>
-  </div>
-  
-  <button type="button" onclick="addColorToProduct()" class="btn-add-color">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-    Adicionar Nova Cor
-  </button>
-  
-  <small class="form-hint">
-    💡 <strong>Fluxo correto:</strong> Adicione as imagens → Crie a cor → Vincule as fotos à cor
-  </small>
-</div>
-
-<!-- ========== SEÇÃO DE IMAGENS (MANTIDA) ========== -->
-<div class="image-manager">
-  <div class="image-manager-title">Imagens do Produto</div>
-  <div class="image-list" id="productImagesList"></div>
-  
-  <div class="image-upload-options">
-    <button type="button" class="image-add-btn">
-      📁 Upload Local
-      <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
-    </button>
-    <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">🔗 URL de Imagem</button>
-    <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">🎨 Gradiente CSS</button>
-  </div>
-  
-  <div class="image-url-input" id="imageUrlInputBox">
-    <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
-    <div class="image-url-actions">
-      <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
-      <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
-    </div>
-  </div>
-  
-  <div class="image-url-input" id="imageGradientInputBox">
-    <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
-    <div class="image-url-actions">
-      <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
-      <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
-    </div>
-  </div>
-  
-  <div class="image-helper">
-    💡 <strong>Como adicionar imagens:</strong><br>
-    • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
-    • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente)<br>
-    • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
-  </div>
-</div>
-        
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos -->
+  <div class="admin-modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h3 id="modalTitle">Adicionar Produto</h3>
+        <button class="admin-close" onclick="closeProductModal()" aria-label="Fechar">✕</button>
+      </div>
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <div class="admin-form-group">
+          <label for="productName">Nome do Produto *</label>
+          <input type="text" id="productName" required>
+        </div>
+        <div class="admin-form-group">
+          <label for="productCategory">Categoria *</label>
+          <select id="productCategory" required>
+            <option value="blusas">Blusas</option>
+            <option value="conjunto calca">Conjunto Calça</option>
+            <option value="peca unica">Peça Única</option>
+            <option value="conjunto short saia">Conjunto Short Saia</option>
+            <option value="conjunto short">Conjunto Short</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label for="productPrice">Preço Atual (R$) *</label>
+          <input type="number" id="productPrice" step="0.01" required>
+        </div>
+        <div class="admin-form-group">
+          <label for="productOldPrice">Preço Antigo (R$) - Opcional</label>
+          <input type="number" id="productOldPrice" step="0.01">
+        </div>
+        <div class="admin-form-group">
+          <label for="productBadge">Badge - Opcional</label>
+          <input type="text" id="productBadge" placeholder="Ex: Novo, -30%, Lançamento">
+        </div>
+        <div class="admin-form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="productBlackFriday" style="width: auto; cursor: pointer;">
+            <span>Black Versátil</span>
+          </label>
+          <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">Produtos marcados exibirão o adesivo "BLACK VERSÁTIL" em destaque</small>
+        </div>
+        <div class="admin-form-group">
+          <label class="section-label">🎨 Cores do Produto</label>
+          <div id="productColorsManager" class="colors-manager-container">
+            <p class="empty-state">Nenhuma cor adicionada ainda</p>
+          </div>
+          <button type="button" onclick="addColorToProduct()" class="btn-add-color">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Adicionar Nova Cor
+          </button>
+          <small class="form-hint">💡 <strong>Fluxo correto:</strong> Adicione as imagens → Crie a cor → Vincule as fotos à cor</small>
+        </div>
+        <div class="image-manager">
+          <div class="image-manager-title">Imagens do Produto</div>
+          <div class="image-list" id="productImagesList"></div>
+          <div class="image-upload-options">
+            <button type="button" class="image-add-btn">
+              📁 Upload Local
+              <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
+            </button>
+            <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">🔗 URL de Imagem</button>
+            <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">🎨 Gradiente CSS</button>
+          </div>
+          <div class="image-url-input" id="imageUrlInputBox">
+            <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
+            <div class="image-url-actions">
+              <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
+              <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
+            </div>
+          </div>
+          <div class="image-url-input" id="imageGradientInputBox">
+            <input type="text" id="gradientField" placeholder="Ex: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+            <div class="image-url-actions">
+              <button type="button" onclick="addGradientImage()" style="background: var(--primary); color: white;">Adicionar Gradiente</button>
+              <button type="button" onclick="toggleGradientInput()" style="background: var(--gray);">Cancelar</button>
+            </div>
+          </div>
+          <div class="image-helper">
+            💡 <strong>Como adicionar imagens:</strong><br>
+            • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
+            • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente)<br>
+            • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
+          </div>
+        </div>
         <input type="hidden" id="productId">
         <div class="admin-form-actions">
           <button type="submit" class="admin-btn-save">Salvar Produto</button>
@@ -884,65 +805,58 @@
     </div>
   </div>
 
-
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos -->
   <div class="customer-data-modal" id="customerDataModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="customer-data-content">
       <div class="customer-data-header">
         <h3>📝 Complete seus dados</h3>
         <p style="font-size: 0.85rem; color: #666;">Para rastrear seu pedido</p>
       </div>
-      
       <form id="customerDataForm">
         <div class="form-group">
           <label>Nome Completo *</label>
           <input type="text" id="guestName" required minlength="3">
         </div>
-        
         <div class="form-group">
           <label>Email *</label>
           <input type="email" id="guestEmail" required autocomplete="email">
         </div>
-        
         <div class="form-group">
           <label>WhatsApp (com DDD) *</label>
           <input type="tel" id="guestPhone" placeholder="71991234567" required>
         </div>
-        
         <div class="form-group">
           <label>CPF * <small>(para rastreamento)</small></label>
           <input type="text" id="guestCPF" placeholder="000.000.000-00" required maxlength="14">
         </div>
-        
         <button type="submit" class="customer-data-submit">Continuar para WhatsApp</button>
         <button type="button" class="customer-data-cancel" onclick="closeCustomerDataModal()">Cancelar</button>
       </form>
     </div>
   </div>
 
-<div class="loading-overlay" id="loadingOverlay">
-      <div class="loading-spinner">
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-      </div>
-      <div class="loading-text" style="color: white; margin-top: 1rem;">Carregando...</div>
+  <!-- ⚠️ VERIFICAR: Dois loading overlays detectados - validar se ambos são usados no script2.js -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+    <div class="loading-text" style="color: white; margin-top: 1rem;">Carregando...</div>
   </div>
 
   <div class="loading-overlay" id="loadingOverlay2">
     <div class="loading-logo">SEJA VERSÁTIL</div>
-    
     <div class="loading-spinner">
-        <div class="loading-dot"></div>
-        <div class="loading-dot"></div>
-        <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
     </div>
-    
     <div class="loading-progress-bar">
-        <div class="loading-progress-fill"></div>
+      <div class="loading-progress-fill"></div>
     </div>
-    
     <div class="loading-text">Preparando sua experiência</div>
-</div>
+  </div>
 
   <script type="application/ld+json">
   {
@@ -956,7 +870,7 @@
   }
   </script>
 
-   <script>
+  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -969,12 +883,9 @@
       });
     }
   </script>
-  </div>
-  </div>
-  </div>
 
-<!-- ADD THIS CORRECT MODAL TO THE END OF YOUR HOME PAGE HTML -->
-<div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <!-- ✅ Consolidado: role="dialog" removido de elementos filhos -->
+  <div id="paymentModal" class="payment-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="payment-modal-content">
       <div class="payment-modal-header">
         <h3>Escolha a Forma de Pagamento</h3>
@@ -1018,15 +929,13 @@
         <div id="installmentsBox" class="installments-box" style="display:none;">
           <label for="installments">Número de Parcelas:</label>
           <select id="installmentsSelect">
-              <option value="2">2x sem juros</option>
-              <option value="3">3x sem juros</option>
+            <option value="2">2x sem juros</option>
+            <option value="3">3x sem juros</option>
           </select>
         </div>
       </div>
       <button class="payment-confirm-btn" onclick="sendToWhatsApp()" type="button">📱 Finalizar Pedido via WhatsApp</button>
     </div>
   </div>
-
-  
 </body>
 </html>
