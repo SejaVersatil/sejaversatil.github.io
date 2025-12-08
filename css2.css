@@ -4128,6 +4128,28 @@ footer {
     }
 }
 
+/* Landscape Mobile - Altura Pequena */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        height: 85vh !important;
+        min-height: 300px !important;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .hero-cta {
+        padding: 0.8rem 2rem !important;
+    }
+}
+
 /* ==========================================================================
    BOOSTERS & OTIMIZAÇÕES
    ========================================================================== */
@@ -4148,14 +4170,20 @@ html {
     scroll-behavior: smooth;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     font-size: 16px !important;
 }
 
 img {
     max-width: 100%;
     height: auto;
-} {
+}
+
+/* ==========================================================================
+   FIM DO ARQUIVO CSS - VERSÃO CONSOLIDADA E OTIMIZADA
+   ========================================================================== */ {
     display: none;
     position: fixed;
     top: 0;
@@ -5175,3 +5203,5 @@ nav {
     background: #ffffff;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.
