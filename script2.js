@@ -5710,7 +5710,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 window.openPaymentModal = openPaymentModal;
 window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
-window.closeCustomerDataModal = closeCustomerDataModal;
 window.collectGuestCustomerData = collectGuestCustomerData;
 window.isValidCPF = isValidCPF;
 window.getUserPhone = getUserPhone;
@@ -5931,3 +5930,4 @@ window.addEventListener('load', () => {
 });
 
 console.log('🎯 Sistema de popup promocional inicializado');
+
