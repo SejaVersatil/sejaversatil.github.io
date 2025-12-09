@@ -5309,3 +5309,139 @@ img {
     filter: brightness(1.15);
     transform: translateY(-2px);
 }
+
+/* ==================== POPUP PROMOCIONAL ==================== */
+.promo-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 1rem;
+}
+
+.promo-popup-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.promo-popup-content {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.8);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: popupBounce 0.6s ease-out forwards;
+}
+
+.promo-popup-overlay.active .promo-popup-content {
+  transform: scale(1);
+}
+
+@keyframes popupBounce {
+  0% {
+    transform: scale(0.5) translateY(-50px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.promo-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promo-popup-close:hover {
+  background: #e74c3c;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.promo-popup-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.promo-popup-cta {
+  display: block;
+  width: calc(100% - 3rem);
+  margin: 1.5rem auto;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.promo-popup-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 768px) {
+  .promo-popup-content {
+    max-width: 90%;
+    border-radius: 12px;
+  }
+  
+  .promo-popup-close {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+  }
+  
+  .promo-popup-cta {
+    font-size: 0.9rem;
+    padding: 0.9rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .promo-popup-content {
+    max-width: 95%;
+  }
+}
