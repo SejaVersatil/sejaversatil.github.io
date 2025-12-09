@@ -937,5 +937,28 @@
       <button class="payment-confirm-btn" onclick="sendToWhatsApp()" type="button">📱 Finalizar Pedido via WhatsApp</button>
     </div>
   </div>
+
+<!-- ==================== POPUP PROMOCIONAL ==================== -->
+<div class="promo-popup-overlay" id="promoPopupOverlay">
+  <div class="promo-popup-content">
+    <button class="promo-popup-close" onclick="closePromoPopup()" aria-label="Fechar">
+      ✕
+    </button>
+    
+    <!-- SUBSTITUA O SRC DA IMAGEM PELA SUA ARTE PROMOCIONAL -->
+    <img src="https://i.imgur.com/your-promo-image.jpg" 
+         alt="Promoção Especial" 
+         class="promo-popup-image"
+         loading="lazy">
+    
+    <!-- OPCIONAL: Botão de ação (CTA) -->
+    <a href="#produtos" 
+       class="promo-popup-cta" 
+       onclick="closePromoPopup(); scrollToProducts();">
+      APROVEITAR OFERTA
+    </a>
+  </div>
+</div>
+  
 </body>
 </html>
