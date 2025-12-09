@@ -5866,3 +5866,68 @@ window.addEventListener('authStateUpdated', (e) => {
     }
 });
 
+// ==================== POPUP PROMOCIONAL COM CONTROLE DE FREQUÊNCIA ====================
+
+function showPromoPopup() {
+  const overlay = document.getElementById('promoPopupOverlay');
+  if (!overlay) {
+    console.warn('⚠️ Elemento #promoPopupOverlay não encontrado');
+    return;
+  }
+  
+  // ✅ Verificar se já foi fechado nas últimas 24 horas
+  const lastClosed = localStorage.getItem('promoPopupLastClosed');
+  const now = Date.now();
+  const ONE_DAY = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+  
+  if (lastClosed && (now - parseInt(lastClosed)) < ONE_DAY) {
+    console.log('🚫 Popup já foi fechado nas últimas 24h - não mostrar novamente');
+    return;
+  }
+  
+  // ✅ Mostrar popup com animação suave
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+  });
+  
+  console.log('✅ Popup promocional exibido');
+}
+
+function closePromoPopup() {
+  const overlay = document.getElementById('promoPopupOverlay');
+  if (!overlay) return;
+  
+  // Remover classe active (trigger da animação de saída)
+  overlay.classList.remove('active');
+  
+  // ✅ Salvar timestamp de fechamento no localStorage
+  localStorage.setItem('promoPopupLastClosed', Date.now().toString());
+  
+  console.log('🚫 Popup fechado - não aparecerá novamente por 24h');
+}
+
+// ✅ Fechar popup ao clicar FORA do conteúdo (no overlay escuro)
+document.addEventListener('click', (e) => {
+  const overlay = document.getElementById('promoPopupOverlay');
+  if (overlay && e.target === overlay) {
+    closePromoPopup();
+  }
+});
+
+// ✅ Fechar popup com tecla ESC
+document.addEventListener('keydown', (e) => {
+  const overlay = document.getElementById('promoPopupOverlay');
+  if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
+    closePromoPopup();
+  }
+});
+
+// ==================== INICIALIZAÇÃO AUTOMÁTICA ====================
+// ✅ Mostrar popup 2 segundos após o carregamento da página
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    showPromoPopup();
+  }, 2000); // 2000ms = 2 segundos
+});
+
+console.log('🎯 Sistema de popup promocional inicializado');
