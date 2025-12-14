@@ -248,13 +248,7 @@ function sanitizeInput(input) {
     
     const div = document.createElement('div');
     div.textContent = input;
-    return div.innerHTML
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-        .replace(/\//g, '&#x2F;');
+    return div.textContent; // ✅ Remover .innerHTML
 }
 
 function validateProductData(data) {
@@ -1951,6 +1945,17 @@ function setupAutoCarousel() {
             clearInterval(carouselIntervals[productId]);
             delete carouselIntervals[productId];
         }
+
+        // === CORREÇÃO DE MEMORY LEAK ===
+        // Remove listeners antigos se existirem armazenados no elemento
+        if (card._handleMouseEnter) {
+            card.removeEventListener('mouseenter', card._handleMouseEnter);
+            card._handleMouseEnter = null;
+        }
+        if (card._handleMouseLeave) {
+            card.removeEventListener('mouseleave', card._handleMouseLeave);
+            card._handleMouseLeave = null;
+        }
         
         const slides = card.querySelectorAll('.product-image-slide');
         
@@ -1962,11 +1967,10 @@ function setupAutoCarousel() {
             return;
         }
         
-        if (carouselEventsRegistered.has(productId)) {
-            return;
-        }
-        
-        carouselEventsRegistered.add(productId);
+        // Removemos a verificação de registro único (Set) para permitir 
+        // a limpeza e re-adição correta dos eventos
+        // if (carouselEventsRegistered.has(productId)) { return; }
+        // carouselEventsRegistered.add(productId);
         
         let currentSlideIndex = 0;
         
@@ -1991,6 +1995,10 @@ function setupAutoCarousel() {
             currentSlideIndex = 0;
             updateCarouselSlides(card, 0);
         };
+        
+        // Armazena as referências das funções no elemento para permitir remoção futura
+        card._handleMouseEnter = handleMouseEnter;
+        card._handleMouseLeave = handleMouseLeave;
         
         card.addEventListener('mouseenter', handleMouseEnter);
         card.addEventListener('mouseleave', handleMouseLeave);
@@ -4667,6 +4675,16 @@ window.addEventListener('unhandledrejection', function(event) {
     event.preventDefault();
 });
 
+// === NOVO ERROR BOUNDARY ===
+window.addEventListener('error', (event) => {
+    console.error('💥 Crash:', event.error);
+    // Verifica se a função showToast já existe antes de chamar para evitar loop de erro
+    if (typeof showToast === 'function') {
+        showToast('Algo deu errado. Recarregue a página.', 'error');
+    }
+    // Enviar para analytics
+});
+
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         carouselsPaused = true;
@@ -5111,3 +5129,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
