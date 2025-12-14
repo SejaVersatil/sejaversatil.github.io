@@ -2323,6 +2323,44 @@ function getCategoryName(category) {
     return names[category] || category.toUpperCase();
 }
 
+function scrollToProducts() {
+    const productsSection = document.getElementById('produtos');
+    
+    if (!productsSection) {
+        console.warn('⚠️ Seção de produtos não encontrada');
+        return;
+    }
+    
+    // Fecha modais/sidebars abertos antes de rolar
+    const openModals = [
+        document.getElementById('cartSidebar'),
+        document.getElementById('userPanel'),
+        document.getElementById('searchModal')
+    ];
+    
+    openModals.forEach(modal => {
+        if (modal && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    // Remove overlay do carrinho se estiver ativo
+    const cartOverlay = document.getElementById('cartOverlay');
+    if (cartOverlay && cartOverlay.classList.contains('active')) {
+        cartOverlay.classList.remove('active');
+    }
+    
+    // Scroll suave até a seção de produtos
+    setTimeout(() => {
+        productsSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
+    }, 300); // Delay para fechar modais antes de rolar
+    
+    trackEvent('Navigation', 'Scroll to Products', 'User Action');
+}
+
 // ==================== BUSCA ====================
 function openSearch() {
     const modal = document.getElementById('searchModal');
@@ -5137,3 +5175,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
