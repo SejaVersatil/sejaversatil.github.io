@@ -1305,3 +1305,7 @@ function checkUserSession() {
         document.getElementById('userLoggedTab').classList.remove('active');
     }
 }
+
+window.checkUserSession = checkUserSession;
+window.maskPhone = maskPhone;
+window.maskCPF = maskCPF;
