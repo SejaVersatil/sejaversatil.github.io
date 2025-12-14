@@ -1282,3 +1282,26 @@ function maskCPF(input) {
     
     input.value = value;
 }
+
+function checkUserSession() {
+    const user = auth.currentUser;
+    
+    if (user) {
+        // Usuário logado
+        document.getElementById('loginTab').classList.remove('active');
+        document.getElementById('registerTab').classList.remove('active');
+        document.getElementById('userLoggedTab').classList.add('active');
+        
+        document.getElementById('userName').textContent = user.displayName || 'Usuário';
+        document.getElementById('userEmail').textContent = user.email;
+        
+        // Mostrar botão admin se necessário
+        if (currentUser && currentUser.isAdmin) {
+            document.getElementById('adminAccessBtn').style.display = 'block';
+        }
+    } else {
+        // Usuário não logado
+        document.getElementById('loginTab').classList.add('active');
+        document.getElementById('userLoggedTab').classList.remove('active');
+    }
+}
