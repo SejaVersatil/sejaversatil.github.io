@@ -4515,9 +4515,13 @@ function showPromoPopup() {
     
     const lastClosed = localStorage.getItem('promoPopupLastClosed');
     const now = Date.now();
-    const ONE_DAY = 24 * 60 * 60 * 1000;
-    if (lastClosed && (now - parseInt(lastClosed)) < ONE_DAY) {
-        console.log('🚫 Popup já foi fechado nas últimas 24h - não mostrar novamente');
+    
+    // AJUSTE AQUI: 5 minutos = 5 * 60 * 1000
+    // Para 10 minutos, mude o 5 para 10
+    const POPUP_COOLDOWN = 5 * 60 * 1000; 
+
+    if (lastClosed && (now - parseInt(lastClosed)) < POPUP_COOLDOWN) {
+        console.log('🚫 Popup fechado recentemente - aguardando intervalo de tempo');
         return;
     }
     
@@ -4534,7 +4538,7 @@ function closePromoPopup() {
     overlay.classList.remove('active');
     
     localStorage.setItem('promoPopupLastClosed', Date.now().toString());
-    console.log('🚫 Popup fechado - não aparecerá novamente por 24h');
+    console.log('🚫 Popup fechado - timer reiniciado');
 }
 
 // ==================== CHAT WIDGET ====================
@@ -5175,4 +5179,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
