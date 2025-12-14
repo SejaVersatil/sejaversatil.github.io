@@ -2638,6 +2638,9 @@ function renderAdminProducts() {
     }).join('');
 }
 
+// ✅ IMPLEMENTAÇÃO DO DEBOUNCE AQUI
+const debouncedAdminRender = debounce(renderAdminProducts, 500);
+
 // ==================== GERENCIAMENTO DE PRODUTOS (ADMIN) ====================
 function openProductModal(productId = null) {
     editingProductId = productId;
@@ -5252,5 +5255,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
