@@ -922,19 +922,29 @@
 <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-   <script>
-    // ✅ REMOVER defer daqui - precisa executar ANTES dos outros scripts
-    
-    // Cria Promise IMEDIATAMENTE (antes de tudo)
-    window.firebaseReady = new Promise((resolve) => {
-      window.resolveFirebase = resolve;
-    });
-    
-    window.addEventListener('DOMContentLoaded', function() {
-      if (typeof firebase === 'undefined') {
-        console.error('❌ Firebase não carregou!');
-        return;
-      }
+  <script>
+// Cria Promises IMEDIATAMENTE
+window.firebaseReady = new Promise((resolve) => {
+  window._resolveFirebase = resolve;
+});
+
+window.authReady = new Promise((resolve) => {
+  window._resolveAuth = resolve;
+});
+
+// Handler de erros global
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.message?.includes('signTransaction') ||
+      event.reason?.message?.includes('ethereum')) {
+    event.preventDefault();
+  }
+});
+
+// Inicializa Firebase quando DOM carregar
+document.addEventListener('DOMContentLoaded', () => {
+  const checkFirebase = setInterval(() => {
+    if (typeof firebase !== 'undefined') {
+      clearInterval(checkFirebase);
       
       const firebaseConfig = {
         apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
@@ -948,32 +958,18 @@
 
       try {
         firebase.initializeApp(firebaseConfig);
-        
         window.db = firebase.firestore();
         window.auth = firebase.auth();
         window.storage = firebase.storage();
-        
         console.log("🔥 Firebase inicializado");
-        
-        // ✅ Resolve a Promise ao invés de disparar evento
-        window.resolveFirebase();
-        
+        window._resolveFirebase();
       } catch (error) {
         console.error("❌ Erro Firebase:", error);
       }
-    });
-
-    // ✅ Handler de erros de extensões crypto
-    window.addEventListener('unhandledrejection', function(event) {
-      if (event.reason && event.reason.message) {
-        if (event.reason.message.includes('signTransaction') ||
-            event.reason.message.includes('ethereum') ||
-            event.reason.message.includes('phantom')) {
-          event.preventDefault();
-        }
-      }
-    });
-  </script>
+    }
+  }, 50);
+});
+</script>
 
  <script defer src="auth.js"></script>
  <script defer src="script2.js?v=1.0.6"></script>
