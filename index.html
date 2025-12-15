@@ -154,54 +154,53 @@
     </div>
     
     <div class="cart-footer" id="cartFooter" style="display: none;">
-      <div class="cart-shipping-progress">
-        <div class="shipping-progress-text">
-          <span id="shippingProgressText">Pra ganhar FRETE GRÁTIS</span>
-          <span id="shippingProgressAmount">R$299,00</span>
-        </div>
-        <div class="shipping-progress-bar">
-          <div class="shipping-progress-fill" id="shippingProgressFill"></div>
-        </div>
-      </div>
-     
-      <div class="coupon-section">
-        <h4>🎟️ Cupom de Desconto</h4>
-        <div class="coupon-input-row">
-          <input type="text" class="coupon-input" id="couponInput" placeholder="Digite o código" maxlength="20" autocomplete="off">
-          <button class="coupon-apply-btn" id="applyCouponBtn" type="button" onclick="applyCoupon()">APLICAR</button>
-        </div>
-        <div class="coupon-message" id="couponMessage"></div>
-        <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
-          <div class="applied-coupon-info">
-            <span class="applied-coupon-code" id="appliedCouponCode"></span>
-            <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
-          </div>
-          <button class="remove-coupon-btn" type="button" onclick="removeCoupon()" title="Remover cupom">✕</button>
-        </div>
-      </div>
-  
-      <div class="cart-summary-box">
-        
-        <div class="summary-row subtotal">
-          <span>Subtotal:</span>
-          <span id="cartSubtotal">R$ 0,00</span>
-        </div>
-
-        <div class="summary-row discount" id="discountBreakdown" style="display: none;">
-          <span>Desconto:</span>
-          <span id="discountValue">- R$ 0,00</span>
-        </div>
-
-        <div class="summary-row total">
-          <span>Total:</span>
-          <span id="cartTotal">R$ 0,00</span>
-        </div>
-
-      </div>
-
-      <button class="view-more-btn" onclick="closeCartAndExplore()">VER MAIS LOOKS</button>
-      <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+  <!-- Barra de Frete -->
+  <div class="cart-shipping-progress">
+    <div class="shipping-progress-text">
+      <span id="shippingProgressText" style="font-size: 0.6875rem;">Falta R$ <strong id="shippingProgressAmount">299,00</strong> para frete grátis</span>
     </div>
+    <div class="shipping-progress-bar">
+      <div class="shipping-progress-fill" id="shippingProgressFill"></div>
+    </div>
+  </div>
+
+  <!-- Cupom -->
+  <div class="coupon-section">
+    <h4 style="font-size: 0.625rem; margin-bottom: 0.625rem;">🎟️ CUPOM</h4>
+    <div class="coupon-input-row">
+      <input type="text" class="coupon-input" id="couponInput" placeholder="Digite o código" maxlength="20" style="font-size: 0.6875rem; padding: 0.5rem 0.625rem;">
+      <button class="coupon-apply-btn" id="applyCouponBtn" type="button" onclick="applyCoupon()" style="font-size: 0.5625rem; padding: 0 0.875rem;">APLICAR</button>
+    </div>
+    <div class="coupon-message" id="couponMessage"></div>
+    <div class="applied-coupon-badge" id="appliedCouponBadge" style="display: none;">
+      <div class="applied-coupon-info">
+        <span class="applied-coupon-code" id="appliedCouponCode"></span>
+        <span class="applied-coupon-discount" id="appliedCouponDiscount"></span>
+      </div>
+      <button class="remove-coupon-btn" type="button" onclick="removeCoupon()">✕</button>
+    </div>
+  </div>
+
+  <!-- Resumo (NOVO) -->
+  <div class="cart-summary-box">
+    <div class="summary-row subtotal">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">R$ 0,00</span>
+    </div>
+    <div class="summary-row discount" id="discountBreakdown" style="display: none;">
+      <span>Desconto</span>
+      <span id="discountValue">- R$ 0,00</span>
+    </div>
+    <div class="summary-row total">
+      <span>Total</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+  </div>
+
+  <!-- Botões -->
+  <button class="view-more-btn" onclick="closeCartAndExplore()" style="font-size: 0.625rem; padding: 0.75rem;">VER MAIS</button>
+  <button class="checkout-btn" onclick="checkout()" style="font-size: 0.6875rem; padding: 0.875rem;">FINALIZAR</button>
+</div>
   </div>
 
   <section class="hero-section" id="hero">
