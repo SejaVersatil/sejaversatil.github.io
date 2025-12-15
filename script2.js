@@ -2038,7 +2038,8 @@ const heroSlides = [
 function initHeroCarousel() {
     const heroContainer = document.querySelector('.hero-carousel');
     if (!heroContainer) return;
-    heroContainer.innerHTML = heroSlides.map((slide, index) => `
+    if (heroContainer.children.length === 0) {
+  heroContainer.innerHTML = heroSlides.map((slide, index) => `
         <div class="hero-slide ${index === 0 ? 'active' : ''}" 
              style="background-image: url('${slide.image}'); cursor: pointer;"
              onclick="scrollToProducts()">
@@ -2051,7 +2052,9 @@ function initHeroCarousel() {
             <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
         `).join('');
     }
-
+} else {
+  console.log('✅ Hero já renderizado no HTML, pulando recriação');
+    }
     startHeroCarousel();
 }
 
@@ -5242,4 +5245,5 @@ console.log(
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
