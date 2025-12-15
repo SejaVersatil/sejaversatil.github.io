@@ -39,10 +39,6 @@ function closePromoPopup() {
     console.log('🚫 Popup fechado - timer reiniciado');
 }
 
-// Aguarda Promise que já existe
-window.firebaseReady.then(() => {
-  console.log('✅ Firebase pronto - script2.js');
-
 
 // ==================== CONFIGURAÇÕES E CONSTANTES ====================
 const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
@@ -96,6 +92,11 @@ let editingProductId = null;
 let productVariants = {};
 let videoGridData = [];
 
+
+// Aguarda Promise que já existe
+window.firebaseReady.then(() => {
+  console.log('✅ Firebase pronto - script2.js');
+    
 // ==================== CLASSES E CONSTRUTORES ====================
 class SecureStorage {
     constructor(key) {
@@ -5214,6 +5215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
 }); 
+
 
 
 
