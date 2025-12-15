@@ -1289,6 +1289,10 @@ function updateCartUI() {
     const cartItems = document.getElementById('cartItems');
     const cartFooter = document.getElementById('cartFooter');
     const cartTotal = document.getElementById('cartTotal');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const discountBreakdown = document.getElementById('discountBreakdown');
+    const discountValue = document.getElementById('discountValue');
+    
     if (!cartCount || !cartItems || !cartFooter) {
         return;
     }
@@ -5255,6 +5259,7 @@ console.log(
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
