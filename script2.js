@@ -3557,10 +3557,17 @@ function setupPaymentListeners() {
 }
 
 async function sendToWhatsApp() {
-    if (window.authReady) await window.authReady;
+    // === CORREÇÃO DE RACE CONDITION ===
+    // Garante que authReady seja uma Promise válida antes de prosseguir.
+    // Se window.authReady for undefined, cria uma Promise que resolve imediatamente (null),
+    // evitando erros ou pular a espera necessária se a auth ainda estiver carregando.
+    const authReadyPromise = window.authReady || Promise.resolve(null);
+    await authReadyPromise;
+    // ==================================
     
     const loadingOverlay = document.getElementById('loadingOverlay');
     if (loadingOverlay) loadingOverlay.classList.add('active');
+    
     try {
         if (!cart || cart.length === 0) {
             showToast('Carrinho vazio!', 'error');
@@ -5184,6 +5191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
