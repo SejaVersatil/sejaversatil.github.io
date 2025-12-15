@@ -1941,13 +1941,17 @@ function setupAutoCarousel() {
     productCards.forEach(card => {
         const productId = card.getAttribute('data-product-id');
         
+        // Limpa intervalos de animação anteriores
         if (carouselIntervals[productId]) {
             clearInterval(carouselIntervals[productId]);
             delete carouselIntervals[productId];
         }
 
-        // === CORREÇÃO DE MEMORY LEAK ===
-        // Remove listeners antigos se existirem armazenados no elemento
+        // ============================================================
+        // CORREÇÃO DE MEMORY LEAK 
+        // ============================================================
+        // 1. Remove listeners antigos se existirem armazenados no elemento
+        // Isso evita o acúmulo de eventos a cada renderização
         if (card._handleMouseEnter) {
             card.removeEventListener('mouseenter', card._handleMouseEnter);
             card._handleMouseEnter = null;
@@ -1956,6 +1960,7 @@ function setupAutoCarousel() {
             card.removeEventListener('mouseleave', card._handleMouseLeave);
             card._handleMouseLeave = null;
         }
+        // ============================================================
         
         const slides = card.querySelectorAll('.product-image-slide');
         
@@ -1967,13 +1972,9 @@ function setupAutoCarousel() {
             return;
         }
         
-        // Removemos a verificação de registro único (Set) para permitir 
-        // a limpeza e re-adição correta dos eventos
-        // if (carouselEventsRegistered.has(productId)) { return; }
-        // carouselEventsRegistered.add(productId);
-        
         let currentSlideIndex = 0;
         
+        // Definição das funções de evento
         const handleMouseEnter = () => {
             if (carouselsPaused) return;
             
@@ -1996,10 +1997,14 @@ function setupAutoCarousel() {
             updateCarouselSlides(card, 0);
         };
         
-        // Armazena as referências das funções no elemento para permitir remoção futura
+        // ============================================================
+        // 2. Armazena as referências no próprio elemento DOM
+        // Isso permite recuperá-las e removê-las na próxima execução
+        // ============================================================
         card._handleMouseEnter = handleMouseEnter;
         card._handleMouseLeave = handleMouseLeave;
         
+        // 3. Adiciona os novos listeners limpos
         card.addEventListener('mouseenter', handleMouseEnter);
         card.addEventListener('mouseleave', handleMouseLeave);
     });
@@ -5179,5 +5184,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
