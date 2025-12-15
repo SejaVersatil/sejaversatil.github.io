@@ -19,25 +19,6 @@ if (typeof window.firebaseReady === 'undefined') {
 // ✅ Aguarda Firebase antes de usar auth
 window.firebaseReady.then(() => {
   console.log('✅ Firebase pronto - auth.js pode executar');
-  
-  // ============================================
-  // SEU CÓDIGO ORIGINAL DO auth.js AQUI
-  // ============================================
-  
-  // Exemplo:
-  let currentUser = null;
-  let isAdminLoggedIn = false;
-
-  auth.onAuthStateChanged(async (user) => {
-    // ... resto do código original ...
-  });
-  
-  // ... todo o resto do auth.js ...
-  
-}).catch(error => {
-  console.error('❌ Firebase não carregou:', error);
-  showToast('Erro ao conectar. Recarregue a página.', 'error');
-});
 
 // ==================== VARIÁVEIS GLOBAIS (CRÍTICAS - NÃO REMOVER) ====================
 let currentUser = null;
