@@ -201,13 +201,20 @@
   </div>
 
   <section class="hero-section" id="hero">
-    <div class="hero-carousel" id="heroCarousel">
-      </div>
-    <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
-    <button class="hero-nav-arrow hero-nav-next" onclick="nextHeroSlide()">›</button>
-    <div class="hero-carousel-dots" id="heroCarouselDots">
-      </div>
-  </section>
+  <div class="hero-carousel" id="heroCarousel">
+    <!-- ✅ PRIMEIRO SLIDE ESTÁTICO (LCP GARANTIDO) -->
+    <div class="hero-slide active" style="background-image: url('https://i.imgur.com/ZVqxl8B.jpeg');">
+      <div class="hero-overlay"></div>
+    </div>
+  </div>
+  <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
+  <button class="hero-nav-arrow hero-nav-next" onclick="nextHeroSlide()">›</button>
+  <div class="hero-carousel-dots" id="heroCarouselDots">
+    <div class="hero-dot active" onclick="goToHeroSlide(0)"></div>
+    <div class="hero-dot" onclick="goToHeroSlide(1)"></div>
+    <div class="hero-dot" onclick="goToHeroSlide(2)"></div>
+  </div>
+</section>
 
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
