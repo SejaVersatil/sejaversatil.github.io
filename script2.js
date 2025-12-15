@@ -5227,11 +5227,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
-
-
-
-
-
-
-
-
+}); 
