@@ -11,11 +11,12 @@ let currentUser = null;
 let isAdminLoggedIn = false;
 
 // ==================== AUTH READY PROMISE (USADO POR CHECKOUT.JS) ====================
-window.authReady = new Promise((resolve) => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-        unsubscribe();
-        resolve(user);
-    });
+const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (window._resolveAuth) {
+        window._resolveAuth(user);
+        window._resolveAuth = null;
+    }
+    unsubscribe();
 });
 
 // ==================== LOADING OVERLAY (STARTUP) ====================
