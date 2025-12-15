@@ -712,30 +712,20 @@ nav {
 }
 
 /* ==========================================================================
-   CARRINHO LATERAL - DESIGN ULTRA PREMIUM MINIMALISTA (REFACTORED)
+   CARRINHO LATERAL - DESIGN PREMIUM MINIMALISTA
    ========================================================================== */
-
-:root {
-    --font-primary: 'Outfit', sans-serif;
-    --color-black: #000000;
-    --color-dark-gray: #1a1a1a;
-    --color-light-gray: #f5f5f5;
-    --color-text-meta: #737373;
-    --radius-sm: 2px;
-    --shadow-soft: -10px 0 40px rgba(0, 0, 0, 0.04);
-}
 
 .cart-sidebar {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 420px; /* Levemente mais largo para elegância */
+    width: 440px;
     max-width: 100vw;
     height: 100vh;
     background: #ffffff;
-    box-shadow: var(--shadow-soft);
-    z-index: 9999; /* Garante que fique acima de tudo */
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Animação mais fluida 'Apple style' */
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.08);
+    z-index: var(--z-cart);
+    transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     display: flex;
     flex-direction: column;
     will-change: transform;
@@ -747,263 +737,398 @@ nav {
 
 /* ==================== HEADER ==================== */
 .cart-header {
-    padding: 2rem 2rem 1rem; /* Mais respiro superior */
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
     background: #ffffff;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .cart-header h3 {
-    font-family: var(--font-primary) !important;
-    font-size: 0.875rem !important; /* Aumentei levemente */
-    font-weight: 700 !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase;
-    letter-spacing: 2px; /* Espaçamento premium */
-    color: var(--color-black);
+    letter-spacing: 2px;
+    color: #1a1a1a;
     margin: 0;
 }
 
 .close-cart {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-black);
-    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
     padding: 0;
-    transition: transform 0.2s ease;
+    color: #999;
+    font-size: 1.5rem;
 }
 
 .close-cart:hover {
-    transform: rotate(90deg); /* Pequeno detalhe de interação */
+    color: #000;
+    transform: scale(1.1);
 }
 
 /* ==================== BARRA DE FRETE ==================== */
 .cart-shipping-progress {
-    padding: 0.5rem 2rem 1.5rem;
-    background: #ffffff;
+    padding: 1.5rem 2rem;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
     flex-shrink: 0;
 }
 
 .shipping-progress-text {
-    font-family: var(--font-primary);
     font-size: 0.75rem;
-    color: var(--color-text-meta);
+    color: #666;
     margin-bottom: 0.75rem;
     font-weight: 500;
-    text-align: center; /* Centralizado fica mais elegante */
+    letter-spacing: 0.3px;
 }
 
 .shipping-progress-bar {
-    height: 2px; /* Barra mais fina e sofisticada */
-    background: #f0f0f0;
+    height: 4px;
+    background: #e8e8e8;
     border-radius: 2px;
     overflow: hidden;
 }
 
 .shipping-progress-fill {
     height: 100%;
-    background: var(--color-black);
+    background: #000000;
     width: 0%;
-    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* ==================== LISTA DE ITENS ==================== */
 .cart-items {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem 2rem;
-    /* Scrollbar oculta para visual mais limpo, mas funcional */
-    scrollbar-width: none; 
+    padding: 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: #e0e0e0 transparent;
 }
 
 .cart-items::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 2px;
 }
 
 /* ==================== ITEM INDIVIDUAL ==================== */
 .cart-item {
     display: grid;
-    grid-template-columns: 90px 1fr 30px; /* Imagem maior | Info | Remover */
+    grid-template-columns: 80px 1fr;
     gap: 1.25rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid #f0f0f0; /* Borda ultra sutil */
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #f5f5f5;
     position: relative;
-    align-items: start;
 }
 
 .cart-item:last-child {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 .cart-item-img {
-    width: 90px !important;
-    height: 120px !important; /* Proporção vertical de moda */
+    width: 80px !important;
+    height: 106px !important;
     background-size: cover !important;
-    background-position: top center !important;
+    background-position: center !important;
     background-color: #fafafa;
-    border-radius: var(--radius-sm);
-    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .cart-item-info {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    padding-top: 2px;
+    gap: 0.5rem;
+    padding-right: 1.5rem;
 }
 
-/* Título e Meta */
 .cart-item-title {
-    font-family: var(--font-primary) !important;
+    font-family: 'Outfit', sans-serif !important;
     font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-black);
+    font-weight: 500;
+    color: #1a1a1a;
     line-height: 1.4;
-    margin-bottom: 0.25rem;
-    text-transform: uppercase; /* Uppercase transmite modernidade */
-    letter-spacing: 0.5px;
+    margin: 0;
+    letter-spacing: 0.2px;
 }
 
 .cart-item-meta {
-    font-family: var(--font-primary);
     font-size: 0.75rem;
-    color: var(--color-text-meta);
-    margin-bottom: auto; /* Empurra o preço/qtd para baixo */
-}
-
-/* Área inferior do item (Qtd e Preço) */
-.item-bottom-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.75rem;
+    color: #999;
+    line-height: 1.5;
 }
 
 .cart-item-price {
-    font-family: var(--font-primary) !important;
-    font-size: 0.9375rem !important;
-    font-weight: 700 !important;
-    color: var(--color-black);
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #000;
+    margin: 0.5rem 0;
+    letter-spacing: -0.2px;
 }
 
-/* ==================== CONTROLES DE QUANTIDADE (Minimalista) ==================== */
+/* ==================== CONTROLES DE QUANTIDADE ==================== */
 .cart-item-qty {
     display: flex;
     align-items: center;
-    gap: 0; /* Sem gap, bordas coladas */
-    border: 1px solid #e5e5e5;
-    border-radius: var(--radius-sm);
+    gap: 1rem;
+    margin-top: 0.75rem;
 }
 
 .qty-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
-    font-size: 0.875rem;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    font-size: 1rem;
+    font-weight: 400;
     cursor: pointer;
-    color: var(--color-dark-gray);
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    color: #1a1a1a;
 }
 
 .qty-btn:hover {
-    background: #f9f9f9;
+    border-color: #000;
+    background: #fafafa;
+}
+
+.qty-btn:active {
+    transform: scale(0.95);
 }
 
 .cart-item-qty span {
-    font-family: var(--font-primary) !important;
-    font-size: 0.75rem;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-black);
+    color: #1a1a1a;
     min-width: 24px;
     text-align: center;
 }
 
 /* ==================== BOTÃO REMOVER ==================== */
 .remove-item {
+    position: absolute;
+    top: 0;
+    right: 0;
     background: transparent;
     border: none;
     cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.25rem;
+    color: #ccc;
     padding: 0;
-    color: #e0e0e0; /* Cinza bem claro */
-    transition: color 0.2s;
+    width: 32px;
+    height: 32px;
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
 }
 
 .remove-item:hover {
-    color: var(--color-black); /* Fica preto no hover, não vermelho (mais elegante) */
+    color: #e74c3c;
 }
 
-/* ==================== SEÇÃO DE CUPONS (Refinada) ==================== */
+.remove-item::before {
+    content: '×';
+    font-size: 1.75rem;
+    font-weight: 300;
+}
+
+/* ==================== CARRINHO VAZIO ==================== */
+.empty-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #999;
+    min-height: 300px;
+}
+
+.empty-cart::before {
+    content: "🛍️";
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.4;
+}
+
+.empty-cart p {
+    font-size: 0.875rem;
+    color: #999;
+    letter-spacing: 0.3px;
+}
+
+/* ==================== SEÇÃO DE CUPONS ==================== */
 .coupon-section {
     padding: 1.5rem 2rem;
-    background: #ffffff;
-    /* Borda sutil apenas no topo do footer area */
+    border-top: 1px solid #f0f0f0;
+    background: #fafafa;
+    flex-shrink: 0;
 }
 
-.coupon-trigger {
+.coupon-section h4 {
     font-size: 0.75rem;
-    text-decoration: underline;
-    cursor: pointer;
-    color: var(--color-text-meta);
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 .coupon-input-row {
     display: flex;
-    gap: 0;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 5px;
+    gap: 0.75rem;
 }
 
 .coupon-input {
     flex: 1;
-    padding: 0.5rem 0;
-    font-size: 0.8125rem;
-    border: none;
-    background: transparent;
-    font-family: var(--font-primary);
-    color: var(--color-black);
-}
-
-.coupon-input::placeholder {
-    color: #cccccc;
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.2s ease;
 }
 
 .coupon-input:focus {
     outline: none;
+    border-color: #000;
+}
+
+.coupon-input.error {
+    border-color: #e74c3c;
+}
+
+.coupon-input.success {
+    border-color: #27ae60;
 }
 
 .coupon-apply-btn {
-    padding: 0 0.5rem;
-    background: transparent;
-    color: var(--color-black);
+    padding: 0 1.5rem;
+    background: #000000;
+    color: #ffffff;
     border: none;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.75rem;
     cursor: pointer;
+    transition: all 0.2s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.coupon-apply-btn:hover {
+    background: #333333;
+}
+
+.coupon-apply-btn:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.coupon-message {
+    margin-top: 1rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: none;
+}
+
+.coupon-message.active {
+    display: block;
+}
+
+.coupon-message.success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 3px solid #28a745;
+}
+
+.coupon-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 3px solid #dc3545;
+}
+
+.applied-coupon-badge {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #d4edda;
+    border-left: 3px solid #28a745;
+    margin-top: 1rem;
+}
+
+.applied-coupon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.applied-coupon-code {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #155724;
+    letter-spacing: 1px;
+}
+
+.applied-coupon-discount {
+    font-size: 0.75rem;
+    color: #155724;
+    font-weight: 500;
+}
+
+.remove-coupon-btn {
+    background: transparent;
+    border: none;
+    color: #721c24;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.remove-coupon-btn:hover {
+    transform: scale(1.15);
+}
+
+.discount-breakdown {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.8rem;
+    color: #27ae60;
+    font-weight: 500;
+    margin-top: 0.5rem;
 }
 
 /* ==================== FOOTER DO CARRINHO ==================== */
 .cart-footer {
-    padding: 1.5rem 2rem 2rem;
+    padding: 2rem;
+    border-top: 1px solid #f0f0f0;
     background: #ffffff;
     flex-shrink: 0;
-    border-top: 1px solid #f5f5f5;
 }
 
 .cart-total {
@@ -1011,90 +1136,158 @@ nav {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .cart-total span:first-child {
-    font-family: var(--font-primary) !important;
-    font-size: 0.875rem;
-    font-weight: 500 !important;
-    color: var(--color-dark-gray);
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.75rem;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
 }
 
 .cart-total span:last-child {
-    font-family: var(--font-primary) !important;
-    font-size: 1.25rem; /* Preço grande */
-    font-weight: 700 !important;
-    color: var(--color-black);
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1.5rem;
+    font-weight: 600 !important;
+    color: #000;
     letter-spacing: -0.5px;
 }
 
 /* ==================== BOTÕES DE AÇÃO ==================== */
-/* Checkout Button - O Elemento Principal */
+.view-more-btn {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    color: #000;
+    border: 1px solid #000;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.75rem;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0.75rem;
+}
+
+.view-more-btn:hover {
+    background: #000;
+    color: #fff;
+}
+
 .checkout-btn {
     width: 100%;
     padding: 1.125rem;
-    background: var(--color-black); /* PRETO SÓLIDO */
+    background: #000;
     color: #fff;
     border: none;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-primary) !important;
-    font-size: 0.8125rem;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.75rem;
     font-weight: 600 !important;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .checkout-btn:hover {
     background: #333;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
-.view-more-btn {
-    width: 100%;
-    padding: 0.875rem;
-    background: transparent;
-    color: var(--color-black);
-    border: none;
-    font-family: var(--font-primary) !important;
-    font-size: 0.75rem;
-    font-weight: 500 !important;
-    text-decoration: underline;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    margin-bottom: 0.5rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.view-more-btn:hover {
-    opacity: 1;
-    background: transparent;
+.checkout-btn:active {
+    transform: scale(0.98);
 }
 
 /* ==================== RESPONSIVO MOBILE ==================== */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .cart-sidebar {
         width: 100vw;
+        max-width: 100vw;
     }
     
-    .cart-header, .cart-items, .cart-footer, .coupon-section {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+    .cart-header {
+        padding: 1.5rem 1.25rem 1.25rem;
     }
-
-    .cart-item-img {
-        width: 70px !important;
-        height: 95px !important;
+    
+    .close-cart {
+        top: 1.5rem;
+        right: 1.25rem;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .cart-shipping-progress {
+        padding: 1.25rem;
+    }
+    
+    .cart-items {
+        padding: 1.5rem 1.25rem;
     }
     
     .cart-item {
-        grid-template-columns: 70px 1fr 24px;
+        grid-template-columns: 70px 1fr;
         gap: 1rem;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cart-item-img {
+        width: 70px !important;
+        height: 93px !important;
+    }
+    
+    .cart-item-title {
+        font-size: 0.8125rem;
+    }
+    
+    .cart-item-meta {
+        font-size: 0.6875rem;
+    }
+    
+    .cart-item-price {
+        font-size: 0.9375rem !important;
+    }
+    
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .coupon-section {
+        padding: 1.25rem;
+    }
+    
+    .cart-footer {
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .cart-total {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    
+    .cart-total span:last-child {
+        font-size: 1.375rem;
+    }
+    
+    .view-more-btn,
+    .checkout-btn {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-item {
+        grid-template-columns: 65px 1fr;
+    }
+    
+    .cart-item-img {
+        width: 65px !important;
+        height: 86px !important;
     }
 }
 
@@ -5215,6 +5408,7 @@ img {
     max-width: 95%;
   }
 }
+
 
 
 
