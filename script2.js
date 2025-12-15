@@ -43,13 +43,6 @@ function closePromoPopup() {
     localStorage.setItem('promoPopupLastClosed', Date.now().toString());
     console.log('🚫 Popup fechado - timer reiniciado');
 }
-// ============================================
-// AGUARDA ANTES DE USAR db/auth/storage
-// ============================================
-
-// ✅ Todas as funções que usam Firebase devem estar dentro deste bloco:
-window.firebaseReady.then(() => {
-  console.log('✅ Firebase pronto - script2.js pode executar');
 
 // ==================== CONFIGURAÇÕES E CONSTANTES ====================
 const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
@@ -5221,5 +5214,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
 }); 
+
 
 
