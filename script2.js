@@ -398,7 +398,14 @@ async function carregarProdutosDoFirestore() {
             return productsData;
         }
 
-        const snapshot = await db.collection("produtos").get();
+        // === OTIMIZAÇÃO DE PERFORMANCE (Server-side Filtering & Pagination) ===
+        // Substitui o .get() total por uma busca filtrada e limitada
+        const snapshot = await db.collection("produtos")
+            .where("active", "==", true) // Traz apenas produtos ativos
+            .limit(50)                   // Limita a 50 itens para evitar latência alta
+            .get();
+        // ====================================================================
+
         productsData.length = 0;
 
         snapshot.forEach((doc) => {
@@ -407,6 +414,7 @@ async function carregarProdutosDoFirestore() {
                 ...doc.data()
             });
         });
+        
         productCache.set('products', productsData);
         return productsData;
         
@@ -423,7 +431,6 @@ async function carregarProdutosDoFirestore() {
         return productsData;
     }
 }
-
 async function loadProducts() {
     try {
         await carregarProdutosDoFirestore();
@@ -5207,6 +5214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
