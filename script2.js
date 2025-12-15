@@ -385,52 +385,45 @@ function getColorHex(colorName) {
 
 // ==================== FIREBASE E FIRESTORE ====================
 async function carregarProdutosDoFirestore() {
-    try {
-        const cached = productCache.get('products');
-        if (cached) {
-            productsData = cached;
-            return productsData;
-        }
+    try {
+        const cached = productCache.get('products');
+        if (cached) {
+            productsData = cached;
+            return productsData;
+        }
 
-        if (!firestoreRateLimiter.canMakeRequest()) {
-            console.warn('⚠️ Rate limit atingido');
-            showToast('Muitas requisições. Aguarde um momento.', 'error');
-            return productsData;
-        }
+        if (!firestoreRateLimiter.canMakeRequest()) {
+            console.warn('⚠️ Rate limit atingido');
+            showToast('Muitas requisições. Aguarde um momento.', 'error');
+            return productsData;
+        }
 
-        // === OTIMIZAÇÃO DE PERFORMANCE (Server-side Filtering & Pagination) ===
-        // Substitui o .get() total por uma busca filtrada e limitada
-        const snapshot = await db.collection("produtos")
-            .where("active", "==", true) // Traz apenas produtos ativos
-            .limit(50)                   // Limita a 50 itens para evitar latência alta
-            .get();
-        // ====================================================================
+        const snapshot = await db.collection("produtos").get();
+        productsData.length = 0;
 
-        productsData.length = 0;
+        snapshot.forEach((doc) => {
+            productsData.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        productCache.set('products', productsData);
+        return productsData;
+        
+    } catch (error) {
+        console.error("❌ Erro ao carregar produtos do Firestore:", error);
+        if (error.code === 'permission-denied') {
+            console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
+            showToast('Erro de permissão ao carregar produtos', 'error');
+        } else if (error.code === 'unavailable') {
+            console.error('🌐 Firestore indisponível. Verifique sua conexão.');
+            showToast('Sem conexão com o servidor', 'error');
+        }
 
-        snapshot.forEach((doc) => {
-            productsData.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-        
-        productCache.set('products', productsData);
-        return productsData;
-        
-    } catch (error) {
-        console.error("❌ Erro ao carregar produtos do Firestore:", error);
-        if (error.code === 'permission-denied') {
-            console.error('🔒 Permissão negada. Verifique as regras do Firestore.');
-            showToast('Erro de permissão ao carregar produtos', 'error');
-        } else if (error.code === 'unavailable') {
-            console.error('🌐 Firestore indisponível. Verifique sua conexão.');
-            showToast('Sem conexão com o servidor', 'error');
-        }
-
-        return productsData;
-    }
+        return productsData;
+    }
 }
+
 async function loadProducts() {
     try {
         await carregarProdutosDoFirestore();
@@ -5214,6 +5207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
