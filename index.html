@@ -36,39 +36,7 @@
   
   <link rel="stylesheet" href="css2.css?v=1.0.1">
   <link rel="stylesheet" href="auth_styles.css">
-  
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
-      authDomain: "seja-versatil.firebaseapp.com",
-      projectId: "seja-versatil",
-      storageBucket: "seja-versatil.firebasestorage.app",
-      messagingSenderId: "102339207381",
-      appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
-      measurementId: "G-86E5CX4S3T"
-    };
 
-    firebase.initializeApp(firebaseConfig);
-
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-    const storage = firebase.storage();
-    
-    console.log("🔥 Firebase inicializado");
-
-    // Handler global de erros (ignora erros de extensões de carteira crypto)
-    window.addEventListener('unhandledrejection', function(event) {
-      if (event.reason && event.reason.message) {
-        if (event.reason.message.includes('signTransaction') ||
-            event.reason.message.includes('ethereum') ||
-            event.reason.message.includes('phantom')) {
-          event.preventDefault();
-        }
-      }
-    });
-  </script>
-  <script src="auth.js"></script>
-  <script src="script2.js?v=1.0.5"></script> 
 </head>
 
 <body>
@@ -950,6 +918,64 @@
 <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+   <script defer>
+    // ✅ Aguarda Firebase estar disponível
+    window.addEventListener('DOMContentLoaded', function() {
+      // ✅ Verifica se Firebase foi carregado
+      if (typeof firebase === 'undefined') {
+        console.error('❌ Firebase não carregou!');
+        return;
+      }
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyAJ9-qnEhtiRVKiyF2TZcLgVgq5kLZYxSs",
+        authDomain: "seja-versatil.firebaseapp.com",
+        projectId: "seja-versatil",
+        storageBucket: "seja-versatil.firebasestorage.app",
+        messagingSenderId: "102339207381",
+        appId: "1:102339207381:web:cbe1192e3550cd5bf0825c",
+        measurementId: "G-86E5CX4S3T"
+      };
+
+      try {
+        // ✅ Inicializa Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // ✅ Exporta para window (global)
+        window.db = firebase.firestore();
+        window.auth = firebase.auth();
+        window.storage = firebase.storage();
+        
+        console.log("🔥 Firebase inicializado com sucesso");
+        
+        // ✅ Dispara evento customizado para avisar que Firebase está pronto
+        const firebaseReadyEvent = new CustomEvent('firebaseReady');
+        window.dispatchEvent(firebaseReadyEvent);
+        
+        // ✅ Promise para outros scripts aguardarem
+        window.firebaseReady = Promise.resolve();
+        
+      } catch (error) {
+        console.error("❌ Erro ao inicializar Firebase:", error);
+        window.firebaseReady = Promise.reject(error);
+      }
+    });
+
+    // ✅ Handler de erros de extensões crypto
+    window.addEventListener('unhandledrejection', function(event) {
+      if (event.reason && event.reason.message) {
+        if (event.reason.message.includes('signTransaction') ||
+            event.reason.message.includes('ethereum') ||
+            event.reason.message.includes('phantom')) {
+          event.preventDefault();
+        }
+      }
+    });
+  </script>
+
+ <script defer src="auth.js"></script>
+  <script defer src="script2.js?v=1.0.6"></script>
   
 </body>
 </html>
