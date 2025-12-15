@@ -1,8 +1,43 @@
-// =================================================================
-// auth.js - Módulo de Autenticação Production-Grade
-// COMPATÍVEL COM: index.html, checkout.html, script2.js, checkout.js
-// VERSÃO FINAL - 100% TESTADA COM CADASTRO PROFISSIONAL
-// =================================================================
+// ============================================
+// AGUARDA FIREBASE ESTAR PRONTO
+// ============================================
+
+// ✅ Cria Promise que resolve quando Firebase estiver pronto
+if (typeof window.firebaseReady === 'undefined') {
+  window.firebaseReady = new Promise((resolve, reject) => {
+    window.addEventListener('firebaseReady', resolve);
+    
+    // Timeout de segurança (10s)
+    setTimeout(() => {
+      if (typeof firebase === 'undefined') {
+        reject(new Error('Firebase não carregou em 10s'));
+      }
+    }, 10000);
+  });
+}
+
+// ✅ Aguarda Firebase antes de usar auth
+window.firebaseReady.then(() => {
+  console.log('✅ Firebase pronto - auth.js pode executar');
+  
+  // ============================================
+  // SEU CÓDIGO ORIGINAL DO auth.js AQUI
+  // ============================================
+  
+  // Exemplo:
+  let currentUser = null;
+  let isAdminLoggedIn = false;
+
+  auth.onAuthStateChanged(async (user) => {
+    // ... resto do código original ...
+  });
+  
+  // ... todo o resto do auth.js ...
+  
+}).catch(error => {
+  console.error('❌ Firebase não carregou:', error);
+  showToast('Erro ao conectar. Recarregue a página.', 'error');
+});
 
 // ==================== VARIÁVEIS GLOBAIS (CRÍTICAS - NÃO REMOVER) ====================
 let currentUser = null;
