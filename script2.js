@@ -579,6 +579,8 @@ function renderProducts() {
     clearCarouselIntervals();
     const badge = document.getElementById('activeCategoryBadge');
     const categoryName = document.getElementById('categoryNameDisplay');
+    
+    // Atualização de UI (Badges e Títulos)
     if (currentFilter !== 'all') {
         let label = currentFilter;
         if (currentFilter === 'favorites') {
@@ -597,6 +599,7 @@ function renderProducts() {
         }
     }
 
+    // Lógica de Paginação
     const filtered = getFilteredProducts();
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const start = (currentPage - 1) * itemsPerPage;
@@ -609,6 +612,7 @@ function renderProducts() {
         return;
     }
     
+    // Estado Vazio (Sem produtos)
     if (paginatedProducts.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
@@ -627,9 +631,12 @@ function renderProducts() {
         return;
     }
     
-    grid.innerHTML = paginatedProducts.map(product => {
+    // === OTIMIZAÇÃO DE PERFORMANCE (DocumentFragment) ===
+    const fragment = document.createDocumentFragment();
+    
+    paginatedProducts.forEach(product => {
+        // Cálculos do Produto
         let images = [];
-        
         if (Array.isArray(product.images) && product.images.length > 0) {
             images = product.images;
         } else if (product.image) {
@@ -640,15 +647,14 @@ function renderProducts() {
         
         const hasMultipleImages = images.length > 1;
         const isFav = isFavorite(product.id);
-        
         const discountPercent = product.oldPrice ? 
             Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
 
-        const variants = productVariants[product.id] || [];
-        const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
-        const lowStockWarning = totalStock > 0 && totalStock <= 10;
+        // Criação do Elemento Temporário
+        const tempDiv = document.createElement('div');
         
-        return `
+        // Template String
+        tempDiv.innerHTML = `
             <div class="product-card" data-product-id="${product.id}" onclick="isInternalNavigation = true; openProductDetails('${product.id}')">
                 <div class="product-image">
                     <button class="favorite-btn ${isFav ? 'active' : ''}" 
@@ -658,7 +664,7 @@ function renderProducts() {
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
                     </button>
-                     
+                      
                     ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
                     ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
                     
@@ -703,7 +709,17 @@ function renderProducts() {
                 </div>
             </div>
         `;
-    }).join('');
+
+        // Extrai o nó DOM real e adiciona ao fragmento
+        // Usamos firstElementChild para pegar a div.product-card e ignorar espaços em branco
+        if (tempDiv.firstElementChild) {
+            fragment.appendChild(tempDiv.firstElementChild);
+        }
+    });
+
+    // Limpa o grid e injeta o fragmento de uma única vez (Reflow único)
+    grid.innerHTML = '';
+    grid.appendChild(fragment);
 
     setupAutoCarousel();
     renderPagination(totalPages);
@@ -5191,6 +5207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
