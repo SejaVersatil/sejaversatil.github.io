@@ -3,6 +3,114 @@
 // Sistema Principal de E-commerce - Organizado e Limpo
 // ====================================================================
 
+// ==================== INICIALIZAÇÃO ROBUSTA ====================
+(async function initApp() {
+  console.log('🚀 Iniciando inicialização...');
+  
+  try {
+    await window.firebaseReady;
+    console.log('✅ Firebase pronto - script2.js');
+    
+    await Promise.race([
+      window.authReady,
+      new Promise(resolve => setTimeout(() => resolve(null), 5000))
+    ]);
+    console.log('✅ Auth pronto - script2.js');
+    
+    if (document.readyState === 'loading') {
+      await new Promise(resolve => {
+        document.addEventListener('DOMContentLoaded', resolve, { once: true });
+      });
+    }
+    console.log('✅ DOM pronto - script2.js');
+    
+    await startApp();
+    
+  } catch (error) {
+    console.error('❌ Erro crítico na inicialização:', error);
+    document.getElementById('loadingOverlay')?.classList.remove('active');
+    
+    const grid = document.getElementById('productsGrid');
+    if (grid) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+          <h2 style="color: #e74c3c;">❌ Erro ao Carregar</h2>
+          <p>${error.message}</p>
+          <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; cursor: pointer; border-radius: 8px;">
+            🔄 Recarregar
+          </button>
+        </div>
+      `;
+    }
+  }
+})();
+
+async function startApp() {
+
+const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.classList.add('active');
+  
+  const isCheckoutPage = window.location.pathname.includes('checkout.html');
+  
+  if (!isCheckoutPage) {
+    window.cartSidebar = document.getElementById('cartSidebar');
+    window.cartOverlay = document.getElementById('sidebarOverlay');
+    
+    if (!window.cartSidebar) {
+      console.error('❌ Cart sidebar not found!');
+    }
+  }
+  
+  try {
+    console.log('🚀 Iniciando carregamento do site...');
+    
+    loadSettings();
+    setupPaymentListeners();
+    
+    if (!isCheckoutPage && typeof renderProductsSkeleton === 'function') {
+      renderProductsSkeleton();
+    }
+    
+    await loadProducts();
+    loadCart();
+    
+    if (!isCheckoutPage) {
+      renderProducts();
+      renderBestSellers();
+      initHeroCarousel();
+      await loadVideoGrid();
+    }
+    
+    updateCartUI();
+    updateFavoritesCount();
+    setupConnectionMonitor();
+    setupCartAbandonmentTracking();
+    setupPushNotifications();
+    
+    console.log('✅ Site carregado com sucesso!');
+    
+  } catch (error) {
+    console.error('❌ ERRO CRÍTICO ao inicializar:', error);
+    console.error('Stack trace:', error.stack);
+    showToast('Erro ao carregar o site. Recarregue a página.', 'error');
+    
+    const grid = document.getElementById('productsGrid');
+    if (grid) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+          <h2 style="color: #e74c3c; margin-bottom: 1rem;">❌ Erro ao Carregar</h2>
+          <p style="color: #666; margin-bottom: 2rem;">${error.message}</p>
+          <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; cursor: pointer; border-radius: 8px;">
+            🔄 Recarregar Página
+          </button>
+        </div>
+      `;
+    }
+  } finally {
+    if (loadingOverlay) loadingOverlay.classList.remove('active');
+  }
+}
+    
 // ==================== POPUP PROMOCIONAL ====================
 function showPromoPopup() {
     const overlay = document.getElementById('promoPopupOverlay');
@@ -91,11 +199,6 @@ let productColors = [];
 let editingProductId = null;
 let productVariants = {};
 let videoGridData = [];
-
-
-// Aguarda Promise que já existe
-window.firebaseReady.then(() => {
-  console.log('✅ Firebase pronto - script2.js');
     
 // ==================== CLASSES E CONSTRUTORES ====================
 class SecureStorage {
@@ -5136,87 +5239,6 @@ console.log(
     'Para marcar produtos Black Friday automaticamente, execute: marcarProdutosBlackFriday()'
 );
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.add('active');
-    }
-
-    const isCheckoutPage = window.location.pathname.includes('checkout.html');
-    
-    if (!isCheckoutPage) {
-        window.cartSidebar = document.getElementById('cartSidebar');
-        window.cartOverlay = document.getElementById('sidebarOverlay');
-        
-        if (!window.cartSidebar) {
-            console.error('❌ CRITICAL: Cart sidebar not found in HTML!');
-        }
-        if (!window.cartOverlay) {
-            console.warn('⚠️ Overlay not found - cart may not close properly');
-        }
-    } else {
-        console.log('ℹ️ Checkout page detected - skipping cart sidebar cache');
-    }
-    
-    try {
-        console.log('🚀 Iniciando carregamento do site...');
-        
-        loadSettings();
-        setupPaymentListeners();
-        
-        // Renderiza o esqueleto IMEDIATAMENTE, antes de esperar o banco de dados
-        if (!isCheckoutPage && typeof renderProductsSkeleton === 'function') {
-            renderProductsSkeleton(); 
-        }
-
-        await loadProducts();
-        loadCart();
-        
-        if (!isCheckoutPage) {
-            renderProducts();
-            renderBestSellers();
-            initHeroCarousel();
-            await loadVideoGrid();
-        }
-        
-        updateCartUI();
-        updateFavoritesCount();
-        setupConnectionMonitor();
-        setupCartAbandonmentTracking();
-        setupPushNotifications();
-        
-        console.log('✅ Site carregado com sucesso!');
-        
-    } catch (error) {
-        console.error('❌ ERRO CRÍTICO ao inicializar:', error);
-        console.error('Stack trace:', error.stack);
-        showToast('Erro ao carregar o site. Recarregue a página.', 'error');
-        
-        const grid = document.getElementById('productsGrid');
-        if (grid) {
-            grid.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-                    <h2 style="color: #e74c3c; margin-bottom: 1rem;">❌ Erro ao Carregar</h2>
-                    <p style="color: #666; margin-bottom: 2rem;">${error.message}</p>
-                    <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; cursor: pointer; border-radius: 8px;">
-                        🔄 Recarregar Página
-                    </button>
-                </div>
-            `;
-        }
-        
-    } finally {
-        if (loadingOverlay) {
-            loadingOverlay.classList.remove('active');
-        }
-    }
-});
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
-}); 
-
-
-
-
-
