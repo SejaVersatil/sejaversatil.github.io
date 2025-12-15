@@ -2038,23 +2038,33 @@ const heroSlides = [
 function initHeroCarousel() {
     const heroContainer = document.querySelector('.hero-carousel');
     if (!heroContainer) return;
-    if (heroContainer.children.length === 0) {
+    // ✅ Se já existe 1 slide no HTML, adiciona os outros 2
+const existingSlides = heroContainer.querySelectorAll('.hero-slide').length;
+
+if (existingSlides === 1) {
+  // Adiciona slides 2 e 3 (índices 1 e 2 do array)
+  heroSlides.slice(1).forEach((slide, index) => {
+    const slideDiv = document.createElement('div');
+    slideDiv.className = 'hero-slide';
+    slideDiv.style.backgroundImage = `url('${slide.image}')`;
+    slideDiv.style.cursor = 'pointer';
+    slideDiv.onclick = () => scrollToProducts();
+    
+    slideDiv.innerHTML = '<div class="hero-overlay"></div>';
+    heroContainer.appendChild(slideDiv);
+  });
+  
+  console.log('✅ Slides 2 e 3 adicionados via JS');
+} else if (existingSlides === 0) {
+  // Fallback: Se HTML não tem nada, cria tudo do zero
   heroContainer.innerHTML = heroSlides.map((slide, index) => `
-        <div class="hero-slide ${index === 0 ? 'active' : ''}" 
-             style="background-image: url('${slide.image}'); cursor: pointer;"
-             onclick="scrollToProducts()">
-            <div class="hero-overlay"></div>
-            </div>
-    `).join('');
-    const dotsContainer = document.querySelector('.hero-carousel-dots');
-    if (dotsContainer) {
-        dotsContainer.innerHTML = heroSlides.map((_, index) => `
-            <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
-        `).join('');
-    }
-} else {
-  console.log('✅ Hero já renderizado no HTML, pulando recriação');
-    }
+    <div class="hero-slide ${index === 0 ? 'active' : ''}" 
+         style="background-image: url('${slide.image}'); cursor: pointer;"
+         onclick="scrollToProducts()">
+      <div class="hero-overlay"></div>
+    </div>
+  `).join('');
+}
     startHeroCarousel();
 }
 
@@ -5245,5 +5255,6 @@ console.log(
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
