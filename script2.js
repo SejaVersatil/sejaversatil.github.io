@@ -3,6 +3,26 @@
 // Sistema Principal de E-commerce - Organizado e Limpo
 // ====================================================================
 
+// ✅ Aguarda Firebase carregar
+if (typeof window.firebaseReady === 'undefined') {
+  window.firebaseReady = new Promise((resolve, reject) => {
+    window.addEventListener('firebaseReady', resolve);
+    setTimeout(() => {
+      if (typeof firebase === 'undefined') {
+        reject(new Error('Firebase timeout'));
+      }
+    }, 10000);
+  });
+}
+
+// ============================================
+// AGUARDA ANTES DE USAR db/auth/storage
+// ============================================
+
+// ✅ Todas as funções que usam Firebase devem estar dentro deste bloco:
+window.firebaseReady.then(() => {
+  console.log('✅ Firebase pronto - script2.js pode executar');
+
 // ==================== CONFIGURAÇÕES E CONSTANTES ====================
 const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
 const WHATSAPP_NUMBER = '5571991427103';
@@ -5207,6 +5227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
 
 
 
