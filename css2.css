@@ -1150,83 +1150,66 @@ nav {
 
 /* ==================== FOOTER DO CARRINHO ==================== */
 .cart-footer {
-    padding: 1.25rem 1.5rem 1.5rem;
+    padding: 1rem 1.25rem 1.25rem;
     border-top: 1px solid #f5f5f5;
     background: #ffffff;
     flex-shrink: 0;
 }
 
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 1.25rem;
-    padding-bottom: 1rem;
+.cart-summary-box {
+    margin-bottom: 1rem;
+    padding: 0.875rem 0;
+    border-top: 1px solid #f5f5f5;
     border-bottom: 1px solid #f5f5f5;
 }
 
-.cart-total span:first-child {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.6875rem;
-    font-weight: 500 !important;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #737373;
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.375rem 0;
+    font-family: 'Outfit', sans-serif;
 }
 
-.cart-total span:last-child {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 1.125rem;
-    font-weight: 600 !important;
+.summary-row.subtotal span:first-child,
+.summary-row.discount span:first-child {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #999;
+}
+
+.summary-row.subtotal span:last-child,
+.summary-row.discount span:last-child {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.summary-row.total {
+    padding-top: 0.625rem;
+    margin-top: 0.375rem;
+    border-top: 1px solid #e8e8e8;
+}
+
+.summary-row.total span:first-child {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #1a1a1a;
+}
+
+.summary-row.total span:last-child {
+    font-size: 1.0625rem;
+    font-weight: 700;
     color: #000;
     letter-spacing: -0.3px;
 }
 
-/* ==================== BOTÕES DE AÇÃO ==================== */
-.view-more-btn {
-    width: 100%;
-    padding: 0.875rem;
-    background: transparent;
-    color: #000;
-    border: 1px solid #e0e0e0;
-    border-radius: 1px;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.6875rem;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    margin-bottom: 0.625rem;
-}
-
-.view-more-btn:hover {
-    border-color: #000;
-    background: #fafafa;
-}
-
-.checkout-btn {
-    width: 100%;
-    padding: 0.9375rem;
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 1px;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.6875rem;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.checkout-btn:hover {
-    background: #1a1a1a;
-}
-
-.checkout-btn:active {
-    transform: scale(0.98);
+.cart-total {
+    display: none; /* Remove versão antiga */
 }
 
 /* ==================== RESPONSIVO MOBILE ==================== */
@@ -5463,6 +5446,7 @@ img {
     max-width: 95%;
   }
 }
+
 
 
 
