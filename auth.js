@@ -1325,3 +1325,4 @@ function checkUserSession() {
 window.checkUserSession = checkUserSession;
 window.maskPhone = maskPhone;
 window.maskCPF = maskCPF;
+});
