@@ -2,20 +2,6 @@
 // AGUARDA FIREBASE ESTAR PRONTO
 // ============================================
 
-// ✅ Cria Promise que resolve quando Firebase estiver pronto
-if (typeof window.firebaseReady === 'undefined') {
-  window.firebaseReady = new Promise((resolve, reject) => {
-    window.addEventListener('firebaseReady', resolve);
-    
-    // Timeout de segurança (10s)
-    setTimeout(() => {
-      if (typeof firebase === 'undefined') {
-        reject(new Error('Firebase não carregou em 10s'));
-      }
-    }, 10000);
-  });
-}
-
 // ✅ Aguarda Firebase antes de usar auth
 window.firebaseReady.then(() => {
   console.log('✅ Firebase pronto - auth.js pode executar');
