@@ -10,6 +10,17 @@
   try {
     await window.firebaseReady;
     console.log('✅ Firebase pronto - script2.js');
+
+    auth.getRedirectResult().then((result) => {
+    if (result.user) {
+        console.log('✅ Retorno do redirect:', result.user.email);
+    }
+}).catch((error) => {
+    if (error.code !== 'auth/popup-closed-by-user') {
+            console.error('❌ Erro no redirect:', error);
+            showToast('Erro no login: ' + error.message, 'error');
+        }
+    });
     
     await Promise.race([
       window.authReady,
@@ -5183,17 +5194,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Listener de busca no header ativado');
 });
 
-auth.getRedirectResult().then((result) => {
-    if (result.user) {
-        console.log('✅ Retorno do redirect:', result.user.email);
-    }
-}).catch((error) => {
-    if (error.code !== 'auth/popup-closed-by-user') {
-            console.error('❌ Erro no redirect:', error);
-            showToast('Erro no login: ' + error.message, 'error');
-        }
-    });
-
 // ==================== INICIALIZAÇÃO ====================
 window.openPaymentModal = openPaymentModal;
 window.closePaymentModal = closePaymentModal;
@@ -5242,3 +5242,4 @@ console.log(
 
 console.log('🎯 Sistema de popup promocional inicializado');
 console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+
