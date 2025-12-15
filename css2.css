@@ -38,7 +38,7 @@
     /* Z-Index */
     --z-header: 1000;
     --z-modal: 2000;
-    --z-cart: 2000;
+    --z-cart: 2100;
     --z-admin: 3500;
     --z-loading: 9999;
     --z-toast: 10000;
@@ -5445,3 +5445,4 @@ img {
     max-width: 95%;
   }
 }
+
