@@ -135,8 +135,7 @@
     </nav>
   </header>
 
-  <!-- ==================== MODALS SECTION ==================== -->
-  <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-hidden="true">
+<div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="search-content">
       <input type="text" class="search-input" id="searchInput" placeholder="Buscar produtos..." oninput="performSearch()">
       <div class="search-results" id="searchResults"></div>
@@ -149,22 +148,22 @@
       <h3>Meu Carrinho</h3>
       <span class="close-cart" onclick="toggleCart()">✕</span>
     </div>
+    
     <div class="cart-items" id="cartItems">
       <div class="empty-cart">Seu carrinho está vazio</div>
     </div>
+    
     <div class="cart-footer" id="cartFooter" style="display: none;">
-      <!-- Barra de Frete -->
       <div class="cart-shipping-progress">
         <div class="shipping-progress-text">
           <span id="shippingProgressText">Pra ganhar FRETE GRÁTIS</span>
-          <span id="shippingProgressAmount" style="float: right; font-weight: 700;">R$299,00</span>
+          <span id="shippingProgressAmount">R$299,00</span>
         </div>
         <div class="shipping-progress-bar">
           <div class="shipping-progress-fill" id="shippingProgressFill"></div>
         </div>
       </div>
      
-      <!-- Sistema de Cupons -->
       <div class="coupon-section">
         <h4>🎟️ Cupom de Desconto</h4>
         <div class="coupon-input-row">
@@ -181,20 +180,23 @@
         </div>
       </div>
   
-      <!-- Total com Desconto -->
-      <div class="cart-total">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+      <div class="cart-summary-box">
+        
+        <div class="summary-row subtotal">
           <span>Subtotal:</span>
           <span id="cartSubtotal">R$ 0,00</span>
         </div>
-        <div class="discount-breakdown" id="discountBreakdown" style="display: none;">
+
+        <div class="summary-row discount" id="discountBreakdown" style="display: none;">
           <span>Desconto:</span>
           <span id="discountValue">- R$ 0,00</span>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; padding-top: 0.5rem; border-top: 2px solid var(--primary); margin-top: 0.5rem;">
+
+        <div class="summary-row total">
           <span>Total:</span>
           <span id="cartTotal">R$ 0,00</span>
         </div>
+
       </div>
 
       <button class="view-more-btn" onclick="closeCartAndExplore()">VER MAIS LOOKS</button>
