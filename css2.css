@@ -1007,254 +1007,291 @@ nav {
     opacity: 0.5;
 }
 
-/* Seção de Cupons */
+/* ==================== ESTILO CARRINHO PREMIUM (SCRIPT2 COMPATIBLE) ==================== */
+
+/* --- VARIÁVEIS LOCAIS (Para consistência) --- */
+:root {
+    --cart-bg: #ffffff;
+    --cart-border: #e5e5e5; /* Cinza suave e elegante */
+    --cart-text-main: #000000;
+    --cart-text-secondary: #666666;
+    --cart-btn-primary: #000000;
+    --cart-btn-hover: #333333;
+}
+
+/* ==================== SEÇÃO DE CUPONS ==================== */
 .coupon-section {
-    padding: 0.7rem 1rem;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
-    background: #fafafa;
-    margin-bottom: 0;
+    padding: 20px;
+    background-color: #fafafa; /* Fundo sutil para separar dos produtos */
+    border-top: 1px solid var(--cart-border);
+    border-bottom: 1px solid var(--cart-border);
+    margin-bottom: 0; /* Remove margem para colar no footer */
 }
 
 .coupon-section h4 {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.55rem;
-    font-weight: 700 !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--cart-text-main);
     text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 0.4rem;
-    color: var(--text);
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Ícone de ticket via CSS (opcional, dá um charme) */
+.coupon-section h4::before {
+    content: '🎟️';
+    font-size: 0.9rem;
+    filter: grayscale(100%); /* Deixa o emoji preto e branco */
 }
 
 .coupon-input-row {
     display: flex;
-    gap: 0.4rem;
+    height: 44px; /* Altura maior para facilitar o toque no mobile */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
 }
 
 .coupon-input {
     flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #e5e5e5;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-family: var(--font-main);
-    text-transform: uppercase;
-    font-weight: 600;
-    transition: var(--transition-normal);
-    background: var(--white);
-    height: 36px;
+    padding: 0 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    color: var(--cart-text-main);
+    border: 1px solid var(--cart-border);
+    border-right: none; /* Une visualmente com o botão */
+    border-radius: 4px 0 0 4px;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.coupon-input::placeholder {
+    color: #999;
+    font-weight: 300;
 }
 
 .coupon-input:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.coupon-input.error {
-    border-color: #e74c3c;
-    animation: shake 0.5s;
-}
-
-.coupon-input.success {
-    border-color: #27ae60;
+    border-color: #000;
+    z-index: 2; /* Traz para frente ao focar */
 }
 
 .coupon-apply-btn {
-    padding: 0 0.7rem;
-    background: var(--primary);
-    color: var(--white);
-    border: none;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 0.55rem;
-    cursor: pointer;
-    transition: var(--transition-normal);
+    padding: 0 24px;
+    background: var(--cart-text-main);
+    color: #fff;
+    border: 1px solid var(--cart-text-main);
+    border-radius: 0 4px 4px 0;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
-    font-family: var(--font-main);
-    height: 36px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .coupon-apply-btn:hover {
-    background: #333;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: var(--cart-btn-hover);
 }
 
 .coupon-apply-btn:disabled {
-    background: var(--gray);
+    background: #ccc;
+    border-color: #ccc;
     cursor: not-allowed;
-    transform: none;
 }
 
+/* Mensagens de Feedback */
 .coupon-message {
-    margin-top: 0.8rem;
-    padding: 0.6rem 0.8rem;
-    border-radius: 4px;
+    margin-top: 10px;
     font-size: 0.8rem;
-    font-weight: 600;
-    display: none;
-    font-family: var(--font-main);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    animation: fadeIn 0.3s ease;
 }
 
-.coupon-message.active {
-    display: block;
-}
+.coupon-message.success { color: #27ae60; }
+.coupon-message.error { color: #e74c3c; }
 
-.coupon-message.success {
-    background: #d4edda;
-    color: #155724;
-    border-left: 4px solid #28a745;
-}
-
-.coupon-message.error {
-    background: #f8d7da;
-    color: #721c24;
-    border-left: 4px solid #dc3545;
-}
-
+/* Badge de Cupom Aplicado */
 .applied-coupon-badge {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.7rem;
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border-left: 4px solid #28a745;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #27ae60;
     border-radius: 4px;
-    margin-top: 0.7rem;
+    margin-top: 12px;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.1);
 }
 
 .applied-coupon-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
 }
 
 .applied-coupon-code {
-    font-family: var(--font-main);
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: #155724;
-    letter-spacing: 0.8px;
+    font-weight: 700;
+    color: #27ae60;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
 }
 
 .applied-coupon-discount {
-    font-family: var(--font-main);
-    font-size: 0.7rem;
-    color: #155724;
-    font-weight: 600;
+    font-size: 0.75rem;
+    color: #666;
 }
 
 .remove-coupon-btn {
-    background: transparent;
+    background: none;
     border: none;
-    color: #721c24;
+    color: #999;
     font-size: 1.2rem;
     cursor: pointer;
-    padding: 0.3rem 0.5rem;
-    transition: var(--transition-fast);
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
 }
 
-.remove-coupon-btn:hover {
-    transform: scale(1.2);
-}
+.remove-coupon-btn:hover { color: #e74c3c; }
 
-.discount-breakdown {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    font-size: 0.75rem;
-    color: #27ae60;
-    font-weight: 600;
-    margin-bottom: 0.6rem;
-}
 
-/* Footer do Carrinho */
+/* ==================== FOOTER DO CARRINHO (TOTAIS) ==================== */
 .cart-footer {
-    padding: 1.2rem 1.2rem 1rem 1.2rem;
-    border-top: 1px solid #f0f0f0;
-    background: #ffffff;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    background: #fff;
+    /* Sombra suave subindo para dar profundidade sobre o conteúdo scrollável */
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+    position: relative;
+    z-index: 10;
 }
 
+/* Área de Totais - Estilo Recibo */
 .cart-total {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.7rem;
-    border-bottom: 1px solid #f0f0f0;
+    flex-direction: column; /* Empilha as linhas */
+    gap: 8px; /* Espaço entre as linhas de subtotal/desconto */
+    margin-bottom: 24px;
 }
 
-.cart-total span:first-child {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.7rem;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #333;
-}
-
-.cart-total span:last-child {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 1.15rem;
-    font-weight: 700 !important;
-    color: #000;
-    line-height: 1;
-}
-
-/* Botão Ver Mais Lookinhos */
-.view-more-btn {
+/* Estiliza cada linha gerada pelo JS (Subtotal, Desconto, etc) */
+.cart-total > div {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     width: 100%;
-    padding: 0.75rem;
-    background: transparent;
-    color: #000;
-    border: 1.5px solid #000;
-    border-radius: 6px;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.72rem;
-    font-weight: 600 !important;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    color: var(--cart-text-secondary);
+}
+
+/* Estilização da linha do DESCONTO (se houver) */
+.discount-breakdown {
+    display: flex !important; 
+    justify-content: space-between !important;
+    font-size: 0.9rem;
+    color: #27ae60 !important; /* Verde */
+    margin: 4px 0;
+}
+
+/* === O GRANDE TRUQUE PARA O TOTAL FINAL === */
+/* Seleciona a última div dentro de .cart-total, que é sempre o TOTAL */
+.cart-total > div:last-child {
+    margin-top: 12px !important;
+    padding-top: 16px !important;
+    border-top: 1px solid var(--cart-border) !important;
+    
+    font-size: 1.4rem !important; /* Tamanho grande */
+    font-weight: 700 !important;
+    color: var(--cart-text-main) !important;
+    letter-spacing: -0.5px;
+}
+
+/* Ajusta o rótulo "Total:" para ficar alinhado com o valor */
+.cart-total > div:last-child span:first-child {
+    font-size: 1rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 0.6rem;
-    line-height: 1;
 }
 
-.view-more-btn:hover {
-    background: #f8f8f8;
+
+/* ==================== BOTÕES DE AÇÃO ==================== */
+
+/* Container para os botões */
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Botão Finalizar Compra */
+/* Botão Principal (Finalizar) */
 .checkout-btn {
     width: 100%;
-    padding: 0.85rem;
-    background: #000;
+    height: 52px; /* Altura robusta */
+    background: var(--cart-btn-primary);
     color: #fff;
     border: none;
-    border-radius: 6px;
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 0.75rem;
-    font-weight: 600 !important;
+    border-radius: 4px; /* Bordas levemente arredondadas (moderno) */
+    
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    line-height: 1;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .checkout-btn:hover {
-    background: #333;
+    background: var(--cart-btn-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
 .checkout-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Botão Secundário (Ver mais looks) */
+.view-more-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--cart-text-main);
+    border: 1px solid var(--cart-border);
+    border-radius: 4px;
+    
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-more-btn:hover {
+    background: #f9f9f9;
+    border-color: #999;
+}
+
+/* Animações utilitárias */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }
 
 /* ==========================================================================
@@ -5445,3 +5482,4 @@ img {
     max-width: 95%;
   }
 }
+
