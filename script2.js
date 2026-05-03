@@ -97,7 +97,8 @@ const loadingOverlay = document.getElementById('loadingOverlay');
     setupConnectionMonitor();
     setupCartAbandonmentTracking();
     setupPushNotifications();
-    
+    await openPendingAdminPanelRequest();
+
     console.log('✅ Site carregado com sucesso!');
     
   } catch (error) {
@@ -2928,6 +2929,36 @@ function renderDropdownResults(products) {
 }
 
 // ==================== PAINEL ADMIN ====================
+async function openPendingAdminPanelRequest() {
+    const params = new URLSearchParams(window.location.search);
+    const requestedByUrl = params.get('admin') === '1';
+    let requestedBySession = false;
+
+    try {
+        requestedBySession = sessionStorage.getItem('sejaVersatilOpenAdminPanel') === '1';
+        if (requestedBySession) {
+            sessionStorage.removeItem('sejaVersatilOpenAdminPanel');
+        }
+    } catch (error) {
+        console.warn('Nao foi possivel ler a solicitacao pendente do painel admin:', error);
+    }
+
+    if (!requestedByUrl && !requestedBySession) return;
+
+    if (requestedByUrl && window.history && typeof window.history.replaceState === 'function') {
+        params.delete('admin');
+        const nextQuery = params.toString();
+        const cleanUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+
+    if (typeof openAdminPanel === 'function') {
+        await openAdminPanel();
+    }
+}
+
 async function openAdminPanel() {
     if (!auth.currentUser) {
         showToast('❌ Você precisa fazer login como administrador', 'error');

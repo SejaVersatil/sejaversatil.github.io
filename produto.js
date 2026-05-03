@@ -1704,6 +1704,16 @@ function closeUserPanel() {
     if (panel) panel.classList.remove('active');
 }
 
+function openProductAdminPanel() {
+    try {
+        sessionStorage.setItem('sejaVersatilOpenAdminPanel', '1');
+    } catch (error) {
+        console.warn('Nao foi possivel salvar a solicitacao de abertura do painel admin:', error);
+    }
+
+    window.location.href = 'index.html?admin=1';
+}
+
 function switchUserTab(tab) {
     document.querySelectorAll('.user-panel-tab').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.user-tab-content').forEach(content => content.classList.remove('active'));
@@ -1716,6 +1726,8 @@ function switchUserTab(tab) {
         document.getElementById('registerTab').classList.add('active');
     }
 }
+
+window.openProductAdminPanel = openProductAdminPanel;
 
 async function resetPassword() {
     const email = prompt("Digite seu e-mail para redefinir a senha:");
