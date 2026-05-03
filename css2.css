@@ -1291,7 +1291,8 @@ nav {
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.sidebar-section h3 {
+.sidebar-section h3,
+.sidebar-section h4 {
     color: white;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -1319,6 +1320,15 @@ nav {
 .sidebar-section ul li a:hover {
     color: white;
     padding-left: 5px;
+}
+
+.sidebar-account-section {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.18), rgba(255, 255, 255, 0.03));
+}
+
+.sidebar-account-section ul li a {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
 }
 
 /* ==========================================================================
@@ -5792,7 +5802,22 @@ nav {
 
   .top-banner-rotative {
     height: 36px !important;
-    font-size: 0.68rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 0.035em !important;
+  }
+
+  .banner-message {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    padding: 0 8px !important;
+    text-align: center !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 
   header {
@@ -5914,6 +5939,139 @@ nav {
 @media (max-width: 480px) {
   .promo-popup-content {
     max-width: 95%;
+  }
+}
+
+/* Mobile header refinement */
+@media (max-width: 768px) {
+  header,
+  .site-header {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.08) !important;
+  }
+
+  nav,
+  .site-header .nav {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    column-gap: 8px !important;
+    height: 56px !important;
+    padding: 0 12px !important;
+    overflow: visible !important;
+  }
+
+  .nav-left {
+    display: contents !important;
+  }
+
+  .nav-center,
+  .primary-nav,
+  .search-bar {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    grid-column: 1 !important;
+    justify-self: start !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+  }
+
+  .logo,
+  .nav-left .logo {
+    grid-column: 2 !important;
+    justify-self: center !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+    font-size: clamp(1.18rem, 4.6vw, 1.48rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1 !important;
+  }
+
+  .nav-icons {
+    grid-column: 3 !important;
+    justify-self: end !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .nav-icon {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+  }
+
+  .nav-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .cart-count {
+    top: 2px !important;
+    right: 0 !important;
+    width: 17px !important;
+    height: 17px !important;
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .nav-icon-account {
+    display: none !important;
+  }
+
+  .logo,
+  .nav-left .logo {
+    font-size: clamp(1.08rem, 5.15vw, 1.36rem) !important;
+    letter-spacing: 0.075em !important;
+  }
+
+  .nav-icons {
+    gap: 5px !important;
+  }
+
+  .nav-icon {
+    width: 36px !important;
+    min-width: 36px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .top-banner-rotative {
+    font-size: 0.54rem !important;
+  }
+
+  nav,
+  .site-header .nav {
+    grid-template-columns: 40px minmax(0, 1fr) auto !important;
+    padding: 0 10px !important;
+    column-gap: 6px !important;
+  }
+
+  .logo,
+  .nav-left .logo {
+    font-size: 1.02rem !important;
+    letter-spacing: 0.055em !important;
+  }
+
+  .nav-icon {
+    width: 32px !important;
+    min-width: 32px !important;
   }
 }
 
