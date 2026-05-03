@@ -558,6 +558,176 @@
             if (!/^https?:\/\//i.test(url) && !/^data:image\//i.test(url)) return '';
             return escapeHTML(url.replace(/['"\\\r\n]/g, ''));
         }
+
+        const DEFAULT_STOCK_SIZES = ['P', 'M', 'G', 'GG'];
+        const COLOR_DISPLAY_ORDER = ['Preto', 'Azul Marinho', 'Cinza', 'Marrom'];
+
+        function normalizeText(value, fallback = '') {
+            if (value === null || value === undefined) return fallback;
+            const text = String(value).trim();
+            return text || fallback;
+        }
+
+        function normalizeNumber(value, fallback = 0) {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : fallback;
+        }
+
+        function normalizeKey(value) {
+            return normalizeText(value)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function uniqueNormalizedValues(values) {
+            const uniqueValues = new Map();
+
+            values.forEach(value => {
+                const text = normalizeText(value);
+                const key = normalizeKey(text);
+                if (text && key && !uniqueValues.has(key)) {
+                    uniqueValues.set(key, text);
+                }
+            });
+
+            return [...uniqueValues.values()];
+        }
+
+        function getProductColors(product, variants = []) {
+            const colors = Array.isArray(product?.colors) ? product.colors : [];
+            const normalizedColors = colors
+                .map(color => {
+                    if (typeof color === 'string') return normalizeText(color);
+                    return normalizeText(color?.name);
+                })
+                .filter(Boolean);
+
+            const variantColors = variants
+                .map(variant => normalizeText(variant.color))
+                .filter(Boolean);
+
+            return uniqueNormalizedValues([...normalizedColors, ...variantColors]);
+        }
+
+        function getProductSizes(product, variants = []) {
+            const sizes = Array.isArray(product?.sizes) ? product.sizes : [];
+            const normalizedSizes = sizes.map(size => normalizeText(size)).filter(Boolean);
+            const variantSizes = variants.map(variant => normalizeText(variant.size)).filter(Boolean);
+            const baseSizes = normalizedSizes.length > 0 ? normalizedSizes : DEFAULT_STOCK_SIZES;
+            const sourceSizes = uniqueNormalizedValues([...baseSizes, ...variantSizes]);
+
+            return sourceSizes.length > 0 ? sourceSizes : DEFAULT_STOCK_SIZES;
+        }
+
+        function getVariantPairKey(size, color) {
+            return `${normalizeKey(size)}__${normalizeKey(color)}`;
+        }
+
+        function buildVariantId(size, color) {
+            return getVariantPairKey(size, color) || `variant-${Date.now()}`;
+        }
+
+        function buildVariantSku(productId, size, color) {
+            return [productId, size, color]
+                .map(part => normalizeKey(part))
+                .filter(Boolean)
+                .join('-')
+                .toUpperCase();
+        }
+
+        async function getProductStockMatrix(productId, product) {
+            const variantsSnapshot = await db.collection('produtos').doc(productId).collection('variants').get();
+            const variants = [];
+
+            variantsSnapshot.forEach(variantDoc => {
+                const data = variantDoc.data() || {};
+                variants.push({
+                    id: variantDoc.id,
+                    ...data,
+                    size: normalizeText(data.size),
+                    color: normalizeText(data.color),
+                    stock: normalizeNumber(data.stock, 0),
+                    available: data.available !== false,
+                    sku: normalizeText(data.sku)
+                });
+            });
+
+            const variantsByPair = new Map();
+            variants.forEach(variant => {
+                if (!variant.size || !variant.color) return;
+                variantsByPair.set(getVariantPairKey(variant.size, variant.color), variant);
+            });
+
+            const colors = getProductColors(product, variants);
+            if (colors.length === 0 && variants.length === 0) return [];
+
+            const sizes = getProductSizes(product, variants);
+            const matrix = [];
+            const addedPairs = new Set();
+
+            colors.forEach(color => {
+                sizes.forEach(size => {
+                    const pairKey = getVariantPairKey(size, color);
+                    const existingVariant = variantsByPair.get(pairKey);
+                    const id = existingVariant?.id || buildVariantId(size, color);
+
+                    matrix.push({
+                        id,
+                        size,
+                        color,
+                        stock: normalizeNumber(existingVariant?.stock, 0),
+                        available: existingVariant ? existingVariant.available !== false : false,
+                        sku: normalizeText(existingVariant?.sku, buildVariantSku(productId, size, color)),
+                        price: existingVariant?.price !== undefined ? normalizeNumber(existingVariant.price, product.price || 0) : normalizeNumber(product.price, 0),
+                        exists: Boolean(existingVariant)
+                    });
+                    addedPairs.add(pairKey);
+                });
+            });
+
+            variants.forEach(variant => {
+                const pairKey = getVariantPairKey(variant.size, variant.color);
+                if (addedPairs.has(pairKey)) return;
+
+                matrix.push({
+                    ...variant,
+                    sku: normalizeText(variant.sku, buildVariantSku(productId, variant.size, variant.color)),
+                    price: variant.price !== undefined ? normalizeNumber(variant.price, product.price || 0) : normalizeNumber(product.price, 0),
+                    exists: true
+                });
+            });
+
+            return matrix;
+        }
+
+        function sortStockVariants(variants) {
+            const sizeOrder = DEFAULT_STOCK_SIZES.reduce((acc, size, index) => {
+                acc[size] = index;
+                return acc;
+            }, {});
+
+            return [...variants].sort((a, b) => {
+                const colorIndexA = COLOR_DISPLAY_ORDER.indexOf(a.color);
+                const colorIndexB = COLOR_DISPLAY_ORDER.indexOf(b.color);
+
+                if (colorIndexA !== -1 && colorIndexB !== -1 && colorIndexA !== colorIndexB) {
+                    return colorIndexA - colorIndexB;
+                }
+                if (colorIndexA !== -1 && colorIndexB === -1) return -1;
+                if (colorIndexB !== -1 && colorIndexA === -1) return 1;
+
+                const colorCompare = a.color.localeCompare(b.color, 'pt-BR');
+                if (colorCompare !== 0) return colorCompare;
+
+                const sizeCompare = (sizeOrder[a.size] ?? 999) - (sizeOrder[b.size] ?? 999);
+                if (sizeCompare !== 0) return sizeCompare;
+
+                return a.size.localeCompare(b.size, 'pt-BR');
+            });
+        }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -627,10 +797,10 @@
                 let outOfStock = 0;
                 
                 for (const doc of productsSnapshot.docs) {
-                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    const product = doc.data() || {};
+                    const variants = await getProductStockMatrix(doc.id, product);
                     
-                    variantsSnapshot.forEach(variantDoc => {
-                        const variant = variantDoc.data();
+                    variants.forEach(variant => {
                         totalStock += variant.stock || 0;
                         
                         if (variant.stock === 0) {
@@ -675,10 +845,10 @@
                 
                 for (const doc of productsSnapshot.docs) {
                     const product = doc.data();
-                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    const variants = await getProductStockMatrix(doc.id, product);
                     
                     let totalStock = 0;
-                    variantsSnapshot.forEach(v => totalStock += v.data().stock || 0);
+                    variants.forEach(v => totalStock += v.stock || 0);
                     
                     const stockClass = totalStock === 0 ? 'stock-out' : totalStock < 20 ? 'stock-low' : 'stock-ok';
                     const stockText = totalStock === 0 ? 'SEM ESTOQUE' : totalStock < 20 ? `BAIXO (${totalStock})` : `OK (${totalStock})`;
@@ -738,12 +908,12 @@
                 
                 for (const doc of productsSnapshot.docs) {
                     const product = doc.data();
-                    const variantsSnapshot = await db.collection('produtos').doc(doc.id).collection('variants').get();
+                    const variants = sortStockVariants(await getProductStockMatrix(doc.id, product));
                     
-                    variantsSnapshot.forEach(variantDoc => {
-                        const variant = variantDoc.data();
+                    variants.forEach(variant => {
                         const stockClass = variant.stock === 0 ? 'stock-out' : variant.stock < 5 ? 'stock-low' : 'stock-ok';
                         const stockText = variant.stock === 0 ? 'SEM ESTOQUE' : variant.stock < 5 ? 'BAIXO' : 'OK';
+                        const syncText = variant.exists ? '' : '<br><small>Pendente de sincronizacao</small>';
                         const availableText = variant.available ? '✅ Disponível' : '❌ Indisponível';
                         
                         html += `
@@ -752,7 +922,7 @@
                                 <td>${escapeHTML(variant.size)}</td>
                                 <td>${escapeHTML(variant.color)}</td>
                                 <td><strong>${Number(variant.stock || 0)}</strong></td>
-                                <td><span class="stock-badge ${stockClass}">${stockText}</span><br><small>${availableText}</small></td>
+                                <td><span class="stock-badge ${stockClass}">${stockText}</span><br><small>${availableText}</small>${syncText}</td>
                                 <td><small>${escapeHTML(variant.sku)}</small></td>
                             </tr>
                         `;
@@ -777,22 +947,26 @@
                 
                 document.getElementById('modalProductName').textContent = product.name;
                 
-                const variantsSnapshot = await db.collection('produtos').doc(productId).collection('variants').get();
-                currentVariants = [];
+                currentVariants = sortStockVariants(await getProductStockMatrix(productId, product));
+
+                if (currentVariants.length === 0) {
+                    document.getElementById('variantsContainer').innerHTML =
+                        '<div class="loading">Nenhuma cor ou tamanho cadastrado para este produto</div>';
+                    document.getElementById('stockModal').classList.add('active');
+                    return;
+                }
                 
                 let html = '<div class="variants-grid">';
                 
                 const variantsByColor = {};
 
-variantsSnapshot.forEach(doc => {
-    const variant = doc.data();
-    currentVariants.push({ id: doc.id, ...variant });
+currentVariants.forEach(variant => {
     
     // Agrupar por cor
     if (!variantsByColor[variant.color]) {
         variantsByColor[variant.color] = [];
     }
-    variantsByColor[variant.color].push({ id: doc.id, ...variant });
+    variantsByColor[variant.color].push(variant);
 });
 
 // Ordenar tamanhos dentro de cada cor
@@ -818,6 +992,7 @@ sortedColors.forEach(color => {
     variantsByColor[color].sort((a, b) => sizeOrder[a.size] - sizeOrder[b.size]);
     
     variantsByColor[color].forEach(variant => {
+        const syncHint = variant.exists ? '' : '<small style="display: block; margin-top: 0.35rem; color: #856404;">Nova variante: sera criada ao salvar</small>';
         html += `
             <div class="variant-card ${!variant.available ? 'unavailable' : ''}">
                 <div class="variant-header">
@@ -835,6 +1010,7 @@ sortedColors.forEach(color => {
                     Disponível para venda
                 </label>
                 <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${escapeHTML(variant.sku)}</small>
+                ${syncHint}
             </div>
         `;
     });
@@ -862,14 +1038,22 @@ sortedColors.forEach(color => {
             try {
                 const stockInputs = document.querySelectorAll('.stock-input');
                 const availableInputs = document.querySelectorAll('.toggle-available input');
+                const availabilityByVariantId = new Map(
+                    Array.from(availableInputs).map(input => [input.dataset.variantId, input.checked])
+                );
                 
                 let totalStock = 0;
                 const batch = db.batch();
                 
-                stockInputs.forEach((input, index) => {
+                stockInputs.forEach(input => {
                     const variantId = input.dataset.variantId;
                     const stock = parseInt(input.value) || 0;
-                    const available = availableInputs[index].checked;
+                    const available = availabilityByVariantId.get(variantId) === true;
+                    const variant = currentVariants.find(item => item.id === variantId);
+                    const size = normalizeText(variant?.size);
+                    const color = normalizeText(variant?.color);
+
+                    if (!size || !color) return;
                     
                     totalStock += stock;
                     
@@ -877,12 +1061,22 @@ sortedColors.forEach(color => {
                         .doc(currentProduct.id)
                         .collection('variants')
                         .doc(variantId);
-                    
-                    batch.update(variantRef, {
-                        stock: stock,
-                        available: available,
+
+                    const variantData = {
+                        size,
+                        color,
+                        stock,
+                        available,
+                        sku: normalizeText(variant?.sku, buildVariantSku(currentProduct.id, size, color)),
+                        price: normalizeNumber(variant?.price, currentProduct.price || 0),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    };
+
+                    if (!variant?.exists) {
+                        variantData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    }
+
+                    batch.set(variantRef, variantData, { merge: true });
                 });
                 
                 const productRef = db.collection('produtos').doc(currentProduct.id);
@@ -896,6 +1090,7 @@ sortedColors.forEach(color => {
                 alert('✅ Estoque atualizado com sucesso!');
                 closeStockModal();
                 loadProducts();
+                loadStockControl();
                 loadDashboard();
                 
             } catch (error) {
