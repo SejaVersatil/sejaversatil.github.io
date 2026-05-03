@@ -767,8 +767,8 @@ function renderSummary() {
         const itemElement = document.createElement('div');
         itemElement.className = 'summary-item';
         itemElement.innerHTML = `
-            <img src="${imageSrc}" 
-                 alt="${escapeHtml(item.name)}" 
+            <img src="${escapeHtml(imageSrc)}"
+                 alt="${escapeHtml(item.name)}"
                  class="summary-item-image"
                  loading="lazy"
                  onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=SV'">
@@ -1234,6 +1234,7 @@ function buildOrderData() {
     };
     
     const cartItems = CartManager ? CartManager.cart : [];
+    const appliedCoupon = CartManager && CartManager.appliedCoupon ? CartManager.appliedCoupon : null;
     
     // ✅ SANITIZE: Remove undefined/null values
     const cleanData = (obj) => {
@@ -1295,9 +1296,87 @@ function buildOrderData() {
             pixDesconto: parseFloat(CheckoutState.pixDiscount?.toFixed(2)) || 0,
             total: parseFloat(CheckoutState.total?.toFixed(2)) || 0
         }),
+
+        cupom: appliedCoupon ? cleanData({
+            id: appliedCoupon.id || appliedCoupon.code,
+            codigo: appliedCoupon.code || appliedCoupon.id,
+            tipo: appliedCoupon.type,
+            valor: parseFloat(appliedCoupon.value) || 0,
+            descontoAplicado: parseFloat(CheckoutState.couponDiscount?.toFixed(2)) || 0
+        }) : null,
         
         status: 'pendente_whatsapp'
     };
+}
+
+async function saveOrder(order) {
+    if (typeof db === 'undefined') {
+        throw new Error('Firestore indisponível para salvar o pedido.');
+    }
+
+    const orderRef = db.collection('pedidos').doc();
+    const coupon = order.cupom;
+
+    if (!coupon || !coupon.id || !(order.valores?.desconto > 0)) {
+        await orderRef.set(order);
+        return orderRef;
+    }
+
+    await db.runTransaction(async (transaction) => {
+        const couponRef = db.collection('coupons').doc(coupon.id);
+        const couponDoc = await transaction.get(couponRef);
+
+        if (!couponDoc.exists) {
+            throw new Error('Cupom aplicado não existe mais.');
+        }
+
+        const couponData = couponDoc.data() || {};
+        const currentCount = Number(couponData.usedCount || 0);
+        const validFrom = couponData.validFrom && typeof couponData.validFrom.toDate === 'function'
+            ? couponData.validFrom.toDate()
+            : null;
+        const validUntil = couponData.validUntil && typeof couponData.validUntil.toDate === 'function'
+            ? couponData.validUntil.toDate()
+            : null;
+        const now = new Date();
+
+        if (couponData.active === false) {
+            throw new Error('O cupom aplicado está inativo.');
+        }
+
+        if (validFrom && now < validFrom) {
+            throw new Error('O cupom aplicado ainda não está válido.');
+        }
+
+        if (validUntil && now > validUntil) {
+            throw new Error('O cupom aplicado expirou.');
+        }
+
+        if (couponData.minValue && (order.valores?.subtotal || 0) < Number(couponData.minValue)) {
+            throw new Error('O pedido não atinge o valor mínimo do cupom.');
+        }
+
+        if (couponData.usageLimit && currentCount + 1 > Number(couponData.usageLimit)) {
+            throw new Error('O cupom aplicado atingiu o limite de usos.');
+        }
+
+        transaction.set(orderRef, order);
+        transaction.update(couponRef, {
+            usedCount: firebase.firestore.FieldValue.increment(1)
+        });
+        transaction.set(db.collection('coupon_usage').doc(), {
+            couponId: coupon.id,
+            orderId: orderRef.id,
+            orderCode: order.codigo,
+            userId: window.currentUser?.uid || null,
+            userEmail: window.currentUser?.email || order.cliente?.email || null,
+            usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            orderValue: order.valores?.total || 0,
+            discountApplied: order.valores?.desconto || 0
+        });
+    });
+
+    return orderRef;
 }
 
 // ==================== FINALIZAR COMPRA - WHATSAPP DIRETO ====================
@@ -1338,13 +1417,9 @@ if (!CheckoutState.step3Valid) {
         // 2. Log order before Firestore write
         console.log('📦 Order object:', JSON.stringify(order, null, 2));
         
-        // 3. Save to Firestore (non-blocking)
-        db.collection('pedidos').add(order)
-            .then(docRef => console.log('✅ Firestore saved:', docRef.id))
-            .catch(err => {
-                console.warn('⚠️ Firestore write failed:', err.message);
-                console.error('Problematic order data:', order);
-            });
+        // 3. Save to Firestore before clearing cart or opening WhatsApp
+        const docRef = await saveOrder(order);
+        console.log('✅ Firestore saved:', docRef.id);
         
         // 4. Construct WhatsApp message
         const message = buildWhatsAppMessage(order);

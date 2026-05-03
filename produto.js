@@ -1228,7 +1228,7 @@ async function sendToWhatsApp() {
             appliedCoupon: state.appliedCoupon ? { code: state.appliedCoupon.code, value: state.appliedCoupon.value } : null
         };
 
-        const docRef = await db.collection('orders').add(orderData);
+        const docRef = await db.collection('pedidos').add(orderData);
         orderId = docRef.id;
 
         if (state.appliedCoupon) {
@@ -1905,8 +1905,11 @@ window.toggleGalleryExpansion = function() {
 
 // Validação de Email
 function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!re.test(normalizedEmail)) return false;
+    const domain = normalizedEmail.split('@')[1];
+    return Boolean(domain) && domain.split('.').every(part => part && !part.startsWith('-') && !part.endsWith('-'));
 }
 
 // Validação de CPF

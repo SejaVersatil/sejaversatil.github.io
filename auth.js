@@ -2,6 +2,32 @@
 // AGUARDA FIREBASE ESTAR PRONTO
 // ============================================
 
+if (!window.firebaseReady) {
+  window.firebaseReady = new Promise((resolve, reject) => {
+    const startedAt = Date.now();
+    const timer = setInterval(() => {
+      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+        clearInterval(timer);
+        window.auth = window.auth || firebase.auth();
+        window.db = window.db || firebase.firestore();
+        if (firebase.storage && !window.storage) {
+          window.storage = firebase.storage();
+        }
+        resolve();
+      } else if (Date.now() - startedAt > 10000) {
+        clearInterval(timer);
+        reject(new Error('Firebase não inicializou dentro do tempo esperado.'));
+      }
+    }, 50);
+  });
+}
+
+if (!window.authReady) {
+  window.authReady = new Promise((resolve) => {
+    window._resolveAuth = resolve;
+  });
+}
+
 // ✅ Aguarda Firebase antes de usar auth
 window.firebaseReady.then(() => {
   console.log('✅ Firebase pronto - auth.js pode executar');
@@ -45,21 +71,13 @@ const FIREBASE_ERROR_MAP = {
 
 // ==================== VALIDATION HELPERS ====================
 function validateEmail(email) {
-    // REGEX mais restritivo - requer pelo menos 2 caracteres antes do @
-    const re = /^[a-zA-Z0-9][a-zA-Z0-9._-]{1,}@[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    
-    const isValid = re.test(String(email).toLowerCase());
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const isValid = re.test(normalizedEmail);
     if (!isValid) return false;
     
-    const domain = email.split('@')[1]?.toLowerCase();
+    const domain = normalizedEmail.split('@')[1];
     if (!domain) return false;
-    
-    // Lista de domínios confiáveis e comuns
-    const trustedDomains = [
-        'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'live.com',
-        'icloud.com', 'protonmail.com', 'aol.com', 'zoho.com', 'mail.com',
-        'gmx.com', 'yandex.com', 'fastmail.com', 'tutanota.com'
-    ];
     
     // Lista de domínios suspeitos/temporários
     const suspiciousDomains = [
@@ -68,30 +86,16 @@ function validateEmail(email) {
         'grr.la', 'guerrillamail', 'spam4.me', 'mintemail',
         'fakeinbox', 'getnada', 'yopmail', 'mohmal', 'emailondeck'
     ];
-    
-    // Se for domínio confiável, aceita
-    if (trustedDomains.includes(domain)) {
-        return true;
-    }
-    
-    // Verifica se contém palavras suspeitas
-    const isSuspicious = suspiciousDomains.some(sus => domain.includes(sus));
-    if (isSuspicious) {
-        return false;
-    }
-    
-    // Validação adicional: domínio deve ter pelo menos 4 caracteres antes do TLD
+
+    if (suspiciousDomains.some(sus => domain.includes(sus))) return false;
+
     const domainParts = domain.split('.');
     if (domainParts.length < 2) return false;
-    
-    const domainName = domainParts[domainParts.length - 2];
-    if (domainName.length < 4) {
-        return false; // Bloqueia domínios muito curtos como "aa.com"
+    if (domainParts.some(part => !part || part.startsWith('-') || part.endsWith('-'))) {
+        return false;
     }
-    
-    // Bloqueia domínios com padrões suspeitos (números aleatórios, etc)
-    if (/^\d+$/.test(domainName)) {
-        return false; // Bloqueia domínios como "123456.com"
+    if (!/[a-z]/.test(domainParts[0]) || /^\d+$/.test(domainParts[0])) {
+        return false;
     }
     
     return true;
@@ -1312,4 +1316,6 @@ function checkUserSession() {
 window.checkUserSession = checkUserSession;
 window.maskPhone = maskPhone;
 window.maskCPF = maskCPF;
+}).catch((error) => {
+  console.error('Erro ao inicializar autenticação:', error);
 });

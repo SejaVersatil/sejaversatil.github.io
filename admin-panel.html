@@ -531,6 +531,33 @@
         
         let currentProduct = null;
         let currentVariants = [];
+
+        function escapeHTML(value) {
+            const div = document.createElement('div');
+            div.textContent = value == null ? '' : String(value);
+            return div.innerHTML;
+        }
+
+        function escapeInlineJS(value) {
+            return String(value == null ? '' : value)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/\r?\n/g, ' ');
+        }
+
+        function escapeAttribute(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function safeImageUrl(value) {
+            const url = String(value || '').trim();
+            if (!/^https?:\/\//i.test(url) && !/^data:image\//i.test(url)) return '';
+            return escapeHTML(url.replace(/['"\\\r\n]/g, ''));
+        }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -658,18 +685,21 @@
                     
                     const firstImage = product.images && product.images[0] ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     const isRealImage = firstImage.startsWith('http') || firstImage.startsWith('data:');
+                    const imageUrl = isRealImage ? safeImageUrl(firstImage) : '';
+                    const fallbackBackground = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    const productId = escapeAttribute(escapeInlineJS(doc.id));
                     
                     html += `
                         <tr>
                             <td>
-                                <div class="product-img" style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}"></div>
+                                <div class="product-img" style="${isRealImage && imageUrl ? `background-image: url('${imageUrl}')` : `background: ${fallbackBackground}`}"></div>
                             </td>
-                            <td><strong>${product.name}</strong></td>
-                            <td>${product.category}</td>
-                            <td>R$ ${product.price.toFixed(2)}</td>
+                            <td><strong>${escapeHTML(product.name)}</strong></td>
+                            <td>${escapeHTML(product.category)}</td>
+                            <td>R$ ${Number(product.price || 0).toFixed(2)}</td>
                             <td><span class="stock-badge ${stockClass}">${stockText}</span></td>
                             <td>
-                                <button class="btn-action btn-stock" onclick="openStockModal('${doc.id}')">📋 Gerenciar</button>
+                                <button class="btn-action btn-stock" onclick="openStockModal('${productId}')">📋 Gerenciar</button>
                             </td>
                         </tr>
                     `;
@@ -718,12 +748,12 @@
                         
                         html += `
                             <tr>
-                                <td><strong>${product.name}</strong></td>
-                                <td>${variant.size}</td>
-                                <td>${variant.color}</td>
-                                <td><strong>${variant.stock}</strong></td>
+                                <td><strong>${escapeHTML(product.name)}</strong></td>
+                                <td>${escapeHTML(variant.size)}</td>
+                                <td>${escapeHTML(variant.color)}</td>
+                                <td><strong>${Number(variant.stock || 0)}</strong></td>
                                 <td><span class="stock-badge ${stockClass}">${stockText}</span><br><small>${availableText}</small></td>
-                                <td><small>${variant.sku}</small></td>
+                                <td><small>${escapeHTML(variant.sku)}</small></td>
                             </tr>
                         `;
                     });
@@ -791,20 +821,20 @@ sortedColors.forEach(color => {
         html += `
             <div class="variant-card ${!variant.available ? 'unavailable' : ''}">
                 <div class="variant-header">
-                    <span class="variant-label">${variant.size} - ${variant.color}</span>
+                    <span class="variant-label">${escapeHTML(variant.size)} - ${escapeHTML(variant.color)}</span>
                 </div>
-                <input type="number" class="stock-input" 
-                       value="${variant.stock}" 
+                <input type="number" class="stock-input"
+                       value="${Number(variant.stock || 0)}"
                        min="0"
-                       data-variant-id="${variant.id}"
+                       data-variant-id="${escapeAttribute(variant.id)}"
                        placeholder="Quantidade">
                 <label class="toggle-available">
-                    <input type="checkbox" 
+                    <input type="checkbox"
                            ${variant.available ? 'checked' : ''}
-                           data-variant-id="${variant.id}">
+                           data-variant-id="${escapeAttribute(variant.id)}">
                     Disponível para venda
                 </label>
-                <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${variant.sku}</small>
+                <small style="display: block; margin-top: 0.5rem; color: #999;">SKU: ${escapeHTML(variant.sku)}</small>
             </div>
         `;
     });

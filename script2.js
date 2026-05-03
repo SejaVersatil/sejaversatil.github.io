@@ -386,12 +386,13 @@ function debounce(func, wait) {
 }
 
 function showToast(message, type = 'success') {
+    const safeType = ['success', 'error', 'info', 'warning'].includes(type) ? type : 'info';
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast toast-${safeType}`;
     toast.innerHTML = `
         <div class="toast-content">
-            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-            <span class="toast-message">${message}</span>
+            <span class="toast-icon">${safeType === 'success' ? '✓' : safeType === 'error' ? '✕' : 'ℹ'}</span>
+            <span class="toast-message">${sanitizeInput(message)}</span>
         </div>
     `;
     document.body.appendChild(toast);
@@ -404,11 +405,11 @@ function showToast(message, type = 'success') {
 }
 
 function sanitizeInput(input) {
-    if (typeof input !== 'string') return '';
+    if (input === null || input === undefined) return '';
 
     const div = document.createElement('div');
-    div.textContent = input;
-    return div.textContent; // ✅ Remover .innerHTML
+    div.textContent = String(input);
+    return div.innerHTML;
 }
 
 const DEFAULT_PRODUCT_IMAGE = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -3646,9 +3647,9 @@ async function marcarProdutosBlackFriday() {
 }
 
 function saveSettings() {
-    const bannerTitle = sanitizeInput(document.getElementById('settingBannerTitle').value.trim());
-    const bannerSubtitle = sanitizeInput(document.getElementById('settingBannerSubtitle').value.trim());
-    const topBanner = sanitizeInput(document.getElementById('settingTopBanner').value.trim());
+    const bannerTitle = normalizeText(document.getElementById('settingBannerTitle').value);
+    const bannerSubtitle = normalizeText(document.getElementById('settingBannerSubtitle').value);
+    const topBanner = normalizeText(document.getElementById('settingTopBanner').value);
     localStorage.setItem('sejaVersatilSettings', JSON.stringify({
         bannerTitle,
         bannerSubtitle,
@@ -4015,7 +4016,7 @@ async function sendToWhatsApp() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, value: appliedCoupon.value } : null
             };
-            const docRef = await db.collection('orders').add(orderData);
+            const docRef = await db.collection('pedidos').add(orderData);
             orderId = docRef.id;
 
             if (appliedCoupon) {
@@ -4253,8 +4254,11 @@ function isValidCPF(cpf) {
 }
 
 function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!re.test(normalizedEmail)) return false;
+    const domain = normalizedEmail.split('@')[1];
+    return Boolean(domain) && domain.split('.').every(part => part && !part.startsWith('-') && !part.endsWith('-'));
 }
 
 function applyVisualValidation(inputElement, validationFn) {

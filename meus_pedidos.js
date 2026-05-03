@@ -245,31 +245,32 @@ function renderOrders(orders) {
     const statusClass = getStatusClass(orderStatus);
     const orderTotal = order.valores?.total || order.totals?.total || 0;
     const orderItems = order.items || [];
+    const orderCode = sanitizeHTML(order.codigo || order.id.substring(0, 8).toUpperCase());
 
     return `
       <div class="order-card">
         <div class="order-header">
           <div class="order-info">
-            <div class="order-id">#${order.codigo || order.id.substring(0, 8).toUpperCase()}</div>
-            <div class="order-date">${orderDate}</div>
+            <div class="order-id">#${orderCode}</div>
+            <div class="order-date">${sanitizeHTML(orderDate)}</div>
           </div>
-          <div class="order-status ${statusClass}">${translateStatus(orderStatus)}</div>
+          <div class="order-status ${sanitizeHTML(statusClass)}">${sanitizeHTML(translateStatus(orderStatus))}</div>
         </div>
 
         <div class="order-body">
           <div class="order-items">
             ${orderItems.slice(0, 3).map(item => `
               <div class="order-item">
-                <img src="${item.image || 'https://via.placeholder.com/60'}" 
-                     alt="${sanitizeHTML(item.name)}" 
+                <img src="${sanitizeHTML(item.image || 'https://via.placeholder.com/60')}"
+                     alt="${sanitizeHTML(item.name)}"
                      class="order-item-image"
                      onerror="this.src='https://via.placeholder.com/60/667eea/ffffff?text=SV'">
                 <div class="order-item-details">
                   <div class="order-item-name">${sanitizeHTML(item.name)}</div>
                   <div class="order-item-variant">
-                    ${item.size ? `Tam: ${item.size}` : ''} 
-                    ${item.color ? `| Cor: ${item.color}` : ''}
-                    ${item.quantity ? `| Qtd: ${item.quantity}` : ''}
+                    ${item.size ? `Tam: ${sanitizeHTML(item.size)}` : ''}
+                    ${item.color ? `| Cor: ${sanitizeHTML(item.color)}` : ''}
+                    ${item.quantity ? `| Qtd: ${sanitizeHTML(item.quantity)}` : ''}
                   </div>
                 </div>
                 <div class="order-item-price">R$ ${formatCurrency(item.price * (item.quantity || 1))}</div>
