@@ -277,6 +277,16 @@ function handleCheckoutAuthUpdate(user) {
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
+                        const nomeReal = userData.name || user.displayName || user.name || user.email?.split('@')[0] || '';
+
+                        if (nomeReal) {
+                            CheckoutState.userData.nome = nomeReal;
+                            if (CheckoutDOM.loggedUserName) CheckoutDOM.loggedUserName.textContent = nomeReal;
+                        }
+
+                        if (user.email) {
+                            CheckoutState.userData.email = user.email;
+                        }
                         
                         if (userData.phone && CheckoutDOM.inputTelefone) {
                             CheckoutDOM.inputTelefone.value = userData.phone;
@@ -288,7 +298,7 @@ function handleCheckoutAuthUpdate(user) {
                             CheckoutState.userData.cpf = userData.cpf;
                         }
                         
-                        if (userData.phone && userData.cpf) {
+                        if (userData.phone && userData.cpf && nomeReal) {
                             CheckoutState.step1Valid = true;
                             updateColumnStatus(1, 'Completo', 'success');
                             unlockColumn(2);
@@ -945,10 +955,24 @@ function updateColumnStatus(columnNumber, status, type = 'default') {
 // ==================== VALIDAÇÃO ETAPA 1: DADOS PESSOAIS ====================
 function validateDadosStep() {
     // ✅ Single source of truth: window.currentUser (managed by auth.js)
-    const nome = window.currentUser?.name || '';
-    const email = document.getElementById('inputEmail')?.value.trim() || window.currentUser?.email || '';
-    const telefone = document.getElementById('inputTelefone')?.value.trim();
-    const cpf = document.getElementById('inputCPF')?.value.trim();
+    const authUser = window.currentUser || (typeof auth !== 'undefined' ? auth.currentUser : null) || {};
+    const loggedName = CheckoutDOM.loggedUserName?.textContent?.trim();
+    const nome = (
+        CheckoutState.userData.nome ||
+        authUser.name ||
+        authUser.displayName ||
+        (loggedName && loggedName !== '---' && loggedName !== 'Usuário' ? loggedName : '') ||
+        authUser.email?.split('@')[0] ||
+        ''
+    ).trim();
+    const email = (
+        document.getElementById('inputEmail')?.value?.trim() ||
+        CheckoutState.userData.email ||
+        authUser.email ||
+        ''
+    ).trim();
+    const telefone = document.getElementById('inputTelefone')?.value?.trim() || CheckoutState.userData.telefone || '';
+    const cpf = document.getElementById('inputCPF')?.value?.trim() || CheckoutState.userData.cpf || '';
     
     // Validation
     if (!nome || nome.length < 3) {
@@ -975,8 +999,10 @@ function validateDadosStep() {
     }
     
     // ✅ Save to Firestore for next time (if logged in) - COLEÇÃO CORRETA
-    if (window.currentUser?.uid && typeof db !== 'undefined') {
-        db.collection('users').doc(window.currentUser.uid).set({
+    if (authUser.uid && typeof db !== 'undefined') {
+        db.collection('users').doc(authUser.uid).set({
+            name: nome,
+            email: email,
             phone: telefoneLimpo,
             cpf: cpf,
             atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
@@ -1250,6 +1276,7 @@ function buildOrderData() {
     const domEmail = document.getElementById('inputEmail')?.value;
     const domTelefone = document.getElementById('inputTelefone')?.value;
     const domCPF = document.getElementById('inputCPF')?.value;
+    const authUser = window.currentUser || (typeof auth !== 'undefined' ? auth.currentUser : null) || {};
     
     return {
         codigo: CheckoutState.cartCode || generateCartCode(),
@@ -1257,11 +1284,11 @@ function buildOrderData() {
         
         cliente: cleanData({
             // Ordem de prioridade: 1. O que tá escrito no input AGORA || 2. O que tá na memória || 3. Vazio
-            nome: domNome || CheckoutState.userData.nome || window.currentUser?.displayName || '',
-            email: domEmail || CheckoutState.userData.email || window.currentUser?.email || '',
+            nome: domNome || CheckoutState.userData.nome || authUser.name || authUser.displayName || authUser.email?.split('@')[0] || '',
+            email: domEmail || CheckoutState.userData.email || authUser.email || '',
             telefone: domTelefone || CheckoutState.userData.telefone || '',
             cpf: domCPF || CheckoutState.userData.cpf || '',
-            uid: window.currentUser?.uid || null
+            uid: authUser.uid || null
         }),
         
         endereco: cleanData({
@@ -1315,68 +1342,103 @@ async function saveOrder(order) {
     }
 
     const orderRef = db.collection('pedidos').doc();
+    await orderRef.set(order);
+    return orderRef;
+}
+
+function backupPendingOrder(order, error) {
+    try {
+        const raw = localStorage.getItem('sejaVersatilPendingOrders');
+        const pendingOrders = raw ? JSON.parse(raw) : [];
+        const backup = {
+            savedAt: new Date().toISOString(),
+            reason: error?.code || error?.message || 'unknown',
+            order: {
+                codigo: order.codigo,
+                cliente: order.cliente,
+                endereco: order.endereco,
+                items: order.items,
+                pagamento: order.pagamento,
+                valores: order.valores,
+                cupom: order.cupom,
+                status: order.status
+            }
+        };
+
+        pendingOrders.unshift(backup);
+        localStorage.setItem('sejaVersatilPendingOrders', JSON.stringify(pendingOrders.slice(0, 10)));
+    } catch (backupError) {
+        console.warn('Nao foi possivel criar backup local do pedido:', backupError);
+    }
+}
+
+async function registerCheckoutCouponUsage(order, orderId) {
     const coupon = order.cupom;
 
-    if (!coupon || !coupon.id || !(order.valores?.desconto > 0)) {
-        await orderRef.set(order);
-        return orderRef;
+    if (!coupon || !coupon.id || !(order.valores?.desconto > 0) || typeof db === 'undefined') {
+        return false;
     }
 
-    await db.runTransaction(async (transaction) => {
-        const couponRef = db.collection('coupons').doc(coupon.id);
-        const couponDoc = await transaction.get(couponRef);
+    try {
+        await db.runTransaction(async (transaction) => {
+            const authUser = window.currentUser || (typeof auth !== 'undefined' ? auth.currentUser : null) || {};
+            const couponRef = db.collection('coupons').doc(coupon.id);
+            const couponDoc = await transaction.get(couponRef);
 
-        if (!couponDoc.exists) {
-            throw new Error('Cupom aplicado não existe mais.');
-        }
+            if (!couponDoc.exists) {
+                throw new Error('Cupom aplicado não existe mais.');
+            }
 
-        const couponData = couponDoc.data() || {};
-        const currentCount = Number(couponData.usedCount || 0);
-        const validFrom = couponData.validFrom && typeof couponData.validFrom.toDate === 'function'
-            ? couponData.validFrom.toDate()
-            : null;
-        const validUntil = couponData.validUntil && typeof couponData.validUntil.toDate === 'function'
-            ? couponData.validUntil.toDate()
-            : null;
-        const now = new Date();
+            const couponData = couponDoc.data() || {};
+            const currentCount = Number(couponData.usedCount || 0);
+            const validFrom = couponData.validFrom && typeof couponData.validFrom.toDate === 'function'
+                ? couponData.validFrom.toDate()
+                : null;
+            const validUntil = couponData.validUntil && typeof couponData.validUntil.toDate === 'function'
+                ? couponData.validUntil.toDate()
+                : null;
+            const now = new Date();
 
-        if (couponData.active === false) {
-            throw new Error('O cupom aplicado está inativo.');
-        }
+            if (couponData.active === false) {
+                throw new Error('O cupom aplicado está inativo.');
+            }
 
-        if (validFrom && now < validFrom) {
-            throw new Error('O cupom aplicado ainda não está válido.');
-        }
+            if (validFrom && now < validFrom) {
+                throw new Error('O cupom aplicado ainda não está válido.');
+            }
 
-        if (validUntil && now > validUntil) {
-            throw new Error('O cupom aplicado expirou.');
-        }
+            if (validUntil && now > validUntil) {
+                throw new Error('O cupom aplicado expirou.');
+            }
 
-        if (couponData.minValue && (order.valores?.subtotal || 0) < Number(couponData.minValue)) {
-            throw new Error('O pedido não atinge o valor mínimo do cupom.');
-        }
+            if (couponData.minValue && (order.valores?.subtotal || 0) < Number(couponData.minValue)) {
+                throw new Error('O pedido não atinge o valor mínimo do cupom.');
+            }
 
-        if (couponData.usageLimit && currentCount + 1 > Number(couponData.usageLimit)) {
-            throw new Error('O cupom aplicado atingiu o limite de usos.');
-        }
+            if (couponData.usageLimit && currentCount + 1 > Number(couponData.usageLimit)) {
+                throw new Error('O cupom aplicado atingiu o limite de usos.');
+            }
 
-        transaction.set(orderRef, order);
-        transaction.update(couponRef, {
-            usedCount: firebase.firestore.FieldValue.increment(1)
+            transaction.update(couponRef, {
+                usedCount: firebase.firestore.FieldValue.increment(1)
+            });
+            transaction.set(db.collection('coupon_usage').doc(), {
+                couponId: coupon.id,
+                orderId,
+                orderCode: order.codigo,
+                userId: authUser.uid || null,
+                userEmail: authUser.email || order.cliente?.email || null,
+                usedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                orderValue: order.valores?.total || 0,
+                discountApplied: order.valores?.desconto || 0
+            });
         });
-        transaction.set(db.collection('coupon_usage').doc(), {
-            couponId: coupon.id,
-            orderId: orderRef.id,
-            orderCode: order.codigo,
-            userId: window.currentUser?.uid || null,
-            userEmail: window.currentUser?.email || order.cliente?.email || null,
-            usedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            orderValue: order.valores?.total || 0,
-            discountApplied: order.valores?.desconto || 0
-        });
-    });
 
-    return orderRef;
+        return true;
+    } catch (error) {
+        console.warn('Nao foi possivel registrar uso do cupom sem bloquear o pedido:', error);
+        return false;
+    }
 }
 
 // ==================== FINALIZAR COMPRA - WHATSAPP DIRETO ====================
@@ -1417,9 +1479,16 @@ if (!CheckoutState.step3Valid) {
         // 2. Log order before Firestore write
         console.log('📦 Order object:', JSON.stringify(order, null, 2));
         
-        // 3. Save to Firestore before clearing cart or opening WhatsApp
-        const docRef = await saveOrder(order);
-        console.log('✅ Firestore saved:', docRef.id);
+        // 3. Save to Firestore, but never block the WhatsApp checkout if rules reject the client write
+        let docRef = null;
+        try {
+            docRef = await saveOrder(order);
+            console.log('✅ Firestore saved:', docRef.id);
+            await registerCheckoutCouponUsage(order, docRef.id);
+        } catch (firestoreError) {
+            console.warn('⚠️ Firestore write failed; checkout will continue through WhatsApp:', firestoreError);
+            backupPendingOrder(order, firestoreError);
+        }
         
         // 4. Construct WhatsApp message
         const message = buildWhatsAppMessage(order);
