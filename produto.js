@@ -38,6 +38,7 @@ const normalizeIdPart = (str = '') =>
     String(str).replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 
 const nowMs = () => (new Date()).getTime();
+const productDetailsUrl = (productId) => `produto.html?id=${encodeURIComponent(String(productId))}`;
 
 /* =========================
    LocalStorage (carrinho)
@@ -740,7 +741,7 @@ async function renderRelatedProducts() {
         related.slice(0, 4).forEach(prod => {
             const card = document.createElement('div');
             card.className = 'product-card';
-            card.onclick = () => window.location.href = `produto.html?id=${prod.id}`;
+            card.onclick = () => window.location.href = productDetailsUrl(prod.id);
             card.style.cursor = 'pointer';
 
             // --- LÓGICA DE IMAGEM CORRIGIDA ---
@@ -1651,7 +1652,7 @@ function renderSearchDropdown(products, query) {
         const price = product.price ? Number(product.price).toFixed(2) : '0.00';
 
         return `
-            <div class="search-dropdown-item" onclick="window.location.href='produto.html?id=${product.id}'">
+            <div class="search-dropdown-item" onclick="window.location.href='${productDetailsUrl(product.id)}'">
                 <div class="search-dropdown-thumb" style="${style}"></div>
                 <div class="search-dropdown-info">
                     <div class="search-dropdown-title">${product.name || 'Produto'}</div>

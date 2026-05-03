@@ -343,7 +343,11 @@ const CartManager = {
             if (!raw) return;
             
             const parsed = JSON.parse(raw);
-            this._cart = parsed.items || [];
+            this._cart = (parsed.items || []).map(item => ({
+                ...item,
+                quantity: parseCurrencyNumber(item.quantity, 1),
+                price: parseCurrencyNumber(item.price, 0)
+            }));
             this._appliedCoupon = parsed.appliedCoupon || null;
             this._couponDiscount = parsed.couponDiscount || 0;
         } catch (err) {
@@ -401,10 +405,135 @@ function showToast(message, type = 'success') {
 
 function sanitizeInput(input) {
     if (typeof input !== 'string') return '';
-    
+
     const div = document.createElement('div');
     div.textContent = input;
     return div.textContent; // ✅ Remover .innerHTML
+}
+
+const DEFAULT_PRODUCT_IMAGE = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+function parseCurrencyNumber(value, fallback = null) {
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : fallback;
+    }
+
+    if (typeof value !== 'string') {
+        return fallback;
+    }
+
+    const cleaned = value.trim().replace(/[^\d,.-]/g, '');
+    if (!cleaned) return fallback;
+
+    const hasComma = cleaned.includes(',');
+    const hasDot = cleaned.includes('.');
+    const normalized = hasComma && hasDot
+        ? cleaned.replace(/\./g, '').replace(',', '.')
+        : cleaned.replace(',', '.');
+
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function formatPrice(value) {
+    return parseCurrencyNumber(value, 0).toFixed(2);
+}
+
+function normalizeText(value, fallback = '') {
+    if (value === null || value === undefined) return fallback;
+    const text = String(value).trim();
+    return text || fallback;
+}
+
+function normalizeProductImages(value, fallback = DEFAULT_PRODUCT_IMAGE) {
+    const list = Array.isArray(value) ? value : (value ? [value] : []);
+    const images = list
+        .map(image => typeof image === 'string' ? image.trim() : '')
+        .filter(Boolean);
+
+    return images.length > 0 ? [...new Set(images)] : (fallback ? [fallback] : []);
+}
+
+function normalizeProductColors(value) {
+    const list = Array.isArray(value) ? value : (value ? [value] : []);
+
+    return list
+        .map(color => {
+            if (typeof color === 'string') {
+                const colorName = normalizeText(color);
+                return colorName ? {
+                    name: colorName,
+                    hex: getColorHex(colorName),
+                    images: []
+                } : null;
+            }
+
+            if (!color || typeof color !== 'object') return null;
+
+            const colorName = normalizeText(color.name, 'Cor');
+            return {
+                name: colorName,
+                hex: normalizeText(color.hex, getColorHex(colorName)),
+                images: normalizeProductImages(color.images, null)
+            };
+        })
+        .filter(Boolean);
+}
+
+function normalizeProductRecord(id, data = {}) {
+    const rawImages = Array.isArray(data.images) && data.images.length > 0
+        ? data.images
+        : data.image;
+    const price = parseCurrencyNumber(data.price, 0);
+    const oldPrice = parseCurrencyNumber(data.oldPrice, null);
+
+    return {
+        ...data,
+        id: String(id),
+        name: normalizeText(data.name, 'Produto sem nome'),
+        category: normalizeText(data.category, 'sem categoria'),
+        price,
+        oldPrice: oldPrice && oldPrice > 0 ? oldPrice : null,
+        badge: data.badge === null || data.badge === undefined ? '' : String(data.badge),
+        isBlackFriday: Boolean(data.isBlackFriday),
+        images: normalizeProductImages(rawImages),
+        colors: normalizeProductColors(data.colors),
+        totalStock: parseCurrencyNumber(data.totalStock, 0)
+    };
+}
+
+function getProductById(productId) {
+    return productsData.find(product => String(product.id) === String(productId));
+}
+
+function escapeInlineJsString(value) {
+    return String(value)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r?\n/g, ' ');
+}
+
+function normalizeDocIdPart(value, fallback = 'item') {
+    const normalized = normalizeText(value, fallback)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+
+    return normalized || fallback;
+}
+
+function buildVariantDocId(productId, size, colorName) {
+    return [
+        normalizeDocIdPart(productId, 'produto'),
+        normalizeDocIdPart(size, 'u'),
+        normalizeDocIdPart(colorName, 'cor')
+    ].join('_').slice(0, 180);
+}
+
+function buildProductDetailsUrl(productId) {
+    return `produto.html?id=${encodeURIComponent(String(productId))}`;
 }
 
 function validateProductData(data) {
@@ -558,10 +687,7 @@ async function carregarProdutosDoFirestore() {
         productsData.length = 0;
 
         snapshot.forEach((doc) => {
-            productsData.push({
-                id: doc.id,
-                ...doc.data()
-            });
+            productsData.push(normalizeProductRecord(doc.id, doc.data() || {}));
         });
         productCache.set('products', productsData);
         return productsData;
@@ -625,7 +751,16 @@ async function loadProductVariants(productId) {
             .get();
         const variants = [];
         variantsSnapshot.forEach(doc => {
-            variants.push({ id: doc.id, ...doc.data() });
+            const data = doc.data() || {};
+            variants.push({
+                id: doc.id,
+                ...data,
+                size: data.size || null,
+                color: data.color || null,
+                stock: parseCurrencyNumber(data.stock, 0),
+                price: data.price !== undefined ? parseCurrencyNumber(data.price, null) : null,
+                available: data.available !== false
+            });
         });
         productVariants[productId] = variants;
         return variants;
@@ -1001,7 +1136,7 @@ function renderBestSellers() {
 
 function openProductDetails(productId) {
     localStorage.setItem('selectedProductId', productId);
-    window.location.href = `produto.html?id=${productId}`;
+    window.location.href = buildProductDetailsUrl(productId);
 }
 
 async function renderAvailableColors(productId) {
@@ -1215,7 +1350,7 @@ function renderRelatedProducts(category, currentId) {
 
 // ==================== CARRINHO ====================
 function addToCart(productId) {
-    window.location.href = `produto.html?id=${productId}`;
+    window.location.href = buildProductDetailsUrl(productId);
     saveCart();
     return;
 }
@@ -1569,16 +1704,16 @@ function loadCart() {
         if (parsed.items && Array.isArray(parsed.items)) {
             cart = parsed.items.map(item => ({
                 ...item,
-                quantity: item.quantity || 1,
-                price: item.price || 0
+                quantity: parseCurrencyNumber(item.quantity, 1),
+                price: parseCurrencyNumber(item.price, 0)
             }));
             appliedCoupon = parsed.appliedCoupon || null;
             couponDiscount = parsed.couponDiscount || 0;
         } else if (Array.isArray(parsed)) {
             cart = parsed.map(item => ({
                 ...item,
-                quantity: item.quantity || 1,
-                price: item.price || 0
+                quantity: parseCurrencyNumber(item.quantity, 1),
+                price: parseCurrencyNumber(item.price, 0)
             }));
             appliedCoupon = null;
             couponDiscount = 0;
@@ -2823,7 +2958,7 @@ function switchAdminTab(tab) {
 
 function updateAdminStats() {
     const totalProducts = productsData.length;
-    const totalValue = productsData.reduce((sum, p) => sum + p.price, 0);
+    const totalValue = productsData.reduce((sum, p) => sum + parseCurrencyNumber(p.price, 0), 0);
     const activeProducts = productsData.filter(p => !p.oldPrice).length;
 
     document.getElementById('totalProducts').textContent = totalProducts;
@@ -2836,34 +2971,32 @@ function renderAdminProducts() {
     const grid = document.getElementById('adminProductsGrid');
     if (!grid) return;
     grid.innerHTML = productsData.map(product => {
-        let images = [];
-        
-        if (Array.isArray(product.images) && product.images.length > 0) {
-            images = product.images;
-        } else if (product.image) {
-            images = [product.image];
-        } else {
-            images = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
-        }
-        
+        const images = normalizeProductImages(
+            Array.isArray(product.images) && product.images.length > 0 ? product.images : product.image
+        );
         const firstImage = images[0];
         const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
-        
+        const productId = escapeInlineJsString(product.id);
+        const productName = sanitizeInput(product.name);
+        const productCategory = sanitizeInput(product.category);
+        const productBadge = sanitizeInput(product.badge || '');
+        const oldPrice = parseCurrencyNumber(product.oldPrice, null);
+
         return `
             <div class="admin-product-card">
                 <div class="admin-product-image" style="${isRealImage ?
                 `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
                 <div class="admin-product-info">
-                    <h4>${sanitizeInput(product.name)}</h4>
-                    <p><strong>Categoria:</strong> ${product.category}</p>
-                    <p><strong>Preço:</strong> R$ ${product.price.toFixed(2)}</p>
-                    ${product.oldPrice ? `<p><strong>De:</strong> R$ ${product.oldPrice.toFixed(2)}</p>` : ''}
-                    ${product.badge ? `<p><strong>Badge:</strong> ${sanitizeInput(product.badge)}</p>` : ''}
+                    <h4>${productName}</h4>
+                    <p><strong>Categoria:</strong> ${productCategory}</p>
+                    <p><strong>Preço:</strong> R$ ${formatPrice(product.price)}</p>
+                    ${oldPrice ? `<p><strong>De:</strong> R$ ${formatPrice(oldPrice)}</p>` : ''}
+                    ${productBadge ? `<p><strong>Badge:</strong> ${productBadge}</p>` : ''}
                     <p><strong>Imagens:</strong> ${images.length}</p>
                 </div>
                 <div class="admin-actions">
-                    <button class="admin-btn admin-btn-edit" onclick="editProduct('${product.id}')">Editar</button>
-                    <button class="admin-btn admin-btn-delete" onclick="deleteProduct('${product.id}')">Excluir</button>
+                    <button class="admin-btn admin-btn-edit" onclick="editProduct('${productId}')">Editar</button>
+                    <button class="admin-btn admin-btn-delete" onclick="deleteProduct('${productId}')">Excluir</button>
                 </div>
             </div>
         `;
@@ -2878,21 +3011,38 @@ function openProductModal(productId = null) {
     editingProductId = productId;
     const modal = document.getElementById('productModal');
     const title = document.getElementById('modalTitle');
+    if (!modal || !title) {
+        showToast('❌ Modal de produto não encontrado', 'error');
+        editingProductId = null;
+        return;
+    }
+
     const modalContent = modal.querySelector('.admin-modal-content');
     if (modalContent) modalContent.scrollTop = 0;
     modal.scrollTop = 0;
     if (productId) {
-        const product = productsData.find(p => p.id === productId);
+        const product = getProductById(productId);
+        if (!product) {
+            showToast('❌ Produto não encontrado. Recarregue a página e tente novamente.', 'error');
+            editingProductId = null;
+            return;
+        }
+
+        const price = parseCurrencyNumber(product.price, null);
+        const oldPrice = parseCurrencyNumber(product.oldPrice, null);
         title.textContent = 'Editar Produto';
         document.getElementById('productId').value = productId;
         document.getElementById('productName').value = product.name;
         document.getElementById('productCategory').value = product.category;
-        document.getElementById('productPrice').value = product.price;
-        document.getElementById('productOldPrice').value = product.oldPrice || '';
+        document.getElementById('productPrice').value = price !== null ? price.toFixed(2) : '';
+        document.getElementById('productOldPrice').value = oldPrice !== null ? oldPrice.toFixed(2) : '';
         document.getElementById('productBadge').value = product.badge || '';
         document.getElementById('productBlackFriday').checked = product.isBlackFriday || false;
-        tempProductImages = [...(product.images || (product.image ? [product.image] : []))];
-        productColors = product.colors ? JSON.parse(JSON.stringify(product.colors)) : [];
+        tempProductImages = normalizeProductImages(
+            Array.isArray(product.images) && product.images.length > 0 ? product.images : product.image,
+            null
+        );
+        productColors = normalizeProductColors(JSON.parse(JSON.stringify(product.colors || [])));
         console.log('📋 Cores carregadas para edição:', productColors.length);
         if (productColors.length > 0) {
             console.log('🎨 Detalhes das cores:', productColors);
@@ -2902,7 +3052,7 @@ function openProductModal(productId = null) {
         title.textContent = 'Adicionar Novo Produto';
         document.getElementById('productForm').reset();
         document.getElementById('productId').value = '';
-        tempProductImages = ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
+        tempProductImages = [DEFAULT_PRODUCT_IMAGE];
         productColors = [];
         setTimeout(() => renderProductColorsManager(), 100);
     }
@@ -2939,8 +3089,9 @@ async function deleteProduct(productId) {
         if (index !== -1) {
             productsData.splice(index, 1);
         }
-        
+
         productCache.clear();
+        delete productVariants[productId];
         renderAdminProducts();
         renderProducts();
         updateAdminStats();
@@ -2977,12 +3128,12 @@ async function saveProduct(event) {
     }
     
     const name = nameEl.value.trim();
-    const price = parseFloat(priceEl.value);
-    const oldPrice = oldPriceEl?.value ? parseFloat(oldPriceEl.value) : null;
+    const price = parseCurrencyNumber(priceEl.value, null);
+    const oldPrice = oldPriceEl?.value ? parseCurrencyNumber(oldPriceEl.value, null) : null;
     const category = categoryEl.value.trim();
     const badge = badgeEl?.value.trim() || '';
     const isBlackFriday = blackFridayEl?.checked || false;
-    if (!name || !price || !category) {
+    if (!name || price === null || !category) {
         showToast('Preencha os campos obrigatórios (Nome, Preço, Categoria)', 'error');
         return;
     }
@@ -2992,6 +3143,14 @@ async function saveProduct(event) {
         return;
     }
 
+    if (oldPrice !== null && oldPrice <= price) {
+        showToast('❌ Preço antigo deve ser maior que o preço atual', 'error');
+        return;
+    }
+
+    const images = normalizeProductImages(tempProductImages);
+    const colors = normalizeProductColors(productColors);
+
     const productData = {
         name,
         price,
@@ -2999,8 +3158,8 @@ async function saveProduct(event) {
         category,
         badge,
         isBlackFriday,
-        images: tempProductImages.filter(url => url.startsWith('http')),
-        colors: productColors || [],
+        images,
+        colors,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
     if (!editingProductId) {
@@ -3013,25 +3172,27 @@ async function saveProduct(event) {
 
     try {
         batch.set(productRef, productData, { merge: true });
-        if (productColors && productColors.length > 0) {
-            productColors.forEach(color => {
-                const variantId = `${productId}_U_${color.name.replace(/\s/g, '')}`;
+        if (colors.length > 0) {
+            colors.forEach(color => {
+                const variantId = buildVariantDocId(productId, 'U', color.name);
                 const variantRef = productRef.collection('variants').doc(variantId);
-                
+
                 batch.set(variantRef, {
                     size: 'U',
                     color: color.name,
                     stock: 999,
                     price: price,
-                    available: true
+                    available: true,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
             });
         }
-        
+
         await batch.commit();
         showToast(`✅ Produto "${name}" salvo com sucesso!`, 'success');
-        
+
         productCache.clear();
+        delete productVariants[productId];
         closeProductModal();
         
         await carregarProdutosDoFirestore(); 
