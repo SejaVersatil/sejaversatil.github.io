@@ -447,10 +447,87 @@ function normalizeText(value, fallback = '') {
     return text || fallback;
 }
 
+const MIRRORED_IMGUR_PRODUCT_IDS = new Set([
+    '03tiX6j',
+    '17qlyzb',
+    '2rgUtOU',
+    '3hTU0up',
+    '4o3susq',
+    '4Vs8k74',
+    '5MEWtCl',
+    '6sTXk2i',
+    '83ZXzTs',
+    '8eeWAIh',
+    '8k1ICUP',
+    '9WKPh4d',
+    'a2Rfz1I',
+    'bG3eVyR',
+    'dBxwsUb',
+    'DlFvHVr',
+    'DpQmOWU',
+    'eHnKzfC',
+    'fcFKj2y',
+    'FoAlEvr',
+    'FpBLzXT',
+    'FpF7Amr',
+    'fXKo0lq',
+    'G4H8FlR',
+    'GLEiXoW',
+    'hdxd93U',
+    'HIeEUtb',
+    'HP8BC4z',
+    'I2VY4pX',
+    'iouCHMx',
+    'JqNlpeG',
+    'jrk12xN',
+    'JSXnwCr',
+    'k9gXnLG',
+    'mf6kD1R',
+    'MjzLjEy',
+    'NhNE8l0',
+    'PtMkRJs',
+    'PvNVQi7',
+    'QCiEHWI',
+    'RI1MIaW',
+    'ROFoQNG',
+    'RSGfdcN',
+    'SkU255o',
+    'SmfJP4C',
+    'sSIoUuE',
+    'sxYA5nn',
+    'tarIomv',
+    'TCTpRrB',
+    'TeHPgbE',
+    'TeKmlUc',
+    'UcpA7Bm',
+    'UDu4sdz',
+    'UHKvJ3f',
+    'VjUgOdx',
+    'WG5D9Y9',
+    'X89eUU7',
+    'XcSUGlu',
+    'Yfhup24',
+    'YrO3bNv',
+    'z0fniHc',
+    'zJ1dgwP'
+]);
+
+function getMirroredProductImageUrl(imageUrl) {
+    const value = typeof imageUrl === 'string' ? imageUrl.trim() : '';
+    const match = value.match(/^https:\/\/i\.imgur\.com\/([A-Za-z0-9]+)\.(?:jpe?g|png|webp)(?:\?.*)?$/i);
+
+    if (match && MIRRORED_IMGUR_PRODUCT_IDS.has(match[1])) {
+        return `assets/products/${match[1]}.webp`;
+    }
+
+    return value;
+}
+
 function normalizeProductImages(value, fallback = DEFAULT_PRODUCT_IMAGE) {
     const list = Array.isArray(value) ? value : (value ? [value] : []);
     const images = list
         .map(image => typeof image === 'string' ? image.trim() : '')
+        .map(getMirroredProductImageUrl)
         .filter(Boolean);
 
     return images.length > 0 ? [...new Set(images)] : (fallback ? [fallback] : []);
@@ -504,6 +581,7 @@ function normalizeProductRecord(id, data = {}) {
     const rawImages = Array.isArray(data.images) && data.images.length > 0
         ? data.images
         : data.image;
+    const images = normalizeProductImages(rawImages);
     const price = parseCurrencyNumber(data.price, 0);
     const oldPrice = parseCurrencyNumber(data.oldPrice, null);
 
@@ -516,7 +594,8 @@ function normalizeProductRecord(id, data = {}) {
         oldPrice: oldPrice && oldPrice > 0 ? oldPrice : null,
         badge: data.badge === null || data.badge === undefined ? '' : String(data.badge),
         isBlackFriday: Boolean(data.isBlackFriday),
-        images: normalizeProductImages(rawImages),
+        image: images[0] || DEFAULT_PRODUCT_IMAGE,
+        images,
         colors: normalizeProductColors(data.colors),
         totalStock: parseCurrencyNumber(data.totalStock, 0)
     };
@@ -606,8 +685,15 @@ function getProductImages(product) {
     return ['linear-gradient(135deg, #667eea 0%, #764ba2 100%)'];
 }
 
+function isRenderableImage(imageSrc) {
+    return Boolean(
+        imageSrc &&
+        /^(https?:\/\/|data:image|blob:|\.?\.?\/?assets\/|\.?\.?\/?images\/)/i.test(String(imageSrc).trim())
+    );
+}
+
 function isRealImage(imageSrc) {
-    return imageSrc && (imageSrc.startsWith('data:image') || imageSrc.startsWith('http'));
+    return isRenderableImage(imageSrc);
 }
 
 function isNewProduct(product) {
@@ -691,6 +777,53 @@ function getColorHex(colorName) {
     }
 
     return colorMap[normalizedColorName] || '#999999';
+}
+
+function formatBRL(value) {
+    return parseCurrencyNumber(value, 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function getSwatchBackground(color) {
+    const rawHex = typeof color === 'object' && color !== null
+        ? normalizeText(color.hex, getColorHex(color.name))
+        : getColorHex(color);
+    const colorParts = rawHex.split(',').map(part => part.trim()).filter(Boolean);
+    const safeColor = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+    if (colorParts.length > 1 && colorParts.every(part => safeColor.test(part))) {
+        return `linear-gradient(135deg, ${colorParts[0]} 50%, ${colorParts[1]} 50%)`;
+    }
+
+    return safeColor.test(colorParts[0]) ? colorParts[0] : '#999999';
+}
+
+function getProductColorOptions(product) {
+    if (!Array.isArray(product.colors)) return [];
+
+    return product.colors
+        .map(color => {
+            if (typeof color === 'string') {
+                return { name: color, background: getSwatchBackground(color) };
+            }
+
+            if (!color || typeof color !== 'object') return null;
+            return {
+                name: normalizeText(color.name, 'Cor'),
+                background: getSwatchBackground(color)
+            };
+        })
+        .filter(Boolean);
+}
+
+function getProductSizeOptions(product) {
+    const sizes = Array.isArray(product.sizes)
+        ? product.sizes.map(size => normalizeText(size)).filter(Boolean)
+        : [];
+
+    return sizes.length > 0 ? sizes : ['P', 'M', 'G', 'GG'];
 }
 
 // ==================== FIREBASE E FIRESTORE ====================
@@ -963,8 +1096,13 @@ function renderProducts() {
         
         const hasMultipleImages = images.length > 1;
         const isFav = isFavorite(product.id);
-        const discountPercent = product.oldPrice ? 
+        const discountPercent = product.oldPrice ?
             Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        const colorOptions = getProductColorOptions(product);
+        const visibleColors = colorOptions.slice(0, 4);
+        const hiddenColorsCount = Math.max(0, colorOptions.length - visibleColors.length);
+        const sizeOptions = getProductSizeOptions(product).slice(0, 5);
+        const installments = formatBRL(product.price / 3);
 
         // Criação do Elemento Temporário
         const tempDiv = document.createElement('div');
@@ -986,7 +1124,7 @@ function renderProducts() {
                     
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
-                            const isRealImage = img.startsWith('data:image') || img.startsWith('http');
+                            const isRealImage = isRenderableImage(img);
                             return `
                                 <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
                                      style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
@@ -1019,8 +1157,24 @@ function renderProducts() {
                 <div class="product-info">
                     <h4>${sanitizeInput(product.name)}</h4>
                     <div class="product-price">
-                        ${product.oldPrice ? `<span class="price-old">De R$ ${product.oldPrice.toFixed(2)}</span>` : ''}
-                        <span class="price-new">R$ ${product.price.toFixed(2)}</span>
+                        ${product.oldPrice ? `<span class="price-old">De ${formatBRL(product.oldPrice)}</span>` : ''}
+                        <span class="price-new">${formatBRL(product.price)}</span>
+                    </div>
+                    <div class="product-payment-note">3x sem juros de ${installments}</div>
+                    <div class="product-card-meta">
+                        <div class="product-size-row" aria-label="Tamanhos disponiveis">
+                            ${sizeOptions.map(size => `<span>${sanitizeInput(size)}</span>`).join('')}
+                        </div>
+                        ${visibleColors.length > 0 ? `
+                            <div class="product-color-row" aria-label="Cores disponiveis">
+                                ${visibleColors.map(color => `
+                                    <span class="product-color-swatch"
+                                          style="background: ${color.background}"
+                                          title="${sanitizeInput(color.name)}"></span>
+                                `).join('')}
+                                ${hiddenColorsCount > 0 ? `<small>+${hiddenColorsCount}</small>` : ''}
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -1121,7 +1275,7 @@ function renderBestSellers() {
         
         const isFav = isFavorite(product.id);
         const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isRealImage = isRenderableImage(firstImage);
         
         return `
             <div class="product-card" onclick="openProductDetails('${product.id}')">
@@ -1353,7 +1507,7 @@ function renderRelatedProducts(category, currentId) {
         }
         
         const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isRealImage = isRenderableImage(firstImage);
         
         return `
             <div class="product-card" onclick="openProductDetails('${product.id}')">
@@ -1507,7 +1661,7 @@ function updateCartUI() {
                 itemDiv.className = 'cart-item';
                 
                 const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
+                const isRealImage = isRenderableImage(itemImage);
                 
                 itemDiv.innerHTML = `
                     <div class="cart-item-img" style="${isRealImage ? `background-image: url(${itemImage}); background-size: cover; background-position: center;` : `background: ${itemImage}`}"></div>
@@ -2072,7 +2226,7 @@ function openFavorites() {
         }
         
         const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isRealImage = isRenderableImage(firstImage);
         const discountPercent = product.oldPrice ? 
             Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
         
@@ -2180,22 +2334,25 @@ let currentHeroSlide = 0;
 let heroCarouselInterval;
 const heroSlides = [
     {
-        image: 'https://i.imgur.com/ZVqxl8B.jpeg',
-        title: '',
-        subtitle: '',
-        cta: 'EXPLORAR AGORA'
+        image: 'assets/home/hero-spin.webp',
+        eyebrow: 'Nova seleção fitness',
+        title: 'Vista sua melhor versão',
+        subtitle: 'Peças com presença, conforto e movimento para acompanhar sua rotina.',
+        cta: 'Comprar agora'
     },
     {
-        image: 'https://i.imgur.com/iapKUtF.jpeg',
-        title: 'LANÇAMENTO',
-        subtitle: 'Tecnologia para máxima performance',
-        cta: 'VER COLEÇÃO'
+        image: 'assets/home/hero-performance.webp',
+        eyebrow: 'Lançamento',
+        title: 'Tecnologia para performance',
+        subtitle: 'Modelagens pensadas para treino, rua e dias em movimento.',
+        cta: 'Ver coleção'
     },
     {
-        image: 'https://i.imgur.com/2SHv3pc.jpeg',
-        title: 'FITNESS & LIFESTYLE',
-        subtitle: 'Do treino ao dia a dia com versatilidade',
-        cta: 'DESCOBRIR'
+        image: 'assets/home/hero-lifestyle.webp',
+        eyebrow: 'Fitness e lifestyle',
+        title: 'Do treino ao dia a dia',
+        subtitle: 'Looks completos com informação de moda e acabamento premium.',
+        cta: 'Descobrir'
     }
 ];
 
@@ -2214,7 +2371,15 @@ if (existingSlides === 1) {
     slideDiv.style.cursor = 'pointer';
     slideDiv.onclick = () => scrollToProducts();
     
-    slideDiv.innerHTML = '<div class="hero-overlay"></div>';
+    slideDiv.innerHTML = `
+      <div class="hero-overlay"></div>
+      <div class="hero-content hero-content-left">
+        <span class="hero-eyebrow">${sanitizeInput(slide.eyebrow || '')}</span>
+        <h2 class="hero-title">${sanitizeInput(slide.title || '')}</h2>
+        <p class="hero-subtitle">${sanitizeInput(slide.subtitle || '')}</p>
+        <button class="hero-cta" type="button" onclick="event.stopPropagation(); scrollToProducts()">${sanitizeInput(slide.cta || 'Comprar')}</button>
+      </div>
+    `;
     heroContainer.appendChild(slideDiv);
   });
   
@@ -2226,6 +2391,12 @@ if (existingSlides === 1) {
          style="background-image: url('${slide.image}'); cursor: pointer;"
          onclick="scrollToProducts()">
       <div class="hero-overlay"></div>
+      <div class="hero-content hero-content-left">
+        <span class="hero-eyebrow">${sanitizeInput(slide.eyebrow || '')}</span>
+        <h2 class="hero-title">${sanitizeInput(slide.title || '')}</h2>
+        <p class="hero-subtitle">${sanitizeInput(slide.subtitle || '')}</p>
+        <button class="hero-cta" type="button" onclick="event.stopPropagation(); scrollToProducts()">${sanitizeInput(slide.cta || 'Comprar')}</button>
+      </div>
     </div>
   `).join('');
 }
@@ -2760,7 +2931,7 @@ const debouncedSearch = debounce(function() {
     
     results.innerHTML = filtered.map(product => {
         const productImage = product.images ? product.images[0] : (product.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
-        const isRealImage = productImage.startsWith('data:image') || productImage.startsWith('http');
+        const isRealImage = isRenderableImage(productImage);
         
         return `
             <div class="search-result-item" onclick="selectSearchResult('${product.id}')">
@@ -2819,7 +2990,7 @@ function performHeaderSearch() {
         }
         
         const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isRealImage = isRenderableImage(firstImage);
         const isFav = isFavorite(product.id);
         const discountPercent = product.oldPrice ?
         Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
@@ -2900,7 +3071,7 @@ function renderDropdownResults(products) {
             imageUrl = product.image;
         }
 
-        const isRealImg = imageUrl.startsWith('http') || imageUrl.startsWith('data:image');
+        const isRealImg = isRenderableImage(imageUrl);
         const imgStyle = isRealImg 
             ? `background-image: url('${imageUrl}'); background-size: cover; background-position: center;` 
             : `background: ${imageUrl};`;
@@ -3030,7 +3201,7 @@ function renderAdminProducts() {
             Array.isArray(product.images) && product.images.length > 0 ? product.images : product.image
         );
         const firstImage = images[0];
-        const isRealImage = firstImage.startsWith('data:image') || firstImage.startsWith('http');
+        const isRealImage = isRenderableImage(firstImage);
         const productId = escapeInlineJsString(product.id);
         const productName = sanitizeInput(product.name);
         const productCategory = sanitizeInput(product.category);
@@ -3320,7 +3491,7 @@ function renderProductImages() {
     const hasColors = Array.isArray(productColors) && productColors.length > 0;
     tempProductImages.forEach((img, index) => {
         const isCover = index === 0;
-        const isImage = img.startsWith('data:image') || img.startsWith('http');
+        const isImage = isRenderableImage(img);
 
         let linkedColor = null;
         if (hasColors) {
@@ -3879,7 +4050,7 @@ function openPaymentModal() {
     });
     cartItemsContainer.innerHTML = cart.map(item => {
         const itemImage = item.image || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        const isRealImage = itemImage.startsWith('data:image') || itemImage.startsWith('http');
+        const isRealImage = isRenderableImage(itemImage);
         
         return `
             <div class="payment-cart-item">
@@ -5304,9 +5475,10 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('load', () => {
+    // Mantem a primeira dobra livre para o visitante absorver a vitrine antes da oferta.
     setTimeout(() => {
         showPromoPopup();
-    }, 2000);
+    }, 9000);
 });
 
 document.addEventListener('keydown', (e) => {

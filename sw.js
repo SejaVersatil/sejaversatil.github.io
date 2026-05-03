@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.15'; // Atualizei a versão para forçar atualização
+const CACHE_NAME = 'seja-versatil-v1.0.20'; // Atualizei a versão para forçar atualização
 
 const urlsToCache = [
     '/',
@@ -6,7 +6,15 @@ const urlsToCache = [
     '/css2.css',
     '/script2.js',
     '/favicon.ico',
-    'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap'
+    '/assets/home/hero-spin.webp',
+    '/assets/home/hero-performance.webp',
+    '/assets/home/hero-lifestyle.webp',
+    '/assets/home/promo-blusas.webp',
+    '/assets/home/promo-conjunto-calca.webp',
+    '/assets/home/promo-peca-unica.webp',
+    '/assets/home/promo-short-saia.webp',
+    '/assets/home/promo-conjunto-short.webp',
+    '/assets/home/popup-pix.webp'
 ];
 
 // INSTALAÇÃO

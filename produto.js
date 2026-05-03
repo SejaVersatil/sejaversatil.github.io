@@ -31,7 +31,59 @@ const safeNumber = (v, fallback = 0) => {
     return Number.isFinite(n) ? n : fallback;
 };
 
-const isImageUrl = (s) => typeof s === 'string' && (s.startsWith('http') || s.startsWith('data:image'));
+const MIRRORED_IMGUR_PRODUCT_IDS = new Set([
+    '03tiX6j', '17qlyzb', '2rgUtOU', '3hTU0up', '4o3susq', '4Vs8k74',
+    '5MEWtCl', '6sTXk2i', '83ZXzTs', '8eeWAIh', '8k1ICUP', '9WKPh4d',
+    'a2Rfz1I', 'bG3eVyR', 'dBxwsUb', 'DlFvHVr', 'DpQmOWU', 'eHnKzfC',
+    'fcFKj2y', 'FoAlEvr', 'FpBLzXT', 'FpF7Amr', 'fXKo0lq', 'G4H8FlR',
+    'GLEiXoW', 'hdxd93U', 'HIeEUtb', 'HP8BC4z', 'I2VY4pX', 'iouCHMx',
+    'JqNlpeG', 'jrk12xN', 'JSXnwCr', 'k9gXnLG', 'mf6kD1R', 'MjzLjEy',
+    'NhNE8l0', 'PtMkRJs', 'PvNVQi7', 'QCiEHWI', 'RI1MIaW', 'ROFoQNG',
+    'RSGfdcN', 'SkU255o', 'SmfJP4C', 'sSIoUuE', 'sxYA5nn', 'tarIomv',
+    'TCTpRrB', 'TeHPgbE', 'TeKmlUc', 'UcpA7Bm', 'UDu4sdz', 'UHKvJ3f',
+    'VjUgOdx', 'WG5D9Y9', 'X89eUU7', 'XcSUGlu', 'Yfhup24', 'YrO3bNv',
+    'z0fniHc', 'zJ1dgwP'
+]);
+
+const mirrorProductImageUrl = (imageUrl) => {
+    const value = typeof imageUrl === 'string' ? imageUrl.trim() : '';
+    const match = value.match(/^https:\/\/i\.imgur\.com\/([A-Za-z0-9]+)\.(?:jpe?g|png|webp)(?:\?.*)?$/i);
+
+    if (match && MIRRORED_IMGUR_PRODUCT_IDS.has(match[1])) {
+        return `assets/products/${match[1]}.webp`;
+    }
+
+    return value;
+};
+
+const normalizeProductImageList = (value) => {
+    const list = Array.isArray(value) ? value : (value ? [value] : []);
+    return [...new Set(list.map(mirrorProductImageUrl).filter(Boolean))];
+};
+
+const normalizeProductMedia = (data = {}) => {
+    const rawImages = Array.isArray(data.images) && data.images.length ? data.images : data.image;
+    const images = normalizeProductImageList(rawImages);
+    const colors = Array.isArray(data.colors) && data.colors.length ? data.colors : (data.colors ? [data.colors] : []);
+
+    return {
+        ...data,
+        image: images[0] || mirrorProductImageUrl(data.image || ''),
+        images,
+        colors: colors.map(color => {
+            if (!color || typeof color !== 'object') return color;
+            return {
+                ...color,
+                images: normalizeProductImageList(color.images)
+            };
+        })
+    };
+};
+
+const isImageUrl = (s) => (
+    typeof s === 'string' &&
+    /^(https?:\/\/|data:image|blob:|\.?\.?\/?assets\/|\.?\.?\/?images\/)/i.test(s.trim())
+);
 const isGradient = (s) => typeof s === 'string' && s.includes('gradient(');
 
 const normalizeIdPart = (str = '') =>
@@ -168,13 +220,10 @@ async function loadProduct(productId) {
         data.price = safeNumber(data.price, 0);
         data.oldPrice = data.oldPrice !== undefined ? safeNumber(data.oldPrice, 0) : null;
 
-        data.images = Array.isArray(data.images) && data.images.length ?
-            data.images.filter(Boolean) :
-            (data.image ? [data.image] : []);
-
-        data.colors = Array.isArray(data.colors) && data.colors.length ?
-            data.colors :
-            (data.colors ? [data.colors] : []);
+        const media = normalizeProductMedia(data);
+        data.image = media.image;
+        data.images = media.images;
+        data.colors = media.colors;
 
         data.sizes = Array.isArray(data.sizes) && data.sizes.length ?
             data.sizes : ['P', 'M', 'G', 'GG'];
@@ -725,7 +774,7 @@ async function renderRelatedProducts() {
             if (doc.id !== p.id) {
                 related.push({
                     id: doc.id,
-                    ...(doc.data() || {})
+                    ...normalizeProductMedia(doc.data() || {})
                 });
             }
         });
@@ -1590,7 +1639,7 @@ async function loadGlobalSearchData() {
         const snapshot = await db.collection('produtos').get();
         globalSearchCache = snapshot.docs.map(doc => ({
             id: doc.id,
-            ...doc.data()
+            ...normalizeProductMedia(doc.data() || {})
         }));
         console.log('🔍 Dados da busca carregados:', globalSearchCache.length);
     } catch (error) {

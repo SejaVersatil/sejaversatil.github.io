@@ -35,11 +35,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Seja Versátil">
 
-  <link rel="preload" as="image" href="https://i.imgur.com/ZVqxl8B.jpeg" fetchpriority="high">
-  <link rel="preload" as="image" href="https://i.imgur.com/iapKUtF.jpeg">
-  <link rel="preload" as="image" href="https://i.imgur.com/2SHv3pc.jpeg">
+  <link rel="preload" as="image" href="assets/home/hero-spin.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/home/hero-performance.webp">
+  <link rel="preload" as="image" href="assets/home/hero-lifestyle.webp">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.1">
+  <link rel="stylesheet" href="css2.css?v=1.0.5">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -83,7 +83,7 @@
     <div class="banner-message active">FRETE GRÁTIS para todo Brasil nas compras acima de R$ 399,90</div>
     <div class="banner-message">PARCELE EM ATÉ <strong>3X SEM JUROS</strong> no cartão de crédito</div>
     <div class="banner-message">GANHE <strong>10% DE DESCONTO</strong> pagando no PIX</div>
-    <div class="banner-message"><strong>ALTA TECNOLOGIA</strong> -</div>
+    <div class="banner-message"><strong>ALTA TECNOLOGIA</strong> para performance e conforto</div>
   </div>
 
   <header>
@@ -96,6 +96,14 @@
       
       <div class="logo" onclick="location.reload()">SEJA VERSÁTIL</div>
       
+      <div class="primary-nav" aria-label="Navegação principal">
+        <button type="button" onclick="filterProducts('all'); scrollToProducts()">Novidades</button>
+        <button type="button" onclick="scrollToProducts()">Mais vendidos</button>
+        <button type="button" onclick="navigateToCategory('conjunto short')">Conjuntos</button>
+        <button type="button" onclick="navigateToCategory('peca unica')">Peça única</button>
+        <button type="button" onclick="filterProducts('sale'); scrollToProducts()">Outlet</button>
+      </div>
+
       <div class="search-bar" style="position: relative;">
         <img src="favicon.ico" alt="Logo" class="search-logo" width="24" height="24" style="margin-right: 8px;">
         <input type="text" id="headerSearchInput" placeholder="Encontre aqui seu próximo look" autocomplete="off">
@@ -205,8 +213,14 @@
   <section class="hero-section" id="hero">
   <div class="hero-carousel" id="heroCarousel">
     <!-- ✅ PRIMEIRO SLIDE ESTÁTICO (LCP GARANTIDO) -->
-    <div class="hero-slide active" style="background-image: url('https://i.imgur.com/ZVqxl8B.jpeg');">
+    <div class="hero-slide active" style="background-image: url('assets/home/hero-spin.webp');">
       <div class="hero-overlay"></div>
+      <div class="hero-content hero-content-left">
+        <span class="hero-eyebrow">Nova seleção fitness</span>
+        <h1 class="hero-title">Vista sua melhor versão</h1>
+        <p class="hero-subtitle">Peças com presença, conforto e movimento para acompanhar sua rotina.</p>
+        <button class="hero-cta" type="button" onclick="scrollToProducts()">Comprar agora</button>
+      </div>
     </div>
   </div>
   <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
@@ -221,7 +235,7 @@
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
       <div class="promo-card" onclick="navigateToCategory('blusas')">
-        <div class="promo-card-image" style="background-image: url('https://i.imgur.com/eUr2qOF.png');">
+        <div class="promo-card-image" style="background-image: url('assets/home/promo-blusas.webp');">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">BLUSAS</span>
@@ -234,7 +248,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('conjunto calca')">
-        <div class="promo-card-image" style="background-image: url('https://i.imgur.com/ffymV91.png');">
+        <div class="promo-card-image" style="background-image: url('assets/home/promo-conjunto-calca.webp');">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO CALÇA</span>
@@ -247,7 +261,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('peca unica')">
-        <div class="promo-card-image" style="background-image: url('https://i.imgur.com/TwJxlyB.png');">
+        <div class="promo-card-image" style="background-image: url('assets/home/promo-peca-unica.webp');">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">PEÇA ÚNICA</span>
@@ -260,7 +274,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('conjunto short saia')">
-        <div class="promo-card-image" style="background-image: url('https://i.imgur.com/ZiQ0h6k.png');">
+        <div class="promo-card-image" style="background-image: url('assets/home/promo-short-saia.webp');">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO SHORT SAIA</span>
@@ -273,7 +287,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('conjunto short')">
-        <div class="promo-card-image" style="background-image: url('https://i.imgur.com/on0sGgE.png');">
+        <div class="promo-card-image" style="background-image: url('assets/home/promo-conjunto-short.webp');">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO SHORT</span>
@@ -910,19 +924,22 @@
     <button class="promo-popup-close" onclick="closePromoPopup()" aria-label="Fechar">
       ✕
     </button>
-    
-    <!-- SUBSTITUA O SRC DA IMAGEM PELA SUA ARTE PROMOCIONAL -->
-    <img src="https://i.imgur.com/Kokds1Y.jpeg" 
-         alt="Promoção Especial" 
-         class="promo-popup-image"
-         loading="lazy">
-    
-    <!-- OPCIONAL: Botão de ação (CTA) -->
-   <!-- <a href="#produtos" 
-       class="promo-popup-cta" 
-       onclick="closePromoPopup(); scrollToProducts();">
-      APROVEITAR OFERTA
-    </a>-->
+
+    <div class="promo-popup-layout">
+      <div class="promo-popup-copy">
+        <span class="promo-popup-kicker">benefício exclusivo</span>
+        <strong>10% OFF no PIX</strong>
+        <p>Escolha seus looks favoritos e finalize com atendimento seguro pelo WhatsApp.</p>
+        <button class="promo-popup-cta" type="button" onclick="closePromoPopup(); scrollToProducts();">
+          Ver coleção
+        </button>
+      </div>
+      <img src="assets/home/popup-pix.webp"
+           alt=""
+           class="promo-popup-image"
+           loading="lazy"
+           onerror="this.closest('.promo-popup-layout').classList.add('no-image'); this.remove();">
+    </div>
   </div>
 </div>
 
@@ -981,7 +998,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
- <script defer src="script2.js?v=1.1.1"></script>
+ <script defer src="script2.js?v=1.1.4"></script>
   
 </body>
 </html>
