@@ -513,25 +513,6 @@ function escapeInlineJsString(value) {
         .replace(/\r?\n/g, ' ');
 }
 
-function normalizeDocIdPart(value, fallback = 'item') {
-    const normalized = normalizeText(value, fallback)
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-zA-Z0-9_-]+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-
-    return normalized || fallback;
-}
-
-function buildVariantDocId(productId, size, colorName) {
-    return [
-        normalizeDocIdPart(productId, 'produto'),
-        normalizeDocIdPart(size, 'u'),
-        normalizeDocIdPart(colorName, 'cor')
-    ].join('_').slice(0, 180);
-}
-
 function buildProductDetailsUrl(productId) {
     return `produto.html?id=${encodeURIComponent(String(productId))}`;
 }
@@ -3172,21 +3153,13 @@ async function saveProduct(event) {
 
     try {
         batch.set(productRef, productData, { merge: true });
-        if (colors.length > 0) {
-            colors.forEach(color => {
-                const variantId = buildVariantDocId(productId, 'U', color.name);
-                const variantRef = productRef.collection('variants').doc(variantId);
-
-                batch.set(variantRef, {
-                    size: 'U',
-                    color: color.name,
-                    stock: 999,
-                    price: price,
-                    available: true,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
+        const variantsSnapshot = await productRef.collection('variants').get();
+        variantsSnapshot.forEach(variantDoc => {
+            batch.update(variantDoc.ref, {
+                price,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-        }
+        });
 
         await batch.commit();
         showToast(`✅ Produto "${name}" salvo com sucesso!`, 'success');
