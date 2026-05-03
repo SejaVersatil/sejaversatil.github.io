@@ -293,8 +293,8 @@
   color: var(--text-dark);
 }
 
-.form-group input,
-.form-group select {
+.account-page .form-group input,
+.account-page .form-group select {
   padding: 0.9rem 1.2rem;
   border: 2px solid var(--border);
   border-radius: 10px;
@@ -302,19 +302,43 @@
   font-family: inherit;
   transition: all 0.3s ease;
   background: white;
+  color: var(--text-dark);
+  -webkit-text-fill-color: var(--text-dark);
+  caret-color: var(--primary);
+  line-height: 1.35;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.account-page .form-group input::placeholder {
+  color: #9aa4ad;
+  -webkit-text-fill-color: #9aa4ad;
+  opacity: 1;
+}
+
+.account-page .form-group input:focus,
+.account-page .form-group select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  background: white;
+  color: var(--text-dark);
+  -webkit-text-fill-color: var(--text-dark);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.14);
 }
 
-.form-group input:disabled {
+.account-page .form-group input:disabled {
   background: #f0f0f0;
   color: var(--text-light);
+  -webkit-text-fill-color: var(--text-light);
   cursor: not-allowed;
+  opacity: 1;
+}
+
+.account-page .form-group input:-webkit-autofill,
+.account-page .form-group input:-webkit-autofill:hover,
+.account-page .form-group input:-webkit-autofill:focus,
+.account-page .form-group input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-dark);
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 9999s ease-out;
 }
 
 .form-group small {
