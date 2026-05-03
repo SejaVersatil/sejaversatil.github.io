@@ -7,6 +7,71 @@
 
 // ==================== VARIÁVEIS GLOBAIS ====================
 let userOrders = [];
+let orderSnapshots = new Map();
+let orderSourceSnapshots = new Map();
+let orderUnsubscribers = [];
+let ordersListenerStarted = false;
+let ordersSuccessfulSources = 0;
+
+const ORDER_STATUS_FLOW = [
+  {
+    key: 'pendente_whatsapp',
+    label: 'Pedido recebido',
+    description: 'Aguardando confirmação pelo WhatsApp',
+    className: 'status-pendente'
+  },
+  {
+    key: 'confirmado',
+    label: 'Confirmado',
+    description: 'Pedido confirmado pela equipe',
+    className: 'status-confirmado'
+  },
+  {
+    key: 'em_separacao',
+    label: 'Em separação',
+    description: 'Produtos sendo preparados',
+    className: 'status-separacao'
+  },
+  {
+    key: 'enviado',
+    label: 'Enviado',
+    description: 'Pedido saiu para entrega',
+    className: 'status-enviado'
+  },
+  {
+    key: 'entregue',
+    label: 'Entregue',
+    description: 'Entrega concluída',
+    className: 'status-entregue'
+  }
+];
+
+const STATUS_ALIASES = {
+  pendente: 'pendente_whatsapp',
+  pendente_whatsapp: 'pendente_whatsapp',
+  aguardando_whatsapp: 'pendente_whatsapp',
+  aguardando_confirmacao: 'pendente_whatsapp',
+  aguardando_pagamento: 'pendente_whatsapp',
+  pedido_recebido: 'pendente_whatsapp',
+  'pendente whatsapp': 'pendente_whatsapp',
+  'pendente_whatsapp': 'pendente_whatsapp',
+  'Pendente WhatsApp': 'pendente_whatsapp',
+  confirmado: 'confirmado',
+  confirmada: 'confirmado',
+  aprovado: 'confirmado',
+  pagamento_aprovado: 'confirmado',
+  em_separacao: 'em_separacao',
+  separacao: 'em_separacao',
+  preparando: 'em_separacao',
+  enviado: 'enviado',
+  postado: 'enviado',
+  em_transporte: 'enviado',
+  saiu_para_entrega: 'enviado',
+  entregue: 'entregue',
+  finalizado: 'entregue',
+  cancelado: 'cancelado',
+  cancelada: 'cancelado'
+};
 
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', async () => {
@@ -35,9 +100,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Inicializar página
     await loadUserData();
-    await loadUserOrders();
     initEventListeners();
     initMasks();
+    setInitialSectionFromURL();
+    startOrdersRealtime();
 
   } catch (error) {
     console.error('❌ Erro na inicialização:', error);
@@ -46,6 +112,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loadingOverlay) loadingOverlay.classList.remove('active');
   }
 });
+
+window.addEventListener('beforeunload', stopOrdersRealtime);
 
 // ==================== AUTH GUARD ====================
 function waitForAuth() {
@@ -118,120 +186,213 @@ async function loadUserData() {
 }
 
 // ==================== CARREGAR PEDIDOS DO USUÁRIO ====================
-async function loadUserOrders() {
+function startOrdersRealtime() {
+  const ordersLoading = document.getElementById('ordersLoading');
+  const ordersEmpty = document.getElementById('ordersEmpty');
+  const ordersList = document.getElementById('ordersList');
+
+  if (ordersListenerStarted) return;
+  if (!auth.currentUser) return;
+
+  console.log('📦 Iniciando acompanhamento em tempo real dos pedidos...');
+  ordersListenerStarted = true;
+  ordersSuccessfulSources = 0;
+  orderSnapshots = new Map();
+  orderSourceSnapshots = new Map();
+
+  if (ordersLoading) ordersLoading.style.display = 'flex';
+  if (ordersEmpty) ordersEmpty.style.display = 'none';
+  if (ordersList) ordersList.style.display = 'none';
+  updateOrdersLiveStatus('syncing', 'Sincronizando pedidos');
+
+  const sourceQueries = [
+    {
+      name: 'cliente.uid',
+      query: db.collection('pedidos').where('cliente.uid', '==', auth.currentUser.uid).limit(50)
+    },
+    {
+      name: 'userId',
+      query: db.collection('pedidos').where('userId', '==', auth.currentUser.uid).limit(50)
+    }
+  ];
+
+  if (auth.currentUser.email) {
+    sourceQueries.push({
+      name: 'cliente.email',
+      query: db.collection('pedidos').where('cliente.email', '==', auth.currentUser.email).limit(50)
+    });
+    sourceQueries.push({
+      name: 'customer.email',
+      query: db.collection('pedidos').where('customer.email', '==', auth.currentUser.email).limit(50)
+    });
+  }
+
+  sourceQueries.forEach((source) => {
+    try {
+      const unsubscribe = source.query.onSnapshot(
+        (snapshot) => {
+          ordersSuccessfulSources += 1;
+          const sourceSnapshot = new Map();
+          snapshot.forEach((doc) => {
+            sourceSnapshot.set(doc.id, {
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+
+          orderSourceSnapshots.set(source.name, sourceSnapshot);
+          mergeOrderSources();
+          applyOrdersSnapshot();
+        },
+        (error) => {
+          console.warn(`⚠️ Erro no listener de pedidos (${source.name}):`, error);
+          if (ordersSuccessfulSources === 0) {
+            renderOrdersError();
+          }
+        }
+      );
+
+      orderUnsubscribers.push(unsubscribe);
+    } catch (error) {
+      console.warn(`⚠️ Falha ao iniciar listener de pedidos (${source.name}):`, error);
+    }
+  });
+}
+
+function stopOrdersRealtime() {
+  orderUnsubscribers.forEach((unsubscribe) => {
+    try {
+      unsubscribe();
+    } catch (error) {
+      console.warn('Erro ao encerrar listener de pedidos:', error);
+    }
+  });
+
+  orderUnsubscribers = [];
+  ordersListenerStarted = false;
+}
+
+function loadUserOrders() {
+  stopOrdersRealtime();
+  startOrdersRealtime();
+}
+
+function mergeOrderSources() {
+  orderSnapshots = new Map();
+
+  orderSourceSnapshots.forEach((sourceSnapshot) => {
+    sourceSnapshot.forEach((order, orderId) => {
+      orderSnapshots.set(orderId, order);
+    });
+  });
+}
+
+function applyOrdersSnapshot() {
   const ordersLoading = document.getElementById('ordersLoading');
   const ordersEmpty = document.getElementById('ordersEmpty');
   const ordersList = document.getElementById('ordersList');
   const ordersBadge = document.getElementById('ordersBadge');
 
-  try {
-    console.log('📦 Carregando pedidos do usuário...');
+  const orders = Array.from(orderSnapshots.values()).sort((a, b) => {
+    const timeA = getTimestampMillis(a.timestamp || a.createdAt || a.updatedAt || a.atualizadoEm);
+    const timeB = getTimestampMillis(b.timestamp || b.createdAt || b.updatedAt || b.atualizadoEm);
+    return timeB - timeA;
+  });
 
-    // Mostrar loading
-    if (ordersLoading) ordersLoading.style.display = 'flex';
-    if (ordersEmpty) ordersEmpty.style.display = 'none';
-    if (ordersList) ordersList.style.display = 'none';
+  userOrders = orders;
 
-    // Buscar pedidos no Firestore
-    let orders = [];
+  if (ordersLoading) ordersLoading.style.display = 'none';
 
-    try {
-      // TENTATIVA 1: Buscar por cliente.uid (formato novo)
-      const query1 = db.collection('pedidos')
-        .where('cliente.uid', '==', currentUser.uid)
-        .limit(50);
-
-      const snapshot1 = await query1.get();
-      
-      snapshot1.forEach((doc) => {
-        orders.push({ id: doc.id, ...doc.data() });
-      });
-
-      console.log(`✅ Encontrados ${orders.length} pedidos com cliente.uid`);
-    } catch (error) {
-      console.warn('⚠️ Erro na query cliente.uid:', error);
-    }
-
-    // TENTATIVA 2: Se não encontrou, buscar por userId (formato antigo)
-    if (orders.length === 0) {
-      try {
-        console.log('🔍 Tentando busca alternativa com userId...');
-        
-        const query2 = db.collection('pedidos')
-          .where('userId', '==', currentUser.uid)
-          .limit(50);
-        
-        const snapshot2 = await query2.get();
-        
-        snapshot2.forEach((doc) => {
-          orders.push({ id: doc.id, ...doc.data() });
-        });
-
-        console.log(`✅ Encontrados ${orders.length} pedidos com userId`);
-      } catch (error) {
-        console.warn('⚠️ Erro na query userId:', error);
-      }
-    }
-
-    // Ordenar manualmente por data (já que não podemos usar orderBy com where em campos diferentes)
-    orders.sort((a, b) => {
-      const dateA = a.timestamp || a.createdAt;
-      const dateB = b.timestamp || b.createdAt;
-      
-      if (!dateA) return 1;
-      if (!dateB) return -1;
-      
-      const timeA = dateA.toMillis ? dateA.toMillis() : dateA;
-      const timeB = dateB.toMillis ? dateB.toMillis() : dateB;
-      
-      return timeB - timeA; // Mais recente primeiro
-    });
-
-    userOrders = orders;
-    console.log(`✅ ${orders.length} pedidos encontrados`);
-
-    // Esconder loading
-    if (ordersLoading) ordersLoading.style.display = 'none';
-
-    // Atualizar badge
-    if (ordersBadge) {
-      if (orders.length > 0) {
-        ordersBadge.textContent = orders.length;
-        ordersBadge.style.display = 'inline-block';
-      } else {
-        ordersBadge.style.display = 'none';
-      }
-    }
-
-    // Renderizar pedidos
-    if (orders.length === 0) {
-      if (ordersEmpty) ordersEmpty.style.display = 'flex';
+  if (ordersBadge) {
+    if (orders.length > 0) {
+      ordersBadge.textContent = orders.length;
+      ordersBadge.style.display = 'inline-flex';
     } else {
-      if (ordersList) {
-        ordersList.style.display = 'flex';
-        renderOrders(orders);
-      }
-    }
-
-  } catch (error) {
-    console.error('❌ Erro ao carregar pedidos:', error);
-    
-    // Esconder loading e mostrar empty
-    if (ordersLoading) ordersLoading.style.display = 'none';
-    if (ordersEmpty) {
-      ordersEmpty.style.display = 'flex';
-      ordersEmpty.innerHTML = `
-        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-        </svg>
-        <h3>Erro ao carregar pedidos</h3>
-        <p>Tente recarregar a página</p>
-        <button onclick="location.reload()" class="btn-primary">
-          Recarregar
-        </button>
-      `;
+      ordersBadge.style.display = 'none';
     }
   }
+
+  if (orders.length === 0) {
+    if (ordersList) ordersList.style.display = 'none';
+    renderOrdersEmptyState();
+    updateOrdersLiveStatus('ready', 'Nenhum pedido encontrado');
+    return;
+  }
+
+  if (ordersEmpty) ordersEmpty.style.display = 'none';
+  if (ordersList) {
+    ordersList.style.display = 'flex';
+    renderOrders(orders);
+  }
+
+  updateOrdersLiveStatus('ready', `Atualizado agora • ${orders.length} pedido${orders.length > 1 ? 's' : ''}`);
+}
+
+function renderOrdersEmptyState() {
+  const ordersEmpty = document.getElementById('ordersEmpty');
+  if (!ordersEmpty) return;
+
+  ordersEmpty.style.display = 'flex';
+  ordersEmpty.innerHTML = `
+    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <h3>Nenhum pedido ainda</h3>
+    <p>Seus pedidos aparecerão aqui após a finalização</p>
+    <button type="button" data-action="go-shop" class="btn-primary">
+      Ir às Compras
+    </button>
+  `;
+}
+
+function renderOrdersError() {
+  const ordersLoading = document.getElementById('ordersLoading');
+  const ordersEmpty = document.getElementById('ordersEmpty');
+  const ordersList = document.getElementById('ordersList');
+
+  if (ordersLoading) ordersLoading.style.display = 'none';
+  if (ordersList) ordersList.style.display = 'none';
+  updateOrdersLiveStatus('error', 'Não foi possível sincronizar');
+
+  if (ordersEmpty) {
+    ordersEmpty.style.display = 'flex';
+    ordersEmpty.innerHTML = `
+      <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+      </svg>
+      <h3>Erro ao carregar pedidos</h3>
+      <p>Tente atualizar novamente em alguns instantes</p>
+      <button type="button" class="btn-primary" data-action="refresh-orders">
+        Recarregar
+      </button>
+    `;
+  }
+}
+
+function updateOrdersLiveStatus(state, text) {
+  const liveStatus = document.getElementById('ordersLiveStatus');
+  const liveText = document.getElementById('ordersLiveText');
+
+  if (liveStatus) {
+    liveStatus.classList.remove('is-syncing', 'is-ready', 'is-error');
+    liveStatus.classList.add(`is-${state}`);
+  }
+
+  if (liveText) {
+    liveText.textContent = text;
+  }
+}
+
+function getTimestampMillis(timestamp) {
+  if (!timestamp) return 0;
+  if (typeof timestamp.toMillis === 'function') return timestamp.toMillis();
+  if (typeof timestamp.toDate === 'function') return timestamp.toDate().getTime();
+  if (timestamp instanceof Date) return timestamp.getTime();
+
+  const parsed = new Date(timestamp).getTime();
+  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 // ==================== RENDERIZAR PEDIDOS ====================
@@ -240,28 +401,27 @@ function renderOrders(orders) {
   if (!ordersList) return;
 
   ordersList.innerHTML = orders.map(order => {
-    const orderDate = formatOrderDate(order.timestamp || order.createdAt);
-    const orderStatus = order.status || 'Pendente';
-    const statusClass = getStatusClass(orderStatus);
-    const orderTotal = order.valores?.total || order.totals?.total || 0;
-    const orderItems = order.items || [];
-    const orderCode = sanitizeHTML(order.codigo || order.id.substring(0, 8).toUpperCase());
+    const view = normalizeOrder(order);
 
     return `
-      <div class="order-card">
+      <article class="order-card" data-order-id="${sanitizeHTML(view.id)}">
         <div class="order-header">
           <div class="order-info">
-            <div class="order-id">#${orderCode}</div>
-            <div class="order-date">${sanitizeHTML(orderDate)}</div>
+            <div class="order-kicker">Pedido</div>
+            <div class="order-id">#${sanitizeHTML(view.code)}</div>
+            <div class="order-date">${sanitizeHTML(view.dateLabel)}</div>
           </div>
-          <div class="order-status ${sanitizeHTML(statusClass)}">${sanitizeHTML(translateStatus(orderStatus))}</div>
+          <div class="order-status ${sanitizeHTML(view.status.className)}">${sanitizeHTML(view.status.label)}</div>
         </div>
 
         <div class="order-body">
+          ${renderOrderTimeline(view)}
+          ${renderTrackingPanel(view)}
+
           <div class="order-items">
-            ${orderItems.slice(0, 3).map(item => `
+            ${view.items.slice(0, 3).map(item => `
               <div class="order-item">
-                <img src="${sanitizeHTML(item.image || 'https://via.placeholder.com/60')}"
+                <img src="${sanitizeHTML(item.image)}"
                      alt="${sanitizeHTML(item.name)}"
                      class="order-item-image"
                      onerror="this.src='https://via.placeholder.com/60/667eea/ffffff?text=SV'">
@@ -269,17 +429,17 @@ function renderOrders(orders) {
                   <div class="order-item-name">${sanitizeHTML(item.name)}</div>
                   <div class="order-item-variant">
                     ${item.size ? `Tam: ${sanitizeHTML(item.size)}` : ''}
-                    ${item.color ? `| Cor: ${sanitizeHTML(item.color)}` : ''}
-                    ${item.quantity ? `| Qtd: ${sanitizeHTML(item.quantity)}` : ''}
+                    ${item.color ? ` • Cor: ${sanitizeHTML(item.color)}` : ''}
+                    ${item.quantity ? ` • Qtd: ${sanitizeHTML(item.quantity)}` : ''}
                   </div>
                 </div>
-                <div class="order-item-price">R$ ${formatCurrency(item.price * (item.quantity || 1))}</div>
+                <div class="order-item-price">R$ ${formatCurrency(item.subtotal)}</div>
               </div>
             `).join('')}
-            
-            ${orderItems.length > 3 ? `
-              <div style="text-align: center; color: var(--text-light); font-size: 0.9rem;">
-                + ${orderItems.length - 3} item(ns)
+
+            ${view.items.length > 3 ? `
+              <div class="order-more-items">
+                + ${view.items.length - 3} item(ns)
               </div>
             ` : ''}
           </div>
@@ -288,10 +448,16 @@ function renderOrders(orders) {
         <div class="order-footer">
           <div class="order-total">
             <div class="order-total-label">Total do Pedido</div>
-            <div class="order-total-value">R$ ${formatCurrency(orderTotal)}</div>
+            <div class="order-total-value">R$ ${formatCurrency(view.total)}</div>
+            ${view.updatedLabel ? `<div class="order-updated">Atualizado ${sanitizeHTML(view.updatedLabel)}</div>` : ''}
           </div>
           <div class="order-actions">
-            <button class="btn-order btn-order-primary" onclick="contactWhatsApp('${order.codigo || order.id}')">
+            ${view.trackingUrl ? `
+              <button class="btn-order" data-action="open-tracking" data-url="${sanitizeHTML(view.trackingUrl)}">
+                Rastrear
+              </button>
+            ` : ''}
+            <button class="btn-order btn-order-primary" data-action="contact-order" data-order-code="${sanitizeHTML(view.code)}">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
@@ -299,9 +465,136 @@ function renderOrders(orders) {
             </button>
           </div>
         </div>
-      </div>
+      </article>
     `;
   }).join('');
+}
+
+function normalizeOrder(order) {
+  const rawStatus = order.status || order.statusPedido || order.orderStatus || 'pendente_whatsapp';
+  const statusKey = normalizeStatus(rawStatus);
+  const status = getStatusMeta(statusKey);
+  const rawItems = Array.isArray(order.items) ? order.items : [];
+  const timestamp = order.timestamp || order.createdAt || order.dataCriacao;
+  const updatedAt = order.statusUpdatedAt || order.updatedAt || order.atualizadoEm || timestamp;
+
+  return {
+    id: order.id || '',
+    code: String(order.codigo || order.code || order.id || '').slice(0, 12).toUpperCase(),
+    dateLabel: formatOrderDate(timestamp),
+    updatedLabel: formatRelativeDate(updatedAt),
+    statusKey,
+    status,
+    statusHistory: normalizeStatusHistory(order.statusHistory || order.historicoStatus || [], statusKey, updatedAt),
+    total: order.valores?.total || order.totals?.total || order.total || 0,
+    payment: order.pagamento?.metodoNome || order.paymentMethod || order.pagamento?.metodo || '',
+    items: rawItems.map(normalizeOrderItem),
+    trackingCode: order.rastreamento?.codigo || order.trackingCode || order.codigoRastreio || '',
+    trackingUrl: safeURL(order.rastreamento?.url || order.trackingUrl || order.linkRastreio || ''),
+    carrier: order.rastreamento?.transportadora || order.carrier || order.transportadora || '',
+    estimatedDelivery: formatOrderDate(order.previsaoEntrega || order.estimatedDelivery || order.rastreamento?.previsaoEntrega)
+  };
+}
+
+function normalizeOrderItem(item) {
+  const quantity = parseInt(item.quantity || item.quantidade || 1, 10) || 1;
+  const price = parseFloat(item.price || item.preco || 0) || 0;
+
+  return {
+    name: item.name || item.nome || 'Produto',
+    size: item.size || item.selectedSize || item.tamanho || '',
+    color: item.color || item.selectedColor || item.cor || '',
+    quantity,
+    price,
+    subtotal: parseFloat(item.subtotal || (price * quantity)) || 0,
+    image: safeURL(item.image || item.imagem || '') || 'https://via.placeholder.com/60/667eea/ffffff?text=SV'
+  };
+}
+
+function normalizeStatusHistory(history, currentStatus, updatedAt) {
+  const entries = Array.isArray(history) ? history : [];
+  const normalized = entries.map(entry => ({
+    status: normalizeStatus(entry.status || entry.key || entry.nome || ''),
+    date: entry.date || entry.createdAt || entry.at || entry.updatedAt || null,
+    note: entry.note || entry.observacao || ''
+  })).filter(entry => entry.status);
+
+  if (!normalized.some(entry => entry.status === currentStatus)) {
+    normalized.push({ status: currentStatus, date: updatedAt || null, note: '' });
+  }
+
+  return normalized;
+}
+
+function renderOrderTimeline(order) {
+  if (order.statusKey === 'cancelado') {
+    return `
+      <div class="order-timeline order-timeline-canceled">
+        <div class="timeline-step is-current">
+          <span class="timeline-dot"></span>
+          <div>
+            <strong>Pedido cancelado</strong>
+            <small>${sanitizeHTML(order.updatedLabel || 'Status atualizado')}</small>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const activeIndex = Math.max(0, ORDER_STATUS_FLOW.findIndex(step => step.key === order.statusKey));
+
+  return `
+    <div class="order-timeline" aria-label="Acompanhamento do pedido">
+      ${ORDER_STATUS_FLOW.map((step, index) => {
+        const stateClass = index < activeIndex ? 'is-done' : index === activeIndex ? 'is-current' : 'is-pending';
+        const historyEntry = order.statusHistory.find(entry => entry.status === step.key);
+        const dateLabel = historyEntry?.date ? formatShortDate(historyEntry.date) : step.description;
+
+        return `
+          <div class="timeline-step ${stateClass}">
+            <span class="timeline-dot"></span>
+            <div>
+              <strong>${sanitizeHTML(step.label)}</strong>
+              <small>${sanitizeHTML(dateLabel)}</small>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderTrackingPanel(order) {
+  if (!order.trackingCode && !order.carrier && !order.payment) return '';
+
+  return `
+    <div class="tracking-panel">
+      ${order.payment ? `
+        <div>
+          <span>Pagamento</span>
+          <strong>${sanitizeHTML(order.payment)}</strong>
+        </div>
+      ` : ''}
+      ${order.carrier ? `
+        <div>
+          <span>Transportadora</span>
+          <strong>${sanitizeHTML(order.carrier)}</strong>
+        </div>
+      ` : ''}
+      ${order.trackingCode ? `
+        <div>
+          <span>Código de rastreio</span>
+          <strong>${sanitizeHTML(order.trackingCode)}</strong>
+        </div>
+      ` : ''}
+      ${order.estimatedDelivery && order.estimatedDelivery !== 'Data não disponível' ? `
+        <div>
+          <span>Previsão</span>
+          <strong>${sanitizeHTML(order.estimatedDelivery)}</strong>
+        </div>
+      ` : ''}
+    </div>
+  `;
 }
 
 // ==================== SALVAR ALTERAÇÕES ====================
@@ -467,26 +760,68 @@ function initEventListeners() {
     formDadosPessoais.addEventListener('submit', handleSaveChanges);
   }
 
+  const refreshOrdersBtn = document.getElementById('refreshOrdersBtn');
+  if (refreshOrdersBtn) {
+    refreshOrdersBtn.addEventListener('click', loadUserOrders);
+  }
+
+  document.addEventListener('click', (event) => {
+    const actionButton = event.target.closest('[data-action]');
+    if (!actionButton) return;
+
+    const action = actionButton.dataset.action;
+
+    if (action === 'refresh-orders') {
+      loadUserOrders();
+    }
+
+    if (action === 'contact-order') {
+      contactWhatsApp(actionButton.dataset.orderCode);
+    }
+
+    if (action === 'open-tracking' && actionButton.dataset.url) {
+      window.open(actionButton.dataset.url, '_blank', 'noopener,noreferrer');
+    }
+
+    if (action === 'go-shop') {
+      window.location.href = 'index.html';
+    }
+  });
+
   // Banner rotativo
   initBannerRotation();
 }
 
 // ==================== TROCAR SEÇÃO ====================
 function switchSection(sectionName) {
+  const safeSection = sectionName === 'pedidos' ? 'pedidos' : 'dados';
+
   // Atualizar menu
   document.querySelectorAll('.account-menu-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.section === sectionName);
+    item.classList.toggle('active', item.dataset.section === safeSection);
   });
 
   // Atualizar conteúdo
   document.querySelectorAll('.account-section').forEach(section => {
-    section.classList.toggle('active', section.id === `section${capitalizeFirst(sectionName)}`);
+    section.classList.toggle('active', section.id === `section${capitalizeFirst(safeSection)}`);
   });
 
-  // Se for pedidos e ainda não carregou, recarregar
-  if (sectionName === 'pedidos' && userOrders.length === 0) {
-    loadUserOrders();
+  const url = new URL(window.location.href);
+  url.searchParams.set('aba', safeSection);
+  window.history.replaceState({}, '', url);
+
+  if (safeSection === 'pedidos' && !ordersListenerStarted) {
+    startOrdersRealtime();
   }
+}
+
+function setInitialSectionFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('aba') || params.get('tab');
+  const hash = window.location.hash.replace('#', '');
+  const initialSection = tab || hash || 'dados';
+
+  switchSection(initialSection === 'pedidos' ? 'pedidos' : 'dados');
 }
 
 // ==================== LOGOUT ====================
@@ -507,7 +842,7 @@ async function handleLogout() {
 
 // ==================== CONTATO WHATSAPP ====================
 function contactWhatsApp(orderId) {
-  const message = `Olá! Gostaria de tirar dúvidas sobre o pedido #${orderId}`;
+  const message = `Olá! Gostaria de tirar dúvidas sobre o pedido #${orderId || ''}`;
   const phone = '5571991427103';
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank');
@@ -516,16 +851,10 @@ function contactWhatsApp(orderId) {
 // ==================== FUNÇÕES UTILITÁRIAS ====================
 function formatOrderDate(timestamp) {
   if (!timestamp) return 'Data não disponível';
-  
-  let date;
-  if (timestamp.toDate) {
-    date = timestamp.toDate();
-  } else if (timestamp instanceof Date) {
-    date = timestamp;
-  } else {
-    date = new Date(timestamp);
-  }
-  
+
+  const date = parseDate(timestamp);
+  if (!date) return 'Data não disponível';
+
   return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
@@ -533,36 +862,91 @@ function formatOrderDate(timestamp) {
   });
 }
 
+function formatShortDate(timestamp) {
+  const date = parseDate(timestamp);
+  if (!date) return '';
+
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit'
+  });
+}
+
+function formatRelativeDate(timestamp) {
+  const date = parseDate(timestamp);
+  if (!date) return '';
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+
+  if (diffMinutes < 1) return 'agora';
+  if (diffMinutes < 60) return `há ${diffMinutes} min`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `há ${diffHours} h`;
+
+  return formatShortDate(date);
+}
+
+function parseDate(timestamp) {
+  if (!timestamp) return null;
+  if (typeof timestamp.toDate === 'function') return timestamp.toDate();
+  if (timestamp instanceof Date) return timestamp;
+
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function formatCurrency(value) {
   return parseFloat(value || 0).toFixed(2).replace('.', ',');
 }
 
+function normalizeStatus(status) {
+  const raw = String(status || 'pendente_whatsapp').trim();
+  const normalized = raw
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  return STATUS_ALIASES[normalized] || normalized || 'pendente_whatsapp';
+}
+
+function getStatusMeta(status) {
+  const statusKey = normalizeStatus(status);
+
+  if (statusKey === 'cancelado') {
+    return {
+      key: 'cancelado',
+      label: 'Cancelado',
+      description: 'Pedido cancelado',
+      className: 'status-cancelado'
+    };
+  }
+
+  return ORDER_STATUS_FLOW.find(step => step.key === statusKey) || ORDER_STATUS_FLOW[0];
+}
+
 function getStatusClass(status) {
-  const statusMap = {
-    'pendente': 'status-pendente',
-    'pendente_whatsapp': 'status-pendente',
-    'enviado': 'status-enviado',
-    'entregue': 'status-entregue',
-    'cancelado': 'status-cancelado'
-  };
-  return statusMap[status.toLowerCase()] || 'status-pendente';
+  return getStatusMeta(status).className;
 }
 
 function translateStatus(status) {
-  const statusMap = {
-    'pendente': 'Pendente',
-    'pendente_whatsapp': 'Aguardando WhatsApp',
-    'enviado': 'Enviado',
-    'entregue': 'Entregue',
-    'cancelado': 'Cancelado'
-  };
-  return statusMap[status.toLowerCase()] || status;
+  return getStatusMeta(status).label;
 }
 
 function sanitizeHTML(str) {
   const div = document.createElement('div');
-  div.textContent = str;
+  div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
+}
+
+function safeURL(value) {
+  const url = String(value || '').trim();
+  if (!url) return '';
+  if (/^https?:\/\//i.test(url) || /^data:image\//i.test(url)) return url.replace(/["'\\\r\n]/g, '');
+  return '';
 }
 
 function capitalizeFirst(str) {

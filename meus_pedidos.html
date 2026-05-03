@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css2.css?v=1.0.1">
   <link rel="stylesheet" href="auth_styles.css">
   <!-- CSS Específico da Página -->
-  <link rel="stylesheet" href="meus_pedidos.css">
+  <link rel="stylesheet" href="meus_pedidos.css?v=1.0.2">
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -257,7 +257,17 @@
         <div id="sectionPedidos" class="account-section">
           <div class="section-header">
             <h2>Meus Pedidos</h2>
-            <p>Acompanhe o histórico das suas compras</p>
+            <p>Acompanhe suas compras, atualizações e entrega em tempo real</p>
+          </div>
+
+          <div class="orders-toolbar">
+            <div class="orders-live-status" id="ordersLiveStatus">
+              <span class="live-dot"></span>
+              <span id="ordersLiveText">Sincronizando pedidos</span>
+            </div>
+            <button type="button" class="btn-refresh-orders" id="refreshOrdersBtn">
+              Atualizar
+            </button>
           </div>
 
           <!-- Loading State -->
@@ -279,7 +289,7 @@
             </svg>
             <h3>Nenhum pedido ainda</h3>
             <p>Seus pedidos aparecerão aqui após a finalização</p>
-            <button onclick="window.location.href='index.html'" class="btn-primary">
+            <button type="button" data-action="go-shop" class="btn-primary">
               Ir às Compras
             </button>
           </div>
@@ -336,7 +346,7 @@
 
   <!-- Scripts -->
   <script src="auth.js?v=1.0.1"></script>
-  <script src="meus_pedidos.js?v=1.0.1"></script>
+  <script src="meus_pedidos.js?v=1.0.2"></script>
 </body>
 </html>
 
