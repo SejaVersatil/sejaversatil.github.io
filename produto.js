@@ -1334,18 +1334,42 @@ function getColorHex(name) {
         'Rosa': '#FFB6C1',
         'Preto': '#000000',
         'Azul': '#4169E1',
+        'Azul Claro': '#87CEEB',
+        'Azul Marinho': '#0B1F4D',
         'Verde': '#32CD32',
+        'Verde Claro': '#90EE90',
         'Branco': '#FFFFFF',
+        'Off': '#F8F5EF',
         'Vermelho': '#DC143C',
         'Amarelo': '#FFD700',
         'Cinza': '#808080',
+        'Chumbo': '#4A4A4A',
         'Lilás': '#9370DB',
+        'Lavanda': '#B57EDC',
         'Coral': '#FF7F50',
         'Nude': '#E8BEAC',
         'Bege': '#F5F5DC',
-        'Laranja': '#FFA500'
+        'Laranja': '#FFA500',
+        'Marrom': '#6B3F2A',
+        'Marrom Claro': '#B6815A',
+        'Caramelo': '#C8783A',
+        'Marsala': '#7D2639',
+        'Militar': '#4B5320',
+        'Marinho': '#0B1F4D',
+        'Ciano': '#00A7B5',
+        'Magenta': '#D43D8C',
+        'Violeta': '#7F3FBF',
+        'Chiclete': '#FF5DA2'
     };
-    return map[name] || '#ddd';
+    const normalizedName = String(name || '').trim();
+    if (normalizedName.includes('/')) {
+        return normalizedName
+            .split('/')
+            .map(part => map[String(part || '').trim()] || '#ddd')
+            .join(',');
+    }
+
+    return map[normalizedName] || '#ddd';
 }
 
 function toggleSidebar() {

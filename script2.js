@@ -480,6 +480,24 @@ function normalizeProductColors(value) {
         .filter(Boolean);
 }
 
+function buildProductColorsFromVariants(product, variants = []) {
+    const colorNames = [...new Set(
+        variants
+            .map(variant => normalizeText(variant.color))
+            .filter(Boolean)
+    )];
+    const images = normalizeProductImages(
+        Array.isArray(product?.images) && product.images.length > 0 ? product.images : product?.image,
+        null
+    );
+
+    return colorNames.map(colorName => ({
+        name: colorName,
+        hex: getColorHex(colorName),
+        images: images.length > 0 ? [...images] : []
+    }));
+}
+
 function normalizeProductRecord(id, data = {}) {
     const rawImages = Array.isArray(data.images) && data.images.length > 0
         ? data.images
@@ -636,17 +654,41 @@ function getColorHex(colorName) {
         'Rosa': '#FFB6C1',
         'Preto': '#000000',
         'Azul': '#4169E1',
+        'Azul Claro': '#87CEEB',
+        'Azul Marinho': '#0B1F4D',
         'Verde': '#32CD32',
+        'Verde Claro': '#90EE90',
         'Branco': '#FFFFFF',
+        'Off': '#F8F5EF',
         'Vermelho': '#DC143C',
         'Amarelo': '#FFD700',
         'Cinza': '#808080',
+        'Chumbo': '#4A4A4A',
         'Lilás': '#9370DB',
+        'Lavanda': '#B57EDC',
         'Coral': '#FF7F50',
         'Nude': '#E8BEAC',
-        'Bege': '#F5F5DC'
+        'Bege': '#F5F5DC',
+        'Marrom': '#6B3F2A',
+        'Marrom Claro': '#B6815A',
+        'Caramelo': '#C8783A',
+        'Marsala': '#7D2639',
+        'Militar': '#4B5320',
+        'Marinho': '#0B1F4D',
+        'Ciano': '#00A7B5',
+        'Magenta': '#D43D8C',
+        'Violeta': '#7F3FBF',
+        'Chiclete': '#FF5DA2'
     };
-    return colorMap[colorName] || '#999999';
+    const normalizedColorName = normalizeText(colorName);
+    if (normalizedColorName.includes('/')) {
+        return normalizedColorName
+            .split('/')
+            .map(part => colorMap[normalizeText(part)] || '#999999')
+            .join(',');
+    }
+
+    return colorMap[normalizedColorName] || '#999999';
 }
 
 // ==================== FIREBASE E FIRESTORE ====================
@@ -2988,7 +3030,7 @@ function renderAdminProducts() {
 const debouncedAdminRender = debounce(renderAdminProducts, 500);
 
 // ==================== GERENCIAMENTO DE PRODUTOS (ADMIN) ====================
-function openProductModal(productId = null) {
+async function openProductModal(productId = null) {
     editingProductId = productId;
     const modal = document.getElementById('productModal');
     const title = document.getElementById('modalTitle');
@@ -3024,6 +3066,10 @@ function openProductModal(productId = null) {
             null
         );
         productColors = normalizeProductColors(JSON.parse(JSON.stringify(product.colors || [])));
+        if (productColors.length === 0) {
+            const variants = await loadProductVariants(productId);
+            productColors = buildProductColorsFromVariants(product, variants);
+        }
         console.log('📋 Cores carregadas para edição:', productColors.length);
         if (productColors.length > 0) {
             console.log('🎨 Detalhes das cores:', productColors);
@@ -3049,7 +3095,10 @@ function closeProductModal() {
 }
 
 function editProduct(productId) {
-    openProductModal(productId);
+    openProductModal(productId).catch(error => {
+        console.error('Erro ao abrir produto para edição:', error);
+        showToast('Erro ao abrir produto para edição: ' + error.message, 'error');
+    });
 }
 
 async function deleteProduct(productId) {
