@@ -465,25 +465,37 @@ function updateGalleryDisplay(images) {
     const remainingImages = images.slice(2);
 
     if (remainingImages.length > 0) {
-        thumbnailContainer.innerHTML = remainingImages.map(img => `
-            <div class="gallery-photo-extra" style="
-                width: 100%;
-                aspect-ratio: 3/4;
-                background-image: url('${img}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                border-radius: 0;
-                cursor: pointer;
-            " onclick="swapMainImage('${img}')">
-                <img src="${img}" alt="Foto Extra" style="width:100%;height:100%;object-fit:cover;opacity:0;">
-            </div>
-        `).join('');
+        thumbnailContainer.innerHTML = '';
+        const productName = state.currentProduct?.name || 'Produto';
+
+        remainingImages.forEach((img, index) => {
+            const photoButton = document.createElement('button');
+            photoButton.type = 'button';
+            photoButton.className = 'gallery-photo-extra';
+            photoButton.setAttribute('aria-label', `${productName} - ver foto ${index + 3}`);
+
+            const photo = document.createElement('img');
+            photo.src = img;
+            photo.alt = `${productName} - foto ${index + 3}`;
+            photo.loading = 'eager';
+            photo.fetchPriority = 'low';
+            photo.decoding = 'async';
+
+            photo.addEventListener('error', () => {
+                photoButton.classList.add('is-image-error');
+            }, { once: true });
+
+            photoButton.addEventListener('click', () => swapMainImage(img));
+            photoButton.appendChild(photo);
+            thumbnailContainer.appendChild(photoButton);
+        });
 
         thumbnailContainer.style.maxHeight = '0';
         thumbnailContainer.style.overflow = 'hidden';
         thumbnailContainer.style.display = 'grid';
+        thumbnailContainer.classList.remove('expanded');
         btnShowMore.style.display = 'flex';
+        btnShowMore.classList.remove('expanded');
         btnShowMore.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     } else {
         thumbnailContainer.innerHTML = '';
@@ -1987,11 +1999,13 @@ window.toggleGalleryExpansion = function() {
         // Expande
         container.style.maxHeight = '6000px';
         container.classList.add('expanded');
+        btn.classList.add('expanded');
         btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     } else {
         // Recolhe
         container.style.maxHeight = '0';
         container.classList.remove('expanded');
+        btn.classList.remove('expanded');
         btn.innerHTML = `MOSTRAR MAIS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
         
         // Rola suavemente para o topo

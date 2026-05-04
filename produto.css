@@ -429,7 +429,7 @@ body, .short-desc-text, .model-info-text {
 }
 
 .thumbnail-grid.expanded {
-    max-height: 3000px !important;
+    max-height: 12000px !important;
 }
 
 /* Itens individuais da thumbnail */
@@ -456,6 +456,47 @@ body, .short-desc-text, .model-info-text {
     object-fit: cover;
     opacity: 0; /* Invisível, só para SEO */
     pointer-events: none;
+}
+
+.gallery-photo-extra {
+    appearance: none !important;
+    padding: 0 !important;
+    aspect-ratio: auto !important;
+    min-height: 0 !important;
+    background: #f3f1ef !important;
+    background-size: contain !important;
+    background-position: center top !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+.gallery-photo-extra img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    opacity: 1 !important;
+    display: block !important;
+    pointer-events: none;
+}
+
+.gallery-photo-extra.is-image-error {
+    min-height: 280px !important;
+    position: relative;
+}
+
+.gallery-photo-extra.is-image-error img {
+    display: none !important;
+}
+
+.gallery-photo-extra.is-image-error::after {
+    content: "Imagem indisponivel";
+    color: #777777;
+    font-size: 0.82rem;
+    font-weight: 600;
 }
 
 .thumbnail-item {
@@ -639,6 +680,14 @@ body, .short-desc-text, .model-info-text {
         transition: transform 0.3s ease;
     }
     
+    .gallery-photo-extra {
+        aspect-ratio: auto !important;
+        min-height: 0 !important;
+        background-size: contain !important;
+        background-position: center top !important;
+        display: flex !important;
+    }
+
     .gallery-photo-extra:hover {
         transform: scale(1.02);
         z-index: 5;
