@@ -15,6 +15,7 @@ const state = {
     productVariants: {},
     countdownInterval: null,
     galleryExpanded: false,
+    swipeHintPlayed: false,
     appliedCoupon: null,        // ← ADICIONE ESTA LINHA
     couponDiscount: 0            // ← ADICIONE ESTA LINHA
 };
@@ -356,6 +357,44 @@ function renderPrices() {
 /* =========================
    Galeria: Lógica "Hero + Thumbnails" (Novo Layout)
    ========================= */
+let swipeHintTimer = null;
+
+function hideMobileSwipeHint() {
+    const hint = document.getElementById('mobileSwipeHint');
+    if (!hint) return;
+
+    hint.classList.remove('is-active');
+    if (swipeHintTimer) {
+        clearTimeout(swipeHintTimer);
+        swipeHintTimer = null;
+    }
+}
+
+function showMobileSwipeHint(imageCount = 0) {
+    const hint = document.getElementById('mobileSwipeHint');
+    const galleryContainer = document.getElementById('galleryContainer');
+
+    if (!hint || window.innerWidth > 768 || imageCount < 2) {
+        if (hint) hint.classList.remove('is-active');
+        return;
+    }
+
+    if (state.swipeHintPlayed) return;
+
+    state.swipeHintPlayed = true;
+    hint.classList.remove('is-active');
+    void hint.offsetWidth;
+    hint.classList.add('is-active');
+
+    const dismissHint = () => {
+        hideMobileSwipeHint();
+        galleryContainer?.removeEventListener('touchstart', dismissHint);
+    };
+
+    galleryContainer?.addEventListener('touchstart', dismissHint, { once: true, passive: true });
+    swipeHintTimer = setTimeout(dismissHint, 5200);
+}
+
 function renderGallery(specificImages = null) {
     const p = state.currentProduct;
     if (!p) return;
@@ -413,7 +452,9 @@ function updateGalleryDisplay(images) {
                 galleryContainer.appendChild(photoDiv);
             });
         }
-        
+
+        showMobileSwipeHint(images.length);
+
         // Esconde botão e thumbnails no mobile
         const thumbnailContainer = document.getElementById('thumbnailList');
         const btnShowMore = document.getElementById('btnShowMore');
@@ -422,6 +463,8 @@ function updateGalleryDisplay(images) {
         
         return; // Para aqui no mobile
     }
+
+    hideMobileSwipeHint();
 
     // ========================================
     // DESKTOP: 2 PRINCIPAIS + THUMBNAILS
