@@ -2088,6 +2088,22 @@ body.product-page .btn-favorite-floating svg {
     }
 }
 
+@media (min-width: 1600px) {
+    .product-page-container .product-main-grid {
+        grid-template-columns: minmax(0, min(57vw, 1460px)) 540px !important;
+        gap: clamp(190px, calc(12.7vw - 15px), 310px) !important;
+    }
+
+    .product-left-flow {
+        max-width: 1460px !important;
+    }
+
+    .product-main-grid > .product-info-section {
+        width: 540px !important;
+        padding-right: 0 !important;
+    }
+}
+
 .product-header-wrapper {
     display: block !important;
     padding-bottom: 10px !important;
