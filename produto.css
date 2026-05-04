@@ -1991,15 +1991,17 @@ body.product-page .btn-favorite-floating svg {
 @media (min-width: 769px) {
     .product-page-container .product-main-grid {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) 420px !important;
+        grid-template-columns: minmax(0, min(57vw, 1180px)) 420px !important;
         align-items: start !important;
-        gap: 34px !important;
+        gap: clamp(88px, calc(23vw - 243px), 230px) !important;
+        justify-content: start !important;
         max-width: none !important;
-        padding: 20px 24px 84px !important;
+        padding: 30px clamp(20px, 1.55vw, 32px) 88px !important;
     }
 
     .product-left-flow {
         min-width: 0;
+        max-width: 1180px !important;
     }
 
     .product-gallery-section {
@@ -2009,7 +2011,7 @@ body.product-page .btn-favorite-floating svg {
 
     body.product-page .product-gallery-section > .btn-favorite-floating {
         top: 58px !important;
-        right: calc(50% + 34px) !important;
+        right: calc(50% + 36px) !important;
         margin-top: 0 !important;
     }
 
@@ -2069,6 +2071,7 @@ body.product-page .btn-favorite-floating svg {
         position: sticky !important;
         top: 112px !important;
         align-self: start !important;
+        width: 420px !important;
         height: auto !important;
         max-height: calc(100vh - 132px) !important;
         overflow-y: auto !important;
