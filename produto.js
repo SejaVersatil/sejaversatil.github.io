@@ -1985,7 +1985,7 @@ window.toggleGalleryExpansion = function() {
 
     if (state.galleryExpanded) {
         // Expande
-        container.style.maxHeight = '2000px';
+        container.style.maxHeight = '6000px';
         container.classList.add('expanded');
         btn.innerHTML = `MOSTRAR MENOS <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" style="transform: rotate(180deg);"><path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     } else {

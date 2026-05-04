@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="produto.css?v=1.0.4">
+  <link rel="stylesheet" href="produto.css?v=1.0.5">
   <link rel="stylesheet" href="css2.css?v=1.0.6">
   <link rel="stylesheet" href="auth_styles.css?v=1.0.1">
 
@@ -191,36 +191,102 @@
 
   <main class="product-page-container" role="main">
     <div class="product-main-grid">
+      <div class="product-left-flow">
+        <div class="product-gallery-section">
+          <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+          </button>
 
-      <div class="product-gallery-section">
-    <button class="btn-favorite-floating" onclick="toggleProductFavorite()" aria-label="Adicionar aos favoritos" type="button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-    </button>
+          <div id="galleryContainer" class="gallery-container">
+              <div class="gallery-photo-full" id="heroWrapper1">
+                  <img id="mainImg1" src="" alt="Imagem Principal 1" style="width:100%;height:100%;object-fit:cover;">
+              </div>
 
-    <div id="galleryContainer" class="gallery-container">
-        <div class="gallery-photo-full" id="heroWrapper1">
-            <img id="mainImg1" src="" alt="Imagem Principal 1" style="width:100%;height:100%;object-fit:cover;">
+              <div class="gallery-photo-full" id="heroWrapper2">
+                  <img id="mainImg2" src="" alt="Imagem Principal 2" style="width:100%;height:100%;object-fit:cover;">
+              </div>
+          </div>
+
+          <div id="thumbnailList" class="thumbnail-grid"></div>
+
+          <button id="btnShowMore" class="btn-show-more" style="display: none;" onclick="toggleGalleryExpansion()" type="button">
+              MOSTRAR MAIS
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor">
+                  <path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </button>
         </div>
 
-        <div class="gallery-photo-full" id="heroWrapper2">
-            <img id="mainImg2" src="" alt="Imagem Principal 2" style="width:100%;height:100%;object-fit:cover;">
-        </div>
-    </div>
+        <section class="product-details-flow" id="productDescriptionBlock" aria-label="Informações do produto">
+          <div class="product-details-lead">
+            <span>Descrição completa</span>
+            <h2>Performance, conforto e presença para todos os movimentos.</h2>
+          </div>
+          <div class="product-details-body">
+            <div class="product-description-section" id="productDescription"></div>
+          </div>
+          <div class="product-details-tabs">
+            <article>
+              <strong>Tecnologia</strong>
+              <p>Tecidos selecionados para toque macio, mobilidade e uso confortável durante treino, rua e rotina.</p>
+            </article>
+            <article>
+              <strong>Indicado para</strong>
+              <p>Looks versáteis de moda fitness feminina, com modelagens que valorizam o corpo sem limitar movimento.</p>
+            </article>
+            <article>
+              <strong>Cuidados</strong>
+              <p>Lave com sabão neutro, evite alvejantes e seque à sombra para preservar cor, elasticidade e acabamento.</p>
+            </article>
+          </div>
+        </section>
 
-    <!-- ⚠️ CRÍTICO: thumbnailList FORA do galleryContainer -->
-    <div id="thumbnailList" class="thumbnail-grid"></div>
+        <section class="product-experience-section" aria-label="Diferenciais Seja Versátil">
+            <div>
+                <span>01</span>
+                <strong>Performance com conforto</strong>
+                <p>Peças escolhidas para acompanhar treino, deslocamento e rotina sem perder presença.</p>
+            </div>
+            <div>
+                <span>02</span>
+                <strong>Curadoria de modelagens</strong>
+                <p>Cortes pensados para valorizar o corpo e facilitar combinações no dia a dia.</p>
+            </div>
+            <div>
+                <span>03</span>
+                <strong>Compra assistida</strong>
+                <p>Suporte rápido pelo WhatsApp para dúvidas sobre tamanho, cor, pedido e entrega.</p>
+            </div>
+        </section>
 
-    <button id="btnShowMore" class="btn-show-more" style="display: none;" onclick="toggleGalleryExpansion()" type="button">
-        MOSTRAR MAIS 
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor">
-            <path d="M1 1L5 5L9 1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </button>
-</div>
-    
-      <div class="product-info-section">
+        <section class="related-products-section">
+            <h3>Você Também Pode Gostar</h3>
+            <div class="related-products-grid" id="relatedProductsGrid"></div>
+        </section>
+
+        <section class="product-reviews-section" id="productReviews" aria-label="Avaliações do produto">
+          <div class="reviews-header">
+            <span>Avaliações</span>
+            <h2>Experiência de quem compra Seja Versátil</h2>
+          </div>
+          <div class="reviews-summary">
+            <div>
+              <strong>5.0</strong>
+              <span>★★★★★</span>
+              <p>Baseado nas avaliações dos clientes da loja.</p>
+            </div>
+            <button type="button" class="review-action">Avaliar produto</button>
+          </div>
+          <div class="reviews-empty-state">
+            <strong>Seja a primeira pessoa a avaliar este produto.</strong>
+            <p>Sua opinião ajuda outras clientes a escolherem tamanho, caimento e combinação ideal.</p>
+          </div>
+        </section>
+      </div>
+
+      <aside class="product-info-section">
         <nav class="breadcrumb">
             <a href="index.html">Início</a> › <span id="breadcrumbCategory">Categoria</span> › <span id="breadcrumbProduct">Produto</span>
         </nav>
@@ -255,22 +321,28 @@
                     </div>
                 </div>
             </div>
-
-            <div class="product-pricing">
-                <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
-                <div class="price-main-row">
-                    <span class="price-current" id="detailsPriceNew">R$ --,--</span>
-                    <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
-                </div>
-                <div class="price-installments" id="detailsInstallments">Em até 10x sem juros</div>
-                <div class="price-pix-note" id="detailsPixNote">10% off no PIX à vista</div>
-            </div>
         </div>
 
-        <div class="product-promise-row" aria-label="Benefícios principais">
-            <span>Toque macio</span>
-            <span>Ajuste seguro</span>
-            <span>Uso versátil</span>
+        <div class="product-rating-row">
+            <span aria-label="5 estrelas">★★★★★</span>
+            <a href="#productReviews">Avaliações</a>
+        </div>
+
+        <div class="product-pricing">
+            <span class="price-old-text" id="detailsPriceOld" style="display:none;">De R$ 0,00</span>
+            <div class="price-main-row">
+                <span class="price-current" id="detailsPriceNew">R$ --,--</span>
+                <span class="price-discount-badge" id="discountBadge" style="display:none;">-0%</span>
+            </div>
+            <div class="price-installments" id="detailsInstallments">Em até 10x sem juros</div>
+            <div class="price-pix-note" id="detailsPixNote">10% off no PIX à vista</div>
+        </div>
+
+        <div class="short-description-container">
+          <p class="short-desc-text" id="productShortDescription">
+             Modelagem pensada para acompanhar seus movimentos com conforto e presença.
+          </p>
+          <a href="#productDescriptionBlock" class="view-full-desc">Veja descrição completa ›</a>
         </div>
 
         <div class="product-selector-group">
@@ -285,7 +357,7 @@
             <small class="selector-helper">Selecione a cor para consultar o estoque por tamanho.</small>
         </div>
 
-        <div class="product-selector-group">
+        <div class="product-selector-group product-quantity-group">
             <label class="selector-label">Quantidade</label>
             <div class="quantity-controls">
                 <button class="qty-control-btn" type="button" onclick="changeQuantity(-1)">−</button>
@@ -341,56 +413,7 @@
             Descubra seu tamanho
         </button>
       </div>
-          
-      <div class="short-description-container">
-        <p class="short-desc-text" id="productShortDescription">
-           Modelagem pensada para acompanhar seus movimentos com conforto e presença.
-        </p>
-        <a href="#productDescription" class="view-full-desc">Veja descrição completa ↓</a>
-      </div>
-
-      <div class="product-info-accordion">
-        <details class="product-detail-panel" open>
-            <summary>Detalhes do produto</summary>
-            <div class="product-description-section" id="productDescription"></div>
-        </details>
-        <details class="product-detail-panel">
-            <summary>Cuidados com a peça</summary>
-            <div class="product-detail-copy">
-                <p>Lave com sabão neutro, evite alvejantes e seque à sombra para preservar cor, elasticidade e toque do tecido.</p>
-            </div>
-        </details>
-        <details class="product-detail-panel">
-            <summary>Troca e atendimento</summary>
-            <div class="product-detail-copy">
-                <p>Conte com atendimento pelo WhatsApp e primeira troca facilitada, seguindo as condições de uso e conservação da peça.</p>
-            </div>
-        </details>
-      </div>
-    </div>
-    </div>
-
-    <section class="product-experience-section" aria-label="Diferenciais Seja Versátil">
-        <div>
-            <span>01</span>
-            <strong>Performance com conforto</strong>
-            <p>Peças escolhidas para acompanhar treino, deslocamento e rotina sem perder presença.</p>
-        </div>
-        <div>
-            <span>02</span>
-            <strong>Curadoria de modelagens</strong>
-            <p>Cortes pensados para valorizar o corpo e facilitar combinações no dia a dia.</p>
-        </div>
-        <div>
-            <span>03</span>
-            <strong>Compra assistida</strong>
-            <p>Suporte rápido pelo WhatsApp para dúvidas sobre tamanho, cor, pedido e entrega.</p>
-        </div>
-    </section>
-
-    <div class="related-products-section">
-        <h3>Você Também Pode Gostar</h3>
-        <div class="related-products-grid" id="relatedProductsGrid"></div>
+      </aside>
     </div>
   </main>
 
@@ -630,7 +653,7 @@
     </div>
 </div>
   
-  <script src="produto.js?v=1.0.5" defer></script>
+  <script src="produto.js?v=1.0.6" defer></script>
 
 <!-- Modal de Pagamento -->
 <div class="payment-modal" id="paymentModal">
