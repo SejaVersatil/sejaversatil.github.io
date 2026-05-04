@@ -85,12 +85,33 @@ const isImageUrl = (s) => (
     /^(https?:\/\/|data:image|blob:|\.?\.?\/?assets\/|\.?\.?\/?images\/)/i.test(s.trim())
 );
 const isGradient = (s) => typeof s === 'string' && s.includes('gradient(');
+const isLocalProductAsset = (s) => typeof s === 'string' && /^\.?\/?assets\/products\//i.test(s.trim());
+
+function getPreferredProductImage(product = {}) {
+    const images = normalizeProductImageList(
+        Array.isArray(product.images) && product.images.length ? product.images : product.image
+    );
+
+    return images.find(isLocalProductAsset) ||
+        images.find(img => isImageUrl(img) && !/^https:\/\/i\.imgur\.com\//i.test(img)) ||
+        '';
+}
 
 const normalizeIdPart = (str = '') =>
     String(str).replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 
 const nowMs = () => (new Date()).getTime();
 const productDetailsUrl = (productId) => `produto.html?id=${encodeURIComponent(String(productId))}`;
+const formatBRL = (value) => safeNumber(value, 0).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+});
+
+function stripHtmlToText(html = '') {
+    const el = document.createElement('div');
+    el.innerHTML = String(html);
+    return (el.textContent || el.innerText || '').replace(/\s+/g, ' ').trim();
+}
 
 /* =========================
    LocalStorage (carrinho)
@@ -299,14 +320,15 @@ function renderPrices() {
     const priceNewEl = $('detailsPriceNew');
     const discountBadge = $('discountBadge');
     const installments = $('detailsInstallments');
+    const pixNote = $('detailsPixNote');
 
     const price = safeNumber(p.price, null);
 
-    if (priceNewEl) priceNewEl.textContent = price !== null ? `R$ ${price.toFixed(2)}` : '---';
+    if (priceNewEl) priceNewEl.textContent = price !== null ? formatBRL(price) : '---';
 
     if (p.oldPrice && price && p.oldPrice > price) {
         if (priceOldEl) {
-            priceOldEl.textContent = `De R$ ${safeNumber(p.oldPrice).toFixed(2)}`;
+            priceOldEl.textContent = `De ${formatBRL(p.oldPrice)}`;
             priceOldEl.style.display = 'block';
         }
         const discount = Math.round(((p.oldPrice - price) / p.oldPrice) * 100);
@@ -323,7 +345,11 @@ function renderPrices() {
     if (installments && price) {
         const maxParcelas = 3; // Máximo de parcelas
         const parcelaValue = price / maxParcelas;
-        installments.textContent = `ou ${maxParcelas}x de R$ ${parcelaValue.toFixed(2)} sem juros`;
+        installments.textContent = `ou ${maxParcelas}x de ${formatBRL(parcelaValue)} sem juros`;
+    }
+
+    if (pixNote && price) {
+        pixNote.textContent = `no PIX ${formatBRL(price * 0.9)} com 10% de desconto`;
     }
 }
 
@@ -750,6 +776,13 @@ function renderDescription() {
       Modelagem que valoriza o corpo e tecido de toque suave.</p>`;
 
     descEl.innerHTML = content;
+
+    const shortDescEl = document.getElementById('productShortDescription');
+    if (shortDescEl) {
+        const source = p.shortDescription || p.summary || stripHtmlToText(content);
+        const text = source.length > 155 ? `${source.slice(0, 152).trim()}...` : source;
+        shortDescEl.textContent = text || 'Modelagem pensada para acompanhar seus movimentos com conforto e presença.';
+    }
 }
 /* =========================
    Produtos relacionados (CORRIGIDO E ROBUSTO)
@@ -765,7 +798,7 @@ async function renderRelatedProducts() {
         // Busca produtos da mesma categoria
         const relatedSnapshot = await db.collection('produtos')
             .where('category', '==', p.category)
-            .limit(5)
+            .limit(12)
             .get();
 
         const related = [];
@@ -779,7 +812,15 @@ async function renderRelatedProducts() {
             }
         });
 
-        if (!related.length) {
+        const productsToShow = related
+            .map(prod => ({
+                ...prod,
+                preferredImage: getPreferredProductImage(prod)
+            }))
+            .filter(prod => Boolean(prod.preferredImage))
+            .slice(0, 4);
+
+        if (!productsToShow.length) {
             relatedGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;">Nenhum produto similar no momento.</p>';
             return;
         }
@@ -787,24 +828,24 @@ async function renderRelatedProducts() {
         relatedGrid.innerHTML = '';
 
         // Pega até 4 produtos para exibir
-        related.slice(0, 4).forEach(prod => {
+        productsToShow.forEach(prod => {
             const card = document.createElement('div');
             card.className = 'product-card';
             card.onclick = () => window.location.href = productDetailsUrl(prod.id);
             card.style.cursor = 'pointer';
 
             // --- LÓGICA DE IMAGEM CORRIGIDA ---
-            let imgUrl = '';
+            let imgUrl = prod.preferredImage;
             // 1. Prioridade: Array de imagens
-            if (Array.isArray(prod.images) && prod.images.length > 0) {
+            if (!imgUrl && Array.isArray(prod.images) && prod.images.length > 0) {
                 imgUrl = prod.images[0];
             }
             // 2. Fallback: String única 'image'
-            else if (prod.image) {
+            else if (!imgUrl && prod.image) {
                 imgUrl = prod.image;
             }
             // 3. Fallback final: String 'img' (caso exista legado)
-            else if (prod.img) {
+            else if (!imgUrl && prod.img) {
                 imgUrl = prod.img;
             }
 
@@ -861,7 +902,7 @@ async function renderRelatedProducts() {
             priceSpan.style.color = '#000';
 
             const priceVal = safeNumber(prod.price, 0);
-            priceSpan.textContent = priceVal > 0 ? `R$ ${priceVal.toFixed(2)}` : 'Sob Consulta';
+            priceSpan.textContent = priceVal > 0 ? formatBRL(priceVal) : 'Sob consulta';
 
             priceDiv.appendChild(priceSpan);
             info.appendChild(h4);
