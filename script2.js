@@ -5602,6 +5602,73 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==================== INICIALIZAÇÃO ====================
+// Controle da busca compacta no header mobile
+function initializeMobileHeaderSearchTrigger() {
+    const searchBars = document.querySelectorAll('.search-bar');
+    if (!searchBars.length) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 768px)');
+
+    searchBars.forEach((bar) => {
+        const input = bar.querySelector('input');
+        const button = bar.querySelector('.search-btn');
+        const dropdown = bar.querySelector('.search-dropdown');
+
+        if (!input || !button || button.dataset.mobileSearchReady === '1') return;
+
+        button.dataset.mobileSearchReady = '1';
+        button.setAttribute('type', 'button');
+
+        const openMobileSearch = () => {
+            if (!mobileQuery.matches) return;
+            bar.classList.add('mobile-search-open');
+        };
+
+        const closeMobileSearch = () => {
+            bar.classList.remove('mobile-search-open');
+            if (dropdown) dropdown.classList.remove('active');
+        };
+
+        button.addEventListener('click', (event) => {
+            if (mobileQuery.matches && !bar.classList.contains('mobile-search-open')) {
+                event.preventDefault();
+                event.stopPropagation();
+                openMobileSearch();
+                requestAnimationFrame(() => input.focus({ preventScroll: true }));
+                return;
+            }
+
+            if (typeof performHeaderSearch === 'function' && input.value.trim().length >= 2) {
+                event.preventDefault();
+                performHeaderSearch();
+                return;
+            }
+
+            input.focus({ preventScroll: true });
+        });
+
+        input.addEventListener('focus', openMobileSearch);
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMobileSearch();
+                input.blur();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (mobileQuery.matches && !bar.contains(event.target)) {
+                closeMobileSearch();
+            }
+        });
+
+        mobileQuery.addEventListener('change', (event) => {
+            if (!event.matches) closeMobileSearch();
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initializeMobileHeaderSearchTrigger);
+
 window.openPaymentModal = openPaymentModal;
 window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
