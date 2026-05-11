@@ -1,6 +1,8 @@
 /* ==========================================================================
    RESET & VARIÁVEIS GLOBAIS
    ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -11,6 +13,7 @@
     /* Fontes */
     --font-main: 'Outfit', sans-serif;
     --font-display: 'Outfit', sans-serif;
+    --font-brand: 'Cormorant Garamond', 'Bodoni 72', 'Didot', 'Baskerville', 'Times New Roman', serif;
 
     /* Cores */
     --primary: #000000;
@@ -199,13 +202,15 @@ nav {
 
 /* Logo */
 .logo, .nav-left .logo {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 1.8rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1.5px !important;
+    font-family: var(--font-brand) !important;
+    font-size: 2.18rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.24em !important;
     color: #000 !important;
     white-space: nowrap;
     flex-shrink: 0;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
 }
 
 /* Barra de Busca */
@@ -3481,10 +3486,10 @@ footer {
 }
 
 .loading-logo {
-    font-family: 'Outfit', sans-serif !important;
-    font-size: 3rem;
-    font-weight: 700 !important;
-    letter-spacing: 4px;
+    font-family: var(--font-brand) !important;
+    font-size: 3.25rem;
+    font-weight: 500 !important;
+    letter-spacing: 0.26em;
     color: white;
     text-transform: uppercase;
     margin-bottom: 1rem;
@@ -4527,11 +4532,11 @@ footer {
         left: 50% !important;
         top: 50% !important;
         transform: translate(-50%, -50%) !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-size: 15px !important;
-        font-weight: 700 !important;
+        font-family: var(--font-brand) !important;
+        font-size: 1.72rem !important;
+        font-weight: 500 !important;
         color: #000 !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 0.18em !important;
         width: auto !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -5325,7 +5330,6 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6,
-.logo,
 .top-banner-rotative,
 .banner-message,
 .section-title,
@@ -5359,8 +5363,11 @@ nav {
 }
 
 .logo, .nav-left .logo {
-    font-size: 1.55rem !important;
-    font-weight: 800 !important;
+    font-family: var(--font-brand) !important;
+    font-size: 2.05rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.24em !important;
+    text-transform: uppercase !important;
 }
 
 .primary-nav {
@@ -5992,9 +5999,10 @@ nav {
     text-align: center !important;
     text-overflow: clip !important;
     white-space: nowrap !important;
-    font-size: clamp(1.18rem, 4.6vw, 1.48rem) !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.08em !important;
+    font-size: clamp(1.65rem, 7vw, 2.05rem) !important;
+    font-family: var(--font-brand) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.22em !important;
     line-height: 1 !important;
   }
 
@@ -6037,8 +6045,8 @@ nav {
 
   .logo,
   .nav-left .logo {
-    font-size: clamp(1.08rem, 5.15vw, 1.36rem) !important;
-    letter-spacing: 0.075em !important;
+    font-size: clamp(1.52rem, 7vw, 1.9rem) !important;
+    letter-spacing: 0.2em !important;
   }
 
   .nav-icons {
@@ -6065,8 +6073,8 @@ nav {
 
   .logo,
   .nav-left .logo {
-    font-size: 1.02rem !important;
-    letter-spacing: 0.055em !important;
+    font-size: 1.42rem !important;
+    letter-spacing: 0.18em !important;
   }
 
   .nav-icon {

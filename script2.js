@@ -1,5 +1,5 @@
 // ==================== CABEÇALHO E COMENTÁRIOS INICIAIS ====================
-// ==================== SCRIPT2.JS - SEJA VERSÁTIL ====================
+// ==================== SCRIPT2.JS - VERSÁTIL ====================
 // Sistema Principal de E-commerce - Organizado e Limpo
 // ====================================================================
 
@@ -2667,7 +2667,7 @@ function getDefaultVideos() {
         {
             url: 'https://firebasestorage.googleapis.com/v0/b/seja-versatil.firebasestorage.app/o/Grid%204%20.mp4?alt=media&token=cffa1c61-6b35-43c5-ba74-970a1e13bd09',
             title: 'VOCÊ',
-            subtitle: 'Seja versátil',
+subtitle: 'Versátil',
             order: 4
         }
     ];
@@ -4261,7 +4261,7 @@ function sanitizeForWhatsApp(str) {
 }
 
 function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod, installments = null) {
-    let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
+let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - VERSÁTIL*\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     
     msg += `*👤 CLIENTE:*\n`;
@@ -5244,7 +5244,7 @@ async function requestNotificationPermission() {
             console.log('✅ Permissão de notificação concedida');
             showToast('Você receberá notificações sobre promoções!', 'success');
             
-            new Notification('Bem-vindo ao Seja Versátil! 👋', {
+new Notification('Bem-vindo à Versátil! 👋', {
                 body: 'Agora você receberá ofertas exclusivas!',
                 icon: '/favicon.ico',
                 badge: '/favicon.ico'
@@ -5715,7 +5715,7 @@ console.log(
 
 
 console.log('🎯 Sistema de popup promocional inicializado');
-console.log('✅ script2.js carregado completamente - Seja Versátil E-commerce');
+console.log('✅ script2.js carregado completamente - Versátil E-commerce');
 
 
 

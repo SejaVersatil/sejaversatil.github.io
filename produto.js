@@ -296,8 +296,8 @@ function renderProduct() {
     if (!p) return;
 
     // Títulos e Breadcrumbs
-    document.title = `${p.name || 'Produto'} - Seja Versátil`;
-    if (elExists('productPageTitle')) $('productPageTitle').textContent = `${p.name} - Seja Versátil`;
+        document.title = `${p.name || 'Produto'} - Versátil`;
+        if (elExists('productPageTitle')) $('productPageTitle').textContent = `${p.name} - Versátil`;
     if (elExists('breadcrumbCategory')) $('breadcrumbCategory').textContent = getCategoryName(p.category);
     if (elExists('breadcrumbProduct')) $('breadcrumbProduct').textContent = p.name || '';
     if (elExists('detailsProductName')) $('detailsProductName').textContent = p.name || '';
@@ -1405,7 +1405,7 @@ async function sendToWhatsApp() {
 
 // ✅ CORREÇÃO 3: Função geradora PURA (sem efeitos colaterais)
 function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod, installments = null) {
-    let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - SEJA VERSÁTIL*\n`;
+    let msg = `*🛍️ PEDIDO #${orderId.toUpperCase().substring(0, 6)} - VERSÁTIL*\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━\n`;
     
     msg += `*👤 CLIENTE:*\n`;
@@ -2038,7 +2038,7 @@ function shareToWhatsApp() {
     const p = state.currentProduct;
     if (!p) return;
 
-    const text = `Olha esse produto que encontrei na Seja Versátil: *${p.name}*\n${window.location.href}`;
+    const text = `Olha esse produto que encontrei na Versátil: *${p.name}*\n${window.location.href}`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }

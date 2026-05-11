@@ -1,5 +1,5 @@
 // ============================================================================
-// CHECKOUT-COMPLETE.JS - SEJA VERSÁTIL
+// CHECKOUT-COMPLETE.JS - VERSÁTIL
 // Controlador de Checkout com Desbloqueio Progressivo (4 Colunas)
 // SINCRONIZADO COM script2-unified.js
 // ============================================================================

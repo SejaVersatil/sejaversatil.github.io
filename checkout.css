@@ -1,5 +1,5 @@
 /* ============================================================================
-   CHECKOUT-4COL.CSS - SEJA VERSÁTIL
+   CHECKOUT-4COL.CSS - VERSÁTIL
    Estilos para o Layout de 4 Colunas com Desbloqueio Progressivo
    ============================================================================ */
 
@@ -64,8 +64,12 @@
 .checkout-logo {
     text-decoration: none;
     color: var(--color-text);
-    font-weight: 700;
-    font-size: 18px;
+    font-family: var(--font-brand, 'Cormorant Garamond', 'Bodoni 72', 'Didot', 'Baskerville', serif);
+    font-weight: 500;
+    font-size: 30px;
+    letter-spacing: 0.24em;
+    line-height: 1;
+    text-transform: uppercase;
     width: auto !important;       /* Permite que o logo ocupe o espaço necessário */
     min-width: 150px;             /* Garante um tamanho mínimo para não cortar */
     overflow: visible !important; /* Mostra o que estiver vazando da caixa */

@@ -1,5 +1,5 @@
 /* ============================================================================
-   MINHA CONTA - SEJA VERSÁTIL
+MINHA CONTA - VERSÁTIL
    Sistema de Gerenciamento de Conta do Cliente
    ============================================================================ */
 
