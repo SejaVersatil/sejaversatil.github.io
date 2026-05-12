@@ -162,7 +162,7 @@ function closePromoPopup() {
 
 // ==================== CONFIGURAÇÕES E CONSTANTES ====================
 const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
-const WHATSAPP_NUMBER = '5571991427103';
+const WHATSAPP_NUMBER = '5571993333570';
 
 // ==================== PRODUTOS PADRÃO ====================
 const DEFAULT_PRODUCTS = [

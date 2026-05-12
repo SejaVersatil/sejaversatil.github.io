@@ -843,7 +843,7 @@ async function handleLogout() {
 // ==================== CONTATO WHATSAPP ====================
 function contactWhatsApp(orderId) {
   const message = `Olá! Gostaria de tirar dúvidas sobre o pedido #${orderId || ''}`;
-  const phone = '5571991427103';
+    const phone = '5571993333570';
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank');
 }

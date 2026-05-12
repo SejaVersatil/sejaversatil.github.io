@@ -8,7 +8,7 @@
 
 // ==================== CONFIGURAÇÕES ====================
 const CHECKOUT_CONFIG = {
-    WHATSAPP_NUMBER: '5571991427103',
+    WHATSAPP_NUMBER: '5571993333570',
     CART_STORAGE_KEY: 'sejaVersatilCart',
     TOAST_DURATION: 5000,
     REDIRECT_DELAY: 3000,
@@ -1509,7 +1509,7 @@ if (!CheckoutState.step3Valid) {
         }
         
         // ✅ 7. Redirect to WhatsApp (NO HOME REDIRECT)
-        const phone = '5571991427103';
+        const phone = '5571993333570';
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
         
         showToast('Pedido enviado!', 'Abrindo WhatsApp...', 'success');

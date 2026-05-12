@@ -1387,7 +1387,7 @@ async function sendToWhatsApp() {
 
     const msg = generateWhatsAppMessage(orderId, customerData, state.cart, { subtotal, discount, total }, paymentMethod, installments);
 
-    const WHATSAPP_NUMBER = '5571991427103'; 
+    const WHATSAPP_NUMBER = '5571993333570';
     const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(whatsappURL, '_blank');
 
@@ -1456,7 +1456,7 @@ function buyViaWhatsApp() {
         `Preço: R$ ${p.price.toFixed(2)}\n` +
         `Link: ${window.location.href}`;
 
-    window.open(`https://wa.me/5571991427103?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/5571993333570?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 /* =========================
