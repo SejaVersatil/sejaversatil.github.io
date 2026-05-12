@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.24'; // Atualizei a versão para forçar atualização
+const CACHE_NAME = 'seja-versatil-v1.0.25'; // Atualizei a versão para forçar atualização
 
 const urlsToCache = [
     '/',
@@ -13,8 +13,7 @@ const urlsToCache = [
     '/assets/home/promo-conjunto-calca.webp',
     '/assets/home/promo-peca-unica.webp',
     '/assets/home/promo-short-saia.webp',
-    '/assets/home/promo-conjunto-short.webp',
-    '/assets/home/popup-pix.webp'
+    '/assets/home/promo-conjunto-short.webp'
 ];
 
 // INSTALAÇÃO

@@ -5680,13 +5680,13 @@ nav {
 
 .promo-popup-content {
   position: relative;
-  max-width: 760px;
+  max-width: 620px;
   width: 100%;
-  background: #060606;
-  color: #ffffff;
+  background: #c3c3c3;
+  color: #111111;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
   transform: translateY(18px);
   transition: transform 0.32s ease;
 }
@@ -5701,9 +5701,9 @@ nav {
   right: 14px;
   width: 38px;
   height: 38px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.36);
   backdrop-filter: blur(4px);
-  color: white;
+  color: #111111;
   border: none;
   border-radius: 50%;
   font-size: 1.5rem;
@@ -5716,7 +5716,7 @@ nav {
 }
 
 .promo-popup-close:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.62);
   transform: scale(1.05);
 }
 
@@ -5736,12 +5736,13 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 3.2rem;
+  padding: 3.4rem;
+  background: #c3c3c3;
 }
 
 .promo-popup-kicker {
   margin-bottom: 0.85rem;
-  color: #ff8b55;
+  color: #2e2e2e;
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -5756,9 +5757,9 @@ nav {
 }
 
 .promo-popup-copy p {
-  max-width: 330px;
+  max-width: 360px;
   margin: 0 0 1.8rem;
-  color: rgba(255,255,255,0.76);
+  color: #2d2d2d;
   font-size: 1rem;
   line-height: 1.55;
 }
@@ -5766,7 +5767,7 @@ nav {
 .promo-popup-image {
   width: 100%;
   height: 100%;
-  display: block;
+  display: none !important;
   object-fit: cover;
   object-position: center top;
 }
@@ -5792,7 +5793,7 @@ nav {
 
 .promo-popup-cta:hover {
   transform: translateY(-2px);
-  background: #ff8b55;
+  background: #f4f4f4;
 }
 
 @media (max-width: 1180px) {
