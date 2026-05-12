@@ -1801,16 +1801,17 @@ nav {
     position: absolute;
     top: 0.8rem;
     left: 0.8rem;
-    background: #e74c3c;
-    color: white;
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
+    background: transparent;
+    color: #ff6b35;
+    padding: 0;
+    font-size: 0.95rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.02em;
     z-index: 3;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.78), 0 0 1px rgba(0, 0, 0, 0.16);
 }
 
 .preorder-countdown-card {
@@ -5990,10 +5991,10 @@ nav {
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
-    color: #ffffff !important;
+    color: #ff6b35 !important;
     font-size: 0.78rem !important;
     font-weight: 900 !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.78), 0 0 1px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.78), 0 0 1px rgba(0, 0, 0, 0.18);
   }
 
   .preorder-countdown-card {
