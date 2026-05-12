@@ -6456,3 +6456,77 @@ nav {
   }
 }
 
+@media (max-width: 768px) {
+  body.home-page header,
+  body.home-page .site-header {
+    background: rgba(13, 12, 12, 0.34) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(8px) saturate(116%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(116%) !important;
+  }
+
+  body.home-page header.scrolled,
+  body.home-page .site-header.scrolled {
+    background: rgba(13, 12, 12, 0.52) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.14) !important;
+  }
+
+  body.home-page .logo,
+  body.home-page .nav-left .logo,
+  body.home-page .nav-icon svg,
+  body.home-page .search-btn,
+  body.home-page .search-btn svg {
+    color: #ffffff !important;
+    stroke: currentColor !important;
+  }
+
+  body.home-page .hamburger-line {
+    background: #ffffff !important;
+  }
+
+  body.home-page nav > .search-bar,
+  body.home-page .site-header .nav-center > .search-bar {
+    color: #ffffff !important;
+  }
+
+  body.home-page .search-btn svg {
+    filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.28));
+  }
+
+  body.home-page .logo,
+  body.home-page .nav-left .logo,
+  body.home-page .nav-icon svg,
+  body.home-page .hamburger-line {
+    filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.24));
+  }
+
+  body.home-page nav > .search-bar.mobile-search-open,
+  body.home-page .site-header .nav-center > .search-bar.mobile-search-open {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: rgba(17, 17, 17, 0.1) !important;
+    box-shadow: 0 14px 34px rgba(17, 17, 17, 0.16) !important;
+    backdrop-filter: blur(12px) saturate(112%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(112%) !important;
+  }
+
+  body.home-page nav > .search-bar.mobile-search-open input,
+  body.home-page .site-header .nav-center > .search-bar.mobile-search-open input {
+    color: #111111 !important;
+    text-shadow: none !important;
+  }
+
+  body.home-page nav > .search-bar.mobile-search-open input::placeholder,
+  body.home-page .site-header .nav-center > .search-bar.mobile-search-open input::placeholder {
+    color: rgba(17, 17, 17, 0.48) !important;
+  }
+
+  body.home-page nav > .search-bar.mobile-search-open .search-btn,
+  body.home-page .site-header .nav-center > .search-bar.mobile-search-open .search-btn,
+  body.home-page nav > .search-bar.mobile-search-open .search-btn svg,
+  body.home-page .site-header .nav-center > .search-bar.mobile-search-open .search-btn svg {
+    color: #111111 !important;
+    filter: none !important;
+  }
+}
+
