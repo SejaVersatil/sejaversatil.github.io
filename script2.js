@@ -577,6 +577,41 @@ function buildProductColorsFromVariants(product, variants = []) {
     }));
 }
 
+function getTimestampMs(value) {
+    if (!value) return 0;
+    if (typeof value.toMillis === 'function') return value.toMillis();
+    if (typeof value.toDate === 'function') return value.toDate().getTime();
+    if (typeof value.seconds === 'number') {
+        return (value.seconds * 1000) + Math.floor((value.nanoseconds || 0) / 1000000);
+    }
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === 'number') return value;
+
+    const parsed = Date.parse(String(value));
+    return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function getProductSortTimestamp(product = {}) {
+    return product.createdAtMs || getTimestampMs(product.createdAt);
+}
+
+function getProductFallbackTimestamp(product = {}) {
+    return product.updatedAtMs ||
+        getTimestampMs(product.updatedAt) ||
+        getTimestampMs(product.launchAt);
+}
+
+function sortProductsByNewest(list = []) {
+    return list.sort((a, b) => {
+        const createdDiff = getProductSortTimestamp(b) - getProductSortTimestamp(a);
+        if (createdDiff !== 0) return createdDiff;
+
+        const newestDiff = getProductFallbackTimestamp(b) - getProductFallbackTimestamp(a);
+        if (newestDiff !== 0) return newestDiff;
+        return normalizeText(a.name).localeCompare(normalizeText(b.name), 'pt-BR');
+    });
+}
+
 function normalizeProductRecord(id, data = {}) {
     const rawImages = Array.isArray(data.images) && data.images.length > 0
         ? data.images
@@ -597,7 +632,9 @@ function normalizeProductRecord(id, data = {}) {
         image: images[0] || DEFAULT_PRODUCT_IMAGE,
         images,
         colors: normalizeProductColors(data.colors),
-        totalStock: parseCurrencyNumber(data.totalStock, 0)
+        totalStock: parseCurrencyNumber(data.totalStock, 0),
+        createdAtMs: getTimestampMs(data.createdAt),
+        updatedAtMs: getTimestampMs(data.updatedAt)
     };
 }
 
@@ -935,7 +972,7 @@ async function carregarProdutosDoFirestore() {
     try {
         const cached = productCache.get('products');
         if (cached) {
-            productsData = cached;
+            productsData = sortProductsByNewest(cached);
             return productsData;
         }
 
@@ -951,6 +988,7 @@ async function carregarProdutosDoFirestore() {
         snapshot.forEach((doc) => {
             productsData.push(normalizeProductRecord(doc.id, doc.data() || {}));
         });
+        sortProductsByNewest(productsData);
         productCache.set('products', productsData);
         return productsData;
         
@@ -1316,7 +1354,7 @@ function sortProducts(sortType) {
 }
 
 function getFilteredProducts() {
-    let filtered = productsData;
+    let filtered = [...productsData];
     if (currentFilter !== 'all') {
         if (currentFilter === 'sale') {
             filtered = filtered.filter(p => p.oldPrice !== null);

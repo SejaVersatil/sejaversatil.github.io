@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.29'; // Atualizei a versão para forçar atualização
+const CACHE_NAME = 'seja-versatil-v1.0.30'; // Atualizei a versão para forçar atualização
 
 const urlsToCache = [
     '/',
