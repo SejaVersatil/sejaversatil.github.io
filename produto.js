@@ -288,6 +288,57 @@ async function loadProductVariants(productId) {
     }
 }
 
+function isPreOrderProduct(product = {}) {
+    return Boolean(
+        product.preOrder ||
+        product.isPreOrder ||
+        product.status === 'preorder' ||
+        product.purchaseButtonLabel
+    );
+}
+
+function getLaunchDate(product = {}) {
+    const rawDate = product.launchAt || product.releaseAt || product.launchDate;
+    if (!rawDate) return null;
+
+    const launchDate = new Date(rawDate);
+    return Number.isNaN(launchDate.getTime()) ? null : launchDate;
+}
+
+function getPurchaseButtonLabel(product = {}) {
+    if (product.purchaseButtonLabel) return String(product.purchaseButtonLabel).toUpperCase();
+    return isPreOrderProduct(product) ? 'COMPRAR NA PR\u00c9-VENDA' : 'COMPRAR';
+}
+
+function getProductLaunchText(product = {}) {
+    const launchDate = getLaunchDate(product);
+    if (!launchDate || launchDate.getTime() <= Date.now()) {
+        return product.collection || 'Cole\u00e7\u00e3o V1';
+    }
+
+    const diff = Math.max(0, launchDate.getTime() - Date.now());
+    const totalMinutes = Math.floor(diff / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+    const launchLabel = product.launchLabel || 's\u00e1bado, 8h';
+
+    return `Pr\u00e9-venda aberta \u00b7 lan\u00e7a em ${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m \u00b7 ${launchLabel}`;
+}
+
+function renderPreOrderState() {
+    const p = state.currentProduct;
+    if (!p) return;
+
+    const buyButton = document.getElementById('detailsBuyButton');
+    if (buyButton) buyButton.textContent = getPurchaseButtonLabel(p);
+
+    const kicker = document.querySelector('.product-kicker');
+    if (kicker && isPreOrderProduct(p)) {
+        kicker.textContent = getProductLaunchText(p);
+    }
+}
+
 /* =========================
    Renderização Principal
    ========================= */
@@ -301,6 +352,7 @@ function renderProduct() {
     if (elExists('breadcrumbCategory')) $('breadcrumbCategory').textContent = getCategoryName(p.category);
     if (elExists('breadcrumbProduct')) $('breadcrumbProduct').textContent = p.name || '';
     if (elExists('detailsProductName')) $('detailsProductName').textContent = p.name || '';
+    renderPreOrderState();
 
     renderPrices();
     renderColors();
@@ -1452,7 +1504,8 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
 function buyViaWhatsApp() {
     const p = state.currentProduct;
     if (!p) return;
-    const msg = `Olá! Gostaria de comprar o produto: *${p.name}*\n` +
+    const intent = isPreOrderProduct(p) ? 'comprar na pré-venda' : 'comprar';
+    const msg = `Olá! Gostaria de ${intent} o produto: *${p.name}*\n` +
         `Preço: R$ ${p.price.toFixed(2)}\n` +
         `Link: ${window.location.href}`;
 

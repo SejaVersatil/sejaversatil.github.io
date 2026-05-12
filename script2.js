@@ -786,6 +786,110 @@ function formatBRL(value) {
     });
 }
 
+function isPreSaleProduct(product = {}) {
+    return Boolean(
+        product.preOrder ||
+        product.isPreOrder ||
+        product.status === 'preorder' ||
+        product.purchaseButtonLabel
+    );
+}
+
+function getProductLaunchDate(product = {}) {
+    const rawDate = product.launchAt || product.releaseAt || product.launchDate;
+    if (!rawDate) return null;
+
+    const date = new Date(rawDate);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getCountdownParts(targetDate) {
+    const diff = Math.max(0, targetDate.getTime() - Date.now());
+    const totalMinutes = Math.floor(diff / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    return {
+        launched: diff <= 0,
+        days: String(days).padStart(2, '0'),
+        hours: String(hours).padStart(2, '0'),
+        minutes: String(minutes).padStart(2, '0')
+    };
+}
+
+function renderPreSaleCountdown(product = {}) {
+    if (!isPreSaleProduct(product)) return '';
+
+    const launchDate = getProductLaunchDate(product);
+    if (!launchDate) return '';
+
+    const parts = getCountdownParts(launchDate);
+    const collectionName = product.collection || 'Coleção V1';
+    const launchLabel = product.launchLabel || 'Sábado, 8h';
+
+    return `
+        <div class="preorder-countdown-card ${parts.launched ? 'is-launched' : ''}"
+             data-launch-countdown="${launchDate.getTime()}"
+             data-launch-label="${sanitizeInput(launchLabel)}"
+             aria-label="${sanitizeInput(collectionName)} lança em ${launchLabel}">
+            <span>${sanitizeInput(collectionName)}</span>
+            <div class="preorder-countdown-units">
+                <strong><b data-countdown-days>${parts.days}</b><small>d</small></strong>
+                <strong><b data-countdown-hours>${parts.hours}</b><small>h</small></strong>
+                <strong><b data-countdown-minutes>${parts.minutes}</b><small>m</small></strong>
+            </div>
+            <em data-countdown-status>${parts.launched ? 'Coleção lançada' : `Pré-venda aberta · ${sanitizeInput(launchLabel)}`}</em>
+        </div>
+    `;
+}
+
+let preSaleCountdownTimer = null;
+
+function updatePreSaleCountdownElement(element) {
+    const target = Number(element.dataset.launchCountdown);
+    if (!target) return;
+
+    const parts = getCountdownParts(new Date(target));
+    const days = element.querySelector('[data-countdown-days]');
+    const hours = element.querySelector('[data-countdown-hours]');
+    const minutes = element.querySelector('[data-countdown-minutes]');
+    const status = element.querySelector('[data-countdown-status]');
+
+    if (days) days.textContent = parts.days;
+    if (hours) hours.textContent = parts.hours;
+    if (minutes) minutes.textContent = parts.minutes;
+
+    element.classList.toggle('is-launched', parts.launched);
+    if (status) {
+        status.textContent = parts.launched
+            ? 'Coleção lançada'
+            : `Pré-venda aberta · ${element.dataset.launchLabel || 'sábado 8h'}`;
+    }
+}
+
+function refreshPreSaleCountdowns() {
+    document
+        .querySelectorAll('[data-launch-countdown]')
+        .forEach(updatePreSaleCountdownElement);
+}
+
+function startPreSaleCountdowns() {
+    refreshPreSaleCountdowns();
+
+    if (!document.querySelector('[data-launch-countdown]')) {
+        if (preSaleCountdownTimer) {
+            clearInterval(preSaleCountdownTimer);
+            preSaleCountdownTimer = null;
+        }
+        return;
+    }
+
+    if (!preSaleCountdownTimer) {
+        preSaleCountdownTimer = setInterval(refreshPreSaleCountdowns, 60000);
+    }
+}
+
 function getSwatchBackground(color) {
     const rawHex = typeof color === 'object' && color !== null
         ? normalizeText(color.hex, getColorHex(color.name))
@@ -1103,6 +1207,7 @@ function renderProducts() {
         const hiddenColorsCount = Math.max(0, colorOptions.length - visibleColors.length);
         const sizeOptions = getProductSizeOptions(product).slice(0, 5);
         const installments = formatBRL(product.price / 3);
+        const preSaleCountdownHtml = renderPreSaleCountdown(product);
 
         // Criação do Elemento Temporário
         const tempDiv = document.createElement('div');
@@ -1121,7 +1226,8 @@ function renderProducts() {
                       
                     ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
                     ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
-                    
+                    ${preSaleCountdownHtml}
+
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
                             const isRealImage = isRenderableImage(img);
@@ -1192,6 +1298,7 @@ function renderProducts() {
     grid.appendChild(fragment);
 
     setupAutoCarousel();
+    startPreSaleCountdowns();
     renderPagination(totalPages);
 }
 

@@ -1813,6 +1813,75 @@ nav {
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
+.preorder-countdown-card {
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.85rem;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.55rem 0.9rem;
+    padding: 0.72rem 0.82rem;
+    color: #ffffff;
+    background: rgba(14, 14, 14, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 8px;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(12px) saturate(118%);
+    -webkit-backdrop-filter: blur(12px) saturate(118%);
+}
+
+.preorder-countdown-card span {
+    align-self: end;
+    font-size: 0.66rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.preorder-countdown-units {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.preorder-countdown-units strong {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.08rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.preorder-countdown-units b {
+    font: inherit;
+}
+
+.preorder-countdown-units small {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.preorder-countdown-card em {
+    align-self: start;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.65rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.preorder-countdown-card.is-launched {
+    background: rgba(17, 17, 17, 0.46);
+}
+
 .stock-warning-badge {
     position: absolute;
     top: 0.8rem;
@@ -5894,6 +5963,30 @@ nav {
 
   .product-info {
     padding: 0.85rem 0.75rem 1rem !important;
+  }
+
+  .preorder-countdown-card {
+    left: 0.55rem;
+    right: 0.55rem;
+    bottom: 0.55rem;
+    grid-template-columns: 1fr;
+    gap: 0.36rem;
+    padding: 0.62rem 0.64rem;
+  }
+
+  .preorder-countdown-units {
+    grid-row: auto;
+    grid-column: auto;
+    justify-content: space-between;
+    gap: 0.24rem;
+  }
+
+  .preorder-countdown-units strong {
+    font-size: 0.76rem;
+  }
+
+  .preorder-countdown-card em {
+    font-size: 0.58rem;
   }
 
   .product-info h4 {
