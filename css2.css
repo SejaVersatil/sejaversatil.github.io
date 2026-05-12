@@ -6322,15 +6322,15 @@ nav {
 @media (min-width: 769px) {
   body.home-page header {
     top: 36px !important;
-    background: rgba(13, 12, 12, 0.58) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    background: rgba(13, 12, 12, 0.34) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
     box-shadow: none !important;
-    backdrop-filter: blur(20px) saturate(128%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(128%) !important;
+    backdrop-filter: blur(8px) saturate(116%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(116%) !important;
   }
 
   body.home-page header.scrolled {
-    background: rgba(13, 12, 12, 0.72) !important;
+    background: rgba(13, 12, 12, 0.58) !important;
     border-bottom-color: rgba(255, 255, 255, 0.14) !important;
     box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12) !important;
   }
@@ -6359,6 +6359,7 @@ nav {
     letter-spacing: 0 !important;
     padding: 0.3rem 0 !important;
     border-bottom-color: transparent !important;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.28);
   }
 
   body.home-page .primary-nav button:hover,
@@ -6391,6 +6392,7 @@ nav {
     color: #ffffff !important;
     font-size: 0.82rem !important;
     font-weight: 400 !important;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.28);
   }
 
   body.home-page .search-bar input::placeholder {
