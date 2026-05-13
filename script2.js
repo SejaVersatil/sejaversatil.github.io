@@ -447,6 +447,66 @@ function normalizeText(value, fallback = '') {
     return text || fallback;
 }
 
+const COLLECTION_FILTER_PREFIX = 'collection:';
+const COLLECTION_LABELS = {
+    'colecao-v1': 'Coleção V1'
+};
+
+function slugifyCollection(value) {
+    return normalizeText(value)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildCollectionFilter(collectionName) {
+    return `${COLLECTION_FILTER_PREFIX}${slugifyCollection(collectionName)}`;
+}
+
+function isCollectionFilter(filter) {
+    return normalizeText(filter).startsWith(COLLECTION_FILTER_PREFIX);
+}
+
+function getCollectionSlugFromFilter(filter) {
+    return normalizeText(filter).slice(COLLECTION_FILTER_PREFIX.length);
+}
+
+function getCollectionNameFromFilter(filter) {
+    const slug = getCollectionSlugFromFilter(filter);
+    return COLLECTION_LABELS[slug] || normalizeText(slug).replace(/-/g, ' ').toUpperCase();
+}
+
+function productMatchesCollection(product = {}, collectionSlug = '') {
+    const collectionFields = [
+        product.collection,
+        product.collectionName,
+        product.line,
+        product.drop
+    ];
+
+    if (collectionFields.some(field => slugifyCollection(field) === collectionSlug)) {
+        return true;
+    }
+
+    if (collectionSlug === 'colecao-v1') {
+        const productText = normalizeText([
+            product.name,
+            product.badge,
+            product.subtitle,
+            product.description
+        ].filter(Boolean).join(' '))
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+        return /\bv1\b/.test(productText);
+    }
+
+    return false;
+}
+
 const MIRRORED_IMGUR_PRODUCT_IDS = new Set([
     '03tiX6j',
     '17qlyzb',
@@ -1361,6 +1421,9 @@ function getFilteredProducts() {
         } else if (currentFilter === 'favorites') {
             filtered = filtered.filter(p => favorites.includes(p.id));
             console.log('❤️ Produtos favoritados:', filtered.length);
+        } else if (isCollectionFilter(currentFilter)) {
+            const collectionSlug = getCollectionSlugFromFilter(currentFilter);
+            filtered = filtered.filter(p => productMatchesCollection(p, collectionSlug));
         } else {
             filtered = filtered.filter(p => {
                 const match = p.category === currentFilter;
@@ -2499,6 +2562,8 @@ const heroSlides = [
         subtitle: 'Looks completos com informação de moda e acabamento premium.',
         cta: 'Descobrir',
         className: 'hero-slide-v1-collection',
+        action: 'collection',
+        collection: 'Coleção V1',
         showContent: false,
         showOverlay: false
     }
@@ -2528,6 +2593,23 @@ function buildHeroSlideMarkup(slide) {
     `;
 }
 
+function handleHeroSlideClick(slide = {}) {
+    if (slide.action === 'collection') {
+        filterCollection(slide.collection || 'Coleção V1');
+        return;
+    }
+
+    scrollToProducts();
+}
+
+function bindHeroSlideActions(heroContainer) {
+    heroContainer.querySelectorAll('.hero-slide').forEach((slideElement, index) => {
+        const slide = heroSlides[index] || {};
+        slideElement.style.cursor = 'pointer';
+        slideElement.onclick = () => handleHeroSlideClick(slide);
+    });
+}
+
 function initHeroCarousel() {
     const heroContainer = document.querySelector('.hero-carousel');
     if (!heroContainer) return;
@@ -2541,8 +2623,7 @@ if (existingSlides === 1) {
     slideDiv.className = getHeroSlideClass(slide);
     slideDiv.style.backgroundImage = `url('${slide.image}')`;
     slideDiv.style.cursor = 'pointer';
-    slideDiv.onclick = () => scrollToProducts();
-    
+
     slideDiv.innerHTML = buildHeroSlideMarkup(slide);
     heroContainer.appendChild(slideDiv);
   });
@@ -2552,12 +2633,12 @@ if (existingSlides === 1) {
   // Fallback: Se HTML não tem nada, cria tudo do zero
   heroContainer.innerHTML = heroSlides.map((slide, index) => `
     <div class="${getHeroSlideClass(slide, index === 0)}"
-         style="background-image: url('${slide.image}'); cursor: pointer;"
-         onclick="scrollToProducts()">
+         style="background-image: url('${slide.image}'); cursor: pointer;">
       ${buildHeroSlideMarkup(slide)}
     </div>
   `).join('');
 }
+    bindHeroSlideActions(heroContainer);
     startHeroCarousel();
 }
 
@@ -2949,6 +3030,23 @@ function handleVideoError(videoElement) {
 }
 
 // ==================== NAVEGAÇÃO E CATEGORIAS ====================
+function filterCollection(collectionName = 'Coleção V1') {
+    const collectionFilter = buildCollectionFilter(collectionName);
+    currentFilter = collectionFilter;
+    currentPage = 1;
+
+    const badge = document.getElementById('activeCategoryBadge');
+    const categoryName = document.getElementById('categoryNameDisplay');
+    if (badge && categoryName) {
+        categoryName.textContent = getCategoryName(collectionFilter);
+        badge.style.display = 'flex';
+    }
+
+    renderProducts();
+    scrollToProducts();
+    trackEvent('Products', 'Filter Collection', collectionName);
+}
+
 function navigateToCategory(category) {
     Object.keys(carouselIntervals).forEach(key => {
         clearInterval(carouselIntervals[key]);
@@ -2995,6 +3093,10 @@ function clearCategoryFilter() {
 }
 
 function getCategoryName(category) {
+    if (isCollectionFilter(category)) {
+        return getCollectionNameFromFilter(category);
+    }
+
     const names = {
         'blusas': 'Blusas',
         'conjunto calca': 'Conjunto Calça',
