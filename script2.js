@@ -2493,13 +2493,40 @@ const heroSlides = [
         cta: 'Ver coleção'
     },
     {
-        image: 'assets/home/hero-lifestyle.webp',
+        image: 'assets/home/hero-v1-collection.webp',
         eyebrow: 'Fitness e lifestyle',
         title: 'Do treino ao dia a dia',
         subtitle: 'Looks completos com informação de moda e acabamento premium.',
-        cta: 'Descobrir'
+        cta: 'Descobrir',
+        className: 'hero-slide-v1-collection',
+        showContent: false,
+        showOverlay: false
     }
 ];
+
+function getHeroSlideClass(slide, isActive = false) {
+    return ['hero-slide', isActive ? 'active' : '', slide.className || '']
+        .filter(Boolean)
+        .join(' ');
+}
+
+function buildHeroSlideMarkup(slide) {
+    const overlayMarkup = slide.showOverlay === false ? '' : '<div class="hero-overlay"></div>';
+
+    if (slide.showContent === false) {
+        return overlayMarkup;
+    }
+
+    return `
+      ${overlayMarkup}
+      <div class="hero-content hero-content-left">
+        <span class="hero-eyebrow">${sanitizeInput(slide.eyebrow || '')}</span>
+        <h2 class="hero-title">${sanitizeInput(slide.title || '')}</h2>
+        <p class="hero-subtitle">${sanitizeInput(slide.subtitle || '')}</p>
+        <button class="hero-cta" type="button" onclick="event.stopPropagation(); scrollToProducts()">${sanitizeInput(slide.cta || 'Comprar')}</button>
+      </div>
+    `;
+}
 
 function initHeroCarousel() {
     const heroContainer = document.querySelector('.hero-carousel');
@@ -2511,20 +2538,12 @@ if (existingSlides === 1) {
   // Adiciona slides 2 e 3 (índices 1 e 2 do array)
   heroSlides.slice(1).forEach((slide, index) => {
     const slideDiv = document.createElement('div');
-    slideDiv.className = 'hero-slide';
+    slideDiv.className = getHeroSlideClass(slide);
     slideDiv.style.backgroundImage = `url('${slide.image}')`;
     slideDiv.style.cursor = 'pointer';
     slideDiv.onclick = () => scrollToProducts();
     
-    slideDiv.innerHTML = `
-      <div class="hero-overlay"></div>
-      <div class="hero-content hero-content-left">
-        <span class="hero-eyebrow">${sanitizeInput(slide.eyebrow || '')}</span>
-        <h2 class="hero-title">${sanitizeInput(slide.title || '')}</h2>
-        <p class="hero-subtitle">${sanitizeInput(slide.subtitle || '')}</p>
-        <button class="hero-cta" type="button" onclick="event.stopPropagation(); scrollToProducts()">${sanitizeInput(slide.cta || 'Comprar')}</button>
-      </div>
-    `;
+    slideDiv.innerHTML = buildHeroSlideMarkup(slide);
     heroContainer.appendChild(slideDiv);
   });
   
@@ -2532,16 +2551,10 @@ if (existingSlides === 1) {
 } else if (existingSlides === 0) {
   // Fallback: Se HTML não tem nada, cria tudo do zero
   heroContainer.innerHTML = heroSlides.map((slide, index) => `
-    <div class="hero-slide ${index === 0 ? 'active' : ''}" 
+    <div class="${getHeroSlideClass(slide, index === 0)}"
          style="background-image: url('${slide.image}'); cursor: pointer;"
          onclick="scrollToProducts()">
-      <div class="hero-overlay"></div>
-      <div class="hero-content hero-content-left">
-        <span class="hero-eyebrow">${sanitizeInput(slide.eyebrow || '')}</span>
-        <h2 class="hero-title">${sanitizeInput(slide.title || '')}</h2>
-        <p class="hero-subtitle">${sanitizeInput(slide.subtitle || '')}</p>
-        <button class="hero-cta" type="button" onclick="event.stopPropagation(); scrollToProducts()">${sanitizeInput(slide.cta || 'Comprar')}</button>
-      </div>
+      ${buildHeroSlideMarkup(slide)}
     </div>
   `).join('');
 }
