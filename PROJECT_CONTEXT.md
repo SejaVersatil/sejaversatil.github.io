@@ -52,6 +52,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Banner mobile V1 ajustado para usar a mesma altura/proporcao dos demais slides do hero.
 - Codigo do hero preparado para trocar automaticamente para artes mobile quando os arquivos `*-mobile.webp` existirem.
 - O V1 ja possui arte mobile dedicada em `assets/home/hero-v1-collection-mobile.webp`; desktop continua usando `assets/home/hero-v1-collection.webp`.
+- O primeiro hero foi trocado para Clube Versatil: desktop usa `assets/home/hero-clube-versatil.webp` e mobile usa `assets/home/hero-clube-versatil-mobile.webp`.
 - Projeto aguardando proxima instrucao do usuario.
 
 ## Pontos sensiveis

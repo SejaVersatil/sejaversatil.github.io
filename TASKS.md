@@ -6,16 +6,14 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Arte mobile final do V1 aplicada.
-- Deploy em `main` autorizado pelo usuario.
+- Banner Clube Versatil aplicado no primeiro hero.
 - Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
-- Banners do hero mobile com mesma altura/proporcao.
-- Slide V1 sem corte de informacoes quando nao houver arte mobile dedicada.
-- Uso automatico de artes mobile verticais quando os arquivos esperados existirem.
-- V1 mobile usando `hero-v1-collection-mobile.webp`.
-- Desktop do V1 sem duplicacao de texto.
+- Primeiro hero usando Clube Versatil no desktop e mobile.
+- Desktop usando a arte horizontal dedicada.
+- Mobile usando a arte vertical dedicada.
+- Sem texto antigo "Vista sua melhor versao" sobreposto.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -36,3 +34,4 @@ Controle da tarefa atual.
 - 2026-05-14: Preparado suporte a imagens mobile dedicadas dos heroes e fallback V1 sem corte de informacoes.
 - 2026-05-14: Aplicada arte mobile final do banner V1, mantendo desktop com a arte original.
 - 2026-05-14: Deploy do ajuste mobile V1 autorizado para o GitHub Pages.
+- 2026-05-14: Primeiro hero trocado para Clube Versatil, com assets separados para desktop e mobile.

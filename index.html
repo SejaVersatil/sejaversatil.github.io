@@ -35,7 +35,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Versátil">
 
-  <link rel="preload" as="image" href="assets/home/hero-spin.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" media="(max-width: 768px)">
   <link rel="preload" as="image" href="assets/home/hero-performance.webp">
   <link rel="preload" as="image" href="assets/home/hero-v1-collection.webp">
   <link rel="preload" as="image" href="assets/home/hero-v1-collection-mobile.webp" media="(max-width: 768px)">
@@ -217,14 +218,7 @@
   <section class="hero-section" id="hero">
   <div class="hero-carousel" id="heroCarousel">
     <!-- ✅ PRIMEIRO SLIDE ESTÁTICO (LCP GARANTIDO) -->
-    <div class="hero-slide active" style="background-image: url('assets/home/hero-spin.webp');">
-      <div class="hero-overlay"></div>
-      <div class="hero-content hero-content-left">
-        <span class="hero-eyebrow">Nova seleção fitness</span>
-        <h1 class="hero-title">Vista sua melhor versão</h1>
-        <p class="hero-subtitle">Peças com presença, conforto e movimento para acompanhar sua rotina.</p>
-        <button class="hero-cta" type="button" onclick="scrollToProducts()">Comprar agora</button>
-      </div>
+    <div class="hero-slide hero-slide-clube-versatil active" style="background-image: url('assets/home/hero-clube-versatil.webp');">
     </div>
   </div>
   <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>

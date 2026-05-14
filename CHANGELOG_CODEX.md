@@ -3,6 +3,20 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-14
+- Tipo: ajuste visual/deploy
+- Arquivos alterados:
+  - `assets/home/hero-clube-versatil.webp`
+  - `assets/home/hero-clube-versatil-mobile.webp`
+  - `index.html`
+  - `css2.css`
+  - `script2.js`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: primeiro hero "Vista sua melhor versao" substituido pelo banner Clube Versatil, com arte exclusiva para desktop e outra para mobile. Texto/CTA antigo em HTML removido desse slide para nao sobrepor o banner.
+- Validacao: imagens convertidas para WebP em 1600x900 e 900x1600; `node --check script2.js`; Playwright confirmou desktop usando `hero-clube-versatil.webp` e mobile usando `hero-clube-versatil-mobile.webp`.
+- Proxima acao: publicar em `main` e validar no site publico.
+
+## 2026-05-14
 - Tipo: deploy
 - Arquivos alterados:
   - `assets/home/hero-v1-collection-mobile.webp`

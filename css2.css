@@ -224,7 +224,29 @@ body.home-page .hero-slide.hero-slide-v1-collection .hero-content {
   display: none;
 }
 
+body.home-page .hero-slide.hero-slide-clube-versatil .hero-overlay,
+body.home-page .hero-slide.hero-slide-clube-versatil .hero-content {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  body.home-page .hero-section:has(.hero-slide-clube-versatil.active) {
+    background: #e4dbd0;
+  }
+
+  body.home-page .hero-slide.hero-slide-clube-versatil {
+    background-color: #e4dbd0 !important;
+    background-position: center center !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+  }
+}
+
 @media (max-width: 768px) {
+  body.home-page .hero-slide.hero-slide-clube-versatil {
+    background-position: center center !important;
+  }
+
   body.home-page .hero-slide.hero-slide-v1-collection {
     background-position: 62% center !important;
   }
@@ -6787,6 +6809,10 @@ nav {
   body.home-page .hero-section:has(.hero-slide-v1-collection.active) .hero-nav-arrow {
     background: rgba(17, 17, 17, 0.12) !important;
     border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  body.home-page .hero-section:has(.hero-slide-clube-versatil.active) .hero-nav-arrow {
+    display: none !important;
   }
 
   body.home-page .hero-nav-prev {

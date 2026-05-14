@@ -2542,12 +2542,15 @@ let currentHeroSlide = 0;
 let heroCarouselInterval;
 const heroSlides = [
     {
-        image: 'assets/home/hero-spin.webp',
-        mobileImage: 'assets/home/hero-spin-mobile.webp',
-        eyebrow: 'Nova seleção fitness',
-        title: 'Vista sua melhor versão',
-        subtitle: 'Peças com presença, conforto e movimento para acompanhar sua rotina.',
-        cta: 'Comprar agora'
+        image: 'assets/home/hero-clube-versatil.webp',
+        mobileImage: 'assets/home/hero-clube-versatil-mobile.webp',
+        eyebrow: 'Clube Versátil',
+        title: 'Ganhe até R$40 em cashback por indicação',
+        subtitle: 'Indique amigas, acumule créditos e use no seu próximo look.',
+        cta: 'Quero participar',
+        className: 'hero-slide-clube-versatil',
+        showContent: false,
+        showOverlay: false
     },
     {
         image: 'assets/home/hero-performance.webp',
