@@ -237,7 +237,7 @@ body.home-page .hero-slide.hero-slide-clube-versatil .hero-content {
   body.home-page .hero-slide.hero-slide-clube-versatil {
     background-color: #e4dbd0 !important;
     background-position: center center !important;
-    background-size: contain !important;
+    background-size: cover !important;
     background-repeat: no-repeat !important;
   }
 }

@@ -123,43 +123,6 @@ const loadingOverlay = document.getElementById('loadingOverlay');
   }
 }
     
-// ==================== POPUP PROMOCIONAL ====================
-function showPromoPopup() {
-    const overlay = document.getElementById('promoPopupOverlay');
-    if (!overlay) {
-        console.warn('⚠️ Elemento #promoPopupOverlay não encontrado');
-        return;
-    }
-    
-    const lastClosed = localStorage.getItem('promoPopupLastClosed');
-    const now = Date.now();
-    
-    // AJUSTE AQUI: 5 minutos = 5 * 60 * 1000
-    // Para 10 minutos, mude o 5 para 10
-    const POPUP_COOLDOWN = 5 * 60 * 1000; 
-
-    if (lastClosed && (now - parseInt(lastClosed)) < POPUP_COOLDOWN) {
-        console.log('🚫 Popup fechado recentemente - aguardando intervalo de tempo');
-        return;
-    }
-    
-    requestAnimationFrame(() => {
-        overlay.classList.add('active');
-    });
-    console.log('✅ Popup promocional exibido');
-}
-
-function closePromoPopup() {
-    const overlay = document.getElementById('promoPopupOverlay');
-    if (!overlay) return;
-    
-    overlay.classList.remove('active');
-    
-    localStorage.setItem('promoPopupLastClosed', Date.now().toString());
-    console.log('🚫 Popup fechado - timer reiniciado');
-}
-
-
 // ==================== CONFIGURAÇÕES E CONSTANTES ====================
 const itemsPerPage = window.innerWidth <= 768 ? 8 : 12;
 const WHATSAPP_NUMBER = '5571993333570';
@@ -5818,27 +5781,6 @@ window.addEventListener('authStateUpdated', (e) => {
     if (typeof updateFavoriteStatus === 'function') {
         updateFavoriteStatus();
     }
-});
-
-document.addEventListener('click', (e) => {
-    const overlay = document.getElementById('promoPopupOverlay');
-    if (overlay && e.target === overlay) {
-        closePromoPopup();
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    const overlay = document.getElementById('promoPopupOverlay');
-    if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
-        closePromoPopup();
-    }
-});
-
-window.addEventListener('load', () => {
-    // Mantem a primeira dobra livre para o visitante absorver a vitrine antes da oferta.
-    setTimeout(() => {
-        showPromoPopup();
-    }, 9000);
 });
 
 document.addEventListener('keydown', (e) => {

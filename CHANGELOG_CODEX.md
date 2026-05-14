@@ -3,6 +3,21 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-14
+- Tipo: ajuste visual/conteudo
+- Arquivos alterados:
+  - `assets/home/hero-clube-versatil.webp`
+  - `css2.css`
+  - `index.html`
+  - `produto.html`
+  - `meus_pedidos.html`
+  - `script2.js`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: banner desktop do Clube Versatil substituido pela arte ajustada; popup promocional de 10% removido; mensagem de 10% removida dos banners rotativos de topo.
+- Validacao: imagem desktop convertida para WebP em 1600x733; `node --check script2.js`; Playwright confirmou desktop com `hero-clube-versatil.webp` em `cover`, mobile preservado com `hero-clube-versatil-mobile.webp`, popup ausente e topo sem mensagem de 10%.
+- Proxima acao: publicar em `main` e validar no site publico.
+
+## 2026-05-14
 - Tipo: ajuste visual/deploy
 - Arquivos alterados:
   - `assets/home/hero-clube-versatil.webp`

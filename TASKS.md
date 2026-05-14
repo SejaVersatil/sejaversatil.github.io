@@ -6,14 +6,16 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Banner Clube Versatil aplicado no primeiro hero.
+- Banner desktop Clube Versatil atualizado.
+- Popup de 10% removido.
+- Mensagem de 10% removida do topo.
 - Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
-- Primeiro hero usando Clube Versatil no desktop e mobile.
-- Desktop usando a arte horizontal dedicada.
-- Mobile usando a arte vertical dedicada.
-- Sem texto antigo "Vista sua melhor versao" sobreposto.
+- Desktop usando nova arte ajustada do Clube Versatil.
+- Mobile preservado com arte dedicada existente.
+- Popup de 10% sem markup/disparo.
+- Banner rotativo sem mensagem de 10%.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -35,3 +37,4 @@ Controle da tarefa atual.
 - 2026-05-14: Aplicada arte mobile final do banner V1, mantendo desktop com a arte original.
 - 2026-05-14: Deploy do ajuste mobile V1 autorizado para o GitHub Pages.
 - 2026-05-14: Primeiro hero trocado para Clube Versatil, com assets separados para desktop e mobile.
+- 2026-05-14: Banner desktop Clube Versatil substituido por arte ajustada; popup e mensagem de 10% removidos.
