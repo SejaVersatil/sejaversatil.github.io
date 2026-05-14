@@ -2543,6 +2543,7 @@ let heroCarouselInterval;
 const heroSlides = [
     {
         image: 'assets/home/hero-spin.webp',
+        mobileImage: 'assets/home/hero-spin-mobile.webp',
         eyebrow: 'Nova seleção fitness',
         title: 'Vista sua melhor versão',
         subtitle: 'Peças com presença, conforto e movimento para acompanhar sua rotina.',
@@ -2550,6 +2551,7 @@ const heroSlides = [
     },
     {
         image: 'assets/home/hero-performance.webp',
+        mobileImage: 'assets/home/hero-performance-mobile.webp',
         eyebrow: 'Lançamento',
         title: 'Tecnologia para performance',
         subtitle: 'Modelagens pensadas para treino, rua e dias em movimento.',
@@ -2557,6 +2559,7 @@ const heroSlides = [
     },
     {
         image: 'assets/home/hero-v1-collection.webp',
+        mobileImage: 'assets/home/hero-v1-collection-mobile.webp',
         eyebrow: 'Fitness e lifestyle',
         title: 'Do treino ao dia a dia',
         subtitle: 'Looks completos com informação de moda e acabamento premium.',
@@ -2568,6 +2571,91 @@ const heroSlides = [
         showOverlay: false
     }
 ];
+
+const heroMobileMediaQuery = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+const heroMobileImageState = new Map();
+let heroResponsiveImagesReady = false;
+
+function isHeroMobileViewport() {
+    return Boolean(heroMobileMediaQuery?.matches);
+}
+
+function preloadHeroMobileImage(src) {
+    if (!src || heroMobileImageState.has(src)) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            heroMobileImageState.set(src, true);
+            resolve();
+        };
+        img.onerror = () => {
+            heroMobileImageState.set(src, false);
+            resolve();
+        };
+        img.src = src;
+    });
+}
+
+function hasHeroMobileArt(slide = {}) {
+    return isHeroMobileViewport() && Boolean(slide.mobileImage) && heroMobileImageState.get(slide.mobileImage) === true;
+}
+
+function getHeroResponsiveImage(slide = {}) {
+    return hasHeroMobileArt(slide) ? slide.mobileImage : slide.image;
+}
+
+function applyHeroResponsiveImages(heroContainer = document.querySelector('.hero-carousel')) {
+    if (!heroContainer) return;
+
+    heroContainer.querySelectorAll('.hero-slide').forEach((slideElement, index) => {
+        const slide = heroSlides[index] || {};
+        const hasMobileArt = hasHeroMobileArt(slide);
+
+        const image = getHeroResponsiveImage(slide);
+
+        slideElement.style.backgroundImage = `url('${image}')`;
+        slideElement.style.setProperty('--hero-slide-image', `url('${image}')`);
+        slideElement.classList.toggle('hero-slide-has-mobile-art', hasMobileArt);
+        slideElement.classList.toggle(
+            'hero-slide-mobile-art-missing',
+            isHeroMobileViewport() && Boolean(slide.mobileImage) && !hasMobileArt
+        );
+    });
+}
+
+function preloadHeroMobileImages(heroContainer = document.querySelector('.hero-carousel')) {
+    if (!isHeroMobileViewport()) {
+        applyHeroResponsiveImages(heroContainer);
+        return;
+    }
+
+    Promise
+        .all(heroSlides.map((slide) => preloadHeroMobileImage(slide.mobileImage)))
+        .then(() => applyHeroResponsiveImages(heroContainer));
+}
+
+function setupHeroResponsiveImages(heroContainer) {
+    applyHeroResponsiveImages(heroContainer);
+    preloadHeroMobileImages(heroContainer);
+
+    if (heroResponsiveImagesReady || !heroMobileMediaQuery) return;
+
+    const updateHeroImages = () => {
+        applyHeroResponsiveImages(heroContainer);
+        preloadHeroMobileImages(heroContainer);
+    };
+
+    if (heroMobileMediaQuery.addEventListener) {
+        heroMobileMediaQuery.addEventListener('change', updateHeroImages);
+    } else {
+        heroMobileMediaQuery.addListener(updateHeroImages);
+    }
+
+    heroResponsiveImagesReady = true;
+}
 
 function getHeroSlideClass(slide, isActive = false) {
     return ['hero-slide', isActive ? 'active' : '', slide.className || '']
@@ -2645,6 +2733,7 @@ if (existingSlides === 1) {
   `).join('');
 }
     bindHeroSlideActions(heroContainer);
+    setupHeroResponsiveImages(heroContainer);
     syncHeroLayoutState();
     startHeroCarousel();
 }
