@@ -3,19 +3,18 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Criar modal do Clube Versatil ao clicar no banner.
 
 ## Status
-- Banner desktop Clube Versatil atualizado.
-- Popup de 10% removido.
-- Mensagem de 10% removida do topo.
-- Nenhuma tarefa funcional em andamento.
+- Modal do Clube Versatil implementado e validado localmente.
+- Botao "Quero meu codigo" abre WhatsApp com mensagem automatica correta.
+- Aguardando publicacao/validacao final no site publico.
 
 ## Criterios de conclusao
-- Desktop usando nova arte ajustada do Clube Versatil.
-- Mobile preservado com arte dedicada existente.
-- Popup de 10% sem markup/disparo.
-- Banner rotativo sem mensagem de 10%.
+- Clique no banner Clube Versatil abre modal sem sair da pagina.
+- Modal mostra beneficios R$10, R$25 e R$40.
+- Botao "Ver regras" revela as regras no modal.
+- Botao "Quero meu codigo" abre WhatsApp cadastrado com mensagem automatica.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -38,3 +37,4 @@ Controle da tarefa atual.
 - 2026-05-14: Deploy do ajuste mobile V1 autorizado para o GitHub Pages.
 - 2026-05-14: Primeiro hero trocado para Clube Versatil, com assets separados para desktop e mobile.
 - 2026-05-14: Banner desktop Clube Versatil substituido por arte ajustada; popup e mensagem de 10% removidos.
+- 2026-05-14: Modal do Clube Versatil criado no clique do banner, com CTA para WhatsApp e regras expansivas.

@@ -41,7 +41,7 @@
   <link rel="preload" as="image" href="assets/home/hero-v1-collection.webp">
   <link rel="preload" as="image" href="assets/home/hero-v1-collection-mobile.webp" media="(max-width: 768px)">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.17">
+  <link rel="stylesheet" href="css2.css?v=1.0.18">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -217,7 +217,7 @@
   <section class="hero-section" id="hero">
   <div class="hero-carousel" id="heroCarousel">
     <!-- ✅ PRIMEIRO SLIDE ESTÁTICO (LCP GARANTIDO) -->
-    <div class="hero-slide hero-slide-clube-versatil active" style="background-image: url('assets/home/hero-clube-versatil.webp');">
+    <div class="hero-slide hero-slide-clube-versatil active" style="background-image: url('assets/home/hero-clube-versatil.webp');" role="button" tabindex="0" aria-label="Abrir Clube Versátil">
     </div>
   </div>
   <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
@@ -228,6 +228,39 @@
     <div class="hero-dot" onclick="goToHeroSlide(2)"></div>
   </div>
 </section>
+
+  <div class="club-modal" id="clubVersatilModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="clubVersatilTitle">
+    <div class="club-modal-content">
+      <button class="club-modal-close" type="button" onclick="closeClubVersatilModal()" aria-label="Fechar Clube Versátil">&times;</button>
+      <span class="club-modal-kicker">Clube Versátil</span>
+      <h2 id="clubVersatilTitle">Ganhe até R$40 em cashback por indicação.</h2>
+      <p class="club-modal-intro">Indique amigas, acumule créditos e use no seu próximo look.</p>
+
+      <div class="club-benefits-list">
+        <div class="club-benefit">
+          <strong>R$10</strong>
+          <span>em compras a partir de R$145,90</span>
+        </div>
+        <div class="club-benefit">
+          <strong>R$25</strong>
+          <span>em compras a partir de R$299,90</span>
+        </div>
+        <div class="club-benefit">
+          <strong>R$40</strong>
+          <span>em compras a partir de R$449,90</span>
+        </div>
+      </div>
+
+      <div class="club-modal-actions">
+        <button class="club-modal-primary" type="button" onclick="openClubVersatilWhatsApp()">Quero meu código</button>
+        <button class="club-modal-secondary" type="button" onclick="toggleClubVersatilRules()">Ver regras</button>
+      </div>
+
+      <div class="club-rules" id="clubVersatilRules" hidden>
+        <p>O cashback é definido pelo valor da compra feita pela amiga indicada. A equipe confirma seu código, validade e uso do crédito pelo WhatsApp.</p>
+      </div>
+    </div>
+  </div>
 
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
@@ -970,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.11"></script>
+  <script defer src="script2.js?v=1.1.12"></script>
   
 </body>
 </html>

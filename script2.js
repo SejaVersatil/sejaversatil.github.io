@@ -2512,6 +2512,7 @@ const heroSlides = [
         subtitle: 'Indique amigas, acumule créditos e use no seu próximo look.',
         cta: 'Quero participar',
         className: 'hero-slide-clube-versatil',
+        action: 'club',
         showContent: false,
         showOverlay: false
     },
@@ -2648,6 +2649,11 @@ function buildHeroSlideMarkup(slide) {
 }
 
 function handleHeroSlideClick(slide = {}) {
+    if (slide.action === 'club') {
+        openClubVersatilModal();
+        return;
+    }
+
     if (slide.action === 'collection') {
         filterCollection(slide.collection || 'Coleção V1');
         return;
@@ -2660,9 +2666,69 @@ function bindHeroSlideActions(heroContainer) {
     heroContainer.querySelectorAll('.hero-slide').forEach((slideElement, index) => {
         const slide = heroSlides[index] || {};
         slideElement.style.cursor = 'pointer';
+        slideElement.setAttribute('role', 'button');
+        slideElement.setAttribute('tabindex', '0');
         slideElement.onclick = () => handleHeroSlideClick(slide);
+        slideElement.onkeydown = (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleHeroSlideClick(slide);
+            }
+        };
     });
 }
+
+function openClubVersatilModal() {
+    const modal = document.getElementById('clubVersatilModal');
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const primaryButton = modal.querySelector('.club-modal-primary');
+    if (primaryButton) {
+        primaryButton.focus();
+    }
+}
+
+function closeClubVersatilModal() {
+    const modal = document.getElementById('clubVersatilModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function toggleClubVersatilRules() {
+    const rules = document.getElementById('clubVersatilRules');
+    if (!rules) return;
+
+    rules.hidden = !rules.hidden;
+}
+
+function openClubVersatilWhatsApp() {
+    const message = 'Olá! Quero participar do Clube Versátil e receber meu código de indicação';
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+}
+
+const clubVersatilModal = document.getElementById('clubVersatilModal');
+
+if (clubVersatilModal) {
+    clubVersatilModal.addEventListener('click', (event) => {
+        if (event.target === clubVersatilModal) {
+            closeClubVersatilModal();
+        }
+    });
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeClubVersatilModal();
+    }
+});
 
 function syncHeroLayoutState() {
     const activeSlide = document.querySelector('.hero-slide.active');

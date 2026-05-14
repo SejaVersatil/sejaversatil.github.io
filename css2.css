@@ -6950,3 +6950,198 @@ nav {
   }
 }
 
+/* ==========================================================================
+   CLUBE VERSATIL
+   ========================================================================== */
+body.modal-open {
+    overflow: hidden;
+}
+
+.club-modal {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-modal) + 50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.club-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.club-modal-content {
+    position: relative;
+    width: min(92vw, 520px);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: clamp(1.6rem, 4vw, 2.4rem);
+    background: #f8f4ed;
+    color: #202316;
+    border-radius: 8px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+    transform: translateY(14px);
+    transition: transform 0.25s ease;
+}
+
+.club-modal.active .club-modal-content {
+    transform: translateY(0);
+}
+
+.club-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(32, 35, 22, 0.14);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.62);
+    color: #202316;
+    font-size: 1.45rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.club-modal-close:hover {
+    background: #ffffff;
+    transform: rotate(90deg);
+}
+
+.club-modal-kicker {
+    display: inline-flex;
+    margin-bottom: 0.85rem;
+    color: #2f3522;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.club-modal-content h2 {
+    max-width: 420px;
+    margin: 0 0 0.8rem;
+    color: #2f3522;
+    font-family: var(--font-brand) !important;
+    font-size: clamp(2.2rem, 9vw, 3.7rem);
+    font-weight: 600 !important;
+    line-height: 0.95;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.club-modal-intro {
+    margin: 0 0 1.4rem;
+    color: #4b4b43;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.club-benefits-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+}
+
+.club-benefit {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: center;
+    padding: 0.95rem 1rem;
+    background: rgba(255, 255, 255, 0.66);
+    border: 1px solid rgba(47, 53, 34, 0.12);
+    border-radius: 8px;
+}
+
+.club-benefit strong {
+    color: #2f3522;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.club-benefit span {
+    color: #3c3c35;
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+
+.club-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 0.72fr;
+    gap: 0.75rem;
+}
+
+.club-modal-primary,
+.club-modal-secondary {
+    min-height: 50px;
+    border-radius: 999px;
+    border: 1px solid #2f3522;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.club-modal-primary {
+    background: #2f3522;
+    color: #ffffff;
+}
+
+.club-modal-secondary {
+    background: transparent;
+    color: #2f3522;
+}
+
+.club-modal-primary:hover,
+.club-modal-secondary:hover {
+    transform: translateY(-1px);
+}
+
+.club-modal-secondary:hover {
+    background: #2f3522;
+    color: #ffffff;
+}
+
+.club-rules {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border-left: 3px solid #2f3522;
+    background: rgba(255, 255, 255, 0.62);
+    color: #4b4b43;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+    .club-modal {
+        align-items: flex-end;
+        padding: 0.75rem;
+    }
+
+    .club-modal-content {
+        width: 100%;
+        padding: 2.3rem 1.2rem 1.25rem;
+    }
+
+    .club-benefit {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .club-modal-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
