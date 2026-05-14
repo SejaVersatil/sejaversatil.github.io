@@ -3,12 +3,12 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Criar modal do Clube Versatil ao clicar no banner.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
-- Modal do Clube Versatil implementado e validado localmente.
+- Modal do Clube Versatil implementado, publicado e validado no site publico.
 - Botao "Quero meu codigo" abre WhatsApp com mensagem automatica correta.
-- Aguardando publicacao/validacao final no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Clique no banner Clube Versatil abre modal sem sair da pagina.

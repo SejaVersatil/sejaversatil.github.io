@@ -11,8 +11,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: clique no banner Clube Versatil agora abre um modal no proprio site com beneficios de cashback, botao para WhatsApp com mensagem automatica e regras expansivas.
-- Validacao: `node --check script2.js`; `git diff --check`; Playwright local confirmou modal em desktop/mobile, beneficios R$10/R$25/R$40, regras visiveis ao clicar e WhatsApp `5571993333570` com mensagem correta.
-- Proxima acao: publicar em `main` e validar no site publico.
+- Validacao: `node --check script2.js`; `git diff --check`; Playwright local e publico confirmaram modal em desktop/mobile, beneficios R$10/R$25/R$40, regras visiveis ao clicar e WhatsApp `5571993333570` com mensagem correta.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-14
 - Tipo: ajuste visual/conteudo
