@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Modais de suporte implementadas e prontas para publicacao em `main`.
+- Modais de suporte publicadas em `main` e validadas no site publico.
 
 ## Criterios de conclusao
 - Menu hamburguer mobile deve abrir modais para Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento.
