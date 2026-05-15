@@ -61,6 +61,8 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Home prioriza imagens locais quando existem, carrega menos imagens do carrossel ao mesmo tempo e tenta a proxima imagem antes de mostrar fallback visual.
 - Upload local de novas imagens pelo admin aceita JPG/PNG/WebP, converte para WebP antes de enviar ao Firebase Storage e registra o download URL no produto.
 - Produto novo no admin nao recebe mais imagem/gradiente padrao automaticamente; e necessario adicionar pelo menos uma imagem antes de salvar.
+- Performance mobile foi priorizada: a home carrega primeiro apenas o hero ativo correto por viewport, adia heroes secundarios, imagens abaixo da dobra, produtos e videos, e usa favicon/icones leves.
+- Service worker passou a manter cache inicial enxuto, com app shell, icones pequenos e hero ativo; imagens/estaticos continuam com estrategia cache-first apos requisicao.
 - Projeto aguardando proxima instrucao do usuario.
 
 ## Pontos sensiveis
@@ -77,6 +79,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Produzir/substituir imagens mobile dedicadas dos outros heroes, se necessario, na proporcao 9:16.
 - Confirmar comandos de lint/testes, se existirem.
 - Reenviar/migrar fotos dos produtos antigos que ainda dependem exclusivamente do Imgur, como Conjunto Resist e Conjunto Mouve.
+- Acompanhar desempenho real no celular apos deploy e repetir teste em rede movel se houver nova lentidao percebida.
 
 ## Observacoes para proximas sessoes
 - Antes de qualquer nova tarefa, ler `AGENTS.md`, `PROJECT_CONTEXT.md`, `TASKS.md` e consultar `CHANGELOG_CODEX.md` se houver necessidade de historico.

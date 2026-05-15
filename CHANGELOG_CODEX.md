@@ -2,6 +2,26 @@
 
 Registro objetivo das alteracoes feitas pelo Codex.
 
+## 2026-05-15
+- Tipo: performance/carregamento
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `script2.js`
+  - `sw.js`
+  - `favicon.ico`
+  - `assets/icons/favicon-32.png`
+  - `assets/icons/icon-192.png`
+  - `assets/icons/icon-512.png`
+  - `manifest.json`
+  - `produto.html`
+  - `checkout.html`
+  - `meus_pedidos.html`
+  - arquivos de contexto Codex
+- Resumo: carregamento mobile-first otimizado sem reduzir qualidade visual; a home prioriza o hero ativo da viewport, adia heroes secundarios, produtos, videos e backgrounds abaixo da dobra, usa favicon/icones leves e service worker com cache inicial enxuto.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local em mobile/desktop confirmou hero correto por viewport, sem videos nem imagens de produto no carregamento inicial mobile; primeiro promo carrega no mobile porque fica visivel no fim da primeira tela.
+- Proxima acao: publicar em `main` e validar site publico.
+
 ## 2026-05-14
 - Tipo: funcional/admin
 - Arquivos alterados:

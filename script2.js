@@ -81,6 +81,8 @@ const loadingOverlay = document.getElementById('loadingOverlay');
     if (!isCheckoutPage && typeof renderProductsSkeleton === 'function') {
       renderProductsSkeleton();
     }
+
+    setupLazyBackgrounds();
     
     await loadProducts();
     loadCart();
@@ -89,7 +91,7 @@ const loadingOverlay = document.getElementById('loadingOverlay');
       renderProducts();
       renderBestSellers();
       initHeroCarousel();
-      await loadVideoGrid();
+      scheduleDeferredVideoGridLoad();
     }
     
     updateCartUI();
@@ -799,10 +801,11 @@ function getProductImageSlideMarkup(imageSrc, productName = '', index = 0, optio
 
     const safeSrc = sanitizeInput(imageSrc);
     const safeAlt = sanitizeInput(productName || 'Produto Versatil');
-    const shouldLoadNow = index === 0;
-    const loading = options.priority ? 'eager' : 'lazy';
-    const fetchPriority = options.priority ? ' fetchpriority="high"' : '';
-    const imageMarkup = shouldLoadNow
+    const shouldRenderImg = index === 0;
+    const shouldLoadNow = Boolean(options.priority && index === 0);
+    const loading = shouldLoadNow ? 'eager' : 'lazy';
+    const fetchPriority = shouldLoadNow ? ' fetchpriority="high"' : '';
+    const imageMarkup = shouldRenderImg
         ? `<img src="${safeSrc}" alt="${safeAlt}" loading="${loading}" decoding="async"${fetchPriority} onerror="handleProductImageError(this)">`
         : '';
 
@@ -815,6 +818,49 @@ function getProductImageSlideMarkup(imageSrc, productName = '', index = 0, optio
             ${imageMarkup}
         </div>
     `;
+}
+
+let lazyBackgroundObserver = null;
+
+function loadLazyBackground(element) {
+    const src = element?.dataset?.bg;
+    if (!src) return;
+
+    element.style.backgroundImage = getCssUrlValue(src);
+    element.classList.add('is-loaded');
+    delete element.dataset.bg;
+}
+
+function setupLazyBackgrounds(root = document) {
+    const elements = [...root.querySelectorAll('.lazy-bg[data-bg]')];
+    if (elements.length === 0) return;
+
+    if (!('IntersectionObserver' in window)) {
+        elements.forEach(loadLazyBackground);
+        return;
+    }
+
+    if (!lazyBackgroundObserver) {
+        lazyBackgroundObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+
+                loadLazyBackground(entry.target);
+                lazyBackgroundObserver.unobserve(entry.target);
+            });
+        }, {
+            rootMargin: '160px 0px',
+            threshold: 0.01
+        });
+    }
+
+    elements.forEach((element) => lazyBackgroundObserver.observe(element));
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setupLazyBackgrounds(), { once: true });
+} else {
+    setupLazyBackgrounds();
 }
 
 function loadProductSlideImage(slide) {
@@ -1442,7 +1488,7 @@ function renderProducts() {
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
                             return getProductImageSlideMarkup(img, product.name, index, {
-                                priority: productIndex < 4 && index === 0
+                                priority: false
                             });
                         }).join('')}
                     </div>
@@ -2657,7 +2703,7 @@ const heroSlides = [
     },
     {
         image: 'assets/home/hero-performance.webp',
-        mobileImage: 'assets/home/hero-performance-mobile.webp',
+        mobileImage: '',
         eyebrow: 'Lançamento',
         title: 'Tecnologia para performance',
         subtitle: 'Modelagens pensadas para treino, rua e dias em movimento.',
@@ -2706,11 +2752,22 @@ function preloadHeroMobileImage(src) {
 }
 
 function hasHeroMobileArt(slide = {}) {
-    return isHeroMobileViewport() && Boolean(slide.mobileImage) && heroMobileImageState.get(slide.mobileImage) === true;
+    return isHeroMobileViewport() && Boolean(slide.mobileImage);
 }
 
 function getHeroResponsiveImage(slide = {}) {
     return hasHeroMobileArt(slide) ? slide.mobileImage : slide.image;
+}
+
+function setHeroSlideImageStyles(slideElement, slide = {}) {
+    if (!slideElement || !slide.image) return;
+
+    slideElement.style.setProperty('--hero-slide-desktop-image', `url('${slide.image}')`);
+    if (slide.mobileImage) {
+        slideElement.style.setProperty('--hero-slide-mobile-image', `url('${slide.mobileImage}')`);
+    } else {
+        slideElement.style.removeProperty('--hero-slide-mobile-image');
+    }
 }
 
 function applyHeroResponsiveImages(heroContainer = document.querySelector('.hero-carousel')) {
@@ -2722,7 +2779,8 @@ function applyHeroResponsiveImages(heroContainer = document.querySelector('.hero
 
         const image = getHeroResponsiveImage(slide);
 
-        slideElement.style.backgroundImage = `url('${image}')`;
+        setHeroSlideImageStyles(slideElement, slide);
+        slideElement.style.backgroundImage = slideElement.classList.contains('active') ? `url('${image}')` : '';
         slideElement.style.setProperty('--hero-slide-image', `url('${image}')`);
         slideElement.classList.toggle('hero-slide-has-mobile-art', hasMobileArt);
         slideElement.classList.toggle(
@@ -2733,25 +2791,40 @@ function applyHeroResponsiveImages(heroContainer = document.querySelector('.hero
 }
 
 function preloadHeroMobileImages(heroContainer = document.querySelector('.hero-carousel')) {
-    if (!isHeroMobileViewport()) {
-        applyHeroResponsiveImages(heroContainer);
+    const sources = heroSlides
+        .slice(1)
+        .map((slide) => (isHeroMobileViewport() && slide.mobileImage) ? slide.mobileImage : slide.image)
+        .filter(Boolean);
+
+    Promise
+        .all(sources.map((source) => preloadHeroMobileImage(source)))
+        .then(() => applyHeroResponsiveImages(heroContainer));
+}
+
+function deferTask(callback, timeout = 1200) {
+    if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout });
         return;
     }
 
-    Promise
-        .all(heroSlides.map((slide) => preloadHeroMobileImage(slide.mobileImage)))
-        .then(() => applyHeroResponsiveImages(heroContainer));
+    window.setTimeout(callback, Math.min(timeout, 1200));
+}
+
+function scheduleDeferredHeroPreload(heroContainer) {
+    window.setTimeout(() => {
+        deferTask(() => preloadHeroMobileImages(heroContainer), 1600);
+    }, 3000);
 }
 
 function setupHeroResponsiveImages(heroContainer) {
     applyHeroResponsiveImages(heroContainer);
-    preloadHeroMobileImages(heroContainer);
+    scheduleDeferredHeroPreload(heroContainer);
 
     if (heroResponsiveImagesReady || !heroMobileMediaQuery) return;
 
     const updateHeroImages = () => {
         applyHeroResponsiveImages(heroContainer);
-        preloadHeroMobileImages(heroContainer);
+        scheduleDeferredHeroPreload(heroContainer);
     };
 
     if (heroMobileMediaQuery.addEventListener) {
@@ -2892,7 +2965,7 @@ if (existingSlides === 1) {
   heroSlides.slice(1).forEach((slide, index) => {
     const slideDiv = document.createElement('div');
     slideDiv.className = getHeroSlideClass(slide);
-    slideDiv.style.backgroundImage = `url('${slide.image}')`;
+    setHeroSlideImageStyles(slideDiv, slide);
     slideDiv.style.cursor = 'pointer';
 
     slideDiv.innerHTML = buildHeroSlideMarkup(slide);
@@ -2904,7 +2977,7 @@ if (existingSlides === 1) {
   // Fallback: Se HTML não tem nada, cria tudo do zero
   heroContainer.innerHTML = heroSlides.map((slide, index) => `
     <div class="${getHeroSlideClass(slide, index === 0)}"
-         style="background-image: url('${slide.image}'); cursor: pointer;">
+         style="--hero-slide-desktop-image: url('${slide.image}'); ${slide.mobileImage ? `--hero-slide-mobile-image: url('${slide.mobileImage}');` : ''} cursor: pointer;">
       ${buildHeroSlideMarkup(slide)}
     </div>
   `).join('');
@@ -2948,6 +3021,7 @@ function updateHeroCarousel() {
     slides.forEach((slide, index) => {
         slide.classList.toggle('active', index === currentHeroSlide);
     });
+    applyHeroResponsiveImages(document.querySelector('.hero-carousel'));
     dots.forEach((dot, index) => {
         dot.classList.toggle('active', index === currentHeroSlide);
     });
@@ -3090,6 +3164,21 @@ function goToProductImage(productId, index, event) {
 }
 
 // ==================== VÍDEO GRID ====================
+let videoGridLoadScheduled = false;
+
+function scheduleDeferredVideoGridLoad() {
+    if (videoGridLoadScheduled) return;
+
+    videoGridLoadScheduled = true;
+    window.setTimeout(() => {
+        deferTask(() => {
+            loadVideoGrid().catch((error) => {
+                console.error('Erro ao carregar videos em segundo plano:', error);
+            });
+        }, 1800);
+    }, 2600);
+}
+
 async function loadVideoGrid() {
     const container = document.getElementById('videoGridContainer');
     if (!container) {
@@ -3215,8 +3304,7 @@ function setupVideoInteractions() {
         video.muted = true;
         video.setAttribute('playsinline', '');
         video.setAttribute('webkit-playsinline', '');
-        video.load();
-        
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -5840,8 +5928,8 @@ async function requestNotificationPermission() {
             
 new Notification('Bem-vindo à Versátil! 👋', {
                 body: 'Agora você receberá ofertas exclusivas!',
-                icon: '/favicon.ico',
-                badge: '/favicon.ico'
+                icon: '/assets/icons/icon-192.png',
+                badge: '/assets/icons/favicon-32.png'
             });
             
             localStorage.setItem('notificationsEnabled', 'true');
@@ -5897,11 +5985,13 @@ window.addEventListener('beforeunload', function () {
 });
 
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        for (let registration of registrations) {
-            registration.update();
-        }
-    });
+    deferTask(() => {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+                registration.update();
+            }
+        });
+    }, 3000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

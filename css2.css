@@ -7259,3 +7259,36 @@ body.modal-open {
     opacity: 0.22;
 }
 
+/* ==========================================================================
+   LOADING PERFORMANCE
+   ========================================================================== */
+body.home-page .hero-slide.active {
+    background-image: var(--hero-slide-desktop-image);
+}
+
+@media (max-width: 768px) {
+    body.home-page .hero-slide.active {
+        background-image: var(--hero-slide-mobile-image, var(--hero-slide-desktop-image));
+    }
+}
+
+.lazy-bg {
+    background-color: #f4f1ec;
+    background-size: cover;
+    background-position: center;
+}
+
+.lazy-bg.is-loaded {
+    background-color: transparent;
+}
+
+.promo-cards-section,
+.products-section,
+.video-grid-section,
+.bestsellers-section,
+.feature-banner,
+.info-bar {
+    content-visibility: auto;
+    contain-intrinsic-size: 720px;
+}
+

@@ -3,15 +3,14 @@
 <head>
   <!-- ✅ Consolidado: dns-prefetch removido, mantido apenas preconnect (mais eficiente) -->
   <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
   <link rel="preconnect" href="https://www.gstatic.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- ✅ Consolidado: Google Fonts unificado em uma única chamada (linhas 6-7 e 32 do original) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,20 +27,18 @@
   
   <title>Versátil - Moda Fitness Feminina</title>
   
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" href="/images/icon-192.png">
+  <link rel="icon" href="/assets/icons/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Versátil">
 
-  <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" media="(max-width: 768px)">
-  <link rel="preload" as="image" href="assets/home/hero-performance.webp">
-  <link rel="preload" as="image" href="assets/home/hero-v1-collection.webp">
-  <link rel="preload" as="image" href="assets/home/hero-v1-collection-mobile.webp" media="(max-width: 768px)">
+  <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.20">
+  <link rel="stylesheet" href="css2.css?v=1.0.21">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -109,7 +106,7 @@
       </div>
 
       <div class="search-bar" style="position: relative;">
-        <img src="favicon.ico" alt="Logo" class="search-logo" width="24" height="24" style="margin-right: 8px;">
+        <img src="assets/icons/favicon-32.png" alt="Logo" class="search-logo" width="24" height="24" loading="lazy" decoding="async" style="margin-right: 8px;">
         <input type="text" id="headerSearchInput" placeholder="Encontre aqui seu próximo look" autocomplete="off">
         <button class="search-btn" type="button" aria-label="Buscar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -217,7 +214,7 @@
   <section class="hero-section" id="hero">
   <div class="hero-carousel" id="heroCarousel">
     <!-- ✅ PRIMEIRO SLIDE ESTÁTICO (LCP GARANTIDO) -->
-    <div class="hero-slide hero-slide-clube-versatil active" style="background-image: url('assets/home/hero-clube-versatil.webp');" role="button" tabindex="0" aria-label="Abrir Clube Versátil">
+    <div class="hero-slide hero-slide-clube-versatil active" style="--hero-slide-desktop-image: url('assets/home/hero-clube-versatil.webp'); --hero-slide-mobile-image: url('assets/home/hero-clube-versatil-mobile.webp');" role="button" tabindex="0" aria-label="Abrir Clube Versátil">
     </div>
   </div>
   <button class="hero-nav-arrow hero-nav-prev" onclick="prevHeroSlide()">‹</button>
@@ -362,7 +359,7 @@
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
       <div class="promo-card" onclick="navigateToCategory('conjunto short saia')">
-        <div class="promo-card-image" style="background-image: url('assets/home/promo-short-saia-v1.jpeg');">
+        <div class="promo-card-image lazy-bg" data-bg="assets/home/promo-short-saia-v1.jpeg">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO SHORT SAIA</span>
@@ -375,7 +372,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('conjunto calca')">
-        <div class="promo-card-image" style="background-image: url('assets/home/promo-conjunto-calca-v1.jpeg');">
+        <div class="promo-card-image lazy-bg" data-bg="assets/home/promo-conjunto-calca-v1.jpeg">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO CALÇA</span>
@@ -388,7 +385,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('conjunto short')">
-        <div class="promo-card-image" style="background-image: url('assets/home/promo-conjunto-short-v1.jpeg');">
+        <div class="promo-card-image lazy-bg" data-bg="assets/home/promo-conjunto-short-v1.jpeg">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">CONJUNTO SHORT</span>
@@ -401,7 +398,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('blusas')">
-        <div class="promo-card-image" style="background-image: url('assets/home/promo-blusas-v1.jpeg');">
+        <div class="promo-card-image lazy-bg" data-bg="assets/home/promo-blusas-v1.jpeg">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">BLUSAS</span>
@@ -414,7 +411,7 @@
         </div>
       </div>
       <div class="promo-card" onclick="navigateToCategory('peca unica')">
-        <div class="promo-card-image" style="background-image: url('assets/home/promo-peca-unica-v1.jpeg');">
+        <div class="promo-card-image lazy-bg" data-bg="assets/home/promo-peca-unica-v1.jpeg">
           <div class="promo-card-overlay"></div>
           <div class="promo-card-content">
             <span class="promo-category">PEÇA ÚNICA</span>
@@ -464,7 +461,7 @@
     <div class="products-grid" id="bestSellersGrid"></div>
   </section>
 
-  <section class="feature-banner" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&q=80')">
+  <section class="feature-banner lazy-bg" data-bg="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&q=80">
     <div class="feature-banner-overlay"></div>
     <div class="feature-banner-content">
       <h2>PERFORMANCE & ESTILO</h2>
@@ -1100,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.14"></script>
+  <script defer src="script2.js?v=1.1.15"></script>
   
 </body>
 </html>

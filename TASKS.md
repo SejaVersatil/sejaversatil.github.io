@@ -3,21 +3,18 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Otimizar carregamento do site com prioridade mobile e depois desktop.
 
 ## Status
-- Regras completas do Clube Versatil adicionadas ao botao "Ver regras".
-- Upload local do admin reforcado para JPG/PNG/WebP, conversao WebP e envio ao Firebase Storage.
-- Produto novo passa a exigir pelo menos uma imagem adicionada antes de salvar.
-- Alteracao publicada em `main` e validada no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Otimizacoes aplicadas e validadas localmente.
+- Publicacao em `main` pendente nesta etapa.
 
 ## Criterios de conclusao
-- Modal do Clube Versatil deve mostrar regras completas ao clicar em "Ver regras".
-- Botao "Ver regras" deve alternar para "Ocultar regras" com `aria-expanded`.
-- Admin deve aceitar upload local apenas de JPG, PNG ou WebP.
-- Imagem local deve ser convertida para WebP antes do upload ao Firebase Storage.
-- Produto novo nao deve salvar sem pelo menos uma imagem adicionada.
+- Mobile deve priorizar somente o hero ativo da viewport no carregamento inicial.
+- Desktop deve manter qualidade visual e tambem evitar preloads desnecessarios.
+- Produtos, videos e backgrounds abaixo da dobra devem carregar de forma adiada/lazy.
+- Favicon e icones devem ser leves.
+- Service worker deve evitar precache pesado.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -43,3 +40,4 @@ Controle da tarefa atual.
 - 2026-05-14: Modal do Clube Versatil criado no clique do banner, com CTA para WhatsApp e regras expansivas.
 - 2026-05-14: Diagnosticadas falhas de imagens por links Imgur 403; implementado fallback, carregamento mais economico e compressao WebP em novos uploads.
 - 2026-05-14: Regras completas do Clube Versatil adicionadas e fluxo de upload/cadastro manual de produto no admin reforcado.
+- 2026-05-15: Otimizacao de carregamento mobile-first aplicada: preload do hero ativo, lazy/defer para imagens e videos abaixo da dobra, favicon leve e service worker enxuto.
