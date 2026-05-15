@@ -13,8 +13,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: icones dos 3 passos do modal Clube Versatil refeitos e redimensionados para ficarem centralizados, proporcionais e mais fieis a referencia; regras e WhatsApp foram preservados.
-- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local mobile e desktop confirmou 3 icones quadrados/circulares, centralizados, CTA visivel, regras expansivas e WhatsApp funcionando.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local mobile e desktop confirmou 3 icones quadrados/circulares, centralizados, CTA visivel, regras expansivas e WhatsApp funcionando; site publico confirmou `css2.css?v=1.0.23` e `sw.js` com cache `v1.0.49`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/conversao

@@ -3,11 +3,11 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Ajustar icones do modal Clube Versatil para ficarem iguais a referencia.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
-- Icones corrigidos localmente e alinhados no modal.
-- Validacao local concluida; publicacao pendente.
+- Icones do modal Clube Versatil corrigidos, publicados em `main` e validados no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Modal deve abrir ao clicar no banner Clube Versatil.
