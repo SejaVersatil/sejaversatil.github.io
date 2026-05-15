@@ -3,18 +3,17 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Trocar visual do modal Clube Versatil pelo modelo novo enviado pelo usuario.
 
 ## Status
-- Otimizacoes de carregamento aplicadas, publicadas em `main` e validadas no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Modelo novo do modal aplicado localmente.
+- Validacao local concluida; publicacao pendente.
 
 ## Criterios de conclusao
-- Mobile deve priorizar somente o hero ativo da viewport no carregamento inicial.
-- Desktop deve manter qualidade visual e tambem evitar preloads desnecessarios.
-- Produtos, videos e backgrounds abaixo da dobra devem carregar de forma adiada/lazy.
-- Favicon e icones devem ser leves.
-- Service worker deve evitar precache pesado.
+- Modal deve abrir ao clicar no banner Clube Versatil.
+- Visual deve seguir o modelo novo com titulo, 3 passos, destaque Pix e botoes empilhados.
+- Botao "Quero meu codigo" deve manter redirecionamento para WhatsApp com mensagem automatica.
+- Botao "Ver regras" deve manter as regras completas expansivas.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -42,3 +41,4 @@ Controle da tarefa atual.
 - 2026-05-14: Regras completas do Clube Versatil adicionadas e fluxo de upload/cadastro manual de produto no admin reforcado.
 - 2026-05-15: Otimizacao de carregamento mobile-first aplicada: preload do hero ativo, lazy/defer para imagens e videos abaixo da dobra, favicon leve e service worker enxuto.
 - 2026-05-15: Deploy da otimizacao publicado e validado no GitHub Pages.
+- 2026-05-15: Modal Clube Versatil redesenhado para modelo em 3 passos com Pix destacado, mantendo regras e WhatsApp.

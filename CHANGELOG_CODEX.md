@@ -3,6 +3,20 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-15
+- Tipo: ajuste visual/conversao
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `produto.html`
+  - `checkout.html`
+  - `meus_pedidos.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: modal do Clube Versatil trocado para o modelo novo com titulo "Suas indicacoes viram cashback", fluxo em 3 passos, destaque de Pix, botoes empilhados e rodape de validade; regras completas e redirecionamento para WhatsApp foram preservados.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local mobile 390x844 e desktop 1366x900 confirmou abertura pelo banner, CTA visivel, regras expansivas e WhatsApp com mensagem do Clube.
+- Proxima acao: publicar em `main` e validar site publico.
+
+## 2026-05-15
 - Tipo: performance/carregamento
 - Arquivos alterados:
   - `index.html`

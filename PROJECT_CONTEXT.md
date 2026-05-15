@@ -53,7 +53,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Codigo do hero preparado para trocar automaticamente para artes mobile quando os arquivos `*-mobile.webp` existirem.
 - O V1 ja possui arte mobile dedicada em `assets/home/hero-v1-collection-mobile.webp`; desktop continua usando `assets/home/hero-v1-collection.webp`.
 - O primeiro hero foi trocado para Clube Versatil: desktop usa `assets/home/hero-clube-versatil.webp` e mobile usa `assets/home/hero-clube-versatil-mobile.webp`.
-- Clique no banner Clube Versatil abre um modal na home com beneficios de cashback, botao "Quero meu codigo" para WhatsApp e botao "Ver regras".
+- Clique no banner Clube Versatil abre um modal premium na home com fluxo em 3 passos, destaque de Pix, botao "Quero meu codigo" para WhatsApp e botao "Ver regras".
 - "Ver regras" do Clube Versatil agora exibe regras completas, valores de cashback, validacao, restricoes, validade e chamada final para solicitar codigo.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
