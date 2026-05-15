@@ -56,6 +56,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Clique no banner Clube Versatil abre um modal premium na home com fluxo em 3 passos, icones refinados conforme referencia (telefone preenchido, duas pessoas preenchidas e separadas com coracao acima, e presente maior), destaque de Pix, botao "Quero meu codigo" para WhatsApp e botao "Ver regras".
 - "Ver regras" do Clube Versatil agora exibe regras completas, valores de cashback, validacao, restricoes, validade e chamada final para solicitar codigo.
 - Menu hamburguer mobile organizado em grupos: Explore, Conta, Categorias, Colecoes e Suporte. "Nossa Essencia" abre modal propria com o texto institucional completo; link do footer "Nossa Essencia" abre a mesma modal.
+- Modal Nossa Essencia usa CTA discreto "Ver Produtos", com capitalizacao normal, tamanho menor e alinhamento no canto direito da area de conteudo.
 - Itens de suporte e Guia de Medidas no menu mobile direcionam ao WhatsApp com mensagem especifica.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.

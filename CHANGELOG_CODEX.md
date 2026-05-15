@@ -3,6 +3,20 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-15
+- Tipo: ajuste visual/conteudo
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `produto.html`
+  - `checkout.html`
+  - `meus_pedidos.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: botao da modal Nossa Essencia alterado para "Ver Produtos", com capitalizacao normal, tamanho menor, peso visual mais delicado e alinhamento a direita.
+- Validacao: `node --check sw.js`; `git diff --check`; Playwright local mobile confirmou texto, transformacao normal, tamanho reduzido e posicao a direita.
+- Proxima acao: publicar em `main` e validar site publico.
+
+## 2026-05-15
 - Tipo: ajuste visual/conversao
 - Arquivos alterados:
   - `index.html`

@@ -7256,7 +7256,19 @@ body.modal-open {
 }
 
 .essence-modal-actions {
+    display: flex;
+    justify-content: flex-end;
     margin-top: 1.5rem;
+}
+
+.essence-modal-actions .club-modal-primary {
+    width: fit-content;
+    min-height: 38px;
+    padding: 0 1.05rem;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
 }
 
 .club-rules {
@@ -7576,6 +7588,12 @@ body.modal-open {
 
     .essence-modal-actions {
         margin-top: 1rem;
+    }
+
+    .essence-modal-actions .club-modal-primary {
+        min-height: 36px;
+        padding: 0 0.95rem;
+        font-size: 0.82rem;
     }
 
     .club-rules {
