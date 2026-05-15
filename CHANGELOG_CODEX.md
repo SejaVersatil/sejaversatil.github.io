@@ -13,8 +13,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: icones do modal Clube Versatil refinados para ficar mais proximos da referencia: WhatsApp com telefone preenchido, indicacao com duas pessoas separadas em perfil se olhando e presente maior.
-- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local mobile confirmou icones centralizados, presente maior, regras expansivas e WhatsApp funcionando.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local mobile confirmou icones centralizados, presente maior, regras expansivas e WhatsApp funcionando; site publico confirmou `css2.css?v=1.0.24` e `sw.js` com cache `v1.0.50`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/conversao
