@@ -6,12 +6,12 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Prompt de notificacoes publicado em `main` e validado no site publico.
+- Hero mobile Clube Versatil ajustado para exibir apenas a seta direita do carrossel.
 
 ## Criterios de conclusao
-- Aviso de permissao de notificacoes deve sair do visual generico/roxo.
-- Visual deve seguir a estetica premium da Versatil, com paleta creme/oliva, tipografia elegante e CTA refinado.
-- Nao alterar regra de permissao de notificacoes nem outras areas do site.
+- No mobile, o banner Clube Versatil deve manter a seta esquerda oculta.
+- No mobile, o banner Clube Versatil deve exibir a seta direita para avancar o hero.
+- Nao alterar imagens, textos, modal, logica de clique do banner nem outros slides.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -49,3 +49,4 @@ Controle da tarefa atual.
 - 2026-05-15: Guia de Medidas estruturado em modal na home/menu mobile e pagina de produto, usando a imagem oficial anexada.
 - 2026-05-15: Suporte do menu mobile e footer desktop estruturado em modal unica com conteudos de frete, trocas, pagamento e atendimento.
 - 2026-05-15: Prompt de notificacoes redesenhado para o visual premium da marca.
+- 2026-05-15: Hero mobile Clube Versatil ajustado para manter somente a seta direita de avancar.

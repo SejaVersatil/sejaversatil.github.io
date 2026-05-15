@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.56';
+const CACHE_NAME = 'seja-versatil-v1.0.57';
 
 const urlsToCache = [
     '/',

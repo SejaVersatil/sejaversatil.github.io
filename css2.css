@@ -6833,8 +6833,14 @@ nav {
     border-color: rgba(255, 255, 255, 0.5) !important;
   }
 
-  body.home-page .hero-section:has(.hero-slide-clube-versatil.active) .hero-nav-arrow {
+  body.home-page .hero-section:has(.hero-slide-clube-versatil.active) .hero-nav-prev {
     display: none !important;
+  }
+
+  body.home-page .hero-section:has(.hero-slide-clube-versatil.active) .hero-nav-next {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   body.home-page .hero-nav-prev {
