@@ -7096,22 +7096,34 @@ body.modal-open {
 }
 
 .club-step-icon-whatsapp svg {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
 }
 
 .club-step-icon-people svg {
-    width: 46px;
-    height: 46px;
+    width: 47px;
+    height: 47px;
 }
 
 .club-step-icon-gift svg {
-    width: 45px;
-    height: 45px;
+    width: 53px;
+    height: 53px;
 }
 
 .club-step-fill {
     fill: currentColor;
+}
+
+.club-profile-fill {
+    fill: currentColor;
+}
+
+.club-step-profile-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .club-step-line {
@@ -7346,14 +7358,18 @@ body.modal-open {
     }
 
     .club-step-icon-whatsapp svg {
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
     }
 
-    .club-step-icon-people svg,
-    .club-step-icon-gift svg {
+    .club-step-icon-people svg {
         width: 39px;
         height: 39px;
+    }
+
+    .club-step-icon-gift svg {
+        width: 48px;
+        height: 48px;
     }
 
     .club-step h3 {
@@ -7452,14 +7468,18 @@ body.modal-open {
     }
 
     .club-step-icon-whatsapp svg {
-        width: 36px;
-        height: 36px;
+        width: 35px;
+        height: 35px;
     }
 
-    .club-step-icon-people svg,
+    .club-step-icon-people svg {
+        width: 34px;
+        height: 34px;
+    }
+
     .club-step-icon-gift svg {
-        width: 33px;
-        height: 33px;
+        width: 42px;
+        height: 42px;
     }
 
     .club-step h3 {
