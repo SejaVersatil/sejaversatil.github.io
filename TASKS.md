@@ -3,14 +3,15 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Diagnosticar e corrigir falhas de carregamento de imagens de produtos.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
 - Causa identificada: imagens antigas do Imgur retornando 403.
 - Fallback e tentativa automatica de proxima imagem implementados na home.
 - Priorizacao de assets locais implementada na home e pagina de produto.
 - Compressao WebP para novos uploads no Firebase implementada.
-- Aguardando deploy/validacao publica.
+- Alteracao publicada e validada no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Produtos com imagem local carregam antes de tentar Imgur.
