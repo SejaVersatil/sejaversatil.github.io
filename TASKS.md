@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Guia de Medidas implementado, validado localmente e pronto para publicacao em `main`.
+- Guia de Medidas publicado em `main` e validado no site publico.
 
 ## Criterios de conclusao
 - Menu hamburguer mobile deve abrir o modal Guia de Medidas.

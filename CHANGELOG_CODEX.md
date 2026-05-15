@@ -16,7 +16,7 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `assets/home/guia-medidas-versatil.jpeg`
   - arquivos de contexto Codex
 - Resumo: criada modal Guia de Medidas Versatil com textos orientativos, imagem oficial anexada sem recriacao e CTA para WhatsApp; menu hamburguer mobile e botao "Tabela de medidas" na pagina de produto agora abrem o guia.
-- Validacao: hash SHA-256 confirmou que a imagem copiada e identica ao anexo; `node --check script2.js`; `node --check produto.js`; `node --check sw.js`; `git diff --check`; Browser local mobile confirmou abertura pelo menu e pela pagina de produto com titulo, imagem e botao WhatsApp visiveis.
+- Validacao: hash SHA-256 confirmou que a imagem copiada e identica ao anexo; `node --check script2.js`; `node --check produto.js`; `node --check sw.js`; `git diff --check`; Browser local mobile confirmou abertura pelo menu e pela pagina de produto com titulo, imagem e botao WhatsApp visiveis; site publico confirmou `index.html`, `produto.html`, `css2.css?v=1.0.27`, `script2.js?v=1.1.17`, `produto.js?v=1.0.15`, `sw.js` cache `v1.0.54` e asset do guia com 141060 bytes.
 - Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
