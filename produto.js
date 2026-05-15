@@ -1589,6 +1589,59 @@ function toggleSidebar() {
     if (ov) ov.classList.toggle('active');
 }
 
+function openSizeGuideModal() {
+    const modal = $('sizeGuideModal');
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const closeButton = modal.querySelector('.club-modal-close');
+    if (closeButton) {
+        closeButton.focus();
+    }
+}
+
+function closeSizeGuideModal() {
+    const modal = $('sizeGuideModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function openSizeGuideWhatsApp() {
+    const message = 'Olá! Quero ajuda com o guia de medidas da Versátil.';
+    const whatsappURL = `https://wa.me/5571993333570?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+}
+
+function bindSizeGuideModal() {
+    const modal = $('sizeGuideModal');
+    if (!modal || modal.dataset.bound === 'true') return;
+
+    modal.dataset.bound = 'true';
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeSizeGuideModal();
+        }
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindSizeGuideModal, { once: true });
+} else {
+    bindSizeGuideModal();
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeSizeGuideModal();
+    }
+});
+
 /* Máscara CEP */
 document.addEventListener('input', (e) => {
     if (e.target && e.target.id === 'zipCodeInput') {
@@ -1608,6 +1661,9 @@ window.calculateShipping = calculateShipping;
 window.addToCartFromDetails = addToCartFromDetails;
 window.buyViaWhatsApp = buyViaWhatsApp;
 window.toggleSidebar = toggleSidebar;
+window.openSizeGuideModal = openSizeGuideModal;
+window.closeSizeGuideModal = closeSizeGuideModal;
+window.openSizeGuideWhatsApp = openSizeGuideWhatsApp;
 window.closePaymentModal = closePaymentModal;
 window.sendToWhatsApp = sendToWhatsApp;
 

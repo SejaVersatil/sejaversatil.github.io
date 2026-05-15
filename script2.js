@@ -2955,6 +2955,33 @@ function closeNossaEssenciaModal() {
     document.body.classList.remove('modal-open');
 }
 
+function openSizeGuideModal() {
+    const modal = document.getElementById('sizeGuideModal');
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const closeButton = modal.querySelector('.club-modal-close');
+    if (closeButton) {
+        closeButton.focus();
+    }
+}
+
+function closeSizeGuideModal() {
+    const modal = document.getElementById('sizeGuideModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function openSizeGuideWhatsApp() {
+    openWhatsAppSupport('guia');
+}
+
 function openWhatsAppSupport(topic = 'atendimento') {
     const supportMessages = {
         guia: 'Olá! Quero ajuda com o guia de medidas da Versátil.',
@@ -2988,10 +3015,21 @@ if (nossaEssenciaModal) {
     });
 }
 
+const sizeGuideModal = document.getElementById('sizeGuideModal');
+
+if (sizeGuideModal) {
+    sizeGuideModal.addEventListener('click', (event) => {
+        if (event.target === sizeGuideModal) {
+            closeSizeGuideModal();
+        }
+    });
+}
+
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         closeClubVersatilModal();
         closeNossaEssenciaModal();
+        closeSizeGuideModal();
     }
 });
 

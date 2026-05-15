@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seja-versatil-v1.0.53';
+const CACHE_NAME = 'seja-versatil-v1.0.54';
 
 const urlsToCache = [
     '/',
@@ -9,7 +9,8 @@ const urlsToCache = [
     '/assets/icons/favicon-32.png',
     '/assets/icons/icon-192.png',
     '/assets/home/hero-clube-versatil.webp',
-    '/assets/home/hero-clube-versatil-mobile.webp'
+    '/assets/home/hero-clube-versatil-mobile.webp',
+    '/assets/home/guia-medidas-versatil.jpeg'
 ];
 
 self.addEventListener('install', (event) => {

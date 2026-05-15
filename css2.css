@@ -7271,6 +7271,98 @@ body.modal-open {
     text-transform: none;
 }
 
+.size-guide-modal-content {
+    width: min(94vw, 760px);
+    padding: clamp(1.85rem, 3.6vw, 2.75rem);
+}
+
+.size-guide-modal-content h2 {
+    max-width: calc(100% - 72px);
+    margin-bottom: 1rem;
+    font-size: clamp(2.55rem, 5vw, 4.1rem);
+    line-height: 1;
+}
+
+.size-guide-copy {
+    display: grid;
+    gap: 0.78rem;
+    color: #3c3c35;
+    font-size: 0.98rem;
+    line-height: 1.62;
+}
+
+.size-guide-copy p {
+    margin: 0;
+}
+
+.size-guide-section {
+    display: grid;
+    gap: 0.62rem;
+}
+
+.size-guide-section h3 {
+    margin: 0;
+    color: #2f3522;
+    font-family: var(--font-main) !important;
+    font-size: 0.92rem;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.2;
+    text-transform: uppercase !important;
+}
+
+.size-guide-measure-list {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.size-guide-copy strong {
+    color: #2f3522;
+}
+
+.size-guide-copy ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding-left: 1.15rem;
+}
+
+.size-guide-tip {
+    padding: 0.78rem 0.9rem;
+    border: 1px solid rgba(47, 53, 34, 0.12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.size-guide-image-frame {
+    margin: 1.25rem 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(47, 53, 34, 0.12);
+    border-radius: 14px;
+    background: #f7f2ea;
+}
+
+.size-guide-image-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.size-guide-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
+.size-guide-actions .club-modal-primary {
+    width: fit-content;
+    min-height: 44px;
+    padding: 0 1.2rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+}
+
 .club-rules {
     margin-top: 1.15rem;
     padding: 1rem;
@@ -7453,6 +7545,25 @@ body.modal-open {
         font-size: 0.94rem;
         line-height: 1.52;
     }
+
+    .size-guide-modal-content {
+        width: min(92vw, 760px);
+        padding: 1.8rem 2rem 1.65rem;
+    }
+
+    .size-guide-modal-content h2 {
+        font-size: clamp(2.35rem, 4.9vw, 3.45rem);
+    }
+
+    .size-guide-copy {
+        gap: 0.62rem;
+        font-size: 0.94rem;
+        line-height: 1.52;
+    }
+
+    .size-guide-image-frame {
+        margin: 1rem 0;
+    }
 }
 
 @media (max-width: 520px) {
@@ -7594,6 +7705,50 @@ body.modal-open {
         min-height: 36px;
         padding: 0 0.95rem;
         font-size: 0.82rem;
+    }
+
+    .size-guide-modal-content {
+        padding: 1.45rem 0.9rem 1rem;
+    }
+
+    .size-guide-modal-content h2 {
+        max-width: calc(100% - 52px);
+        margin-bottom: 0.8rem;
+        font-size: clamp(2.05rem, 10.5vw, 2.65rem);
+    }
+
+    .size-guide-copy {
+        gap: 0.62rem;
+        font-size: 0.88rem;
+        line-height: 1.5;
+    }
+
+    .size-guide-section {
+        gap: 0.5rem;
+    }
+
+    .size-guide-section h3 {
+        font-size: 0.78rem;
+        letter-spacing: 0.07em !important;
+    }
+
+    .size-guide-tip {
+        padding: 0.65rem 0.72rem;
+    }
+
+    .size-guide-image-frame {
+        margin: 0.95rem 0;
+        border-radius: 11px;
+    }
+
+    .size-guide-actions {
+        margin-top: 1rem;
+    }
+
+    .size-guide-actions .club-modal-primary {
+        width: 100%;
+        min-height: 46px;
+        font-size: 0.78rem;
     }
 
     .club-rules {

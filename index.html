@@ -38,7 +38,7 @@
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.26">
+  <link rel="stylesheet" href="css2.css?v=1.0.27">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -54,7 +54,7 @@
         <li><a href="#produtos" onclick="filterProducts('all'); scrollToProducts(); toggleSidebar(); return false;">Lançamentos</a></li>
         <li><a href="#" onclick="toggleSidebar(); setTimeout(openClubVersatilModal, 250); return false;">Clube Versátil</a></li>
         <li><a href="#" onclick="toggleSidebar(); setTimeout(openNossaEssenciaModal, 250); return false;">Nossa Essência</a></li>
-        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('guia'), 250); return false;">Guia de Medidas</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(openSizeGuideModal, 250); return false;">Guia de Medidas</a></li>
       </ul>
     </div>
     <div class="sidebar-section sidebar-account-section">
@@ -423,6 +423,57 @@
       </div>
       <div class="essence-modal-actions">
         <button class="club-modal-primary" type="button" onclick="closeNossaEssenciaModal(); scrollToProducts();">Ver Produtos</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="club-modal size-guide-modal" id="sizeGuideModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sizeGuideTitle">
+    <div class="club-modal-content size-guide-modal-content">
+      <button class="club-modal-close" type="button" onclick="closeSizeGuideModal()" aria-label="Fechar Guia de Medidas">&times;</button>
+      <span class="club-modal-kicker">Guia de Medidas</span>
+      <h2 id="sizeGuideTitle">Guia de Medidas Versátil</h2>
+
+      <div class="size-guide-copy">
+        <p>Escolher o tamanho certo faz toda diferença na sua experiência com a peça.</p>
+        <p>Nossas peças possuem elasticidade, conforto e caimento pensado para acompanhar o corpo em movimento. Para encontrar o tamanho ideal, confira suas medidas de busto, cintura e quadril e compare com a tabela abaixo.</p>
+        <p>As medidas são aproximadas e podem variar de acordo com a modelagem, tecido e elasticidade de cada peça.</p>
+
+        <section class="size-guide-section">
+          <h3>Como medir:</h3>
+          <div class="size-guide-measure-list">
+            <p><strong>Busto:</strong> Meça ao redor da parte mais volumosa dos seios, mantendo a fita reta e confortável.</p>
+            <p><strong>Cintura:</strong> Meça a parte mais fina da cintura, sem apertar a fita.</p>
+            <p><strong>Quadril:</strong> Meça ao redor da parte mais larga do quadril.</p>
+          </div>
+          <p class="size-guide-tip"><strong>Dica Versátil:</strong> use uma fita métrica flexível e tire as medidas com o corpo relaxado.</p>
+        </section>
+      </div>
+
+      <figure class="size-guide-image-frame">
+        <img src="assets/home/guia-medidas-versatil.jpeg" alt="Guia de Medidas Versátil com tabela de busto, cintura e quadril" loading="lazy" decoding="async">
+      </figure>
+
+      <div class="size-guide-copy">
+        <section class="size-guide-section">
+          <h3>Como escolher seu tamanho:</h3>
+          <p>Se você está entre dois tamanhos, escolha de acordo com a sensação que prefere ao vestir:</p>
+          <ul>
+            <li>Para um caimento mais ajustado: escolha o menor tamanho.</li>
+            <li>Para mais conforto e liberdade: escolha o maior tamanho.</li>
+          </ul>
+          <p>Em peças com maior compressão, como leggings e macacões, recomendamos escolher o tamanho maior caso você esteja entre duas numerações.</p>
+        </section>
+
+        <section class="size-guide-section">
+          <h3>Ainda está em dúvida?</h3>
+          <p>Se precisar de ajuda para escolher seu tamanho, fale com a gente pelo WhatsApp.</p>
+          <p>Vamos te orientar com carinho para encontrar a peça ideal para o seu corpo e sua rotina.</p>
+          <p><strong>Seja você, seja VERSÁTIL.</strong></p>
+        </section>
+      </div>
+
+      <div class="size-guide-actions">
+        <button class="club-modal-primary" type="button" onclick="openSizeGuideWhatsApp()">Falar no WhatsApp</button>
       </div>
     </div>
   </div>
@@ -1168,7 +1219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.16"></script>
+  <script defer src="script2.js?v=1.1.17"></script>
   
 </body>
 </html>

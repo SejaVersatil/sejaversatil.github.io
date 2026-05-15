@@ -6,13 +6,13 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Upgrade do painel de estoque publicado em `main` e validado no site publico.
+- Guia de Medidas implementado, validado localmente e pronto para publicacao em `main`.
 
 ## Criterios de conclusao
-- Painel deve manter o modelo atual de produtos/variantes no Firebase.
-- Estoque detalhado deve ter resumo, busca, filtros, exportacao CSV e edicao inline.
-- Alteracoes inline devem ser salvas em lote, atualizando variantes e `totalStock` do produto.
-- Layout do admin deve corrigir o cabecalho e melhorar leitura/uso em desktop e telas menores.
+- Menu hamburguer mobile deve abrir o modal Guia de Medidas.
+- Botao "Tabela de medidas" da pagina de produto deve abrir o mesmo modal.
+- Modal deve conter os textos solicitados, a imagem anexada sem recriacao e CTA para WhatsApp.
+- Nao alterar regras de produto, checkout, carrinho ou Clube Versatil.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -47,3 +47,4 @@ Controle da tarefa atual.
 - 2026-05-15: Icone "Indique amigas" do modal Clube Versatil ajustado para duas pessoas preenchidas e separadas com coracao acima.
 - 2026-05-15: Botao "Ver Produtos" da modal Nossa Essencia ajustado para ficar menor, delicado e alinhado a direita.
 - 2026-05-15: Upgrade do painel admin de estoque com resumo, filtros, busca, edicao inline, exportacao CSV e melhorias responsivas.
+- 2026-05-15: Guia de Medidas estruturado em modal na home/menu mobile e pagina de produto, usando a imagem oficial anexada.
