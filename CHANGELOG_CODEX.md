@@ -13,8 +13,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: banner mobile Clube Versatil voltou a exibir somente a seta direita do hero, mantendo a seta esquerda oculta para nao sobrepor as informacoes do banner.
-- Validacao: `node --check sw.js`; `git diff --check`; conferido versionamento `css2.css?v=1.0.30` e service worker `v1.0.57`.
-- Proxima acao: publicar e validar no site publico.
+- Validacao: `node --check sw.js`; `git diff --check`; site publico confirmou `css2.css?v=1.0.30`, regras `.hero-nav-prev`/`.hero-nav-next` do Clube Versatil e service worker `v1.0.57`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/notificacoes

@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Hero mobile Clube Versatil ajustado para exibir apenas a seta direita do carrossel.
+- Hero mobile Clube Versatil ajustado, publicado em `main` e validado no site publico.
 
 ## Criterios de conclusao
 - No mobile, o banner Clube Versatil deve manter a seta esquerda oculta.
