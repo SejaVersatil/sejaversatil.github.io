@@ -3,11 +3,11 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Trocar visual do modal Clube Versatil pelo modelo novo enviado pelo usuario.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
-- Modelo novo do modal aplicado localmente.
-- Validacao local concluida; publicacao pendente.
+- Modal Clube Versatil redesenhado, publicado em `main` e validado no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Modal deve abrir ao clicar no banner Clube Versatil.
