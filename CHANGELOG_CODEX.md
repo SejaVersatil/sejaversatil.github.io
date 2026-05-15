@@ -19,8 +19,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `meus_pedidos.html`
   - arquivos de contexto Codex
 - Resumo: carregamento mobile-first otimizado sem reduzir qualidade visual; a home prioriza o hero ativo da viewport, adia heroes secundarios, produtos, videos e backgrounds abaixo da dobra, usa favicon/icones leves e service worker com cache inicial enxuto.
-- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local em mobile/desktop confirmou hero correto por viewport, sem videos nem imagens de produto no carregamento inicial mobile; primeiro promo carrega no mobile porque fica visivel no fim da primeira tela.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright local em mobile/desktop confirmou hero correto por viewport, sem videos nem imagens de produto no carregamento inicial mobile; site publico confirmou `script2.js?v=1.1.15`, `css2.css?v=1.0.21` e `sw.js` com cache `v1.0.47`.
+- Proxima acao: acompanhar desempenho real no celular e aguardar proxima instrucao.
 
 ## 2026-05-14
 - Tipo: funcional/admin

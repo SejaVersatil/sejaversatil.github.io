@@ -3,11 +3,11 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Otimizar carregamento do site com prioridade mobile e depois desktop.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
-- Otimizacoes aplicadas e validadas localmente.
-- Publicacao em `main` pendente nesta etapa.
+- Otimizacoes de carregamento aplicadas, publicadas em `main` e validadas no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Mobile deve priorizar somente o hero ativo da viewport no carregamento inicial.
@@ -41,3 +41,4 @@ Controle da tarefa atual.
 - 2026-05-14: Diagnosticadas falhas de imagens por links Imgur 403; implementado fallback, carregamento mais economico e compressao WebP em novos uploads.
 - 2026-05-14: Regras completas do Clube Versatil adicionadas e fluxo de upload/cadastro manual de produto no admin reforcado.
 - 2026-05-15: Otimizacao de carregamento mobile-first aplicada: preload do hero ativo, lazy/defer para imagens e videos abaixo da dobra, favicon leve e service worker enxuto.
+- 2026-05-15: Deploy da otimizacao publicado e validado no GitHub Pages.
