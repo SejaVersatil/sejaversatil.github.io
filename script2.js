@@ -553,7 +553,29 @@ function normalizeProductImages(value, fallback = DEFAULT_PRODUCT_IMAGE) {
         .map(getMirroredProductImageUrl)
         .filter(Boolean);
 
-    return images.length > 0 ? [...new Set(images)] : (fallback ? [fallback] : []);
+    if (images.length === 0) {
+        return fallback ? [fallback] : [];
+    }
+
+    return prioritizeReliableProductImages([...new Set(images)]);
+}
+
+function isLocalProductImage(imageSrc) {
+    return /^\.?\/?assets\/products\//i.test(String(imageSrc || '').trim());
+}
+
+function isImgurProductImage(imageSrc) {
+    return /^https:\/\/i\.imgur\.com\//i.test(String(imageSrc || '').trim());
+}
+
+function prioritizeReliableProductImages(images = []) {
+    const localImages = images.filter(isLocalProductImage);
+    if (localImages.length === 0) return images;
+
+    return [
+        ...localImages,
+        ...images.filter(image => !isLocalProductImage(image) && !isImgurProductImage(image))
+    ];
 }
 
 function normalizeProductColors(value) {
@@ -754,6 +776,134 @@ function isRenderableImage(imageSrc) {
 
 function isRealImage(imageSrc) {
     return isRenderableImage(imageSrc);
+}
+
+function getCssUrlValue(imageSrc) {
+    return `url("${String(imageSrc || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}")`;
+}
+
+function getProductImageBackgroundStyle(imageSrc) {
+    return `background-image: ${sanitizeInput(getCssUrlValue(imageSrc))}; background-size: cover; background-position: center;`;
+}
+
+function getProductImageSlideMarkup(imageSrc, productName = '', index = 0, options = {}) {
+    const isReal = isRenderableImage(imageSrc);
+    const activeClass = index === 0 ? ' active' : '';
+
+    if (!isReal) {
+        return `
+            <div class="product-image-slide${activeClass}"
+                 style="background: ${imageSrc || DEFAULT_PRODUCT_IMAGE}"></div>
+        `;
+    }
+
+    const safeSrc = sanitizeInput(imageSrc);
+    const safeAlt = sanitizeInput(productName || 'Produto Versatil');
+    const shouldLoadNow = index === 0;
+    const loading = options.priority ? 'eager' : 'lazy';
+    const fetchPriority = options.priority ? ' fetchpriority="high"' : '';
+    const imageMarkup = shouldLoadNow
+        ? `<img src="${safeSrc}" alt="${safeAlt}" loading="${loading}" decoding="async"${fetchPriority} onerror="handleProductImageError(this)">`
+        : '';
+
+    return `
+        <div class="product-image-slide${activeClass}"
+             data-image-src="${safeSrc}"
+             data-image-alt="${safeAlt}"
+             data-image-loaded="${shouldLoadNow ? 'true' : 'false'}"
+             style="${shouldLoadNow ? getProductImageBackgroundStyle(imageSrc) : ''}">
+            ${imageMarkup}
+        </div>
+    `;
+}
+
+function loadProductSlideImage(slide) {
+    if (!slide || slide.dataset.imageLoaded === 'true') return;
+
+    const src = slide.dataset.imageSrc;
+    if (!src) return;
+
+    slide.style.backgroundImage = getCssUrlValue(src);
+    slide.style.backgroundSize = 'cover';
+    slide.style.backgroundPosition = 'center';
+    slide.dataset.imageLoaded = 'true';
+
+    if (!slide.querySelector('img')) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = slide.dataset.imageAlt || 'Produto Versatil';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.onerror = function() {
+            handleProductImageError(this);
+        };
+        slide.appendChild(img);
+    }
+}
+
+function getAvailableProductSlideIndex(slides, startIndex, direction = 1) {
+    if (!slides.length) return -1;
+
+    for (let offset = 0; offset < slides.length; offset += 1) {
+        const index = (startIndex + (offset * direction) + (slides.length * 10)) % slides.length;
+        if (!slides[index].classList.contains('product-image-slide-failed')) {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
+function showProductImageFallback(card) {
+    const carousel = card?.querySelector('.product-image-carousel');
+    if (carousel) {
+        carousel.classList.add('product-image-carousel-fallback');
+    }
+
+    const arrows = card?.querySelector('.product-carousel-arrows');
+    const dots = card?.querySelector('.product-carousel-dots');
+    if (arrows) arrows.style.display = 'none';
+    if (dots) dots.style.display = 'none';
+}
+
+function activateProductImageSlide(card, requestedIndex, direction = 1) {
+    if (!card) return -1;
+
+    const slides = [...card.querySelectorAll('.product-image-slide')];
+    const dots = [...card.querySelectorAll('.product-carousel-dot')];
+    const activeIndex = getAvailableProductSlideIndex(slides, requestedIndex, direction);
+
+    if (activeIndex < 0) {
+        showProductImageFallback(card);
+        return -1;
+    }
+
+    slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === activeIndex);
+    });
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === activeIndex);
+        dot.classList.toggle('failed', slides[index]?.classList.contains('product-image-slide-failed'));
+    });
+
+    loadProductSlideImage(slides[activeIndex]);
+    return activeIndex;
+}
+
+function handleProductImageError(img) {
+    const slide = img?.closest('.product-image-slide');
+    const card = img?.closest('.product-card');
+    if (!slide || !card) return;
+
+    slide.classList.add('product-image-slide-failed');
+    slide.style.backgroundImage = 'none';
+    img.remove();
+
+    if (slide.classList.contains('active')) {
+        const slides = [...card.querySelectorAll('.product-image-slide')];
+        const failedIndex = slides.indexOf(slide);
+        activateProductImageSlide(card, failedIndex + 1, 1);
+    }
 }
 
 function isNewProduct(product) {
@@ -1248,7 +1398,7 @@ function renderProducts() {
     // === OTIMIZAÇÃO DE PERFORMANCE (DocumentFragment) ===
     const fragment = document.createDocumentFragment();
     
-    paginatedProducts.forEach(product => {
+    paginatedProducts.forEach((product, productIndex) => {
         // Cálculos do Produto
         let images = [];
         if (Array.isArray(product.images) && product.images.length > 0) {
@@ -1291,13 +1441,9 @@ function renderProducts() {
 
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
-                            const isRealImage = isRenderableImage(img);
-                            return `
-                                <div class="product-image-slide ${index === 0 ? 'active' : ''}" 
-                                     style="${isRealImage ? `background-image: url('${img}')` : `background: ${img}`}">
-                                    ${isRealImage ? `<img src="${img}" alt="${sanitizeInput(product.name)}" loading="lazy" decoding="async">` : ''}
-                                </div>
-                            `;
+                            return getProductImageSlideMarkup(img, product.name, index, {
+                                priority: productIndex < 4 && index === 0
+                            });
                         }).join('')}
                     </div>
                     
@@ -1446,7 +1592,6 @@ function renderBestSellers() {
         
         const isFav = isFavorite(product.id);
         const firstImage = images[0];
-        const isRealImage = isRenderableImage(firstImage);
         
         return `
             <div class="product-card" onclick="openProductDetails('${product.id}')">
@@ -1458,7 +1603,7 @@ function renderBestSellers() {
                     </button>
                     
                     <div class="product-image-carousel">
-                        <div class="product-image-slide active" style="${isRealImage ? `background-image: url(${firstImage}); background-size: cover; background-position: center;` : `background: ${firstImage}`}"></div>
+                        ${getProductImageSlideMarkup(firstImage, product.name, 0)}
                     </div>
                     
                     ${product.badge ? `<span class="product-badge">${sanitizeInput(product.badge)}</span>` : ''}
@@ -1678,13 +1823,12 @@ function renderRelatedProducts(category, currentId) {
         }
         
         const firstImage = images[0];
-        const isRealImage = isRenderableImage(firstImage);
         
         return `
             <div class="product-card" onclick="openProductDetails('${product.id}')">
                 <div class="product-image">
-                    <div class="product-image-slide active" 
-                         style="${isRealImage ? `background-image: url('${firstImage}'); background-size: cover; background-position: center;` : `background: ${firstImage}`}">
+                    <div class="product-image-carousel">
+                        ${getProductImageSlideMarkup(firstImage, product.name, 0)}
                     </div>
                 </div>
                 <div class="product-info">
@@ -2397,7 +2541,6 @@ function openFavorites() {
         }
         
         const firstImage = images[0];
-        const isRealImage = isRenderableImage(firstImage);
         const discountPercent = product.oldPrice ? 
             Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
         
@@ -2431,11 +2574,7 @@ function openFavorites() {
                         `<div class="discount-badge">-${discountPercent}%</div>` : ''}
                     
                     <div class="product-image-carousel">
-                        <div class="product-image-slide active" 
-                             style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}">
-                            ${isRealImage ?
-                                `<img src="${firstImage}" alt="${product.name}" loading="lazy">` : ''}
-                        </div>
+                        ${getProductImageSlideMarkup(firstImage, product.name, 0)}
                     </div>
                     
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
@@ -2872,8 +3011,7 @@ function setupAutoCarousel() {
             
             carouselIntervals[productId] = setInterval(() => {
                 const cardSlides = card.querySelectorAll('.product-image-slide');
-                currentSlideIndex = (currentSlideIndex + 1) % cardSlides.length;
-                updateCarouselSlides(card, currentSlideIndex);
+                currentSlideIndex = updateCarouselSlides(card, (currentSlideIndex + 1) % cardSlides.length);
             }, 1500);
         };
         
@@ -2882,7 +3020,7 @@ function setupAutoCarousel() {
                 clearInterval(carouselIntervals[productId]);
             }
             currentSlideIndex = 0;
-            updateCarouselSlides(card, 0);
+            currentSlideIndex = updateCarouselSlides(card, 0);
         };
         
         // ============================================================
@@ -2899,14 +3037,7 @@ function setupAutoCarousel() {
 }
 
 function updateCarouselSlides(card, activeIndex) {
-    const slides = card.querySelectorAll('.product-image-slide');
-    const dots = card.querySelectorAll('.product-carousel-dot');
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('active', index === activeIndex);
-    });
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === activeIndex);
-    });
+    return activateProductImageSlide(card, activeIndex, 1);
 }
 
 function nextProductImage(productId, event) {
@@ -2915,15 +3046,8 @@ function nextProductImage(productId, event) {
     
     clearInterval(carouselIntervals[productId]);
     const slides = card.querySelectorAll('.product-image-slide');
-    const dots = card.querySelectorAll('.product-carousel-dot');
     let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-    
-    slides[currentIndex].classList.remove('active');
-    dots[currentIndex].classList.remove('active');
-    currentIndex = (currentIndex + 1) % slides.length;
-    
-    slides[currentIndex].classList.add('active');
-    dots[currentIndex].classList.add('active');
+    activateProductImageSlide(card, currentIndex + 1, 1);
     
     setTimeout(() => {
         setupAutoCarousel();
@@ -2937,15 +3061,8 @@ function prevProductImage(productId, event) {
     clearInterval(carouselIntervals[productId]);
     
     const slides = card.querySelectorAll('.product-image-slide');
-    const dots = card.querySelectorAll('.product-carousel-dot');
     let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-    
-    slides[currentIndex].classList.remove('active');
-    dots[currentIndex].classList.remove('active');
-    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-    
-    slides[currentIndex].classList.add('active');
-    dots[currentIndex].classList.add('active');
+    activateProductImageSlide(card, currentIndex - 1, -1);
     setTimeout(() => {
         setupAutoCarousel();
     }, 3000);
@@ -2960,11 +3077,7 @@ function goToProductImage(productId, index, event) {
     const slides = card.querySelectorAll('.product-image-slide');
     const dots = card.querySelectorAll('.product-carousel-dot');
     
-    slides.forEach(slide => slide.classList.remove('active'));
-    dots.forEach(dot => dot.classList.remove('active'));
-    
-    slides[index].classList.add('active');
-    dots[index].classList.add('active');
+    activateProductImageSlide(card, index, 1);
     setTimeout(() => {
         setupAutoCarousel();
     }, 3000);
@@ -3379,7 +3492,6 @@ function performHeaderSearch() {
         }
         
         const firstImage = images[0];
-        const isRealImage = isRenderableImage(firstImage);
         const isFav = isFavorite(product.id);
         const discountPercent = product.oldPrice ?
         Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
@@ -3393,10 +3505,7 @@ function performHeaderSearch() {
                     </button>
                     
                     <div class="product-image-carousel">
-                        <div class="product-image-slide active" 
-                             style="${isRealImage ? `background-image: url('${firstImage}')` : `background: ${firstImage}`}">
-                            ${isRealImage ? `<img src="${firstImage}" alt="${product.name}" loading="lazy">` : ''}
-                        </div>
+                        ${getProductImageSlideMarkup(firstImage, product.name, 0)}
                     </div>
                     
                     ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
@@ -3821,6 +3930,62 @@ async function saveProduct(event) {
     }
 }
 
+function sanitizeStorageFileName(fileName = 'produto.webp') {
+    return String(fileName)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9._-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'produto.webp';
+}
+
+function loadImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('Nao foi possivel otimizar a imagem.'));
+        };
+        img.src = url;
+    });
+}
+
+async function optimizeProductImageFile(file) {
+    if (!file.type.startsWith('image/') || file.type === 'image/gif' || file.type === 'image/svg+xml') {
+        return file;
+    }
+
+    try {
+        const img = await loadImageFile(file);
+        const maxDimension = 1600;
+        const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.82));
+        if (!blob || blob.size >= file.size) return file;
+
+        const optimizedName = sanitizeStorageFileName(file.name).replace(/\.[^.]+$/, '') + '.webp';
+        return new File([blob], optimizedName, {
+            type: 'image/webp',
+            lastModified: Date.now()
+        });
+    } catch (error) {
+        console.warn('Nao foi possivel otimizar imagem antes do upload:', error);
+        return file;
+    }
+}
+
 async function handleImageUpload(event) {
     const files = event.target.files;
     if (!files.length) return;
@@ -3851,9 +4016,12 @@ async function handleImageUpload(event) {
         }
 
         try {
+            const optimizedFile = await optimizeProductImageFile(file);
             const storageRef = storage.ref();
-            const imageRef = storageRef.child(`produtos/${Date.now()}_${file.name}`);
-            await imageRef.put(file);
+            const imageRef = storageRef.child(`produtos/${Date.now()}_${sanitizeStorageFileName(optimizedFile.name || file.name)}`);
+            await imageRef.put(optimizedFile, {
+                contentType: optimizedFile.type || file.type || 'image/webp'
+            });
             const imageUrl = await imageRef.getDownloadURL();
             tempProductImages.push(imageUrl);
             renderProductImages();

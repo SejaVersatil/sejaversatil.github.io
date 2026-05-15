@@ -56,6 +56,9 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Clique no banner Clube Versatil abre um modal na home com beneficios de cashback, botao "Quero meu codigo" para WhatsApp e botao "Ver regras".
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
+- Imagens quebradas em produtos antigos foram diagnosticadas como URLs externas do Imgur retornando 403, nao como limite confirmado do Firebase. Produtos com assets locais em `assets/products` carregam corretamente.
+- Home prioriza imagens locais quando existem, carrega menos imagens do carrossel ao mesmo tempo e tenta a proxima imagem antes de mostrar fallback visual.
+- Upload de novas imagens pelo admin comprime/redimensiona para WebP antes de enviar ao Firebase Storage, reduzindo uso de armazenamento/banda.
 - Projeto aguardando proxima instrucao do usuario.
 
 ## Pontos sensiveis
@@ -65,11 +68,13 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Nao substituir padroes existentes por solucoes genericas quando a estrutura do projeto for identificada.
 - Cuidado com regras duplicadas no fim de `css2.css`; as regras finais costumam sobrescrever blocos anteriores.
 - Nao transformar o slide V1 desktop sem pedido, pois ele usa informacao embutida na imagem original.
+- Produtos antigos com todas as fotos no Imgur precisam ter fotos reenviadas/migradas para `assets/products` ou Firebase Storage; fallback visual nao recupera imagem removida/bloqueada na origem.
 
 ## Pendencias atuais
 - Confirmar fluxo de deploy/publicacao desejado.
 - Produzir/substituir imagens mobile dedicadas dos outros heroes, se necessario, na proporcao 9:16.
 - Confirmar comandos de lint/testes, se existirem.
+- Reenviar/migrar fotos dos produtos antigos que ainda dependem exclusivamente do Imgur, como Conjunto Resist e Conjunto Mouve.
 
 ## Observacoes para proximas sessoes
 - Antes de qualquer nova tarefa, ler `AGENTS.md`, `PROJECT_CONTEXT.md`, `TASKS.md` e consultar `CHANGELOG_CODEX.md` se houver necessidade de historico.

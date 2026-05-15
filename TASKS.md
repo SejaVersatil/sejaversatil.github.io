@@ -3,18 +3,20 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Diagnosticar e corrigir falhas de carregamento de imagens de produtos.
 
 ## Status
-- Modal do Clube Versatil implementado, publicado e validado no site publico.
-- Botao "Quero meu codigo" abre WhatsApp com mensagem automatica correta.
-- Nenhuma tarefa funcional em andamento.
+- Causa identificada: imagens antigas do Imgur retornando 403.
+- Fallback e tentativa automatica de proxima imagem implementados na home.
+- Priorizacao de assets locais implementada na home e pagina de produto.
+- Compressao WebP para novos uploads no Firebase implementada.
+- Aguardando deploy/validacao publica.
 
 ## Criterios de conclusao
-- Clique no banner Clube Versatil abre modal sem sair da pagina.
-- Modal mostra beneficios R$10, R$25 e R$40.
-- Botao "Ver regras" revela as regras no modal.
-- Botao "Quero meu codigo" abre WhatsApp cadastrado com mensagem automatica.
+- Produtos com imagem local carregam antes de tentar Imgur.
+- Se uma URL falhar, o card tenta a proxima imagem do produto.
+- Se nenhuma imagem carregar, o card mostra fallback limpo sem icone quebrado.
+- Novos uploads sao otimizados antes de ir ao Firebase Storage.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -38,3 +40,4 @@ Controle da tarefa atual.
 - 2026-05-14: Primeiro hero trocado para Clube Versatil, com assets separados para desktop e mobile.
 - 2026-05-14: Banner desktop Clube Versatil substituido por arte ajustada; popup e mensagem de 10% removidos.
 - 2026-05-14: Modal do Clube Versatil criado no clique do banner, com CTA para WhatsApp e regras expansivas.
+- 2026-05-14: Diagnosticadas falhas de imagens por links Imgur 403; implementado fallback, carregamento mais economico e compressao WebP em novos uploads.

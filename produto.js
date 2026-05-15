@@ -57,9 +57,21 @@ const mirrorProductImageUrl = (imageUrl) => {
     return value;
 };
 
+const isReliableLocalProductImage = (s) => typeof s === 'string' && /^\.?\/?assets\/products\//i.test(s.trim());
+const isImgurProductImage = (s) => typeof s === 'string' && /^https:\/\/i\.imgur\.com\//i.test(s.trim());
+
+const prioritizeReliableProductImages = (images = []) => {
+    const localImages = images.filter(isReliableLocalProductImage);
+    if (!localImages.length) return images;
+    return [
+        ...localImages,
+        ...images.filter(img => !isReliableLocalProductImage(img) && !isImgurProductImage(img))
+    ];
+};
+
 const normalizeProductImageList = (value) => {
     const list = Array.isArray(value) ? value : (value ? [value] : []);
-    return [...new Set(list.map(mirrorProductImageUrl).filter(Boolean))];
+    return prioritizeReliableProductImages([...new Set(list.map(mirrorProductImageUrl).filter(Boolean))]);
 };
 
 const normalizeProductMedia = (data = {}) => {

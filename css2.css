@@ -7145,3 +7145,39 @@ body.modal-open {
     }
 }
 
+/* ==========================================================================
+   PRODUCT IMAGE RESILIENCE
+   ========================================================================== */
+.product-image-slide img {
+    display: block;
+}
+
+.product-image-slide-failed {
+    opacity: 0 !important;
+}
+
+.product-image-carousel-fallback {
+    position: relative;
+    background: linear-gradient(135deg, #f2f0ec 0%, #e6e2dc 100%);
+}
+
+.product-image-carousel-fallback::after {
+    content: "Imagem em atualizacao";
+    position: absolute;
+    inset: auto 1rem 1rem 1rem;
+    z-index: 2;
+    padding: 0.65rem 0.8rem;
+    background: rgba(255, 255, 255, 0.82);
+    color: #4b4b43;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.product-carousel-dot.failed {
+    opacity: 0.22;
+}
+

@@ -3,6 +3,20 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-14
+- Tipo: performance/resiliencia
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `script2.js`
+  - `produto.html`
+  - `produto.js`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: diagnosticado que produtos antigos com imagens quebradas usam URLs do Imgur retornando 403; home agora prioriza assets locais, carrega menos imagens de carrossel, tenta a proxima imagem quando uma URL falha e mostra fallback limpo se todas falharem. Novos uploads no admin passam por redimensionamento/compressao WebP antes do Firebase Storage.
+- Validacao: `node --check script2.js`; `node --check produto.js`; `git diff --check`; Playwright local confirmou Nyra/Juna carregando via assets locais, Resist/Mouve usando fallback por nao terem copias locais e Imgur retornando 403.
+- Proxima acao: publicar em `main`, validar no site publico e reenviar/migrar fotos dos produtos que ainda dependem so do Imgur.
+
+## 2026-05-14
 - Tipo: funcional/conversao
 - Arquivos alterados:
   - `index.html`
