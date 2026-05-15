@@ -8,8 +8,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `admin-panel.html`
   - arquivos de contexto Codex
 - Resumo: painel de estoque ganhou resumo operacional, busca, filtros por status/categoria, edicao inline de estoque e disponibilidade, salvamento em lote no Firebase, exportacao CSV, toast de feedback, suporte a imagens locais e layout admin responsivo com cabecalho corrigido.
-- Validacao: parse do script inline com Node; `git diff --check`; Playwright local com dados simulados confirmou renderizacao do painel, filtros, contadores, edicao inline, botao de salvar, contador de pendencias, ausencia de erros de console e layout com header em coluna.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: parse do script inline com Node; `git diff --check`; Playwright local com dados simulados confirmou renderizacao do painel, filtros, contadores, edicao inline, botao de salvar, contador de pendencias, ausencia de erros de console e layout com header em coluna; site publico confirmou `admin-panel.html` com resumo, edicao inline, exportacao CSV e cabecalho corrigido.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/conteudo

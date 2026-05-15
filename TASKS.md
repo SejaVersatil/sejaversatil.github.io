@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Upgrade do painel de estoque implementado localmente e em preparacao para publicacao.
+- Upgrade do painel de estoque publicado em `main` e validado no site publico.
 
 ## Criterios de conclusao
 - Painel deve manter o modelo atual de produtos/variantes no Firebase.
