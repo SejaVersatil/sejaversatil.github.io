@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Prompt de notificacoes ajustado e pronto para publicacao em `main`.
+- Prompt de notificacoes publicado em `main` e validado no site publico.
 
 ## Criterios de conclusao
 - Aviso de permissao de notificacoes deve sair do visual generico/roxo.

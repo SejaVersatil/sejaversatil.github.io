@@ -14,7 +14,7 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: prompt de permissao de notificacoes trocado do visual generico com emoji/gradiente roxo para card premium em creme/oliva, monograma Versatil, textos refinados e botoes coerentes com a marca.
-- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Browser local aberto, mas o prompt nao apareceu naturalmente porque a permissao do navegador local nao estava em estado default.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Browser local aberto, mas o prompt nao apareceu naturalmente porque a permissao do navegador local nao estava em estado default; site publico confirmou `index.html`, `css2.css?v=1.0.29`, `script2.js?v=1.1.19` e `sw.js` cache `v1.0.56`.
 - Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
