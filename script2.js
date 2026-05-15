@@ -2932,6 +2932,42 @@ function openClubVersatilWhatsApp() {
     window.open(whatsappURL, '_blank', 'noopener,noreferrer');
 }
 
+function openNossaEssenciaModal() {
+    const modal = document.getElementById('nossaEssenciaModal');
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const closeButton = modal.querySelector('.club-modal-close');
+    if (closeButton) {
+        closeButton.focus();
+    }
+}
+
+function closeNossaEssenciaModal() {
+    const modal = document.getElementById('nossaEssenciaModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function openWhatsAppSupport(topic = 'atendimento') {
+    const supportMessages = {
+        guia: 'Olá! Quero ajuda com o guia de medidas da Versátil.',
+        frete: 'Olá! Quero tirar uma dúvida sobre frete e entrega na Versátil.',
+        trocas: 'Olá! Quero tirar uma dúvida sobre trocas e devoluções na Versátil.',
+        pagamento: 'Olá! Quero tirar uma dúvida sobre formas de pagamento na Versátil.',
+        atendimento: 'Olá! Vim pelo site da Versátil e preciso de atendimento.'
+    };
+    const message = supportMessages[topic] || supportMessages.atendimento;
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+}
+
 const clubVersatilModal = document.getElementById('clubVersatilModal');
 
 if (clubVersatilModal) {
@@ -2942,9 +2978,20 @@ if (clubVersatilModal) {
     });
 }
 
+const nossaEssenciaModal = document.getElementById('nossaEssenciaModal');
+
+if (nossaEssenciaModal) {
+    nossaEssenciaModal.addEventListener('click', (event) => {
+        if (event.target === nossaEssenciaModal) {
+            closeNossaEssenciaModal();
+        }
+    });
+}
+
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         closeClubVersatilModal();
+        closeNossaEssenciaModal();
     }
 });
 

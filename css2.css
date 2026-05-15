@@ -7229,6 +7229,36 @@ body.modal-open {
     text-align: center;
 }
 
+.essence-modal-content {
+    width: min(94vw, 760px);
+}
+
+.essence-modal-content h2 {
+    max-width: 100%;
+    margin-bottom: 1.15rem;
+}
+
+.essence-modal-copy {
+    display: grid;
+    gap: 0.95rem;
+    color: #3c3c35;
+    font-size: clamp(0.98rem, 1.8vw, 1.08rem);
+    line-height: 1.68;
+}
+
+.essence-modal-copy p {
+    margin: 0;
+}
+
+.essence-modal-copy strong {
+    color: #2f3522;
+    letter-spacing: 0.08em;
+}
+
+.essence-modal-actions {
+    margin-top: 1.5rem;
+}
+
 .club-rules {
     margin-top: 1.15rem;
     padding: 1rem;
@@ -7401,6 +7431,16 @@ body.modal-open {
     .club-modal-footnote {
         margin-top: 0.75rem;
     }
+
+    .essence-modal-content {
+        width: min(92vw, 780px);
+    }
+
+    .essence-modal-copy {
+        gap: 0.72rem;
+        font-size: 0.94rem;
+        line-height: 1.52;
+    }
 }
 
 @media (max-width: 520px) {
@@ -7522,6 +7562,20 @@ body.modal-open {
     .club-modal-footnote {
         margin-top: 0.7rem;
         font-size: 0.76rem;
+    }
+
+    .essence-modal-content h2 {
+        font-size: clamp(2.55rem, 14vw, 3.2rem);
+    }
+
+    .essence-modal-copy {
+        gap: 0.72rem;
+        font-size: 0.9rem;
+        line-height: 1.52;
+    }
+
+    .essence-modal-actions {
+        margin-top: 1rem;
     }
 
     .club-rules {

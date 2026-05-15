@@ -38,7 +38,7 @@
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.24">
+  <link rel="stylesheet" href="css2.css?v=1.0.25">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -51,7 +51,10 @@
     <div class="sidebar-section">
       <h3>Explore</h3>
       <ul>
-        <li><a href="#produtos" onclick="toggleSidebar()">Lançamentos</a></li>
+        <li><a href="#produtos" onclick="filterProducts('all'); scrollToProducts(); toggleSidebar(); return false;">Lançamentos</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(openClubVersatilModal, 250); return false;">Clube Versátil</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(openNossaEssenciaModal, 250); return false;">Nossa Essência</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('guia'), 250); return false;">Guia de Medidas</a></li>
       </ul>
     </div>
     <div class="sidebar-section sidebar-account-section">
@@ -65,10 +68,10 @@
       <h3>Categorias</h3>
       <ul>
         <li><a href="#" onclick="navigateToCategory('blusas'); toggleSidebar()">Blusas</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto calca'); toggleSidebar()">Conjunto Calça</a></li>
-        <li><a href="#" onclick="navigateToCategory('peca unica'); toggleSidebar()">Peça Única</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto short saia'); toggleSidebar()">Conjunto Short Saia</a></li>
-        <li><a href="#" onclick="navigateToCategory('conjunto short'); toggleSidebar()">Conjunto Short</a></li>
+        <li><a href="#" onclick="navigateToCategory('peca unica'); toggleSidebar()">Peças Únicas</a></li>
+        <li><a href="#" onclick="navigateToCategory('conjunto calca'); toggleSidebar()">Conjuntos com Calça</a></li>
+        <li><a href="#" onclick="navigateToCategory('conjunto short'); toggleSidebar()">Conjuntos com Short</a></li>
+        <li><a href="#" onclick="navigateToCategory('conjunto short saia'); toggleSidebar()">Conjuntos Short Saia</a></li>
         <li><a href="#" onclick="navigateToCategory('all'); toggleSidebar()">Todos os Produtos</a></li>
       </ul>
     </div>
@@ -76,6 +79,15 @@
       <h3>Coleções</h3>
       <ul>
         <li><a href="#" onclick="filterCollection('Coleção V1'); toggleSidebar(); return false;">Coleção V1</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h3>Suporte</h3>
+      <ul>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('frete'), 250); return false;">Frete e Entrega</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('trocas'), 250); return false;">Trocas e Devoluções</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('pagamento'), 250); return false;">Formas de Pagamento</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('atendimento'), 250); return false;">Atendimento</a></li>
       </ul>
     </div>
   </div>
@@ -396,6 +408,25 @@
     </div>
   </div>
 
+  <div class="club-modal essence-modal" id="nossaEssenciaModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nossaEssenciaTitle">
+    <div class="club-modal-content essence-modal-content">
+      <button class="club-modal-close" type="button" onclick="closeNossaEssenciaModal()" aria-label="Fechar Nossa Essência">&times;</button>
+      <span class="club-modal-kicker">Sobre a Versátil</span>
+      <h2 id="nossaEssenciaTitle">Nossa Essência</h2>
+      <div class="essence-modal-copy">
+        <p>A Versátil nasceu do desejo de levar até você peças que acompanham mulheres reais em diferentes momentos da rotina - do treino ao dia a dia, do movimento à pausa, da performance ao autocuidado.</p>
+        <p>Idealizada por Ana Carolina, a marca carrega um olhar atento para aquilo que realmente importa em uma peça fitness: conforto, segurança, caimento, qualidade e beleza. Cada escolha passa por uma seleção cuidadosa, pensada para que você se sinta confiante, livre e bem vestida em qualquer ocasião.</p>
+        <p>Acreditamos que uma roupa não precisa limitar quem você é. Ela precisa acompanhar sua intensidade, sua leveza, sua rotina e suas versões. Por isso, selecionamos peças que unem estética premium, tecidos confortáveis, bom caimento, sustentação e o compromisso com aquilo que faz diferença na experiência de uso: zero transparência, segurança e liberdade de movimento.</p>
+        <p>A Versátil é para quem treina, trabalha, vive, recomeça, se movimenta e escolhe se sentir bem todos os dias.</p>
+        <p>Mais do que moda fitness, entregamos uma seleção pensada para acompanhar histórias, fases e conquistas.</p>
+        <p><strong>Seja você, seja VERSÁTIL.</strong></p>
+      </div>
+      <div class="essence-modal-actions">
+        <button class="club-modal-primary" type="button" onclick="closeNossaEssenciaModal(); scrollToProducts();">Ver produtos</button>
+      </div>
+    </div>
+  </div>
+
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
       <div class="promo-card" onclick="navigateToCategory('conjunto short saia')">
@@ -545,7 +576,7 @@
       <div class="footer-section">
         <h4>Institucional</h4>
         <ul>
-          <li><a href="#">Sobre Nós</a></li>
+          <li><a href="#" onclick="openNossaEssenciaModal(); return false;">Nossa Essência</a></li>
           <li><a href="#">Trabalhe Conosco</a></li>
           <li><a href="#">Nossas Lojas</a></li>
           <li><a href="#">Política de Privacidade</a></li>
@@ -1137,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.15"></script>
+  <script defer src="script2.js?v=1.1.16"></script>
   
 </body>
 </html>

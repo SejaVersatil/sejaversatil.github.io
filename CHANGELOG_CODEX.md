@@ -3,6 +3,21 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-15
+- Tipo: conteudo/navegacao
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `script2.js`
+  - `produto.html`
+  - `checkout.html`
+  - `meus_pedidos.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: menu hamburguer mobile reorganizado em Explore, Conta, Categorias, Colecoes e Suporte; criada modal Nossa Essencia com texto institucional completo; footer trocou Sobre Nos por Nossa Essencia; suporte e Guia de Medidas abrem WhatsApp com mensagem especifica.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright mobile confirmou ordem do menu, abertura da modal Nossa Essencia pelo menu e footer, texto completo e WhatsApp de suporte.
+- Proxima acao: publicar em `main` e validar site publico.
+
+## 2026-05-15
 - Tipo: ajuste visual/conversao
 - Arquivos alterados:
   - `index.html`

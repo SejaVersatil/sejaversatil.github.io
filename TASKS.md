@@ -3,19 +3,19 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Organizar menu hamburguer mobile e adicionar Nossa Essencia.
 
 ## Status
-- Icones do modal Clube Versatil refinados, publicados em `main` e validados no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Menu mobile reorganizado localmente.
+- Modal Nossa Essencia criada localmente e vinculada ao menu/footer.
+- Validacao local concluida; publicacao pendente.
 
 ## Criterios de conclusao
-- Modal deve abrir ao clicar no banner Clube Versatil.
-- Icone 1 deve ter telefone preenchido.
-- Icone 2 deve ter duas pessoas separadas em perfil se olhando.
-- Icone 3 deve ter caixa/presente maior.
-- Botao "Quero meu codigo" deve manter redirecionamento para WhatsApp com mensagem automatica.
-- Botao "Ver regras" deve manter as regras completas expansivas.
+- Menu hamburguer deve seguir os grupos e a ordem solicitada.
+- Nossa Essencia deve abrir com o texto completo fornecido.
+- Footer deve trocar "Sobre Nos" por "Nossa Essencia" e abrir a mesma informacao.
+- Clube Versatil deve continuar abrindo o modal existente.
+- Suporte e Guia de Medidas devem ter acao funcional.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -46,3 +46,4 @@ Controle da tarefa atual.
 - 2026-05-15: Modal Clube Versatil redesenhado para modelo em 3 passos com Pix destacado, mantendo regras e WhatsApp.
 - 2026-05-15: Icones do modal Clube Versatil corrigidos para ficarem centralizados e proporcionais como na referencia.
 - 2026-05-15: Icones refinados novamente: telefone preenchido, pessoas separadas se olhando e presente maior.
+- 2026-05-15: Menu hamburguer reorganizado e modal Nossa Essencia criada com texto institucional completo.
