@@ -2842,9 +2842,15 @@ function closeClubVersatilModal() {
 
 function toggleClubVersatilRules() {
     const rules = document.getElementById('clubVersatilRules');
+    const trigger = document.querySelector('[aria-controls="clubVersatilRules"]');
     if (!rules) return;
 
     rules.hidden = !rules.hidden;
+    if (trigger) {
+        const isOpen = !rules.hidden;
+        trigger.setAttribute('aria-expanded', String(isOpen));
+        trigger.textContent = isOpen ? 'Ocultar regras' : 'Ver regras';
+    }
 }
 
 function openClubVersatilWhatsApp() {
@@ -3780,7 +3786,7 @@ async function openProductModal(productId = null) {
         title.textContent = 'Adicionar Novo Produto';
         document.getElementById('productForm').reset();
         document.getElementById('productId').value = '';
-        tempProductImages = [DEFAULT_PRODUCT_IMAGE];
+        tempProductImages = [];
         productColors = [];
         setTimeout(() => renderProductColorsManager(), 100);
     }
@@ -3879,8 +3885,17 @@ async function saveProduct(event) {
         return;
     }
 
-    const images = normalizeProductImages(tempProductImages);
-    const colors = normalizeProductColors(productColors);
+    const images = normalizeProductImages(tempProductImages, null);
+    if (images.length === 0) {
+        showToast('Adicione pelo menos uma imagem do produto antes de salvar.', 'error');
+        return;
+    }
+
+    const imageSet = new Set(images);
+    const colors = normalizeProductColors(productColors).map(color => ({
+        ...color,
+        images: normalizeProductImages(color.images, null).filter(image => imageSet.has(image))
+    }));
 
     const productData = {
         name,
@@ -3973,7 +3988,8 @@ async function optimizeProductImageFile(file) {
         ctx.drawImage(img, 0, 0, width, height);
 
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.82));
-        if (!blob || blob.size >= file.size) return file;
+        if (!blob) return file;
+        if (file.type === 'image/webp' && scale === 1 && blob.size >= file.size) return file;
 
         const optimizedName = sanitizeStorageFileName(file.name).replace(/\.[^.]+$/, '') + '.webp';
         return new File([blob], optimizedName, {
@@ -3989,42 +4005,54 @@ async function optimizeProductImageFile(file) {
 async function handleImageUpload(event) {
     const files = event.target.files;
     if (!files.length) return;
-    
+
     if (!storage) {
-        showToast('Firebase Storage não está configurado', 'error');
+        showToast('Firebase Storage nao esta configurado', 'error');
         event.target.value = '';
         return;
     }
 
     const MAX_SIZE = 5 * 1024 * 1024;
+    const SUPPORTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
     for (const file of files) {
+        if (!SUPPORTED_TYPES.has(file.type)) {
+            showToast(`Formato "${file.type || file.name}" nao suportado. Use JPG, PNG ou WebP.`, 'error');
+            event.target.value = '';
+            return;
+        }
+
         if (file.size > MAX_SIZE) {
-            showToast(`Arquivo "${file.name}" é muito grande! Máximo: 5MB`, 'error');
+            showToast(`Arquivo "${file.name}" e muito grande! Maximo: 5MB`, 'error');
             event.target.value = '';
             return;
         }
     }
-    
+
     const loadingMsg = document.createElement('div');
     loadingMsg.style.cssText = 'padding: 1rem; background: #f0f0f0; margin-bottom: 1rem; border-radius: 4px;';
-    loadingMsg.textContent = '⏳ Fazendo upload das imagens...';
+    loadingMsg.textContent = 'Otimizando para WebP e enviando imagens...';
     document.getElementById('productImagesList').parentElement.insertBefore(loadingMsg, document.getElementById('productImagesList'));
     for (const file of files) {
-        if (!file.type.startsWith('image/')) {
-            showToast('Por favor, selecione apenas arquivos de imagem!', 'error');
-            continue;
-        }
-
         try {
             const optimizedFile = await optimizeProductImageFile(file);
+            if (optimizedFile.type !== 'image/webp') {
+                throw new Error('Nao foi possivel converter a imagem para WebP.');
+            }
+
             const storageRef = storage.ref();
             const imageRef = storageRef.child(`produtos/${Date.now()}_${sanitizeStorageFileName(optimizedFile.name || file.name)}`);
             await imageRef.put(optimizedFile, {
-                contentType: optimizedFile.type || file.type || 'image/webp'
+                contentType: 'image/webp',
+                customMetadata: {
+                    optimizedBy: 'seja-versatil-admin',
+                    originalName: file.name,
+                    originalType: file.type || 'desconhecido'
+                }
             });
             const imageUrl = await imageRef.getDownloadURL();
             tempProductImages.push(imageUrl);
             renderProductImages();
+            showToast(`Imagem "${file.name}" convertida para WebP e enviada.`, 'success');
         } catch (error) {
             console.error('Erro ao fazer upload:', error);
             showToast('Erro ao fazer upload da imagem: ' + error.message, 'error');
@@ -4040,10 +4068,19 @@ function renderProductImages() {
     if (!container) return;
 
     container.innerHTML = '';
-    
+
     container.style.display = 'grid';
     container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
     container.style.gap = '15px';
+
+    if (tempProductImages.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'admin-image-empty-state';
+        emptyState.textContent = 'Nenhuma imagem adicionada. Use Upload Local para enviar fotos em JPG, PNG ou WebP; o sistema converte para WebP antes de salvar.';
+        emptyState.style.cssText = 'grid-column: 1 / -1; padding: 2rem 1rem; border: 1px dashed #d8d8d8; border-radius: 8px; color: #777; background: #fafafa; text-align: center; font-size: 0.85rem;';
+        container.appendChild(emptyState);
+        return;
+    }
 
     const hasColors = Array.isArray(productColors) && productColors.length > 0;
     tempProductImages.forEach((img, index) => {

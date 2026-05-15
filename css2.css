@@ -6980,7 +6980,7 @@ body.modal-open {
 
 .club-modal-content {
     position: relative;
-    width: min(92vw, 520px);
+    width: min(94vw, 680px);
     max-height: 90vh;
     overflow-y: auto;
     padding: clamp(1.6rem, 4vw, 2.4rem);
@@ -7116,12 +7116,80 @@ body.modal-open {
 
 .club-rules {
     margin-top: 1rem;
-    padding: 0.9rem 1rem;
+    padding: 1rem;
     border-left: 3px solid #2f3522;
     background: rgba(255, 255, 255, 0.62);
     color: #4b4b43;
     font-size: 0.9rem;
     line-height: 1.45;
+}
+
+.club-rules section + section {
+    margin-top: 1rem;
+}
+
+.club-rules h3,
+.club-rules h4 {
+    margin: 0 0 0.45rem;
+    color: #2f3522;
+    font-family: var(--font-main) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1.2;
+    text-transform: uppercase !important;
+}
+
+.club-rules h3 {
+    font-size: 1rem;
+}
+
+.club-rules h4 {
+    font-size: 0.78rem;
+}
+
+.club-rules p {
+    margin: 0.4rem 0;
+}
+
+.club-rules ul {
+    display: grid;
+    gap: 0.38rem;
+    margin: 0.45rem 0 0;
+    padding-left: 1rem;
+}
+
+.club-rules li {
+    padding-left: 0.15rem;
+}
+
+.club-rules-table {
+    display: grid;
+    gap: 1px;
+    margin: 0.75rem 0;
+    overflow: hidden;
+    border: 1px solid rgba(47, 53, 34, 0.12);
+    border-radius: 8px;
+    background: rgba(47, 53, 34, 0.12);
+}
+
+.club-rules-table > div {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.72rem 0.8rem;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.club-rules-table > div:first-child {
+    background: #2f3522;
+    color: #ffffff;
+}
+
+.club-rules-summary {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    background: rgba(47, 53, 34, 0.08);
 }
 
 @media (max-width: 520px) {
@@ -7133,6 +7201,16 @@ body.modal-open {
     .club-modal-content {
         width: 100%;
         padding: 2.3rem 1.2rem 1.25rem;
+    }
+
+    .club-rules {
+        padding: 0.9rem 0.85rem;
+        font-size: 0.84rem;
+    }
+
+    .club-rules-table > div {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
     }
 
     .club-benefit {

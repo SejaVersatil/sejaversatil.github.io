@@ -41,7 +41,7 @@
   <link rel="preload" as="image" href="assets/home/hero-v1-collection.webp">
   <link rel="preload" as="image" href="assets/home/hero-v1-collection-mobile.webp" media="(max-width: 768px)">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.19">
+  <link rel="stylesheet" href="css2.css?v=1.0.20">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -253,11 +253,108 @@
 
       <div class="club-modal-actions">
         <button class="club-modal-primary" type="button" onclick="openClubVersatilWhatsApp()">Quero meu código</button>
-        <button class="club-modal-secondary" type="button" onclick="toggleClubVersatilRules()">Ver regras</button>
+        <button class="club-modal-secondary" type="button" onclick="toggleClubVersatilRules()" aria-controls="clubVersatilRules" aria-expanded="false">Ver regras</button>
       </div>
 
       <div class="club-rules" id="clubVersatilRules" hidden>
-        <p>O cashback é definido pelo valor da compra feita pela amiga indicada. A equipe confirma seu código, validade e uso do crédito pelo WhatsApp.</p>
+        <section>
+          <h3>Regras do Clube Versátil</h3>
+          <p>O Clube Versátil é o nosso programa de indicação criado para valorizar quem compartilha a experiência Seja Versátil com outras pessoas.</p>
+          <p>Ao participar, você recebe um código exclusivo de indicação. Quando uma pessoa indicada realiza uma compra confirmada usando seu código, você ganha cashback em crédito para usar em uma próxima compra na Seja Versátil.</p>
+        </section>
+
+        <section>
+          <h4>Como funciona</h4>
+          <ul>
+            <li>A cliente solicita seu código exclusivo pelo WhatsApp.</li>
+            <li>Depois de receber o código, pode compartilhar com amigas, familiares ou pessoas que queiram conhecer a marca.</li>
+            <li>Quando a pessoa indicada fizer uma compra e informar esse código no momento do pedido, a indicação será registrada.</li>
+            <li>Após a confirmação e validação da compra, o cashback será liberado como crédito para quem indicou.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Valores de cashback</h4>
+          <p>O cashback é calculado sobre o valor final dos produtos comprados pela pessoa indicada, sem considerar o frete.</p>
+          <div class="club-rules-table" role="table" aria-label="Valores de cashback do Clube Versátil">
+            <div role="row">
+              <strong role="columnheader">Compra da indicada</strong>
+              <strong role="columnheader">Cashback</strong>
+            </div>
+            <div role="row">
+              <span>A partir de R$145,90</span>
+              <strong>R$10</strong>
+            </div>
+            <div role="row">
+              <span>A partir de R$299,90</span>
+              <strong>R$25</strong>
+            </div>
+            <div role="row">
+              <span>A partir de R$449,90</span>
+              <strong>R$40</strong>
+            </div>
+          </div>
+          <p>Compras abaixo de R$145,90 não geram cashback.</p>
+        </section>
+
+        <section>
+          <h4>O que vale</h4>
+          <ul>
+            <li>O cashback é válido para a primeira compra de cada pessoa indicada.</li>
+            <li>Cada nova pessoa indicada pode gerar um novo cashback, desde que a compra seja confirmada e esteja dentro das regras.</li>
+            <li>A cliente pode indicar quantas pessoas quiser.</li>
+            <li>O cashback pode ser acumulado entre indicações diferentes.</li>
+            <li>O crédito poderá ser usado em uma próxima compra na Seja Versátil.</li>
+            <li>O cashback será liberado somente após confirmação e validação do pedido da pessoa indicada.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Validade e Pix</h4>
+          <ul>
+            <li>O crédito de cashback tem validade de 60 dias após a liberação.</li>
+            <li>Após esse prazo, caso não seja utilizado, o crédito será automaticamente expirado.</li>
+            <li>Além do Clube Versátil, clientes que finalizam o pedido via Pix recebem 5% OFF no pagamento.</li>
+            <li>O benefício no Pix é válido para clientes novas, antigas, indicadas ou não, conforme disponibilidade no site.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>O que não vale</h4>
+          <ul>
+            <li>O cashback não pode ser convertido em dinheiro.</li>
+            <li>Não vale para compras canceladas, devolvidas ou trocadas integralmente.</li>
+            <li>O valor do frete não entra no cálculo do cashback.</li>
+            <li>A mesma pessoa indicada gera cashback apenas uma vez.</li>
+            <li>Não é permitido usar o próprio código para gerar cashback.</li>
+            <li>Não é permitido criar múltiplos cadastros, usar dados repetidos ou simular indicações.</li>
+            <li>Indicações com mesmo CPF, telefone, e-mail, endereço ou outros dados repetidos poderão ser analisadas e, se houver uso indevido, o cashback poderá ser cancelado.</li>
+            <li>O cashback não é cumulativo com campanhas promocionais específicas, cupons especiais ou condições que informem restrição de acúmulo.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Validação e uso do crédito</h4>
+          <ul>
+            <li>A indicação será válida quando a pessoa indicada informar o código exclusivo no momento da compra e o pedido for confirmado.</li>
+            <li>A Seja Versátil poderá analisar os dados da compra antes de liberar o cashback.</li>
+            <li>Em caso de cancelamento, devolução, troca integral, inconsistência nos dados ou suspeita de uso indevido, o benefício poderá ser cancelado.</li>
+            <li>O crédito deve ser utilizado pela cliente cadastrada no Clube Versátil e não poderá ser transferido para terceiros sem autorização da marca.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Atualizações do Clube</h4>
+          <p>A Seja Versátil poderá ajustar, pausar ou encerrar as condições do Clube Versátil a qualquer momento, sempre buscando manter uma experiência justa, transparente e especial para suas clientes.</p>
+        </section>
+
+        <section class="club-rules-summary">
+          <h4>Resumo</h4>
+          <p>Indique amigas, acumule créditos e use seu cashback em novos looks.</p>
+          <p>Você pode ganhar R$10, R$25 ou R$40, conforme o valor da compra da indicada. O cashback é válido para a primeira compra de cada pessoa indicada e tem validade de 60 dias após a liberação.</p>
+          <p><strong>Gostou?</strong> Clique em “Quero meu código” e entre para o Clube Versátil.</p>
+          <p>Seja você, seja VERSÁTIL.</p>
+        </section>
       </div>
     </div>
   </div>
@@ -789,13 +886,13 @@
           <div class="image-upload-options">
             <button type="button" class="image-add-btn">
               📁 Upload Local
-              <input type="file" accept="image/*" multiple onchange="handleImageUpload(event)">
+              <input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageUpload(event)">
             </button>
             <button type="button" class="image-add-btn" onclick="toggleUrlInput()" style="border-style: solid;">🔗 URL de Imagem</button>
             <button type="button" class="image-add-btn" onclick="toggleGradientInput()" style="border-style: dashed;">🎨 Gradiente CSS</button>
           </div>
           <div class="image-url-input" id="imageUrlInputBox">
-            <input type="text" id="imageUrlField" placeholder="Cole o link da imagem (ex: https://i.imgur.com/abc123.jpg)">
+            <input type="text" id="imageUrlField" placeholder="Cole um link permanente da imagem (ex: https://seudominio.com/produto.webp)">
             <div class="image-url-actions">
               <button type="button" onclick="addImageFromUrl()" style="background: var(--primary); color: white;">Adicionar Imagem</button>
               <button type="button" onclick="toggleUrlInput()" style="background: var(--gray);">Cancelar</button>
@@ -809,10 +906,10 @@
             </div>
           </div>
           <div class="image-helper">
-            💡 <strong>Como adicionar imagens:</strong><br>
-            • <strong>Upload Local:</strong> Temporário, apaga ao limpar cache do navegador<br>
-            • <strong>URL de Imagem:</strong> Use Imgur, ImgBB ou GitHub (permanente)<br>
-            • <strong>Gradiente CSS:</strong> Visual moderno sem usar fotos
+            <strong>Como adicionar imagens:</strong><br>
+            &bull; <strong>Upload Local:</strong> envia ao Firebase Storage e converte para WebP automaticamente<br>
+            &bull; <strong>URL de Imagem:</strong> use apenas links permanentes e confiaveis<br>
+            &bull; <strong>Gradiente CSS:</strong> use apenas como apoio visual; produto publicado deve ter foto real
           </div>
         </div>
         <input type="hidden" id="productId">
@@ -1003,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.13"></script>
+  <script defer src="script2.js?v=1.1.14"></script>
   
 </body>
 </html>

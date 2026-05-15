@@ -54,11 +54,13 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - O V1 ja possui arte mobile dedicada em `assets/home/hero-v1-collection-mobile.webp`; desktop continua usando `assets/home/hero-v1-collection.webp`.
 - O primeiro hero foi trocado para Clube Versatil: desktop usa `assets/home/hero-clube-versatil.webp` e mobile usa `assets/home/hero-clube-versatil-mobile.webp`.
 - Clique no banner Clube Versatil abre um modal na home com beneficios de cashback, botao "Quero meu codigo" para WhatsApp e botao "Ver regras".
+- "Ver regras" do Clube Versatil agora exibe regras completas, valores de cashback, validacao, restricoes, validade e chamada final para solicitar codigo.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
 - Imagens quebradas em produtos antigos foram diagnosticadas como URLs externas do Imgur retornando 403, nao como limite confirmado do Firebase. Produtos com assets locais em `assets/products` carregam corretamente.
 - Home prioriza imagens locais quando existem, carrega menos imagens do carrossel ao mesmo tempo e tenta a proxima imagem antes de mostrar fallback visual.
-- Upload de novas imagens pelo admin comprime/redimensiona para WebP antes de enviar ao Firebase Storage, reduzindo uso de armazenamento/banda.
+- Upload local de novas imagens pelo admin aceita JPG/PNG/WebP, converte para WebP antes de enviar ao Firebase Storage e registra o download URL no produto.
+- Produto novo no admin nao recebe mais imagem/gradiente padrao automaticamente; e necessario adicionar pelo menos uma imagem antes de salvar.
 - Projeto aguardando proxima instrucao do usuario.
 
 ## Pontos sensiveis

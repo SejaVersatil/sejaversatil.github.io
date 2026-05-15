@@ -3,27 +3,25 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Ajustar regras do Clube Versatil e auditar cadastro manual de produtos no admin.
 
 ## Status
-- Causa identificada: imagens antigas do Imgur retornando 403.
-- Fallback e tentativa automatica de proxima imagem implementados na home.
-- Priorizacao de assets locais implementada na home e pagina de produto.
-- Compressao WebP para novos uploads no Firebase implementada.
-- Alteracao publicada e validada no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Regras completas do Clube Versatil adicionadas ao botao "Ver regras".
+- Upload local do admin reforcado para JPG/PNG/WebP, conversao WebP e envio ao Firebase Storage.
+- Produto novo passa a exigir pelo menos uma imagem adicionada antes de salvar.
+- Validacao local concluida.
 
 ## Criterios de conclusao
-- Produtos com imagem local carregam antes de tentar Imgur.
-- Se uma URL falhar, o card tenta a proxima imagem do produto.
-- Se nenhuma imagem carregar, o card mostra fallback limpo sem icone quebrado.
-- Novos uploads sao otimizados antes de ir ao Firebase Storage.
+- Modal do Clube Versatil deve mostrar regras completas ao clicar em "Ver regras".
+- Botao "Ver regras" deve alternar para "Ocultar regras" com `aria-expanded`.
+- Admin deve aceitar upload local apenas de JPG, PNG ou WebP.
+- Imagem local deve ser convertida para WebP antes do upload ao Firebase Storage.
+- Produto novo nao deve salvar sem pelo menos uma imagem adicionada.
 - Contexto atualizado ao final.
 
 ## Proximos passos
-- Receber nova instrucao do usuario.
-- Ler os arquivos de contexto antes de agir.
-- Identificar os arquivos minimos necessarios para a tarefa.
+- Publicar alteracao no GitHub Pages.
+- Validar pagina publica apos deploy.
 
 ## O que nao fazer
 - Nao iniciar alteracoes funcionais sem pedido.
@@ -42,3 +40,4 @@ Controle da tarefa atual.
 - 2026-05-14: Banner desktop Clube Versatil substituido por arte ajustada; popup e mensagem de 10% removidos.
 - 2026-05-14: Modal do Clube Versatil criado no clique do banner, com CTA para WhatsApp e regras expansivas.
 - 2026-05-14: Diagnosticadas falhas de imagens por links Imgur 403; implementado fallback, carregamento mais economico e compressao WebP em novos uploads.
+- 2026-05-14: Regras completas do Clube Versatil adicionadas e fluxo de upload/cadastro manual de produto no admin reforcado.
