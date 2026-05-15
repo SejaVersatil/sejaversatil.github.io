@@ -64,6 +64,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Home prioriza imagens locais quando existem, carrega menos imagens do carrossel ao mesmo tempo e tenta a proxima imagem antes de mostrar fallback visual.
 - Upload local de novas imagens pelo admin aceita JPG/PNG/WebP, converte para WebP antes de enviar ao Firebase Storage e registra o download URL no produto.
 - Produto novo no admin nao recebe mais imagem/gradiente padrao automaticamente; e necessario adicionar pelo menos uma imagem antes de salvar.
+- Painel admin de estoque em `admin-panel.html` possui resumo operacional, busca, filtros por status/categoria, edicao inline de quantidade e disponibilidade por variacao, salvamento em lote no Firebase, exportacao CSV e layout responsivo melhorado.
 - Performance mobile foi priorizada: a home carrega primeiro apenas o hero ativo correto por viewport, adia heroes secundarios, imagens abaixo da dobra, produtos e videos, e usa favicon/icones leves.
 - Service worker passou a manter cache inicial enxuto, com app shell, icones pequenos e hero ativo; imagens/estaticos continuam com estrategia cache-first apos requisicao.
 - Projeto aguardando proxima instrucao do usuario.

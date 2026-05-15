@@ -12,6 +12,20 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --admin-primary: #667eea;
+            --admin-primary-dark: #5366d6;
+            --admin-ink: #172033;
+            --admin-muted: #667085;
+            --admin-surface: #ffffff;
+            --admin-soft: #f5f7fb;
+            --admin-line: #e6eaf2;
+            --admin-success: #15803d;
+            --admin-warning: #9a6700;
+            --admin-danger: #b42318;
+            --admin-info: #0e7490;
+        }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -105,10 +119,11 @@
         
         .admin-dashboard {
             display: none;
+            flex-direction: column;
             background: white;
-            width: 95vw;
-            height: 95vh;
-            border-radius: 16px;
+            width: min(1480px, 96vw);
+            height: 94vh;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
@@ -116,7 +131,7 @@
         .admin-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1.5rem 2rem;
+            padding: 1.15rem 1.6rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -143,14 +158,14 @@
         
         .admin-body {
             display: flex;
-            height: calc(100% - 80px);
+            height: calc(100% - 68px);
         }
         
         .admin-sidebar {
             width: 250px;
-            background: #f8f9fa;
+            background: #f7f8fb;
             padding: 2rem 0;
-            border-right: 1px solid #e5e5e5;
+            border-right: 1px solid var(--admin-line);
             overflow-y: auto;
         }
         
@@ -174,9 +189,40 @@
         
         .admin-content {
             flex: 1;
-            padding: 2rem;
+            padding: 1.7rem 2rem 2rem;
             overflow-y: auto;
-            background: #fafafa;
+            background: var(--admin-soft);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            color: var(--admin-ink);
+            font-size: 1.55rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-kicker {
+            display: block;
+            margin-bottom: 0.28rem;
+            color: var(--admin-muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            margin-top: 0.35rem;
+            color: var(--admin-muted);
+            font-size: 0.9rem;
         }
         
         .stats-grid {
@@ -214,7 +260,7 @@
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
         }
         
         .products-table th {
@@ -235,7 +281,7 @@
         }
         
         .products-table tr:hover {
-            background: #f8f9fa;
+            background: #f8fafc;
         }
         
         .product-img {
@@ -258,6 +304,284 @@
         .stock-ok { background: #d4edda; color: #155724; }
         .stock-low { background: #fff3cd; color: #856404; }
         .stock-out { background: #f8d7da; color: #721c24; }
+
+        .stock-unavailable { background: #e9ecef; color: #495057; }
+        .stock-pending { background: #e0f2fe; color: #075985; }
+
+        .stock-workspace {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .stock-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(130px, 1fr));
+            gap: 0.85rem;
+        }
+
+        .stock-summary-card {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-line);
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+        }
+
+        .stock-summary-card strong {
+            display: block;
+            color: var(--admin-ink);
+            font-size: 1.65rem;
+            line-height: 1;
+        }
+
+        .stock-summary-card span {
+            display: block;
+            margin-top: 0.45rem;
+            color: var(--admin-muted);
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .stock-summary-card.critical { border-color: rgba(180, 35, 24, 0.22); }
+        .stock-summary-card.warning { border-color: rgba(154, 103, 0, 0.24); }
+        .stock-summary-card.info { border-color: rgba(14, 116, 144, 0.24); }
+
+        .stock-toolbar {
+            display: grid;
+            grid-template-columns: minmax(260px, 1fr) 210px auto;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.9rem;
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-line);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+        }
+
+        .stock-search,
+        .stock-select {
+            width: 100%;
+            min-height: 42px;
+            padding: 0 0.9rem;
+            border: 1px solid var(--admin-line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--admin-ink);
+            font-size: 0.92rem;
+        }
+
+        .stock-search:focus,
+        .stock-select:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.14);
+        }
+
+        .stock-filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        .stock-chip {
+            min-height: 36px;
+            padding: 0 0.78rem;
+            border: 1px solid var(--admin-line);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--admin-muted);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 800;
+            transition: all 0.2s ease;
+        }
+
+        .stock-chip:hover,
+        .stock-chip.active {
+            border-color: rgba(102, 126, 234, 0.45);
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--admin-primary-dark);
+        }
+
+        .stock-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.55rem;
+        }
+
+        .btn-secondary,
+        .btn-primary,
+        .btn-warning {
+            min-height: 40px;
+            padding: 0 0.95rem;
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: var(--admin-primary-dark);
+        }
+
+        .btn-primary {
+            background: var(--admin-primary);
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .btn-secondary:hover,
+        .btn-primary:hover,
+        .btn-warning:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stock-results-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            color: var(--admin-muted);
+            font-size: 0.86rem;
+        }
+
+        .stock-table-card {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-line);
+            border-radius: 14px;
+            overflow-x: auto;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+        }
+
+        .stock-table-card .products-table {
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .stock-product-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-width: 220px;
+        }
+
+        .stock-product-thumb {
+            width: 44px;
+            height: 58px;
+            flex-shrink: 0;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 5px 14px rgba(15, 23, 42, 0.12);
+        }
+
+        .stock-product-name {
+            display: block;
+            color: var(--admin-ink);
+            font-weight: 800;
+        }
+
+        .stock-product-meta {
+            display: block;
+            margin-top: 0.18rem;
+            color: var(--admin-muted);
+            font-size: 0.78rem;
+        }
+
+        .stock-inline-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .stock-stepper {
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--admin-line);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--admin-ink);
+            cursor: pointer;
+            font-weight: 900;
+        }
+
+        .stock-row-input {
+            width: 64px;
+            height: 34px;
+            padding: 0 0.45rem;
+            border: 1px solid var(--admin-line);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .stock-row-input.stock-dirty,
+        .stock-row-toggle.stock-dirty {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+        }
+
+        .stock-available-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--admin-muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .stock-available-toggle input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .stock-empty-state {
+            padding: 2.5rem;
+            text-align: center;
+            color: var(--admin-muted);
+            background: #fff;
+            border: 1px dashed var(--admin-line);
+            border-radius: 14px;
+        }
+
+        .admin-toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 2000;
+            display: none;
+            max-width: 360px;
+            padding: 0.95rem 1.1rem;
+            border-radius: 12px;
+            background: #172033;
+            color: #fff;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.28);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .admin-toast.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
         
         .btn-action {
             padding: 0.5rem 1rem;
@@ -429,6 +753,79 @@
             40% { content: '..'; }
             60%, 100% { content: '...'; }
         }
+
+        @media (max-width: 1180px) {
+            .stock-summary-grid {
+                grid-template-columns: repeat(3, minmax(130px, 1fr));
+            }
+
+            .stock-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .stock-actions {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 820px) {
+            body {
+                align-items: stretch;
+            }
+
+            .admin-dashboard {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .admin-body {
+                flex-direction: column;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+                display: flex;
+                gap: 0.25rem;
+                padding: 0.6rem;
+                overflow-x: auto;
+                border-right: 0;
+                border-bottom: 1px solid var(--admin-line);
+            }
+
+            .sidebar-item {
+                white-space: nowrap;
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+            }
+
+            .sidebar-item:hover,
+            .sidebar-item.active {
+                border-left: 0;
+                background: #fff;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .section-heading {
+                flex-direction: column;
+            }
+
+            .stock-summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .stock-table-card {
+                overflow-x: auto;
+            }
+
+            .products-table {
+                min-width: 820px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -491,12 +888,26 @@
                 </div>
                 
                 <div id="productsSection" style="display: none;">
-                    <h2 style="margin-bottom: 2rem;">Gerenciar Produtos</h2>
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Produtos</span>
+                            <h2>Gerenciar Produtos</h2>
+                            <p class="section-subtitle">Visão rápida do estoque total por produto.</p>
+                        </div>
+                        <button class="btn-secondary" type="button" onclick="loadProducts()">Atualizar lista</button>
+                    </div>
                     <div id="productsTableContainer"></div>
                 </div>
                 
                 <div id="stockSection" style="display: none;">
-                    <h2 style="margin-bottom: 2rem;">Controle de Estoque Detalhado</h2>
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Estoque e variantes</span>
+                            <h2>Controle de Estoque Detalhado</h2>
+                            <p class="section-subtitle">Edite quantidades por tamanho/cor, filtre pontos críticos e exporte a visão atual.</p>
+                        </div>
+                        <button class="btn-secondary" type="button" onclick="loadStockControl()">Atualizar estoque</button>
+                    </div>
                     <div id="stockTableContainer"></div>
                 </div>
             </div>
@@ -513,6 +924,8 @@
             <button class="btn-save" onclick="saveStock()">💾 Salvar Alterações</button>
         </div>
     </div>
+
+    <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
 
     <script>
         const firebaseConfig = {
@@ -531,6 +944,15 @@
         
         let currentProduct = null;
         let currentVariants = [];
+        let adminInventoryRows = [];
+        let stockSearchTerm = '';
+        let stockStatusFilter = 'all';
+        let stockCategoryFilter = 'all';
+        let stockPendingEdits = new Map();
+        let adminToastTimer = null;
+
+        const LOW_STOCK_THRESHOLD = 5;
+        const PRODUCT_LOW_STOCK_THRESHOLD = 20;
 
         function escapeHTML(value) {
             const div = document.createElement('div');
@@ -555,7 +977,11 @@
 
         function safeImageUrl(value) {
             const url = String(value || '').trim();
-            if (!/^https?:\/\//i.test(url) && !/^data:image\//i.test(url)) return '';
+            if (
+                !/^https?:\/\//i.test(url) &&
+                !/^data:image\//i.test(url) &&
+                !/^(?:\.\/)?assets\//i.test(url)
+            ) return '';
             return escapeHTML(url.replace(/['"\\\r\n]/g, ''));
         }
 
@@ -728,6 +1154,480 @@
                 return a.size.localeCompare(b.size, 'pt-BR');
             });
         }
+
+        function formatCurrency(value) {
+            return Number(value || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        function getStockRowKey(productId, variantId) {
+            return `${productId}::${variantId}`;
+        }
+
+        function getEditedStock(row) {
+            const edit = stockPendingEdits.get(row.rowKey);
+            return edit ? edit.stock : row.stock;
+        }
+
+        function getEditedAvailable(row) {
+            const edit = stockPendingEdits.get(row.rowKey);
+            return edit ? edit.available : row.available;
+        }
+
+        function getStockState(stock, available = true, exists = true) {
+            if (!available) return { key: 'unavailable', label: 'INDISPONIVEL', className: 'stock-unavailable' };
+            if (!exists) return { key: 'pending', label: 'PENDENTE', className: 'stock-pending' };
+            if (stock === 0) return { key: 'out', label: 'SEM ESTOQUE', className: 'stock-out' };
+            if (stock < LOW_STOCK_THRESHOLD) return { key: 'low', label: 'BAIXO', className: 'stock-low' };
+            return { key: 'ok', label: 'OK', className: 'stock-ok' };
+        }
+
+        function getProductImageStyle(product) {
+            const firstImage = product.images && product.images[0] ? product.images[0] : '';
+            const imageUrl = safeImageUrl(firstImage);
+            return imageUrl ? `background-image: url('${imageUrl}')` : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+
+        function buildInventoryRowsFromProduct(productId, product, variants) {
+            const productName = normalizeText(product.name, 'Produto sem nome');
+            const category = normalizeText(product.category, 'Sem categoria');
+            const imageStyle = getProductImageStyle(product);
+
+            return variants.map(variant => {
+                const rowKey = getStockRowKey(productId, variant.id);
+                return {
+                    rowKey,
+                    productId,
+                    productName,
+                    category,
+                    price: normalizeNumber(product.price, 0),
+                    imageStyle,
+                    variantId: variant.id,
+                    size: normalizeText(variant.size),
+                    color: normalizeText(variant.color),
+                    stock: normalizeNumber(variant.stock, 0),
+                    available: variant.available !== false,
+                    sku: normalizeText(variant.sku, buildVariantSku(productId, variant.size, variant.color)),
+                    variantPrice: normalizeNumber(variant.price, product.price || 0),
+                    exists: Boolean(variant.exists)
+                };
+            });
+        }
+
+        function calculateStockSummary(rows) {
+            const productIds = new Set();
+            let totalUnits = 0;
+            let lowCount = 0;
+            let outCount = 0;
+            let unavailableCount = 0;
+            let pendingCount = 0;
+
+            rows.forEach(row => {
+                productIds.add(row.productId);
+                const stock = getEditedStock(row);
+                const available = getEditedAvailable(row);
+                const state = getStockState(stock, available, row.exists);
+
+                totalUnits += stock;
+                if (state.key === 'low') lowCount++;
+                if (state.key === 'out') outCount++;
+                if (state.key === 'unavailable') unavailableCount++;
+                if (state.key === 'pending') pendingCount++;
+            });
+
+            return {
+                products: productIds.size,
+                variants: rows.length,
+                totalUnits,
+                lowCount,
+                outCount,
+                unavailableCount,
+                pendingCount
+            };
+        }
+
+        function normalizeSearchValue(value) {
+            return normalizeText(value)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
+        function getStockCategories(rows = adminInventoryRows) {
+            return [...new Set(rows.map(row => row.category).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        }
+
+        function getVisibleStockRows() {
+            const search = normalizeSearchValue(stockSearchTerm);
+
+            return adminInventoryRows.filter(row => {
+                const stock = getEditedStock(row);
+                const available = getEditedAvailable(row);
+                const state = getStockState(stock, available, row.exists);
+                const haystack = normalizeSearchValue([
+                    row.productName,
+                    row.category,
+                    row.size,
+                    row.color,
+                    row.sku
+                ].join(' '));
+
+                const matchesSearch = !search || haystack.includes(search);
+                const matchesCategory = stockCategoryFilter === 'all' || row.category === stockCategoryFilter;
+                const matchesStatus =
+                    stockStatusFilter === 'all' ||
+                    (stockStatusFilter === 'critical' && ['out', 'low'].includes(state.key)) ||
+                    state.key === stockStatusFilter;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+        }
+
+        function renderStockControl() {
+            const container = document.getElementById('stockTableContainer');
+            const visibleRows = getVisibleStockRows();
+            const summary = calculateStockSummary(adminInventoryRows);
+            const categories = getStockCategories();
+
+            const categoryOptions = [
+                '<option value="all">Todas as categorias</option>',
+                ...categories.map(category => `<option value="${escapeAttribute(category)}" ${stockCategoryFilter === category ? 'selected' : ''}>${escapeHTML(category)}</option>`)
+            ].join('');
+
+            const chips = [
+                ['all', 'Todos'],
+                ['critical', 'Críticos'],
+                ['out', 'Sem estoque'],
+                ['low', 'Baixo'],
+                ['unavailable', 'Indisponíveis'],
+                ['pending', 'Pendentes']
+            ].map(([key, label]) => `
+                <button class="stock-chip ${stockStatusFilter === key ? 'active' : ''}" type="button" onclick="setStockStatusFilter('${key}')">${label}</button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="stock-workspace">
+                    <div class="stock-summary-grid">
+                        <div class="stock-summary-card">
+                            <strong>${summary.totalUnits}</strong>
+                            <span>Unidades totais</span>
+                        </div>
+                        <div class="stock-summary-card info">
+                            <strong>${summary.variants}</strong>
+                            <span>Variações</span>
+                        </div>
+                        <div class="stock-summary-card warning">
+                            <strong>${summary.lowCount}</strong>
+                            <span>Estoque baixo</span>
+                        </div>
+                        <div class="stock-summary-card critical">
+                            <strong>${summary.outCount}</strong>
+                            <span>Sem estoque</span>
+                        </div>
+                        <div class="stock-summary-card info">
+                            <strong>${summary.unavailableCount}</strong>
+                            <span>Indisponíveis</span>
+                        </div>
+                    </div>
+
+                    <div class="stock-toolbar">
+                        <input class="stock-search" id="stockSearchInput" type="search" placeholder="Buscar produto, SKU, cor, tamanho..." value="${escapeAttribute(stockSearchTerm)}" oninput="setStockSearch(this.value)">
+                        <select class="stock-select" id="stockCategoryFilter" onchange="setStockCategoryFilter(this.value)">
+                            ${categoryOptions}
+                        </select>
+                        <div class="stock-actions">
+                            <button class="btn-primary" id="saveInlineStockBtn" type="button" onclick="saveInlineStockChanges()" ${stockPendingEdits.size === 0 ? 'disabled' : ''}>Salvar alterações</button>
+                            <button class="btn-secondary" type="button" onclick="exportStockCsv()">Exportar CSV</button>
+                        </div>
+                    </div>
+
+                    <div class="stock-filter-chips">${chips}</div>
+
+                    <div class="stock-results-bar">
+                        <span>${visibleRows.length} variações exibidas de ${adminInventoryRows.length}</span>
+                        <span id="stockPendingCountText">${formatPendingEditsText(stockPendingEdits.size)}</span>
+                    </div>
+
+                    ${renderStockRowsTable(visibleRows)}
+                </div>
+            `;
+
+            refreshInlineSaveState();
+        }
+
+        function renderStockRowsTable(rows) {
+            if (rows.length === 0) {
+                return '<div class="stock-empty-state">Nenhuma variação encontrada para os filtros atuais.</div>';
+            }
+
+            const tableRows = rows.map(row => {
+                const stock = getEditedStock(row);
+                const available = getEditedAvailable(row);
+                const state = getStockState(stock, available, row.exists);
+                const productId = escapeAttribute(escapeInlineJS(row.productId));
+                const variantId = escapeAttribute(escapeInlineJS(row.variantId));
+
+                return `
+                    <tr data-row-key="${escapeAttribute(row.rowKey)}">
+                        <td>
+                            <div class="stock-product-cell">
+                                <div class="stock-product-thumb" style="${row.imageStyle}"></div>
+                                <div>
+                                    <span class="stock-product-name">${escapeHTML(row.productName)}</span>
+                                    <span class="stock-product-meta">${escapeHTML(row.category)} • ${formatCurrency(row.price)}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${escapeHTML(row.size)}</strong></td>
+                        <td>${escapeHTML(row.color)}</td>
+                        <td>
+                            <div class="stock-inline-control">
+                                <button class="stock-stepper" type="button" onclick="adjustInlineStock('${productId}', '${variantId}', -1)">−</button>
+                                <input class="stock-row-input" type="number" min="0" value="${stock}" data-row-key="${escapeAttribute(row.rowKey)}" data-product-id="${escapeAttribute(row.productId)}" data-variant-id="${escapeAttribute(row.variantId)}" data-original-stock="${row.stock}" oninput="markInlineStockDirty(this)">
+                                <button class="stock-stepper" type="button" onclick="adjustInlineStock('${productId}', '${variantId}', 1)">+</button>
+                            </div>
+                        </td>
+                        <td><span class="stock-badge ${state.className}">${state.label}</span>${row.exists ? '' : '<br><small>Pendente de sincronização</small>'}</td>
+                        <td>
+                            <label class="stock-available-toggle">
+                                <input class="stock-row-toggle" type="checkbox" ${available ? 'checked' : ''} data-row-key="${escapeAttribute(row.rowKey)}" data-product-id="${escapeAttribute(row.productId)}" data-variant-id="${escapeAttribute(row.variantId)}" data-original-available="${row.available ? 'true' : 'false'}" onchange="markInlineStockDirty(this)">
+                                Venda ativa
+                            </label>
+                        </td>
+                        <td><small>${escapeHTML(row.sku)}</small></td>
+                        <td><button class="btn-action btn-stock" onclick="openStockModal('${productId}')">Gerenciar</button></td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <div class="stock-table-card">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Tamanho</th>
+                                <th>Cor</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Venda</th>
+                                <th>SKU</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function setStockSearch(value) {
+            stockSearchTerm = value;
+            renderStockControl();
+            const input = document.getElementById('stockSearchInput');
+            if (input) {
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            }
+        }
+
+        function setStockCategoryFilter(value) {
+            stockCategoryFilter = value || 'all';
+            renderStockControl();
+        }
+
+        function setStockStatusFilter(value) {
+            stockStatusFilter = value || 'all';
+            renderStockControl();
+        }
+
+        function findInlineInput(productId, variantId) {
+            return Array.from(document.querySelectorAll('.stock-row-input'))
+                .find(input => input.dataset.productId === productId && input.dataset.variantId === variantId);
+        }
+
+        function findInlineToggle(productId, variantId) {
+            return Array.from(document.querySelectorAll('.stock-row-toggle'))
+                .find(input => input.dataset.productId === productId && input.dataset.variantId === variantId);
+        }
+
+        function adjustInlineStock(productId, variantId, delta) {
+            const input = findInlineInput(productId, variantId);
+            if (!input) return;
+            const nextValue = Math.max(0, (parseInt(input.value, 10) || 0) + delta);
+            input.value = nextValue;
+            markInlineStockDirty(input);
+        }
+
+        function markInlineStockDirty(control) {
+            const rowKey = control.dataset.rowKey;
+            const row = adminInventoryRows.find(item => item.rowKey === rowKey);
+            if (!row) return;
+
+            const input = findInlineInput(row.productId, row.variantId);
+            const toggle = findInlineToggle(row.productId, row.variantId);
+            const stock = Math.max(0, parseInt(input?.value, 10) || 0);
+            const available = toggle ? toggle.checked : row.available;
+            const changed = stock !== row.stock || available !== row.available;
+
+            if (input) input.classList.toggle('stock-dirty', changed);
+            if (toggle) toggle.classList.toggle('stock-dirty', changed);
+
+            if (changed) {
+                stockPendingEdits.set(rowKey, { stock, available });
+            } else {
+                stockPendingEdits.delete(rowKey);
+            }
+
+            refreshInlineSaveState();
+        }
+
+        function refreshInlineSaveState() {
+            const button = document.getElementById('saveInlineStockBtn');
+            if (!button) return;
+            button.disabled = stockPendingEdits.size === 0;
+            button.textContent = stockPendingEdits.size === 0
+                ? 'Salvar alterações'
+                : stockPendingEdits.size === 1
+                    ? 'Salvar 1 alteração'
+                    : `Salvar ${stockPendingEdits.size} alterações`;
+
+            const pendingText = document.getElementById('stockPendingCountText');
+            if (pendingText) {
+                pendingText.textContent = formatPendingEditsText(stockPendingEdits.size);
+            }
+        }
+
+        function formatPendingEditsText(count) {
+            if (count === 0) return 'Nenhuma alteração pendente';
+            if (count === 1) return '1 alteração pendente';
+            return `${count} alterações pendentes`;
+        }
+
+        async function saveInlineStockChanges() {
+            if (stockPendingEdits.size === 0) return;
+
+            try {
+                const batch = db.batch();
+                const affectedProducts = new Set();
+
+                stockPendingEdits.forEach((edit, rowKey) => {
+                    const row = adminInventoryRows.find(item => item.rowKey === rowKey);
+                    if (!row) return;
+
+                    affectedProducts.add(row.productId);
+                    const variantRef = db.collection('produtos')
+                        .doc(row.productId)
+                        .collection('variants')
+                        .doc(row.variantId);
+
+                    const variantData = {
+                        size: row.size,
+                        color: row.color,
+                        stock: edit.stock,
+                        available: edit.available,
+                        sku: row.sku,
+                        price: row.variantPrice,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    if (!row.exists) {
+                        variantData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    }
+
+                    batch.set(variantRef, variantData, { merge: true });
+                });
+
+                affectedProducts.forEach(productId => {
+                    const totalStock = adminInventoryRows
+                        .filter(row => row.productId === productId)
+                        .reduce((sum, row) => {
+                            const edit = stockPendingEdits.get(row.rowKey);
+                            return sum + (edit ? edit.stock : row.stock);
+                        }, 0);
+
+                    batch.update(db.collection('produtos').doc(productId), {
+                        totalStock,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                await batch.commit();
+
+                adminInventoryRows = adminInventoryRows.map(row => {
+                    const edit = stockPendingEdits.get(row.rowKey);
+                    return edit ? { ...row, stock: edit.stock, available: edit.available, exists: true } : row;
+                });
+
+                stockPendingEdits.clear();
+                renderStockControl();
+                loadDashboard();
+                showAdminToast('Estoque atualizado com sucesso.');
+            } catch (error) {
+                console.error('Erro ao salvar estoque inline:', error);
+                showAdminToast('Erro ao salvar estoque: ' + error.message);
+            }
+        }
+
+        function exportStockCsv() {
+            const rows = getVisibleStockRows();
+            if (rows.length === 0) {
+                showAdminToast('Nenhuma variação para exportar.');
+                return;
+            }
+
+            const headers = ['Produto', 'Categoria', 'Tamanho', 'Cor', 'Estoque', 'Disponivel', 'Status', 'SKU'];
+            const csvRows = rows.map(row => {
+                const stock = getEditedStock(row);
+                const available = getEditedAvailable(row);
+                const state = getStockState(stock, available, row.exists);
+
+                return [
+                    row.productName,
+                    row.category,
+                    row.size,
+                    row.color,
+                    stock,
+                    available ? 'Sim' : 'Nao',
+                    state.label,
+                    row.sku
+                ].map(csvEscape).join(';');
+            });
+
+            const csv = '\uFEFF' + [headers.map(csvEscape).join(';'), ...csvRows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `estoque-versatil-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function csvEscape(value) {
+            const text = String(value == null ? '' : value);
+            return `"${text.replace(/"/g, '""')}"`;
+        }
+
+        function showAdminToast(message) {
+            const toast = document.getElementById('adminToast');
+            if (!toast) {
+                alert(message);
+                return;
+            }
+
+            clearTimeout(adminToastTimer);
+            toast.textContent = message;
+            toast.classList.add('active');
+            adminToastTimer = setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3500);
+        }
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -853,16 +1753,13 @@
                     const stockClass = totalStock === 0 ? 'stock-out' : totalStock < 20 ? 'stock-low' : 'stock-ok';
                     const stockText = totalStock === 0 ? 'SEM ESTOQUE' : totalStock < 20 ? `BAIXO (${totalStock})` : `OK (${totalStock})`;
                     
-                    const firstImage = product.images && product.images[0] ? product.images[0] : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    const isRealImage = firstImage.startsWith('http') || firstImage.startsWith('data:');
-                    const imageUrl = isRealImage ? safeImageUrl(firstImage) : '';
-                    const fallbackBackground = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    const imageStyle = getProductImageStyle(product);
                     const productId = escapeAttribute(escapeInlineJS(doc.id));
                     
                     html += `
                         <tr>
                             <td>
-                                <div class="product-img" style="${isRealImage && imageUrl ? `background-image: url('${imageUrl}')` : `background: ${fallbackBackground}`}"></div>
+                                <div class="product-img" style="${imageStyle}"></div>
                             </td>
                             <td><strong>${escapeHTML(product.name)}</strong></td>
                             <td>${escapeHTML(product.category)}</td>
@@ -890,47 +1787,17 @@
             
             try {
                 const productsSnapshot = await db.collection('produtos').get();
-                
-                let html = `
-                    <table class="products-table">
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Tamanho</th>
-                                <th>Cor</th>
-                                <th>Estoque</th>
-                                <th>Status</th>
-                                <th>SKU</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
+                const rows = [];
+
                 for (const doc of productsSnapshot.docs) {
                     const product = doc.data();
                     const variants = sortStockVariants(await getProductStockMatrix(doc.id, product));
-                    
-                    variants.forEach(variant => {
-                        const stockClass = variant.stock === 0 ? 'stock-out' : variant.stock < 5 ? 'stock-low' : 'stock-ok';
-                        const stockText = variant.stock === 0 ? 'SEM ESTOQUE' : variant.stock < 5 ? 'BAIXO' : 'OK';
-                        const syncText = variant.exists ? '' : '<br><small>Pendente de sincronizacao</small>';
-                        const availableText = variant.available ? '✅ Disponível' : '❌ Indisponível';
-                        
-                        html += `
-                            <tr>
-                                <td><strong>${escapeHTML(product.name)}</strong></td>
-                                <td>${escapeHTML(variant.size)}</td>
-                                <td>${escapeHTML(variant.color)}</td>
-                                <td><strong>${Number(variant.stock || 0)}</strong></td>
-                                <td><span class="stock-badge ${stockClass}">${stockText}</span><br><small>${availableText}</small>${syncText}</td>
-                                <td><small>${escapeHTML(variant.sku)}</small></td>
-                            </tr>
-                        `;
-                    });
+                    rows.push(...buildInventoryRowsFromProduct(doc.id, product, variants));
                 }
-                
-                html += `</tbody></table>`;
-                container.innerHTML = html;
+
+                adminInventoryRows = rows;
+                stockPendingEdits.clear();
+                renderStockControl();
                 
             } catch (error) {
                 console.error('Erro ao carregar estoque:', error);
@@ -1087,7 +1954,7 @@ sortedColors.forEach(color => {
                 
                 await batch.commit();
                 
-                alert('✅ Estoque atualizado com sucesso!');
+                showAdminToast('Estoque atualizado com sucesso.');
                 closeStockModal();
                 loadProducts();
                 loadStockControl();
@@ -1095,7 +1962,7 @@ sortedColors.forEach(color => {
                 
             } catch (error) {
                 console.error('Erro ao salvar estoque:', error);
-                alert('❌ Erro ao salvar estoque: ' + error.message);
+                showAdminToast('Erro ao salvar estoque: ' + error.message);
             }
         }
         

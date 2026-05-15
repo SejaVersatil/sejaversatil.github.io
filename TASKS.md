@@ -6,14 +6,13 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Botao "Ver Produtos" da modal Nossa Essencia ajustado, publicado em `main` e validado no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Upgrade do painel de estoque implementado localmente e em preparacao para publicacao.
 
 ## Criterios de conclusao
-- Botao deve aparecer como "Ver Produtos", com capitalizacao normal.
-- Botao deve ficar menor, mais delicado e alinhado ao canto direito da area de conteudo.
-- Nao alterar o texto institucional da modal Nossa Essencia.
-- Cache do CSS/service worker deve ser atualizado para servir a versao nova.
+- Painel deve manter o modelo atual de produtos/variantes no Firebase.
+- Estoque detalhado deve ter resumo, busca, filtros, exportacao CSV e edicao inline.
+- Alteracoes inline devem ser salvas em lote, atualizando variantes e `totalStock` do produto.
+- Layout do admin deve corrigir o cabecalho e melhorar leitura/uso em desktop e telas menores.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -47,3 +46,4 @@ Controle da tarefa atual.
 - 2026-05-15: Menu hamburguer reorganizado e modal Nossa Essencia criada com texto institucional completo.
 - 2026-05-15: Icone "Indique amigas" do modal Clube Versatil ajustado para duas pessoas preenchidas e separadas com coracao acima.
 - 2026-05-15: Botao "Ver Produtos" da modal Nossa Essencia ajustado para ficar menor, delicado e alinhado a direita.
+- 2026-05-15: Upgrade do painel admin de estoque com resumo, filtros, busca, edicao inline, exportacao CSV e melhorias responsivas.
