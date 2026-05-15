@@ -6120,8 +6120,10 @@ async function setupPushNotifications() {
 }
 
 function showNotificationPrompt() {
+    if (document.getElementById('notificationPrompt')) return;
+
     const promptHTML = `
-        <div id="notificationPrompt" style="
+        <div id="notificationPrompt" class="notification-prompt" role="dialog" aria-live="polite" aria-label="Convite para receber novidades da Versátil" style="
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -6133,15 +6135,16 @@ function showNotificationPrompt() {
             z-index: 9998;
             animation: slideInRight 0.5s ease;
         ">
-            <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="font-size: 2rem;">🔔</div>
-                <div style="flex: 1;">
-                    <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Receber Notificações?</h4>
+            <div class="notification-prompt__shell" style="display: flex; align-items: flex-start; gap: 1rem;">
+                <div class="notification-prompt__icon" aria-hidden="true" style="font-size: 2rem;"></div>
+                <div class="notification-prompt__content" style="flex: 1;">
+                    <span class="notification-prompt__kicker">Novidades Versátil</span>
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Receba lançamentos primeiro</h4>
                     <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
-                        Seja avisado sobre promoções exclusivas e lançamentos!
+                        Promoções, reposições e coleções especiais, com cuidado e sem excesso.
                     </p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="requestNotificationPermission()" style="
+                    <div class="notification-prompt__actions" style="display: flex; gap: 0.5rem;">
+                        <button class="notification-prompt__primary" type="button" onclick="requestNotificationPermission()" style="
                             flex: 1;
                             padding: 0.6rem;
                             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -6151,9 +6154,9 @@ function showNotificationPrompt() {
                             font-weight: 600;
                             font-size: 0.85rem;
                         ">
-                            Permitir
+                            Quero receber
                         </button>
-                        <button onclick="closeNotificationPrompt()" style="
+                        <button class="notification-prompt__secondary" type="button" onclick="closeNotificationPrompt()" style="
                             padding: 0.6rem 1rem;
                             background: #e5e5e5;
                             color: #666;
@@ -6179,10 +6182,10 @@ async function requestNotificationPermission() {
         
         if (permission === 'granted') {
             console.log('✅ Permissão de notificação concedida');
-            showToast('Você receberá notificações sobre promoções!', 'success');
+            showToast('Você receberá novidades da Versátil.', 'success');
             
-new Notification('Bem-vindo à Versátil! 👋', {
-                body: 'Agora você receberá ofertas exclusivas!',
+new Notification('Você está na lista Versátil', {
+                body: 'Vamos te avisar sobre novidades, reposições e ofertas especiais.',
                 icon: '/assets/icons/icon-192.png',
                 badge: '/assets/icons/favicon-32.png'
             });
@@ -6201,8 +6204,8 @@ new Notification('Bem-vindo à Versátil! 👋', {
 function closeNotificationPrompt() {
     const prompt = document.getElementById('notificationPrompt');
     if (prompt) {
-        prompt.style.animation = 'slideOutRight 0.5s ease';
-        setTimeout(() => prompt.remove(), 500);
+        prompt.classList.add('is-closing');
+        setTimeout(() => prompt.remove(), 260);
     }
 }
 

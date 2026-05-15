@@ -6,13 +6,12 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Modais de suporte publicadas em `main` e validadas no site publico.
+- Prompt de notificacoes ajustado e pronto para publicacao em `main`.
 
 ## Criterios de conclusao
-- Menu hamburguer mobile deve abrir modais para Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento.
-- Footer desktop deve trocar Atendimento por Suporte e usar as mesmas opcoes/modais.
-- Conteudo deve seguir os textos solicitados e manter CTA para WhatsApp.
-- Nao alterar regras de produto, checkout, carrinho ou Clube Versatil.
+- Aviso de permissao de notificacoes deve sair do visual generico/roxo.
+- Visual deve seguir a estetica premium da Versatil, com paleta creme/oliva, tipografia elegante e CTA refinado.
+- Nao alterar regra de permissao de notificacoes nem outras areas do site.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -49,3 +48,4 @@ Controle da tarefa atual.
 - 2026-05-15: Upgrade do painel admin de estoque com resumo, filtros, busca, edicao inline, exportacao CSV e melhorias responsivas.
 - 2026-05-15: Guia de Medidas estruturado em modal na home/menu mobile e pagina de produto, usando a imagem oficial anexada.
 - 2026-05-15: Suporte do menu mobile e footer desktop estruturado em modal unica com conteudos de frete, trocas, pagamento e atendimento.
+- 2026-05-15: Prompt de notificacoes redesenhado para o visual premium da marca.

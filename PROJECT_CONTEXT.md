@@ -60,6 +60,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Itens de suporte no menu mobile abrem modal unica de suporte com conteudo especifico para Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento; cada modal mantem CTA para WhatsApp.
 - Footer desktop da home usa secao "Suporte" com as mesmas opcoes e a mesma modal do menu mobile.
 - Guia de Medidas no menu hamburguer mobile e botao "Tabela de medidas" da pagina de produto abrem modal proprio com texto orientativo, imagem oficial `assets/home/guia-medidas-versatil.jpeg` e CTA para WhatsApp.
+- Prompt de permissao de notificacoes segue visual premium da marca: card creme, monograma Versatil, textos delicados e botoes oliva/contorno.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
 - Imagens quebradas em produtos antigos foram diagnosticadas como URLs externas do Imgur retornando 403, nao como limite confirmado do Firebase. Produtos com assets locais em `assets/products` carregam corretamente.
