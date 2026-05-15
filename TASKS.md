@@ -3,15 +3,15 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Aguardando proxima instrucao do usuario.
+- Ajustar icones do modal Clube Versatil para ficarem iguais a referencia.
 
 ## Status
-- Modal Clube Versatil redesenhado, publicado em `main` e validado no site publico.
-- Nenhuma tarefa funcional em andamento.
+- Icones corrigidos localmente e alinhados no modal.
+- Validacao local concluida; publicacao pendente.
 
 ## Criterios de conclusao
 - Modal deve abrir ao clicar no banner Clube Versatil.
-- Visual deve seguir o modelo novo com titulo, 3 passos, destaque Pix e botoes empilhados.
+- Icones dos 3 passos devem ficar centralizados, proporcionais e sem distorcao.
 - Botao "Quero meu codigo" deve manter redirecionamento para WhatsApp com mensagem automatica.
 - Botao "Ver regras" deve manter as regras completas expansivas.
 - Contexto atualizado ao final.
@@ -42,3 +42,4 @@ Controle da tarefa atual.
 - 2026-05-15: Otimizacao de carregamento mobile-first aplicada: preload do hero ativo, lazy/defer para imagens e videos abaixo da dobra, favicon leve e service worker enxuto.
 - 2026-05-15: Deploy da otimizacao publicado e validado no GitHub Pages.
 - 2026-05-15: Modal Clube Versatil redesenhado para modelo em 3 passos com Pix destacado, mantendo regras e WhatsApp.
+- 2026-05-15: Icones do modal Clube Versatil corrigidos para ficarem centralizados e proporcionais como na referencia.
