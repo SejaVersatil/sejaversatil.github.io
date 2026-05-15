@@ -3,6 +3,16 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-15
+- Tipo: ajuste visual/conversao
+- Arquivos alterados:
+  - `index.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: icone "Indique amigas" do modal Clube Versatil trocado para duas pessoas preenchidas e separadas com coracao acima, conforme referencia enviada.
+- Validacao: `node --check sw.js`; `git diff --check`; Playwright local confirmou modal visivel, 5 paths preenchidos no icone e ausencia das linhas antigas; site publico confirmou o novo SVG e `sw.js` com cache `v1.0.52`.
+- Proxima acao: aguardar proxima instrucao do usuario.
+
+## 2026-05-15
 - Tipo: conteudo/navegacao
 - Arquivos alterados:
   - `index.html`

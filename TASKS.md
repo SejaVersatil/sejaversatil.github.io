@@ -6,15 +6,13 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Menu mobile reorganizado, modal Nossa Essencia publicada em `main` e validada no site publico.
+- Icone "Indique amigas" do modal Clube Versatil ajustado, publicado em `main` e validado no site publico.
 - Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
-- Menu hamburguer deve seguir os grupos e a ordem solicitada.
-- Nossa Essencia deve abrir com o texto completo fornecido.
-- Footer deve trocar "Sobre Nos" por "Nossa Essencia" e abrir a mesma informacao.
-- Clube Versatil deve continuar abrindo o modal existente.
-- Suporte e Guia de Medidas devem ter acao funcional.
+- Icone "Indique amigas" deve mostrar duas pessoas preenchidas e separadas com coracao acima, conforme referencia.
+- Regras, CTA e redirecionamento para WhatsApp do Clube Versatil devem permanecer inalterados.
+- Cache do service worker deve ser atualizado para servir a versao nova.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -46,3 +44,4 @@ Controle da tarefa atual.
 - 2026-05-15: Icones do modal Clube Versatil corrigidos para ficarem centralizados e proporcionais como na referencia.
 - 2026-05-15: Icones refinados novamente: telefone preenchido, pessoas separadas se olhando e presente maior.
 - 2026-05-15: Menu hamburguer reorganizado e modal Nossa Essencia criada com texto institucional completo.
+- 2026-05-15: Icone "Indique amigas" do modal Clube Versatil ajustado para duas pessoas preenchidas e separadas com coracao acima.
