@@ -6,12 +6,12 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Guia de Medidas publicado em `main` e validado no site publico.
+- Modais de suporte implementadas e prontas para publicacao em `main`.
 
 ## Criterios de conclusao
-- Menu hamburguer mobile deve abrir o modal Guia de Medidas.
-- Botao "Tabela de medidas" da pagina de produto deve abrir o mesmo modal.
-- Modal deve conter os textos solicitados, a imagem anexada sem recriacao e CTA para WhatsApp.
+- Menu hamburguer mobile deve abrir modais para Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento.
+- Footer desktop deve trocar Atendimento por Suporte e usar as mesmas opcoes/modais.
+- Conteudo deve seguir os textos solicitados e manter CTA para WhatsApp.
 - Nao alterar regras de produto, checkout, carrinho ou Clube Versatil.
 - Contexto atualizado ao final.
 
@@ -48,3 +48,4 @@ Controle da tarefa atual.
 - 2026-05-15: Botao "Ver Produtos" da modal Nossa Essencia ajustado para ficar menor, delicado e alinhado a direita.
 - 2026-05-15: Upgrade do painel admin de estoque com resumo, filtros, busca, edicao inline, exportacao CSV e melhorias responsivas.
 - 2026-05-15: Guia de Medidas estruturado em modal na home/menu mobile e pagina de produto, usando a imagem oficial anexada.
+- 2026-05-15: Suporte do menu mobile e footer desktop estruturado em modal unica com conteudos de frete, trocas, pagamento e atendimento.

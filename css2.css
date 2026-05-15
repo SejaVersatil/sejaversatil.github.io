@@ -7363,6 +7363,96 @@ body.modal-open {
     letter-spacing: 0.12em;
 }
 
+.support-modal-content {
+    width: min(94vw, 740px);
+    padding: clamp(1.9rem, 3.5vw, 2.8rem);
+}
+
+.support-modal-content h2 {
+    max-width: calc(100% - 72px);
+    margin-bottom: 1rem;
+    font-size: clamp(2.55rem, 5.2vw, 4rem);
+    line-height: 1;
+}
+
+.support-modal-body {
+    display: grid;
+    gap: 1rem;
+    color: #3c3c35;
+}
+
+.support-modal-intro {
+    margin: 0;
+    color: #45453d;
+    font-size: 1rem;
+    line-height: 1.58;
+}
+
+.support-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.support-info-grid-single {
+    grid-template-columns: 1fr;
+}
+
+.support-info-card {
+    display: grid;
+    gap: 0.45rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.52);
+    border: 1px solid rgba(47, 53, 34, 0.12);
+    border-radius: 14px;
+}
+
+.support-info-card-wide {
+    grid-column: 1 / -1;
+}
+
+.support-info-card h3 {
+    margin: 0;
+    color: #2f3522;
+    font-family: var(--font-main) !important;
+    font-size: 0.78rem;
+    font-weight: 800 !important;
+    letter-spacing: 0.1em !important;
+    line-height: 1.25;
+    text-transform: uppercase !important;
+}
+
+.support-info-card p {
+    margin: 0;
+    color: #3d3d36;
+    font-size: 0.9rem;
+    line-height: 1.48;
+}
+
+.support-info-card ul {
+    display: grid;
+    gap: 0.3rem;
+    margin: 0;
+    padding-left: 1.05rem;
+    color: #3d3d36;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.support-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
+.support-modal-actions .club-modal-primary {
+    width: fit-content;
+    min-height: 44px;
+    padding: 0 1.2rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+}
+
 .club-rules {
     margin-top: 1.15rem;
     padding: 1rem;
@@ -7564,6 +7654,28 @@ body.modal-open {
     .size-guide-image-frame {
         margin: 1rem 0;
     }
+
+    .support-modal-content {
+        width: min(92vw, 740px);
+        padding: 1.8rem 2rem 1.65rem;
+    }
+
+    .support-modal-content h2 {
+        font-size: clamp(2.35rem, 4.9vw, 3.4rem);
+    }
+
+    .support-modal-intro {
+        font-size: 0.94rem;
+        line-height: 1.5;
+    }
+
+    .support-info-grid {
+        gap: 0.7rem;
+    }
+
+    .support-info-card {
+        padding: 0.85rem;
+    }
 }
 
 @media (max-width: 520px) {
@@ -7746,6 +7858,56 @@ body.modal-open {
     }
 
     .size-guide-actions .club-modal-primary {
+        width: 100%;
+        min-height: 46px;
+        font-size: 0.78rem;
+    }
+
+    .support-modal-content {
+        padding: 1.45rem 0.9rem 1rem;
+    }
+
+    .support-modal-content h2 {
+        max-width: calc(100% - 52px);
+        margin-bottom: 0.8rem;
+        font-size: clamp(2.05rem, 10.5vw, 2.65rem);
+    }
+
+    .support-modal-body {
+        gap: 0.82rem;
+    }
+
+    .support-modal-intro {
+        font-size: 0.9rem;
+        line-height: 1.48;
+    }
+
+    .support-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.62rem;
+    }
+
+    .support-info-card {
+        gap: 0.36rem;
+        padding: 0.78rem;
+        border-radius: 11px;
+    }
+
+    .support-info-card h3 {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em !important;
+    }
+
+    .support-info-card p,
+    .support-info-card ul {
+        font-size: 0.84rem;
+    }
+
+    .support-modal-actions {
+        margin-top: 1rem;
+    }
+
+    .support-modal-actions .club-modal-primary {
         width: 100%;
         min-height: 46px;
         font-size: 0.78rem;

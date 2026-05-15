@@ -38,7 +38,7 @@
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil-mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/home/hero-clube-versatil.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
   
-  <link rel="stylesheet" href="css2.css?v=1.0.27">
+  <link rel="stylesheet" href="css2.css?v=1.0.28">
   <link rel="stylesheet" href="auth_styles.css">
 
 </head>
@@ -84,10 +84,10 @@
     <div class="sidebar-section">
       <h3>Suporte</h3>
       <ul>
-        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('frete'), 250); return false;">Frete e Entrega</a></li>
-        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('trocas'), 250); return false;">Trocas e Devoluções</a></li>
-        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('pagamento'), 250); return false;">Formas de Pagamento</a></li>
-        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openWhatsAppSupport('atendimento'), 250); return false;">Atendimento</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openSupportModal('frete'), 250); return false;">Frete e Entrega</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openSupportModal('trocas'), 250); return false;">Trocas e Devoluções</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openSupportModal('pagamento'), 250); return false;">Formas de Pagamento</a></li>
+        <li><a href="#" onclick="toggleSidebar(); setTimeout(() => openSupportModal('atendimento'), 250); return false;">Atendimento</a></li>
       </ul>
     </div>
   </div>
@@ -478,6 +478,18 @@
     </div>
   </div>
 
+  <div class="club-modal support-modal" id="supportInfoModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="supportInfoTitle">
+    <div class="club-modal-content support-modal-content">
+      <button class="club-modal-close" type="button" onclick="closeSupportModal()" aria-label="Fechar Suporte">&times;</button>
+      <span class="club-modal-kicker">Suporte Versátil</span>
+      <h2 id="supportInfoTitle">Suporte</h2>
+      <div class="support-modal-body" id="supportInfoBody"></div>
+      <div class="support-modal-actions">
+        <button class="club-modal-primary" type="button" onclick="openSupportWhatsAppFromModal()">Falar no WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
   <section class="promo-cards-section">
     <div class="promo-cards-grid">
       <div class="promo-card" onclick="navigateToCategory('conjunto short saia')">
@@ -634,12 +646,12 @@
         </ul>
       </div>
       <div class="footer-section">
-        <h4>Atendimento</h4>
+        <h4>Suporte</h4>
         <ul>
-          <li><a href="#">Central de Ajuda</a></li>
-          <li><a href="#">Trocas e Devoluções</a></li>
-          <li><a href="#">Formas de Pagamento</a></li>
-          <li><a href="#">Rastreamento</a></li>
+          <li><a href="#" onclick="openSupportModal('frete'); return false;">Frete e Entrega</a></li>
+          <li><a href="#" onclick="openSupportModal('trocas'); return false;">Trocas e Devoluções</a></li>
+          <li><a href="#" onclick="openSupportModal('pagamento'); return false;">Formas de Pagamento</a></li>
+          <li><a href="#" onclick="openSupportModal('atendimento'); return false;">Atendimento</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -1219,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
  <script defer src="auth.js?v=1.0.1"></script>
-  <script defer src="script2.js?v=1.1.17"></script>
+  <script defer src="script2.js?v=1.1.18"></script>
   
 </body>
 </html>

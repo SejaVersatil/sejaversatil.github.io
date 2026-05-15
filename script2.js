@@ -2982,6 +2982,165 @@ function openSizeGuideWhatsApp() {
     openWhatsAppSupport('guia');
 }
 
+let activeSupportTopic = 'atendimento';
+
+const supportModalContent = {
+    frete: {
+        title: 'Frete e Entrega',
+        body: `
+            <p class="support-modal-intro">Na Seja Versátil, preparamos seu pedido com cuidado para que ele chegue até você da melhor forma.</p>
+            <div class="support-info-grid">
+                <section class="support-info-card">
+                    <h3>Prazo de postagem</h3>
+                    <p>Seu pedido será separado e enviado em até 3 dias úteis após a confirmação do pagamento.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Prazo de entrega</h3>
+                    <p>O prazo pode variar de acordo com o CEP e a modalidade escolhida no checkout.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Frete grátis</h3>
+                    <p>Frete grátis para compras acima de R$ 399 conforme campanha ativa no site.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Rastreamento</h3>
+                    <p>Assim que o pedido for enviado, você receberá o código de rastreio para acompanhar a entrega.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Endereço incorreto ou incompleto</h3>
+                    <p>Confira os dados antes de finalizar a compra. Caso o pedido retorne por endereço incorreto, incompleto ou ausência no recebimento, o reenvio poderá gerar nova cobrança de frete.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Atrasos</h3>
+                    <p>Eventuais atrasos podem ocorrer por fatores externos, como transportadora, Correios, clima, feriados ou alta demanda.</p>
+                </section>
+            </div>
+        `
+    },
+    trocas: {
+        title: 'Trocas e Devoluções',
+        body: `
+            <p class="support-modal-intro">Queremos que você tenha uma experiência segura com a Versátil. Por isso, nossa política de trocas e devoluções foi pensada para ser simples e transparente.</p>
+            <div class="support-info-grid">
+                <section class="support-info-card">
+                    <h3>Direito de arrependimento</h3>
+                    <p>Para compras realizadas online, a cliente pode solicitar a devolução em até 7 dias corridos após o recebimento do pedido, conforme o Código de Defesa do Consumidor.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Troca por tamanho ou modelo</h3>
+                    <p>A solicitação de troca deve ser feita em até 7 dias após o recebimento do pedido.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Condições da peça</h3>
+                    <p>A peça precisa estar sem sinais de uso, sem lavagem, sem odor, sem manchas, sem avarias e com etiqueta/lacre, quando houver.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Itens que não entram na troca</h3>
+                    <p>Peças com sinais de uso, lavagem, alteração, odor, manchas ou danos não serão aceitas.</p>
+                </section>
+                <section class="support-info-card support-info-card-wide">
+                    <h3>Como solicitar</h3>
+                    <p>Entre em contato pelo WhatsApp informando:</p>
+                    <ul>
+                        <li>número do pedido;</li>
+                        <li>nome completo;</li>
+                        <li>peça que deseja trocar ou devolver;</li>
+                        <li>motivo da solicitação;</li>
+                        <li>fotos da peça, se necessário.</li>
+                    </ul>
+                </section>
+                <section class="support-info-card">
+                    <h3>Análise</h3>
+                    <p>Após o recebimento da solicitação, a Versátil irá orientar os próximos passos. A troca ou devolução será concluída após análise das condições da peça.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Reembolso</h3>
+                    <p>Em caso de devolução aprovada, o reembolso será realizado conforme a forma de pagamento utilizada na compra.</p>
+                </section>
+            </div>
+        `
+    },
+    pagamento: {
+        title: 'Formas de Pagamento',
+        body: `
+            <p class="support-modal-intro">Na Seja Versátil, você pode finalizar sua compra com segurança e escolher a melhor forma de pagamento disponível no site.</p>
+            <div class="support-info-grid">
+                <section class="support-info-card">
+                    <h3>Pix</h3>
+                    <p>Compras via Pix têm 5% OFF no pagamento.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Cartão de crédito</h3>
+                    <p>Pagamento com cartão de crédito disponível no checkout, conforme condições apresentadas no site.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Parcelamento</h3>
+                    <p>Você pode parcelar sua compra em até 3x sem juros.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Confirmação do pagamento</h3>
+                    <p>Pedidos pagos via Pix são confirmados após a aprovação do pagamento. Pedidos no cartão passam pela análise da operadora.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Cupons e cashback</h3>
+                    <p>Cupons, descontos e créditos do Clube Versátil podem seguir regras específicas de uso e não são necessariamente cumulativos com outras campanhas.</p>
+                </section>
+                <section class="support-info-card">
+                    <h3>Segurança</h3>
+                    <p>Todas as informações de pagamento são processadas em ambiente seguro pelo sistema de checkout.</p>
+                </section>
+            </div>
+        `
+    },
+    atendimento: {
+        title: 'Atendimento Versátil',
+        body: `
+            <p class="support-modal-intro">Fale com a gente pelo WhatsApp para tirar dúvidas sobre tamanhos, pedidos, trocas, entregas ou Clube Versátil.</p>
+            <div class="support-info-grid support-info-grid-single">
+                <section class="support-info-card support-info-card-wide">
+                    <h3>Horário de atendimento</h3>
+                    <p>Segunda a sexta, das 8:00 às 18:00</p>
+                    <p>Sábado, das 8:00 às 16:00</p>
+                </section>
+            </div>
+        `
+    }
+};
+
+function openSupportModal(topic = 'atendimento') {
+    const modal = document.getElementById('supportInfoModal');
+    const title = document.getElementById('supportInfoTitle');
+    const body = document.getElementById('supportInfoBody');
+    const content = supportModalContent[topic] || supportModalContent.atendimento;
+
+    if (!modal || !title || !body) return;
+
+    activeSupportTopic = topic;
+    title.textContent = content.title;
+    body.innerHTML = content.body;
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const closeButton = modal.querySelector('.club-modal-close');
+    if (closeButton) {
+        closeButton.focus();
+    }
+}
+
+function closeSupportModal() {
+    const modal = document.getElementById('supportInfoModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function openSupportWhatsAppFromModal() {
+    openWhatsAppSupport(activeSupportTopic);
+}
+
 function openWhatsAppSupport(topic = 'atendimento') {
     const supportMessages = {
         guia: 'Olá! Quero ajuda com o guia de medidas da Versátil.',
@@ -3025,11 +3184,22 @@ if (sizeGuideModal) {
     });
 }
 
+const supportInfoModal = document.getElementById('supportInfoModal');
+
+if (supportInfoModal) {
+    supportInfoModal.addEventListener('click', (event) => {
+        if (event.target === supportInfoModal) {
+            closeSupportModal();
+        }
+    });
+}
+
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         closeClubVersatilModal();
         closeNossaEssenciaModal();
         closeSizeGuideModal();
+        closeSupportModal();
     }
 });
 

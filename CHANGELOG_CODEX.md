@@ -3,6 +3,21 @@
 Registro objetivo das alteracoes feitas pelo Codex.
 
 ## 2026-05-15
+- Tipo: conteudo/ux-suporte
+- Arquivos alterados:
+  - `index.html`
+  - `css2.css`
+  - `script2.js`
+  - `checkout.html`
+  - `produto.html`
+  - `meus_pedidos.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: suporte do menu hamburguer mobile passou a abrir modal unica com conteudos de Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento; footer desktop trocou "Atendimento" por "Suporte" e usa as mesmas opcoes/modais.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Browser local confirmou abertura do modal pelo menu mobile em Frete e Entrega e pelo footer desktop em Formas de Pagamento, com CTA de WhatsApp visivel.
+- Proxima acao: aguardar proxima instrucao do usuario.
+
+## 2026-05-15
 - Tipo: conteudo/ux-guia-medidas
 - Arquivos alterados:
   - `index.html`

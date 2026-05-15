@@ -57,7 +57,8 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - "Ver regras" do Clube Versatil agora exibe regras completas, valores de cashback, validacao, restricoes, validade e chamada final para solicitar codigo.
 - Menu hamburguer mobile organizado em grupos: Explore, Conta, Categorias, Colecoes e Suporte. "Nossa Essencia" abre modal propria com o texto institucional completo; link do footer "Nossa Essencia" abre a mesma modal.
 - Modal Nossa Essencia usa CTA discreto "Ver Produtos", com capitalizacao normal, tamanho menor e alinhamento no canto direito da area de conteudo.
-- Itens de suporte no menu mobile direcionam ao WhatsApp com mensagem especifica.
+- Itens de suporte no menu mobile abrem modal unica de suporte com conteudo especifico para Frete e Entrega, Trocas e Devolucoes, Formas de Pagamento e Atendimento; cada modal mantem CTA para WhatsApp.
+- Footer desktop da home usa secao "Suporte" com as mesmas opcoes e a mesma modal do menu mobile.
 - Guia de Medidas no menu hamburguer mobile e botao "Tabela de medidas" da pagina de produto abrem modal proprio com texto orientativo, imagem oficial `assets/home/guia-medidas-versatil.jpeg` e CTA para WhatsApp.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
