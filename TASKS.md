@@ -3,13 +3,14 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Ajustar regras do Clube Versatil e auditar cadastro manual de produtos no admin.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
 - Regras completas do Clube Versatil adicionadas ao botao "Ver regras".
 - Upload local do admin reforcado para JPG/PNG/WebP, conversao WebP e envio ao Firebase Storage.
 - Produto novo passa a exigir pelo menos uma imagem adicionada antes de salvar.
-- Validacao local concluida.
+- Alteracao publicada em `main` e validada no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Modal do Clube Versatil deve mostrar regras completas ao clicar em "Ver regras".
@@ -20,8 +21,9 @@ Controle da tarefa atual.
 - Contexto atualizado ao final.
 
 ## Proximos passos
-- Publicar alteracao no GitHub Pages.
-- Validar pagina publica apos deploy.
+- Receber nova instrucao do usuario.
+- Ler os arquivos de contexto antes de agir.
+- Identificar os arquivos minimos necessarios para a tarefa.
 
 ## O que nao fazer
 - Nao iniciar alteracoes funcionais sem pedido.

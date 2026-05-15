@@ -11,8 +11,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: regras completas do Clube Versatil adicionadas ao modal; painel admin agora orienta upload local permanente, aceita apenas JPG/PNG/WebP, converte para WebP antes do Firebase Storage, grava metadata do upload e impede salvar produto sem imagem adicionada.
-- Validacao: `node --check script2.js`; `git diff --check`; Playwright local confirmou regras no modal, estado vazio de imagens no admin, accept do upload, texto de ajuda e conversao PNG para WebP.
-- Proxima acao: publicar em `main` e validar no site publico.
+- Validacao: `node --check script2.js`; `git diff --check`; Playwright local confirmou regras no modal, estado vazio de imagens no admin, accept do upload, texto de ajuda e conversao PNG para WebP; site publico confirmou `index.html`, `script2.js?v=1.1.14` e `sw.js` atualizados.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-14
 - Tipo: performance/resiliencia
