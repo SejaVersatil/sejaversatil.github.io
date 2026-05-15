@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Botao "Ver Produtos" da modal Nossa Essencia ajustado e pronto para publicacao.
+- Botao "Ver Produtos" da modal Nossa Essencia ajustado, publicado em `main` e validado no site publico.
 - Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao

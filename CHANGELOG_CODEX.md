@@ -13,8 +13,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: botao da modal Nossa Essencia alterado para "Ver Produtos", com capitalizacao normal, tamanho menor, peso visual mais delicado e alinhamento a direita.
-- Validacao: `node --check sw.js`; `git diff --check`; Playwright local mobile confirmou texto, transformacao normal, tamanho reduzido e posicao a direita.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: `node --check sw.js`; `git diff --check`; Playwright local mobile confirmou texto, transformacao normal, tamanho reduzido e posicao a direita; site publico confirmou `css2.css?v=1.0.26` e `sw.js` com cache `v1.0.53`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/conversao
