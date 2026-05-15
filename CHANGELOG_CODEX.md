@@ -14,8 +14,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: menu hamburguer mobile reorganizado em Explore, Conta, Categorias, Colecoes e Suporte; criada modal Nossa Essencia com texto institucional completo; footer trocou Sobre Nos por Nossa Essencia; suporte e Guia de Medidas abrem WhatsApp com mensagem especifica.
-- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright mobile confirmou ordem do menu, abertura da modal Nossa Essencia pelo menu e footer, texto completo e WhatsApp de suporte.
-- Proxima acao: publicar em `main` e validar site publico.
+- Validacao: `node --check script2.js`; `node --check sw.js`; `git diff --check`; Playwright mobile confirmou ordem do menu, abertura da modal Nossa Essencia pelo menu e footer, texto completo e WhatsApp de suporte; site publico confirmou `css2.css?v=1.0.25`, `script2.js?v=1.1.16` e `sw.js` com cache `v1.0.51`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/conversao

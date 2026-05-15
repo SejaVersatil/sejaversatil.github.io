@@ -3,12 +3,11 @@
 Controle da tarefa atual.
 
 ## Tarefa atual
-- Organizar menu hamburguer mobile e adicionar Nossa Essencia.
+- Aguardando proxima instrucao do usuario.
 
 ## Status
-- Menu mobile reorganizado localmente.
-- Modal Nossa Essencia criada localmente e vinculada ao menu/footer.
-- Validacao local concluida; publicacao pendente.
+- Menu mobile reorganizado, modal Nossa Essencia publicada em `main` e validada no site publico.
+- Nenhuma tarefa funcional em andamento.
 
 ## Criterios de conclusao
 - Menu hamburguer deve seguir os grupos e a ordem solicitada.
