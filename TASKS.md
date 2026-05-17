@@ -6,12 +6,13 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Hero mobile Clube Versatil ajustado, publicado em `main` e validado no site publico.
+- Ajuste de pre-venda implementado: badge antiga passa a "Lançamento" e countdown foi removido da renderizacao.
 
 ## Criterios de conclusao
-- No mobile, o banner Clube Versatil deve manter a seta esquerda oculta.
-- No mobile, o banner Clube Versatil deve exibir a seta direita para avancar o hero.
-- Nao alterar imagens, textos, modal, logica de clique do banner nem outros slides.
+- Produtos com badge "pre-venda" ou variações devem exibir "Lançamento".
+- Countdown de pre-venda nao deve ser renderizado nos cards da vitrine.
+- Pagina do produto nao deve usar texto/botao de compra na pre-venda para esse estado antigo.
+- Nao alterar imagens, precos, estoque, categorias ou outras regras comerciais.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -50,3 +51,4 @@ Controle da tarefa atual.
 - 2026-05-15: Suporte do menu mobile e footer desktop estruturado em modal unica com conteudos de frete, trocas, pagamento e atendimento.
 - 2026-05-15: Prompt de notificacoes redesenhado para o visual premium da marca.
 - 2026-05-15: Hero mobile Clube Versatil ajustado para manter somente a seta direita de avancar.
+- 2026-05-17: Badge antiga de pre-venda normalizada para "Lançamento" e countdown removido da vitrine.

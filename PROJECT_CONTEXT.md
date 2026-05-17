@@ -62,6 +62,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Footer desktop da home usa secao "Suporte" com as mesmas opcoes e a mesma modal do menu mobile.
 - Guia de Medidas no menu hamburguer mobile e botao "Tabela de medidas" da pagina de produto abrem modal proprio com texto orientativo, imagem oficial `assets/home/guia-medidas-versatil.jpeg` e CTA para WhatsApp.
 - Prompt de permissao de notificacoes segue visual premium da marca: card creme, monograma Versatil, textos delicados e botoes oliva/contorno.
+- Produtos com badge antiga de pre-venda devem ser exibidos como "Lançamento"; o countdown de pre-venda nao deve mais aparecer na vitrine.
 - Popup promocional de 10% removido da home.
 - Mensagem de 10% removida dos banners rotativos de topo da home, produto e meus pedidos.
 - Imagens quebradas em produtos antigos foram diagnosticadas como URLs externas do Imgur retornando 403, nao como limite confirmado do Firebase. Produtos com assets locais em `assets/products` carregam corretamente.
@@ -71,7 +72,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Painel admin de estoque em `admin-panel.html` possui resumo operacional, busca, filtros por status/categoria, edicao inline de quantidade e disponibilidade por variacao, salvamento em lote no Firebase, exportacao CSV e layout responsivo melhorado.
 - Performance mobile foi priorizada: a home carrega primeiro apenas o hero ativo correto por viewport, adia heroes secundarios, imagens abaixo da dobra, produtos e videos, e usa favicon/icones leves.
 - Service worker passou a manter cache inicial enxuto, com app shell, icones pequenos e hero ativo; imagens/estaticos continuam com estrategia cache-first apos requisicao.
-- Projeto aguardando proxima instrucao do usuario.
+- Ajuste de badge/counter de pre-venda publicado: badge antiga vira "Lançamento" e countdown nao e mais renderizado.
 
 ## Pontos sensiveis
 - Nao alterar design, layout, textos, estilos ou comportamento sem pedido explicito.

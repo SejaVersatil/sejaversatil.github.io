@@ -2,6 +2,20 @@
 
 Registro objetivo das alteracoes feitas pelo Codex.
 
+## 2026-05-17
+- Tipo: ajuste conteudo/produtos
+- Arquivos alterados:
+  - `script2.js`
+  - `produto.js`
+  - `index.html`
+  - `checkout.html`
+  - `produto.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: produtos com badge antiga de pre-venda agora exibem "Lançamento"; o countdown de pre-venda deixou de ser inserido nos cards da vitrine e a pagina do produto nao usa mais chamada de compra na pre-venda.
+- Validacao: `node --check script2.js`; `node --check produto.js`; `node --check sw.js`; `git diff --check`.
+- Proxima acao: publicar e validar no site publico.
+
 ## 2026-05-15
 - Tipo: ajuste visual/mobile
 - Arquivos alterados:

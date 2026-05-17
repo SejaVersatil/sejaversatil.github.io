@@ -412,6 +412,22 @@ function normalizeText(value, fallback = '') {
     return text || fallback;
 }
 
+function isPreSaleBadge(value) {
+    const normalized = normalizeText(value)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+
+    return normalized === 'prevenda' || normalized === 'preorder';
+}
+
+function normalizeProductBadge(value) {
+    const text = normalizeText(value);
+    if (!text) return '';
+    return isPreSaleBadge(text) ? 'Lançamento' : text;
+}
+
 const COLLECTION_FILTER_PREFIX = 'collection:';
 const COLLECTION_LABELS = {
     'colecao-v1': 'Coleção V1'
@@ -674,7 +690,7 @@ function normalizeProductRecord(id, data = {}) {
         category: normalizeText(data.category, 'sem categoria'),
         price,
         oldPrice: oldPrice && oldPrice > 0 ? oldPrice : null,
-        badge: data.badge === null || data.badge === undefined ? '' : String(data.badge),
+        badge: normalizeProductBadge(data.badge),
         isBlackFriday: Boolean(data.isBlackFriday),
         image: images[0] || DEFAULT_PRODUCT_IMAGE,
         images,
@@ -1075,29 +1091,7 @@ function getCountdownParts(targetDate) {
 }
 
 function renderPreSaleCountdown(product = {}) {
-    if (!isPreSaleProduct(product)) return '';
-
-    const launchDate = getProductLaunchDate(product);
-    if (!launchDate) return '';
-
-    const parts = getCountdownParts(launchDate);
-    const collectionName = product.collection || 'Coleção V1';
-    const launchLabel = product.launchLabel || 'Sábado, 8h';
-
-    return `
-        <div class="preorder-countdown-card ${parts.launched ? 'is-launched' : ''}"
-             data-launch-countdown="${launchDate.getTime()}"
-             data-launch-label="${sanitizeInput(launchLabel)}"
-             aria-label="${sanitizeInput(collectionName)} lança em ${launchLabel}">
-            <span>${sanitizeInput(collectionName)}</span>
-            <div class="preorder-countdown-units">
-                <strong><b data-countdown-days>${parts.days}</b><small>d</small></strong>
-                <strong><b data-countdown-hours>${parts.hours}</b><small>h</small></strong>
-                <strong><b data-countdown-minutes>${parts.minutes}</b><small>m</small></strong>
-            </div>
-            <em data-countdown-status>${parts.launched ? 'Coleção lançada' : `Pré-venda aberta · ${sanitizeInput(launchLabel)}`}</em>
-        </div>
-    `;
+    return '';
 }
 
 let preSaleCountdownTimer = null;
@@ -1120,7 +1114,7 @@ function updatePreSaleCountdownElement(element) {
     if (status) {
         status.textContent = parts.launched
             ? 'Coleção lançada'
-            : `Pré-venda aberta · ${element.dataset.launchLabel || 'sábado 8h'}`;
+            : 'Lançamento';
     }
 }
 
@@ -1464,7 +1458,6 @@ function renderProducts() {
         const hiddenColorsCount = Math.max(0, colorOptions.length - visibleColors.length);
         const sizeOptions = getProductSizeOptions(product).slice(0, 5);
         const installments = formatBRL(product.price / 3);
-        const preSaleCountdownHtml = renderPreSaleCountdown(product);
 
         // Criação do Elemento Temporário
         const tempDiv = document.createElement('div');
@@ -1483,7 +1476,6 @@ function renderProducts() {
                       
                     ${product.badge && discountPercent === 0 ? `<div class="product-badge">${sanitizeInput(product.badge)}</div>` : ''}
                     ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
-                    ${preSaleCountdownHtml}
 
                     <div class="product-image-carousel">
                         ${images.map((img, index) => {
@@ -4211,7 +4203,7 @@ async function saveProduct(event) {
     const price = parseCurrencyNumber(priceEl.value, null);
     const oldPrice = oldPriceEl?.value ? parseCurrencyNumber(oldPriceEl.value, null) : null;
     const category = categoryEl.value.trim();
-    const badge = badgeEl?.value.trim() || '';
+    const badge = normalizeProductBadge(badgeEl?.value);
     const isBlackFriday = blackFridayEl?.checked || false;
     if (!name || price === null || !category) {
         showToast('Preencha os campos obrigatórios (Nome, Preço, Categoria)', 'error');

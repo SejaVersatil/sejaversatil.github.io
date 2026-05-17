@@ -74,6 +74,13 @@ const normalizeProductImageList = (value) => {
     return prioritizeReliableProductImages([...new Set(list.map(mirrorProductImageUrl).filter(Boolean))]);
 };
 
+const isPreSaleText = (value) => String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .includes('prevenda');
+
 const normalizeProductMedia = (data = {}) => {
     const rawImages = Array.isArray(data.images) && data.images.length ? data.images : data.image;
     const images = normalizeProductImageList(rawImages);
@@ -318,24 +325,15 @@ function getLaunchDate(product = {}) {
 }
 
 function getPurchaseButtonLabel(product = {}) {
-    if (product.purchaseButtonLabel) return String(product.purchaseButtonLabel).toUpperCase();
-    return isPreOrderProduct(product) ? 'COMPRAR NA PR\u00c9-VENDA' : 'COMPRAR';
+    if (product.purchaseButtonLabel && !isPreSaleText(product.purchaseButtonLabel)) {
+        return String(product.purchaseButtonLabel).toUpperCase();
+    }
+
+    return 'COMPRAR';
 }
 
 function getProductLaunchText(product = {}) {
-    const launchDate = getLaunchDate(product);
-    if (!launchDate || launchDate.getTime() <= Date.now()) {
-        return product.collection || 'Cole\u00e7\u00e3o V1';
-    }
-
-    const diff = Math.max(0, launchDate.getTime() - Date.now());
-    const totalMinutes = Math.floor(diff / 60000);
-    const days = Math.floor(totalMinutes / 1440);
-    const hours = Math.floor((totalMinutes % 1440) / 60);
-    const minutes = totalMinutes % 60;
-    const launchLabel = product.launchLabel || 's\u00e1bado, 8h';
-
-    return `Pr\u00e9-venda aberta \u00b7 lan\u00e7a em ${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m \u00b7 ${launchLabel}`;
+    return product.collection || 'Lançamento';
 }
 
 function renderPreOrderState() {
@@ -1516,7 +1514,7 @@ function generateWhatsAppMessage(orderId, customer, items, totals, paymentMethod
 function buyViaWhatsApp() {
     const p = state.currentProduct;
     if (!p) return;
-    const intent = isPreOrderProduct(p) ? 'comprar na pré-venda' : 'comprar';
+    const intent = 'comprar';
     const msg = `Olá! Gostaria de ${intent} o produto: *${p.name}*\n` +
         `Preço: R$ ${p.price.toFixed(2)}\n` +
         `Link: ${window.location.href}`;
