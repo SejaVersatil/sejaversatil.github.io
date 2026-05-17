@@ -6,7 +6,7 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Ajuste de pre-venda implementado: badge antiga passa a "Lançamento" e countdown foi removido da renderizacao.
+- Ajuste de pre-venda publicado e validado no site publico.
 
 ## Criterios de conclusao
 - Produtos com badge "pre-venda" ou variações devem exibir "Lançamento".

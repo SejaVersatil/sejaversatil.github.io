@@ -13,8 +13,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: produtos com badge antiga de pre-venda agora exibem "Lançamento"; o countdown de pre-venda deixou de ser inserido nos cards da vitrine e a pagina do produto nao usa mais chamada de compra na pre-venda.
-- Validacao: `node --check script2.js`; `node --check produto.js`; `node --check sw.js`; `git diff --check`.
-- Proxima acao: publicar e validar no site publico.
+- Validacao: `node --check script2.js`; `node --check produto.js`; `node --check sw.js`; `git diff --check`; site publico confirmou `script2.js?v=1.1.20`, `produto.js?v=1.0.16`, normalizacao da badge e service worker `v1.0.58`.
+- Proxima acao: aguardar proxima instrucao do usuario.
 
 ## 2026-05-15
 - Tipo: ajuste visual/mobile
