@@ -6,7 +6,9 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Ajuste de seguranca Firebase em andamento: configuracao removida dos HTMLs e centralizada em `firebase-init.js`.
+- Ajuste de seguranca Firebase publicado: configuracao removida dos HTMLs principais e centralizada em `firebase-init.js`.
+- GitHub Pages validado sem `firebaseConfig`, `apiKey` direta ou `measurementId` no `index.html` publico.
+- Proxima protecao obrigatoria deve ser feita no console Firebase/Google Cloud: restricao da API key por HTTP referrer, App Check e revisao de Rules.
 
 ## Criterios de conclusao
 - HTMLs principais nao devem conter `apiKey`, `measurementId`, `firebaseConfig` ou valores diretos da configuracao Firebase.
@@ -52,4 +54,4 @@ Controle da tarefa atual.
 - 2026-05-15: Prompt de notificacoes redesenhado para o visual premium da marca.
 - 2026-05-15: Hero mobile Clube Versatil ajustado para manter somente a seta direita de avancar.
 - 2026-05-17: Badge antiga de pre-venda normalizada para "Lançamento" e countdown removido da vitrine.
-- 2026-05-27: Inicializacao Firebase centralizada fora dos HTMLs e documentacao de seguranca Firebase adicionada.
+- 2026-05-27: Inicializacao Firebase centralizada fora dos HTMLs, documentacao de seguranca Firebase adicionada e publicacao validada no GitHub Pages.

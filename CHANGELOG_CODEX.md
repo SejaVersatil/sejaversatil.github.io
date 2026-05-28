@@ -15,8 +15,8 @@ Registro objetivo das alteracoes feitas pelo Codex.
   - `sw.js`
   - arquivos de contexto Codex
 - Resumo: configuracao Firebase removida dos HTMLs e centralizada em `firebase-init.js`, com montagem dos identificadores fora das paginas e bloqueio de inicializacao fora dos hosts esperados; criado guia curto com medidas reais de protecao no Firebase/Google Cloud.
-- Validacao: `node --check firebase-init.js`; `node --check sw.js`; busca confirmou ausencia de `apiKey`, `measurementId`, `firebaseConfig` e valores diretos nos arquivos HTML/JS; Chrome headless abriu home/produto/checkout localmente sem pagina de erro.
-- Proxima acao: publicar e validar no site publico.
+- Validacao: `node --check firebase-init.js`; `node --check sw.js`; busca confirmou ausencia de `apiKey`, `measurementId`, `firebaseConfig` e valores diretos nos HTMLs principais; HTTP local retornou 200 para home/produto/checkout/meus pedidos/admin; GitHub Pages confirmou `index.html` sem configuracao direta, `firebase-init.js` publicado e service worker `v1.0.59`.
+- Proxima acao: aplicar no console Firebase/Google Cloud a restricao de API key por HTTP referrer, App Check e revisao de Firestore/Storage Rules.
 
 ## 2026-05-17
 - Tipo: ajuste conteudo/produtos
