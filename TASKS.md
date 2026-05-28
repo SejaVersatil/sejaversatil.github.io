@@ -6,13 +6,13 @@ Controle da tarefa atual.
 - Aguardando proxima instrucao do usuario.
 
 ## Status
-- Ajuste de pre-venda publicado e validado no site publico.
+- Ajuste de seguranca Firebase em andamento: configuracao removida dos HTMLs e centralizada em `firebase-init.js`.
 
 ## Criterios de conclusao
-- Produtos com badge "pre-venda" ou variações devem exibir "Lançamento".
-- Countdown de pre-venda nao deve ser renderizado nos cards da vitrine.
-- Pagina do produto nao deve usar texto/botao de compra na pre-venda para esse estado antigo.
-- Nao alterar imagens, precos, estoque, categorias ou outras regras comerciais.
+- HTMLs principais nao devem conter `apiKey`, `measurementId`, `firebaseConfig` ou valores diretos da configuracao Firebase.
+- Firebase deve continuar inicializando na home, produto, checkout, meus pedidos e admin.
+- O projeto deve registrar a orientacao de seguranca real: Rules, App Check e restricao de chave por referrer.
+- Nao alterar design, textos comerciais, produtos, estoque ou fluxo de compra.
 - Contexto atualizado ao final.
 
 ## Proximos passos
@@ -52,3 +52,4 @@ Controle da tarefa atual.
 - 2026-05-15: Prompt de notificacoes redesenhado para o visual premium da marca.
 - 2026-05-15: Hero mobile Clube Versatil ajustado para manter somente a seta direita de avancar.
 - 2026-05-17: Badge antiga de pre-venda normalizada para "Lançamento" e countdown removido da vitrine.
+- 2026-05-27: Inicializacao Firebase centralizada fora dos HTMLs e documentacao de seguranca Firebase adicionada.

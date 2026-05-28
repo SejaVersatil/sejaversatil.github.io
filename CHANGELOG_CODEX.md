@@ -2,6 +2,22 @@
 
 Registro objetivo das alteracoes feitas pelo Codex.
 
+## 2026-05-27
+- Tipo: seguranca/firebase
+- Arquivos alterados:
+  - `firebase-init.js`
+  - `FIREBASE_SECURITY.md`
+  - `index.html`
+  - `produto.html`
+  - `checkout.html`
+  - `meus_pedidos.html`
+  - `admin-panel.html`
+  - `sw.js`
+  - arquivos de contexto Codex
+- Resumo: configuracao Firebase removida dos HTMLs e centralizada em `firebase-init.js`, com montagem dos identificadores fora das paginas e bloqueio de inicializacao fora dos hosts esperados; criado guia curto com medidas reais de protecao no Firebase/Google Cloud.
+- Validacao: `node --check firebase-init.js`; `node --check sw.js`; busca confirmou ausencia de `apiKey`, `measurementId`, `firebaseConfig` e valores diretos nos arquivos HTML/JS; Chrome headless abriu home/produto/checkout localmente sem pagina de erro.
+- Proxima acao: publicar e validar no site publico.
+
 ## 2026-05-17
 - Tipo: ajuste conteudo/produtos
 - Arquivos alterados:

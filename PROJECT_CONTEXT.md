@@ -73,6 +73,8 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Performance mobile foi priorizada: a home carrega primeiro apenas o hero ativo correto por viewport, adia heroes secundarios, imagens abaixo da dobra, produtos e videos, e usa favicon/icones leves.
 - Service worker passou a manter cache inicial enxuto, com app shell, icones pequenos e hero ativo; imagens/estaticos continuam com estrategia cache-first apos requisicao.
 - Ajuste de badge/counter de pre-venda publicado: badge antiga vira "Lançamento" e countdown nao e mais renderizado.
+- Inicializacao Firebase foi centralizada em `firebase-init.js`; os HTMLs nao devem conter blocos `firebaseConfig` nem valores diretos de configuracao Firebase. O arquivo inclui trava de host para `sejaversatil.github.io`, `www.sejaversatil.github.io`, `localhost` e `127.0.0.1`.
+- Criado `FIREBASE_SECURITY.md` com o lembrete de que configuracao Web Firebase nao e segredo no navegador; a protecao real deve ser feita com Security Rules, App Check e restricao de API key por HTTP referrer no Google Cloud/Firebase.
 
 ## Pontos sensiveis
 - Nao alterar design, layout, textos, estilos ou comportamento sem pedido explicito.
@@ -82,6 +84,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Cuidado com regras duplicadas no fim de `css2.css`; as regras finais costumam sobrescrever blocos anteriores.
 - Nao transformar o slide V1 desktop sem pedido, pois ele usa informacao embutida na imagem original.
 - Produtos antigos com todas as fotos no Imgur precisam ter fotos reenviadas/migradas para `assets/products` ou Firebase Storage; fallback visual nao recupera imagem removida/bloqueada na origem.
+- Nao prometer que Firebase Web config fica invisivel no navegador em GitHub Pages puro; se o frontend acessa Firebase direto, o navegador sempre recebe os identificadores. Para ocultar de verdade, precisa backend/Cloud Functions.
 
 ## Pendencias atuais
 - Confirmar fluxo de deploy/publicacao desejado.
@@ -89,6 +92,7 @@ Memoria objetiva do projeto para orientar proximas sessoes do Codex.
 - Confirmar comandos de lint/testes, se existirem.
 - Reenviar/migrar fotos dos produtos antigos que ainda dependem exclusivamente do Imgur, como Conjunto Resist e Conjunto Mouve.
 - Acompanhar desempenho real no celular apos deploy e repetir teste em rede movel se houver nova lentidao percebida.
+- Aplicar no console Firebase/Google Cloud: restricao de API key por HTTP referrer, App Check Web e revisao/deploy de Firestore/Storage Rules.
 
 ## Observacoes para proximas sessoes
 - Antes de qualquer nova tarefa, ler `AGENTS.md`, `PROJECT_CONTEXT.md`, `TASKS.md` e consultar `CHANGELOG_CODEX.md` se houver necessidade de historico.

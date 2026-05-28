@@ -1,10 +1,11 @@
-const CACHE_NAME = 'seja-versatil-v1.0.58';
+const CACHE_NAME = 'seja-versatil-v1.0.59';
 
 const urlsToCache = [
     '/',
     '/index.html',
     '/css2.css',
     '/script2.js',
+    '/firebase-init.js',
     '/favicon.ico',
     '/assets/icons/favicon-32.png',
     '/assets/icons/icon-192.png',
